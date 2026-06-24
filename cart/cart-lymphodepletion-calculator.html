@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CAR-T LD Calculator – drAisyi EduCare</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;font-size:13px;background:#f4f6fb;color:#1a1a2e}
+.brand-bar{background:#1a237e;color:#fff;padding:11px 18px;display:flex;align-items:center;gap:10px}
+.brand-bar .logo{font-size:17px;font-weight:700;letter-spacing:.4px}
+.brand-bar .tag{font-size:10px;opacity:.75;margin-top:1px}
+.brand-bar .badge{margin-left:auto;background:rgba(255,255,255,.15);border-radius:20px;padding:3px 11px;font-size:10px;font-weight:600;letter-spacing:.4px}
+.wrap{max-width:960px;margin:0 auto;padding:14px}
+.card{background:#fff;border-radius:10px;border:1px solid #dde2f0;padding:14px;margin-bottom:12px}
+.sec{font-size:11px;font-weight:700;color:#1a237e;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+.f label{font-size:11px;font-weight:600;color:#444;margin-bottom:3px;display:block}
+.f input,.f select,.f textarea{width:100%;padding:7px 9px;border:1px solid #cdd2e8;border-radius:7px;font-size:12px;color:#1a1a2e;background:#fafbff;outline:none}
+.f input:focus,.f select:focus{border-color:#3949ab;box-shadow:0 0 0 2px rgba(57,73,171,.1)}
+.f .u{font-size:10px;color:#7986cb;margin-top:2px}
+.ro{background:#eef1ff!important;color:#3949ab!important;font-weight:700}
+.divider{height:1px;background:#e8eaf6;margin:12px 0}
+.alert{border-radius:7px;padding:9px 12px;margin-bottom:7px;font-size:12px;display:flex;align-items:flex-start;gap:7px;line-height:1.45}
+.aw{background:#fff8e1;border:1px solid #ffe082;color:#7b5800}
+.ad{background:#fce4ec;border:1px solid #f48fb1;color:#880e4f}
+.ao{background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20}
+.ai{background:#e3f2fd;border:1px solid #90caf9;color:#0d47a1}
+.ap{background:#f3e5f5;border:1px solid #ce93d8;color:#4a148c}
+.badge{display:inline-flex;align-items:center;gap:3px;border-radius:5px;padding:2px 7px;font-size:10px;font-weight:700}
+.bg{background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7}
+.br{background:#fce4ec;color:#c62828;border:1px solid #f48fb1}
+.by{background:#fff8e1;color:#f57f17;border:1px solid #ffe082}
+.bb{background:#e3f2fd;color:#1565c0;border:1px solid #90caf9}
+.bp{background:#f3e5f5;color:#6a1b9a;border:1px solid #ce93d8}
+.bgy{background:#f1f8e9;color:#33691e;border:1px solid #c5e1a5}
+.tabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.tab{padding:6px 12px;border-radius:7px;border:1px solid #c5cae9;background:#fff;font-size:12px;font-weight:600;color:#5c6bc0;cursor:pointer}
+.tab.a{background:#1a237e;color:#fff;border-color:#1a237e}
+.tc{display:none}
+.tc.a{display:block}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{background:#1a237e;color:#fff;padding:8px 9px;text-align:left;font-weight:600;font-size:11px}
+.tbl td{padding:7px 9px;border-bottom:1px solid #eef0fa;vertical-align:top}
+.tbl tr:nth-child(even) td{background:#f7f8fe}
+.tbl tr:hover td{background:#eef1ff}
+.metric-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:9px;margin-bottom:12px}
+.metric{background:#f0f3ff;border-radius:9px;padding:10px;text-align:center}
+.metric .v{font-size:20px;font-weight:700;color:#1a237e}
+.metric .l{font-size:10px;color:#5c6bc0;margin-top:2px}
+.go-box{border-radius:10px;padding:14px 18px;margin-bottom:12px;display:flex;align-items:center;gap:12px;font-size:14px;font-weight:700}
+.go-ok{background:#e8f5e9;border:2px solid #43a047;color:#1b5e20}
+.go-warn{background:#fff8e1;border:2px solid #ffa000;color:#7b5800}
+.go-stop{background:#fce4ec;border:2px solid #e53935;color:#880e4f}
+.go-icon{font-size:28px}
+.disp-block{background:#f3f4ff;border:1px solid #c5cae9;border-radius:8px;padding:11px;margin-bottom:9px}
+.disp-block .d-day{font-weight:700;color:#1a237e;font-size:12px;margin-bottom:6px}
+.disp-block .d-item{font-size:12px;color:#333;margin-bottom:4px;display:flex;align-items:flex-start;gap:5px}
+.hcard{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:7px;padding:11px;margin-bottom:7px}
+.hcard .ht{font-weight:700;color:#1b5e20;margin-bottom:5px;font-size:12px}
+.hcard p{font-size:12px;color:#2e7d32;margin-bottom:3px}
+.ul-list li{margin-bottom:5px;font-size:12px;list-style:none;display:flex;align-items:flex-start;gap:5px;padding-left:0}
+.ul-list li i{color:#3949ab;margin-top:1px;flex-shrink:0}
+.btn-main{width:100%;padding:12px;background:#1a237e;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px}
+.btn-main:hover{background:#283593}
+.btn-sec{width:100%;padding:9px;background:#fff;color:#5c6bc0;border:1px solid #c5cae9;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;margin-top:7px}
+.btn-sec:hover{background:#f5f5ff}
+.out{display:none}
+.out.show{display:block}
+.row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
+.print-btn{padding:7px 14px;background:#fff;border:1px solid #c5cae9;border-radius:7px;color:#3949ab;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px}
+.print-btn:hover{background:#f0f3ff}
+.warn-box{background:#fff8e1;border:1px solid #ffe082;border-radius:7px;padding:10px 12px;margin-bottom:10px;font-size:11px;color:#7b5800;line-height:1.5}
+.info-box{background:#e3f2fd;border:1px solid #90caf9;border-radius:7px;padding:10px 12px;margin-bottom:10px;font-size:11px;color:#0d47a1;line-height:1.5}
+.footer{text-align:center;padding:14px;color:#9fa8da;font-size:10px;margin-top:8px}
+.footer strong{color:#5c6bc0}
+.verif-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px}
+.verif-field{border:1px dashed #c5cae9;border-radius:7px;padding:8px 10px}
+.verif-field label{font-size:10px;color:#9fa8da;display:block;margin-bottom:3px}
+.verif-field .line{border-bottom:1px solid #e0e4f0;height:22px}
+.custom-drug{background:#f7f8ff;border:1px solid #c5cae9;border-radius:8px;padding:11px;margin-bottom:8px}
+.custom-drug .cd-title{font-size:11px;font-weight:700;color:#3949ab;margin-bottom:8px}
+@media print{
+  .no-print{display:none!important}
+  .brand-bar{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .go-ok,.go-warn,.go-stop{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .tbl th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<div class="brand-bar">
+  <div>
+    <div class="logo">drAisyi EduCare</div>
+    <div class="tag">Clinical Decision Support · Pediatric Hematology-Oncology</div>
+  </div>
+  <div class="badge">CAR-T LD Dose Calculator & Pharmacy Worksheet</div>
+</div>
+
+<div class="wrap">
+<h2 class="sr-only">CAR-T Lymphodepletion Dose Calculator & Pharmacy Dispensing Worksheet</h2>
+
+<!-- SECTION 1: PATIENT & PRODUCT -->
+<div class="card">
+  <div class="sec"><i class="ti ti-user-circle"></i> Data Pasien & Produk CAR-T</div>
+  <div class="g4" style="margin-bottom:10px">
+    <div class="f"><label>BB (kg)</label><input type="number" id="bb" placeholder="kg" min="1" max="150" step="0.1"><div class="u">berat badan aktual</div></div>
+    <div class="f"><label>TB (cm)</label><input type="number" id="tb" placeholder="cm" min="30" max="220" step="0.5"><div class="u">tinggi badan</div></div>
+    <div class="f"><label>BSA — Mosteller (m²)</label><input type="text" id="bsa" class="ro" placeholder="otomatis" readonly><div class="u">dihitung otomatis; 3 desimal</div></div>
+    <div class="f"><label>Usia (tahun)</label><input type="number" id="usia" placeholder="tahun" min="0" max="25" step="0.5"><div class="u">untuk Schwartz eGFR</div></div>
+  </div>
+  <div class="g3" style="margin-bottom:10px">
+    <div class="f"><label>Produk CAR-T</label>
+      <select id="cart_product" onchange="updateCartInfo()">
+        <option value="">— pilih produk —</option>
+        <option value="kymriah">Kymriah (tisagenlecleucel)</option>
+        <option value="yescarta">Yescarta (axicabtagene ciloleucel)</option>
+        <option value="tecartus">Tecartus (brexucabtagene autoleucel)</option>
+        <option value="breyanzi">Breyanzi (lisocabtagene maraleucel)</option>
+        <option value="inhouse">In-house / Investigational CAR-T</option>
+        <option value="other">Produk lain</option>
+      </select>
+    </div>
+    <div class="f"><label>Diagnosis</label>
+      <select id="diagnosis">
+        <option value="">— pilih —</option>
+        <option value="r_r_ball">r/r B-ALL</option>
+        <option value="r_r_dlbcl">r/r DLBCL</option>
+        <option value="r_r_bcell">r/r B-cell limfoma lain</option>
+        <option value="r_r_mcl">r/r MCL</option>
+        <option value="other">Lainnya</option>
+      </select>
+    </div>
+    <div class="f"><label>Target Antigen</label>
+      <select id="antigen">
+        <option value="cd19">CD19</option>
+        <option value="cd22">CD22</option>
+        <option value="cd19_cd22">CD19 + CD22 (dual)</option>
+        <option value="bcma">BCMA</option>
+        <option value="other">Lainnya</option>
+      </select>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="f"><label>Status Product Release</label>
+      <select id="prod_release">
+        <option value="yes">Sudah release — CoR tersedia</option>
+        <option value="no">Belum release</option>
+        <option value="pending">Proses QC</option>
+      </select>
+    </div>
+    <div class="f"><label>Bridging Therapy</label>
+      <select id="bridging">
+        <option value="none">Tidak ada</option>
+        <option value="washout_ok">Sudah selesai, washout cukup</option>
+        <option value="washout_pending">Washout belum selesai</option>
+      </select>
+    </div>
+    <div class="f"><label>Washout Steroid</label>
+      <select id="steroid_washout">
+        <option value="ok">Steroid sudah dihentikan ≥48 jam</option>
+        <option value="recent">Steroid dosis terakhir &lt;48 jam</option>
+        <option value="none">Tidak ada steroid sebelumnya</option>
+      </select>
+    </div>
+  </div>
+  <div id="cart-info-box" style="display:none;margin-top:10px"></div>
+</div>
+
+<!-- SECTION 2: FUNGSI ORGAN -->
+<div class="card">
+  <div class="sec"><i class="ti ti-activity"></i> Fungsi Organ</div>
+  <div class="g4" style="margin-bottom:10px">
+    <div class="f"><label>Kreatinin (mg/dL)</label><input type="number" id="creat" placeholder="mg/dL" step="0.01"><div class="u">untuk Schwartz eGFR</div></div>
+    <div class="f"><label>eGFR manual (opsional)</label><input type="number" id="egfr_manual" placeholder="mL/min/1.73m²" step="1"><div class="u">isi jika ada data lab CrCl</div></div>
+    <div class="f"><label>Status ginjal</label>
+      <select id="renal_status">
+        <option value="normal">Normal / CKD tidak diketahui</option>
+        <option value="ckd">CKD stabil</option>
+        <option value="aki">AKI aktif</option>
+        <option value="dialysis">Dialisis</option>
+      </select>
+    </div>
+    <div class="f"><label>eGFR (estimasi)</label><input type="text" id="egfr_calc" class="ro" placeholder="otomatis" readonly><div class="u">Schwartz / atau manual</div></div>
+  </div>
+  <div class="g4">
+    <div class="f"><label>SGOT / AST (U/L)</label><input type="number" id="sgot" placeholder="U/L" step="1"></div>
+    <div class="f"><label>SGPT / ALT (U/L)</label><input type="number" id="sgpt" placeholder="U/L" step="1"></div>
+    <div class="f"><label>Bilirubin Total (mg/dL)</label><input type="number" id="bili" placeholder="mg/dL" step="0.1"></div>
+    <div class="f"><label>Bilirubin Direk (mg/dL)</label><input type="number" id="bili_dir" placeholder="mg/dL" step="0.1"></div>
+  </div>
+  <div class="g3" style="margin-top:10px">
+    <div class="f"><label>Albumin (g/dL)</label><input type="number" id="albumin" placeholder="g/dL" step="0.1"></div>
+    <div class="f"><label>INR</label><input type="number" id="inr" placeholder="rasio" step="0.1"></div>
+    <div class="f"><label>Hepatitis B status</label>
+      <select id="hbv">
+        <option value="neg">HBsAg negatif / sudah skrining</option>
+        <option value="pos">HBsAg positif</option>
+        <option value="unknown">Belum diperiksa</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3: REGIMEN LD -->
+<div class="card">
+  <div class="sec"><i class="ti ti-pill"></i> Regimen Lymphodepletion</div>
+  <div class="g3" style="margin-bottom:10px">
+    <div class="f"><label>Pilih Protokol LD</label>
+      <select id="regimen" onchange="updateRegimen()">
+        <option value="kymriah_label">Kymriah label — Flu 30 mg/m² ×4d + Cy 500 mg/m² ×2d</option>
+        <option value="fc_900">Flu/Cy — Flu 25 mg/m² ×3d + Cy 900 mg/m² ×2d</option>
+        <option value="fc_rito">Flu/Cy + Rituximab — Flu 25 mg/m² ×3d + Cy 900 mg/m² ×2d + Rtx 375 mg/m² D-5</option>
+        <option value="fc_low">Flu/Cy dosis rendah — Flu 15 mg/m² ×3d + Cy 500 mg/m² ×2d</option>
+        <option value="cy_only">Cy saja — Cy 1500 mg/m² ×2d</option>
+        <option value="bend">Bendamustine — 70 mg/m² ×2d</option>
+        <option value="custom">Protokol custom / manual</option>
+      </select>
+    </div>
+    <div class="f"><label>Sumber Protokol</label>
+      <input type="text" id="proto_source" placeholder="mis: product label, protokol institusi, studi klinis">
+    </div>
+    <div class="f"><label>Tanggal D-5 (mulai LD)</label>
+      <input type="date" id="tgl_start">
+      <div class="u">Infusi CAR-T pada D0</div>
+    </div>
+  </div>
+
+  <div class="warn-box no-print" id="regimen-warn">
+    <i class="ti ti-alert-triangle"></i> <strong>Perhatian:</strong> Dosis LD final harus mengikuti protocol/product label dan diverifikasi oleh farmasi-onkologi. Pilihan di atas hanya referensi; selalu konfirmasi dengan DPJP dan tim.
+  </div>
+
+  <div id="regimen-desc-box" class="info-box"></div>
+
+  <!-- CUSTOM REGIMEN -->
+  <div id="custom-regimen-section" style="display:none">
+    <div class="sec" style="margin-top:10px"><i class="ti ti-pencil"></i> Input Regimen Manual</div>
+    <div id="custom-drugs">
+      <div class="custom-drug" id="cd-0">
+        <div class="cd-title">Obat 1</div>
+        <div class="g4">
+          <div class="f"><label>Nama Obat</label><input type="text" placeholder="mis: Fludarabine"></div>
+          <div class="f"><label>Dosis (mg/m²/hari)</label><input type="number" step="0.1" class="cd-dose"></div>
+          <div class="f"><label>Hari pemberian</label><input type="text" placeholder="mis: -5,-4,-3" class="cd-days"></div>
+          <div class="f"><label>Kekuatan vial (mg)</label><input type="number" step="1" class="cd-vial"></div>
+        </div>
+        <div class="g2" style="margin-top:6px">
+          <div class="f"><label>Rute</label><input type="text" placeholder="mis: IV infus 30 menit" class="cd-route"></div>
+          <div class="f"><label>Diluent</label><input type="text" placeholder="mis: NaCl 0.9% 100 mL" class="cd-diluent"></div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-sec no-print" onclick="addCustomDrug()" style="margin-top:0;width:auto;padding:7px 14px">+ Tambah Obat</button>
+  </div>
+</div>
+
+<!-- SECTION 4: STOK OBAT -->
+<div class="card">
+  <div class="sec"><i class="ti ti-package"></i> Stok Obat & Rescue Readiness</div>
+  <div class="g4" style="margin-bottom:10px">
+    <div class="f"><label>Fludarabine (vial 50 mg)</label><input type="number" id="stok_flu" placeholder="vial" step="1" min="0"></div>
+    <div class="f"><label>Cyclophosphamide (vial 500 mg)</label><input type="number" id="stok_cy" placeholder="vial" step="1" min="0"></div>
+    <div class="f"><label>Mesna (vial 400 mg)</label><input type="number" id="stok_mesna" placeholder="vial" step="1" min="0"></div>
+    <div class="f"><label>Rituximab (vial 100 mg)</label><input type="number" id="stok_rtx" placeholder="vial" step="1" min="0"></div>
+  </div>
+  <div class="g4" style="margin-bottom:10px">
+    <div class="f"><label>Ondansetron 8 mg (amp/tab)</label><input type="number" id="stok_ond" placeholder="unit" step="1" min="0"></div>
+    <div class="f"><label>Dexamethasone 5 mg/mL (amp)</label><input type="number" id="stok_dexa" placeholder="amp" step="1" min="0"></div>
+    <div class="f"><label>Bendamustine (vial 100 mg)</label><input type="number" id="stok_bend" placeholder="vial" step="1" min="0"></div>
+    <div class="f"><label>Pakai Mesna?</label>
+      <select id="pakai_mesna">
+        <option value="1">Ya — pakai Mesna</option>
+        <option value="0">Tidak</option>
+      </select>
+    </div>
+  </div>
+  <div class="f" style="margin-bottom:10px">
+    <label>Mesna % dari dosis Cy</label>
+    <select id="mesna_pct">
+      <option value="60">60% per dosis (standar)</option>
+      <option value="100">100% per dosis (dosis tinggi)</option>
+      <option value="custom">Custom %</option>
+    </select>
+  </div>
+  <div class="f" id="mesna_custom_wrap" style="display:none;margin-bottom:10px">
+    <label>Custom Mesna % dari Cy</label><input type="number" id="mesna_custom_pct" placeholder="mis: 80" step="1" min="0" max="200">
+  </div>
+  <div class="divider"></div>
+  <div class="sec"><i class="ti ti-first-aid-kit"></i> CRS/ICANS Rescue Readiness</div>
+  <div class="g4">
+    <div class="f"><label>Tocilizumab (vial)</label><input type="number" id="stok_tocilizumab" placeholder="min 2 vial" step="1" min="0"></div>
+    <div class="f"><label>Metilprednisolon 125 mg (vial)</label><input type="number" id="stok_mpred" placeholder="vial" step="1" min="0"></div>
+    <div class="f"><label>Levetiracetam (vial/tab)</label><input type="number" id="stok_leve" placeholder="unit" step="1" min="0"></div>
+    <div class="f"><label>ICU/PICU tersedia?</label>
+      <select id="icu_avail">
+        <option value="yes">Ya — tersedia</option>
+        <option value="no">Tidak</option>
+        <option value="limited">Terbatas</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<button class="btn-main no-print" onclick="calculate()"><i class="ti ti-calculator"></i> Hitung Dosis & Buat Worksheet</button>
+<button class="btn-sec no-print" onclick="resetForm()"><i class="ti ti-refresh"></i> Reset Form</button>
+
+<!-- OUTPUT SECTION -->
+<div class="out" id="output">
+  <div class="divider"></div>
+  <div class="row-top">
+    <div class="sec" style="margin-bottom:0"><i class="ti ti-clipboard-check"></i> Hasil Kalkulasi & Pharmacy Worksheet</div>
+    <button class="print-btn no-print" onclick="window.print()"><i class="ti ti-printer"></i> Cetak Worksheet</button>
+  </div>
+
+  <!-- GO/NO-GO -->
+  <div id="go-nogo-box"></div>
+
+  <!-- ALERTS -->
+  <div id="alert-container"></div>
+
+  <!-- METRICS -->
+  <div class="metric-row" id="metrics"></div>
+
+  <!-- TABS -->
+  <div class="tabs no-print">
+    <div class="tab a" onclick="showTab('t-jadwal',this)"><i class="ti ti-calendar"></i> Jadwal & Dosis</div>
+    <div class="tab" onclick="showTab('t-dispensing',this)"><i class="ti ti-package"></i> Dispensing</div>
+    <div class="tab" onclick="showTab('t-premedikasi',this)"><i class="ti ti-syringe"></i> Premedikasi</div>
+    <div class="tab" onclick="showTab('t-hidrasi',this)"><i class="ti ti-droplet"></i> Hidrasi</div>
+    <div class="tab" onclick="showTab('t-rescue',this)"><i class="ti ti-first-aid-kit"></i> Rescue</div>
+    <div class="tab" onclick="showTab('t-verif',this)"><i class="ti ti-writing"></i> Verifikasi</div>
+  </div>
+
+  <div id="t-jadwal" class="tc a card"></div>
+  <div id="t-dispensing" class="tc card" style="display:none"></div>
+  <div id="t-premedikasi" class="tc card" style="display:none"></div>
+  <div id="t-hidrasi" class="tc card" style="display:none"></div>
+  <div id="t-rescue" class="tc card" style="display:none"></div>
+  <div id="t-verif" class="tc card" style="display:none"></div>
+</div>
+
+<div class="footer">
+  <strong>drAisyi EduCare</strong> · CAR-T Lymphodepletion Dose Calculator & Pharmacy Worksheet v2.0<br>
+  Hanya untuk keperluan edukasi klinis. Dosis final wajib diverifikasi oleh DPJP dan farmasi klinis. Tidak menggantikan keputusan klinis.
+</div>
+</div>
+
+<script>
+document.getElementById('mesna_pct').addEventListener('change', function(){
+  document.getElementById('mesna_custom_wrap').style.display = this.value === 'custom' ? 'block' : 'none';
+});
+
+const CART_INFO = {
+  kymriah: {label:'Kymriah (tisagenlecleucel)', ld:'Flu 30 mg/m²/hari ×4 hari (D-5 s/d D-2) + Cy 500 mg/m²/hari ×2 hari (D-5, D-4)', note:'Sesuai product label FDA/EMA. Konfirmasi dengan SmPC/package insert terkini.'},
+  yescarta: {label:'Yescarta (axicabtagene ciloleucel)', ld:'Flu 30 mg/m²/hari ×3 hari + Cy 500 mg/m²/hari ×3 hari (D-5 s/d D-3)', note:'Sesuai product label. Verifikasi SmPC lokal.'},
+  tecartus: {label:'Tecartus (brexucabtagene autoleucel)', ld:'Flu 25 mg/m²/hari ×3 hari + Cy 900 mg/m²/hari ×2 hari (D-5 s/d D-3)', note:'Sesuai product label. Verifikasi SmPC lokal.'},
+  breyanzi: {label:'Breyanzi (lisocabtagene maraleucel)', ld:'Flu 30 mg/m²/hari ×3 hari + Cy 300 mg/m²/hari ×3 hari (D-5 s/d D-3)', note:'Sesuai product label. Verifikasi SmPC lokal.'},
+  inhouse: {label:'In-house / Investigational CAR-T', ld:'Mengikuti protokol studi / IND / protokol institusi', note:'Pastikan sumber protokol LD terdokumentasi dengan jelas.'},
+  other: {label:'Produk lain', ld:'Lihat product label / protokol spesifik', note:'Konfirmasi regimen LD dengan DPJP dan protokol yang berlaku.'}
+};
+
+const REGIMEN_DATA = {
+  kymriah_label:{desc:'Flu 30 mg/m²/hari ×4 hari (D-5,D-4,D-3,D-2) + Cy 500 mg/m²/hari ×2 hari (D-5,D-4) — sesuai Kymriah product label',flu_dose:30,flu_days:[-5,-4,-3,-2],cy_dose:500,cy_days:[-5,-4],rtx:false,bend_dose:0,bend_days:[],cy_only:false},
+  fc_900:{desc:'Flu 25 mg/m²/hari ×3 hari + Cy 900 mg/m²/hari ×2 hari — protokol institusi / perlu disesuaikan',flu_dose:25,flu_days:[-5,-4,-3],cy_dose:900,cy_days:[-5,-4],rtx:false,bend_dose:0,bend_days:[],cy_only:false},
+  fc_rito:{desc:'Flu 25 mg/m²/hari ×3 hari + Cy 900 mg/m²/hari ×2 hari + Rituximab 375 mg/m² D-5',flu_dose:25,flu_days:[-5,-4,-3],cy_dose:900,cy_days:[-5,-4],rtx:true,bend_dose:0,bend_days:[],cy_only:false},
+  fc_low:{desc:'Flu 15 mg/m²/hari ×3 hari + Cy 500 mg/m²/hari ×2 hari — dosis rendah (gangguan ginjal / BB rendah)',flu_dose:15,flu_days:[-5,-4,-3],cy_dose:500,cy_days:[-5,-4],rtx:false,bend_dose:0,bend_days:[],cy_only:false},
+  cy_only:{desc:'Cy 1500 mg/m²/hari ×2 hari (D-5, D-4) — tanpa Fludarabine',flu_dose:0,flu_days:[],cy_dose:1500,cy_days:[-5,-4],rtx:false,bend_dose:0,bend_days:[],cy_only:true},
+  bend:{desc:'Bendamustine 70 mg/m²/hari ×2 hari (D-5, D-4)',flu_dose:0,flu_days:[],cy_dose:0,cy_days:[],rtx:false,bend_dose:70,bend_days:[-5,-4],cy_only:false},
+  custom:{desc:'Protokol custom — isi data obat di bawah',flu_dose:0,flu_days:[],cy_dose:0,cy_days:[],rtx:false,bend_dose:0,bend_days:[],cy_only:false}
+};
+
+function updateCartInfo(){
+  const p = document.getElementById('cart_product').value;
+  const box = document.getElementById('cart-info-box');
+  if (!p){box.style.display='none';return;}
+  const ci = CART_INFO[p];
+  box.style.display='block';
+  box.innerHTML=`<div class="info-box"><i class="ti ti-info-circle"></i> <strong>${ci.label}</strong><br>Regimen LD referensi: ${ci.ld}<br><small>${ci.note}</small></div>`;
+}
+
+function updateRegimen(){
+  const r = document.getElementById('regimen').value;
+  const rd = REGIMEN_DATA[r];
+  document.getElementById('regimen-desc-box').innerHTML=`<i class="ti ti-info-circle"></i> ${rd.desc}`;
+  document.getElementById('custom-regimen-section').style.display = r==='custom' ? 'block' : 'none';
+}
+updateRegimen();
+
+let customDrugCount = 1;
+function addCustomDrug(){
+  const idx = customDrugCount++;
+  const div = document.createElement('div');
+  div.className='custom-drug';
+  div.id='cd-'+idx;
+  div.innerHTML=`<div class="cd-title">Obat ${idx+1} <button onclick="this.closest('.custom-drug').remove()" style="float:right;background:none;border:none;color:#e53935;cursor:pointer;font-size:12px"><i class="ti ti-trash"></i></button></div>
+  <div class="g4"><div class="f"><label>Nama Obat</label><input type="text" placeholder="mis: Fludarabine"></div>
+  <div class="f"><label>Dosis (mg/m²/hari)</label><input type="number" step="0.1" class="cd-dose"></div>
+  <div class="f"><label>Hari pemberian</label><input type="text" placeholder="mis: -5,-4,-3" class="cd-days"></div>
+  <div class="f"><label>Kekuatan vial (mg)</label><input type="number" step="1" class="cd-vial"></div></div>
+  <div class="g2" style="margin-top:6px"><div class="f"><label>Rute</label><input type="text" placeholder="mis: IV infus 30 menit" class="cd-route"></div>
+  <div class="f"><label>Diluent</label><input type="text" placeholder="mis: NaCl 0.9% 100 mL" class="cd-diluent"></div></div>`;
+  document.getElementById('custom-drugs').appendChild(div);
+}
+
+function parseLocalDate(str){const [y,m,d]=str.split('-').map(Number);return new Date(y,m-1,d);}
+function addDays(base,n){const d=new Date(base);d.setDate(d.getDate()+n);return d;}
+function fmtDate(d){return d.toLocaleDateString('id-ID',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});}
+function numOrNull(v){const n=parseFloat(v);return isNaN(n)?null:n;}
+function roundDose(v,dec){return parseFloat(v.toFixed(dec));}
+
+function bsaCalc(){
+  const bb=numOrNull(document.getElementById('bb').value);
+  const tb=numOrNull(document.getElementById('tb').value);
+  if(bb&&tb&&bb>0&&tb>0){
+    const bsa=Math.sqrt((bb*tb)/3600);
+    document.getElementById('bsa').value=bsa.toFixed(3);
+  }
+  calcEGFR();
+}
+document.getElementById('bb').addEventListener('input',bsaCalc);
+document.getElementById('tb').addEventListener('input',bsaCalc);
+document.getElementById('creat').addEventListener('input',calcEGFR);
+document.getElementById('usia').addEventListener('input',calcEGFR);
+document.getElementById('egfr_manual').addEventListener('input',calcEGFR);
+
+function calcEGFR(){
+  const creat=numOrNull(document.getElementById('creat').value);
+  const usia=numOrNull(document.getElementById('usia').value);
+  const tb=numOrNull(document.getElementById('tb').value);
+  const manualEGFR=numOrNull(document.getElementById('egfr_manual').value);
+  const el=document.getElementById('egfr_calc');
+  if(manualEGFR){el.value=manualEGFR.toFixed(0)+' (manual)';return;}
+  if(creat&&usia&&tb&&creat>0&&tb>0){
+    const k=usia<1?0.33:usia<13?0.413:usia<18?0.55:0.7;
+    const egfr=(k*tb)/creat;
+    el.value=egfr.toFixed(0)+' (est. Schwartz)';
+  } else {el.value='';}
+}
+
+function getEGFRValue(){
+  const manual=numOrNull(document.getElementById('egfr_manual').value);
+  if(manual) return manual;
+  const creat=numOrNull(document.getElementById('creat').value);
+  const usia=numOrNull(document.getElementById('usia').value);
+  const tb=numOrNull(document.getElementById('tb').value);
+  if(creat&&usia&&tb&&creat>0&&tb>0){
+    const k=usia<1?0.33:usia<13?0.413:usia<18?0.55:0.7;
+    return (k*tb)/creat;
+  }
+  return null;
+}
+
+function showTab(id,el){
+  document.querySelectorAll('.tc').forEach(t=>{t.classList.remove('a');t.style.display='none';});
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('a'));
+  const box=document.getElementById(id);
+  box.classList.add('a');
+  box.style.display='block';
+  el.classList.add('a');
+}
+
+function resetForm(){
+  document.querySelectorAll('input[type=number],input[type=text],input[type=date]').forEach(i=>{if(!i.readOnly)i.value='';});
+  document.getElementById('bsa').value='';
+  document.getElementById('egfr_calc').value='';
+  document.getElementById('output').classList.remove('show');
+  document.getElementById('cart-info-box').style.display='none';
+  document.getElementById('custom-regimen-section').style.display='none';
+  document.getElementById('regimen').value='kymriah_label';
+  document.getElementById('cart_product').value='';
+  updateRegimen();
+}
+
+function calculate(){
+  const bb=numOrNull(document.getElementById('bb').value);
+  const bsa=numOrNull(document.getElementById('bsa').value);
+  if(!bb||!bsa){alert('Masukkan BB dan TB terlebih dahulu.');return;}
+
+  const reg=document.getElementById('regimen').value;
+  const rd=REGIMEN_DATA[reg];
+  const egfr=getEGFRValue();
+  const sgot=numOrNull(document.getElementById('sgot').value);
+  const sgpt=numOrNull(document.getElementById('sgpt').value);
+  const bili=numOrNull(document.getElementById('bili').value);
+  const bili_dir=numOrNull(document.getElementById('bili_dir').value);
+  const albumin=numOrNull(document.getElementById('albumin').value);
+  const inr=numOrNull(document.getElementById('inr').value);
+  const hbv=document.getElementById('hbv').value;
+  const renal_status=document.getElementById('renal_status').value;
+  const prod_release=document.getElementById('prod_release').value;
+  const bridging=document.getElementById('bridging').value;
+  const steroid_washout=document.getElementById('steroid_washout').value;
+  const icu_avail=document.getElementById('icu_avail').value;
+  const pakai_mesna=parseInt(document.getElementById('pakai_mesna').value);
+  const mesna_pct_sel=document.getElementById('mesna_pct').value;
+  const mesna_pct=mesna_pct_sel==='custom'?(numOrNull(document.getElementById('mesna_custom_pct').value)||60)/100:(parseInt(mesna_pct_sel)/100);
+  const startDate=document.getElementById('tgl_start').value;
+
+  const stok_flu=numOrNull(document.getElementById('stok_flu').value)||0;
+  const stok_cy=numOrNull(document.getElementById('stok_cy').value)||0;
+  const stok_mesna=numOrNull(document.getElementById('stok_mesna').value)||0;
+  const stok_rtx=numOrNull(document.getElementById('stok_rtx').value)||0;
+  const stok_ond=numOrNull(document.getElementById('stok_ond').value)||0;
+  const stok_dexa=numOrNull(document.getElementById('stok_dexa').value)||0;
+  const stok_bend=numOrNull(document.getElementById('stok_bend').value)||0;
+  const stok_toci=numOrNull(document.getElementById('stok_tocilizumab').value)||0;
+  const stok_mpred=numOrNull(document.getElementById('stok_mpred').value)||0;
+  const stok_leve=numOrNull(document.getElementById('stok_leve').value)||0;
+
+  // DOSE CALCULATIONS
+  const flu_per_day=rd.flu_dose?roundDose(rd.flu_dose*bsa,1):0;
+  const cy_per_day=rd.cy_dose?roundDose(rd.cy_dose*bsa,1):0;
+  const rtx_dose=rd.rtx?roundDose(375*bsa,1):0;
+  const bend_per_day=rd.bend_dose?roundDose(rd.bend_dose*bsa,1):0;
+
+  const flu_rounded=rd.flu_dose?Math.round(flu_per_day):0;
+  const cy_rounded=rd.cy_dose?Math.round(cy_per_day):0;
+
+  const flu_vials_day=rd.flu_dose?Math.ceil(flu_per_day/50):0;
+  const cy_vials_day=rd.cy_dose?Math.ceil(cy_per_day/500):0;
+  const rtx_vials=rd.rtx?Math.ceil(rtx_dose/100):0;
+  const bend_vials_day=rd.bend_dose?Math.ceil(bend_per_day/100):0;
+
+  const total_flu_vials=flu_vials_day*rd.flu_days.length;
+  const total_cy_vials=cy_vials_day*rd.cy_days.length;
+  const total_bend_vials=bend_vials_day*rd.bend_days.length;
+
+  const mesna_per_dose=pakai_mesna&&cy_per_day?roundDose(cy_per_day*mesna_pct,1):0;
+  const mesna_vials_day=pakai_mesna&&mesna_per_dose?Math.ceil((mesna_per_dose*3)/400):0;
+  const total_mesna_vials=mesna_vials_day*rd.cy_days.length;
+
+  const total_days_med=Math.max(rd.flu_days.length,rd.cy_days.length,rd.bend_days.length)||2;
+  const total_ond=total_days_med*2;
+  const total_dexa=total_days_med*1;
+
+  // GO/NO-GO LOGIC
+  let noGoReasons=[];
+  let warnReasons=[];
+
+  if(!bsa||bsa<=0) noGoReasons.push('BSA tidak valid');
+  if(egfr!==null&&egfr<30&&rd.flu_dose) noGoReasons.push('eGFR <30 mL/min — Fludarabine standar kontraindikasi relatif; wajib review MDT');
+  if(renal_status==='aki') noGoReasons.push('AKI aktif — tunda LD hingga fungsi ginjal stabil');
+  if(renal_status==='dialysis'&&rd.flu_dose) noGoReasons.push('Pasien dialisis dengan regimen Fludarabine — perlu protokol khusus dan persetujuan MDT');
+  if(prod_release==='no') noGoReasons.push('Product release belum konfirmasi — jangan mulai LD sebelum release certificate tersedia');
+  if(bridging==='washout_pending') noGoReasons.push('Washout bridging therapy belum selesai');
+  if(stok_toci<2) noGoReasons.push('Tocilizumab rescue <2 vial tersedia — CAR-T tidak boleh dimulai tanpa rescue obat CRS');
+  if(icu_avail==='no') noGoReasons.push('ICU/PICU tidak tersedia — persyaratan minimal CAR-T tidak terpenuhi');
+  if(rd.flu_dose&&stok_flu<total_flu_vials) noGoReasons.push(`Stok Fludarabine tidak cukup (butuh ${total_flu_vials}, ada ${stok_flu})`);
+  if(rd.cy_dose&&stok_cy<total_cy_vials) noGoReasons.push(`Stok Cyclophosphamide tidak cukup (butuh ${total_cy_vials}, ada ${stok_cy})`);
+  if(pakai_mesna&&rd.cy_dose&&stok_mesna<total_mesna_vials) noGoReasons.push(`Stok Mesna tidak cukup (butuh ${total_mesna_vials}, ada ${stok_mesna})`);
+
+  if(egfr!==null&&egfr>=30&&egfr<60&&rd.flu_dose) warnReasons.push('eGFR 30–59: pertimbangkan reduksi Fludarabine; wajib review farmasi/nefrologi');
+  if(egfr!==null&&egfr>=60&&egfr<80&&rd.flu_dose) warnReasons.push('eGFR 60–79: monitor ketat fungsi ginjal; pertimbangkan reduksi per protokol');
+  if(sgpt!==null&&sgpt>200||sgot!==null&&sgot>200) warnReasons.push('Transaminase sangat tinggi — wajib review DPJP/farmasi; pertimbangkan tunda LD');
+  else if(sgpt!==null&&sgpt>90||sgot!==null&&sgot>90) warnReasons.push('Transaminase meningkat — pantau ketat, ikuti protokol penyesuaian dosis');
+  if(bili!==null&&bili>3.0) warnReasons.push('Bilirubin total >3.0 mg/dL — risiko hepatotoksisitas tinggi; wajib review');
+  else if(bili!==null&&bili>1.5) warnReasons.push('Bilirubin total 1.5–3.0 mg/dL — pertimbangkan reduksi dosis; ikuti panduan hepatik');
+  if(bili_dir!==null&&bili_dir>1.5) warnReasons.push('Bilirubin direk >1.5 — kemungkinan SOS/VOD atau obstruksi bilier; evaluasi');
+  if(albumin!==null&&albumin<3.0) warnReasons.push('Albumin rendah — risiko toksisitas meningkat; pertimbangkan suportif');
+  if(inr!==null&&inr>1.5) warnReasons.push('INR >1.5 — fungsi hepar terganggu; evaluasi sebelum kemoterapi');
+  if(hbv==='pos') warnReasons.push('HBsAg positif — wajib profilaksis antiviral Entekavir/Tenofovir sebelum dan selama terapi; konsultasi hepatologi');
+  if(hbv==='unknown') warnReasons.push('Status HBV belum diperiksa — skrining wajib sebelum Rituximab/imunosupresi');
+  if(steroid_washout==='recent') warnReasons.push('Steroid dosis terakhir <48 jam — kortikosteroid dapat mengganggu fungsi CAR-T; konfirmasi dengan protokol');
+  if(bb<10) warnReasons.push('BB <10 kg — pastikan dosis minimum pediatrik; konfirmasi dengan protokol institusi');
+  if(stok_ond<total_ond) warnReasons.push(`Stok Ondansetron mungkin kurang (estimasi ${total_ond} unit)`);
+  if(icu_avail==='limited') warnReasons.push('ICU/PICU hanya tersedia terbatas — koordinasikan kapasitas sebelum infusi CAR-T');
+  if(rd.rtx&&stok_rtx<rtx_vials) warnReasons.push(`Stok Rituximab kurang (butuh ${rtx_vials} vial, ada ${stok_rtx})`);
+
+  const goStatus = noGoReasons.length>0?'stop':warnReasons.length>0?'warn':'ok';
+  const goLabel={'ok':'OK TO DISPENSE','warn':'CONDITIONAL — Perlu Review','stop':'NO-GO — Jangan Dispense'};
+  const goIcon={'ok':'ti-circle-check','warn':'ti-alert-circle','stop':'ti-circle-x'};
+
+  document.getElementById('go-nogo-box').innerHTML=`
+    <div class="go-box go-${goStatus}">
+      <i class="ti ${goIcon[goStatus]} go-icon"></i>
+      <div>
+        <div style="font-size:15px;font-weight:700">${goLabel[goStatus]}</div>
+        ${noGoReasons.length?'<div style="font-size:12px;margin-top:4px">'+noGoReasons.map(r=>'• '+r).join('<br>')+'</div>':''}
+        ${goStatus==='warn'&&warnReasons.length?'<div style="font-size:12px;margin-top:4px">'+warnReasons.slice(0,3).map(r=>'⚠ '+r).join('<br>')+'</div>':''}
+      </div>
+    </div>`;
+
+  // ALERTS
+  let alertHtml='';
+  const pushAlert=(type,icon,msg)=>{alertHtml+=`<div class="alert ${type}"><i class="ti ${icon}" style="flex-shrink:0;font-size:15px"></i><span>${msg}</span></div>`;};
+  noGoReasons.forEach(r=>pushAlert('ad','ti-circle-x',r));
+  warnReasons.forEach(r=>pushAlert('aw','ti-alert-circle',r));
+  if(goStatus==='ok') pushAlert('ao','ti-circle-check','Semua parameter dalam batas aman. Lanjutkan persiapan sesuai protokol.');
+  document.getElementById('alert-container').innerHTML=alertHtml;
+
+  // METRICS
+  document.getElementById('metrics').innerHTML=`
+    <div class="metric"><div class="v">${bsa.toFixed(3)}</div><div class="l">BSA (m²)</div></div>
+    ${flu_per_day?`<div class="metric"><div class="v">${flu_per_day}</div><div class="l">Flu/hari (mg)</div></div>`:''}
+    ${cy_per_day?`<div class="metric"><div class="v">${cy_per_day}</div><div class="l">Cy/hari (mg)</div></div>`:''}
+    ${rtx_dose?`<div class="metric"><div class="v">${rtx_dose}</div><div class="l">Rituximab (mg)</div></div>`:''}
+    ${bend_per_day?`<div class="metric"><div class="v">${bend_per_day}</div><div class="l">Bend/hari (mg)</div></div>`:''}
+    ${egfr!==null?`<div class="metric"><div class="v" style="color:${egfr<30?'#c62828':egfr<60?'#e65100':'#2e7d32'}">${egfr.toFixed(0)}</div><div class="l">eGFR (mL/min)</div></div>`:''}
+  `;
+
+  // JADWAL
+  const allDays=[...new Set([...rd.flu_days,...rd.cy_days,...rd.bend_days,(rd.rtx?[-5]:[])].flat())].sort((a,b)=>a-b);
+  if(!allDays.length&&rd.cy_only) allDays.push(-5,-4);
+  const dayLabel=d=>d===0?'D0 (Infusi CAR-T)':`D${d<0?d:'+'+d}`;
+
+  let jadwalHtml=`<div class="warn-box" style="margin-bottom:10px"><i class="ti ti-alert-triangle"></i> <strong>Dosis yang ditampilkan adalah dosis kalkulasi.</strong> Dosis final (rounded) harus dikonfirmasi farmasi klinis sebelum dispensing.</div>`;
+  jadwalHtml+=`<table class="tbl"><thead><tr>
+    <th>Hari</th><th>Tanggal</th><th>Obat</th><th>Dosis kalkulasi</th><th>Dosis dibulatkan</th><th>Vial</th><th>Rute / Durasi</th><th>Diluent</th>
+  </tr></thead><tbody>`;
+
+  const dispDays=[];
+  for(const d of allDays){
+    const dt=startDate?fmtDate(addDays(parseLocalDate(startDate),d+5)):'—';
+    const rows=[];
+    const disp=[];
+    if(rd.flu_dose&&rd.flu_days.includes(d)){
+      rows.push(`<tr><td>${dayLabel(d)}</td><td>${dt}</td><td><span class="badge bb">Fludarabine</span></td><td>${flu_per_day} mg</td><td>${flu_rounded} mg</td><td>${flu_vials_day} vial (50mg)</td><td>IV 30 menit</td><td>NaCl 0.9% 100 mL</td></tr>`);
+      disp.push(`Fludarabine ${flu_per_day} mg → dibulatkan ${flu_rounded} mg → ${flu_vials_day} vial 50mg`);
+    }
+    if(rd.cy_dose&&rd.cy_days.includes(d)){
+      rows.push(`<tr><td>${rd.flu_days.includes(d)?'↳':dayLabel(d)}</td><td>${rd.flu_days.includes(d)?'':dt}</td><td><span class="badge by">Cyclophosphamide</span></td><td>${cy_per_day} mg</td><td>${cy_rounded} mg</td><td>${cy_vials_day} vial (500mg)</td><td>IV 1–2 jam</td><td>NaCl 0.9% 250 mL</td></tr>`);
+      disp.push(`Cyclophosphamide ${cy_per_day} mg → ${cy_rounded} mg → ${cy_vials_day} vial 500mg`);
+      if(pakai_mesna&&mesna_per_dose){
+        rows.push(`<tr><td></td><td></td><td><span class="badge bg">Mesna</span></td><td>${mesna_per_dose} mg × 3</td><td>${mesna_per_dose} mg × 3</td><td>${mesna_vials_day} vial (400mg)</td><td>IV T0/T+4h/T+8h</td><td>NaCl 0.9% 50 mL</td></tr>`);
+        disp.push(`Mesna ${mesna_per_dose} mg × 3 dosis → ${mesna_vials_day} vial 400mg`);
+      }
+    }
+    if(rd.rtx&&d===-5){
+      rows.push(`<tr><td>${!rd.flu_days.includes(d)&&!rd.cy_days.includes(d)?dayLabel(d):'↳'}</td><td></td><td><span class="badge bp">Rituximab</span></td><td>${rtx_dose} mg</td><td>${rtx_dose} mg</td><td>${rtx_vials} vial (100mg)</td><td>IV infus bertahap</td><td>NaCl 0.9% 250 mL</td></tr>`);
+      disp.push(`Rituximab ${rtx_dose} mg → ${rtx_vials} vial 100mg; infus bertahap dengan pemantauan reaksi`);
+    }
+    if(rd.bend_dose&&rd.bend_days.includes(d)){
+      const bend_rounded=Math.round(bend_per_day);
+      rows.push(`<tr><td>${dayLabel(d)}</td><td>${dt}</td><td><span class="badge bgy">Bendamustine</span></td><td>${bend_per_day} mg</td><td>${bend_rounded} mg</td><td>${bend_vials_day} vial (100mg)</td><td>IV 30–60 menit</td><td>NaCl 0.9% 500 mL</td></tr>`);
+      disp.push(`Bendamustine ${bend_per_day} mg → ${bend_rounded} mg → ${bend_vials_day} vial 100mg`);
+    }
+    if(rows.length){
+      jadwalHtml+=rows.join('');
+      dispDays.push({d,dt,items:disp});
+    }
+  }
+  jadwalHtml+='</tbody></table>';
+  document.getElementById('t-jadwal').innerHTML=jadwalHtml;
+
+  // DISPENSING
+  let dispHtml='';
+  for(const dd of dispDays){
+    if(!dd.items.length) continue;
+    dispHtml+=`<div class="disp-block"><div class="d-day"><i class="ti ti-calendar-event"></i> ${dayLabel(dd.d)} — ${dd.dt}</div>`;
+    for(const it of dd.items) dispHtml+=`<div class="d-item"><i class="ti ti-package"></i>${it}</div>`;
+    dispHtml+=`<div class="d-item" style="color:#5c6bc0"><i class="ti ti-droplet"></i>Ondansetron 8 mg × 2 (pre-kemo + 12 jam)</div>`;
+    dispHtml+=`<div class="d-item" style="color:#5c6bc0"><i class="ti ti-capsule"></i>Dexamethasone antiemetik — hanya bila diizinkan protokol; JANGAN rutin menjelang infusi CAR-T tanpa persetujuan tim</div></div>`;
+  }
+  dispHtml+=`<div class="alert ai"><i class="ti ti-package"></i><div><strong>Ringkasan kebutuhan total vial:</strong><br>
+    ${rd.flu_dose?`Fludarabine: ${total_flu_vials} vial (stok ${stok_flu}) <span class="badge ${stok_flu>=total_flu_vials?'bg':'br'}">${stok_flu>=total_flu_vials?'Cukup':'Kurang'}</span><br>`:''}
+    ${rd.cy_dose?`Cyclophosphamide: ${total_cy_vials} vial (stok ${stok_cy}) <span class="badge ${stok_cy>=total_cy_vials?'bg':'br'}">${stok_cy>=total_cy_vials?'Cukup':'Kurang'}</span><br>`:''}
+    ${pakai_mesna&&rd.cy_dose?`Mesna: ${total_mesna_vials} vial (stok ${stok_mesna}) <span class="badge ${stok_mesna>=total_mesna_vials?'bg':'br'}">${stok_mesna>=total_mesna_vials?'Cukup':'Kurang'}</span><br>`:''}
+    ${rd.rtx?`Rituximab: ${rtx_vials} vial (stok ${stok_rtx}) <span class="badge ${stok_rtx>=rtx_vials?'bg':'br'}">${stok_rtx>=rtx_vials?'Cukup':'Kurang'}</span><br>`:''}
+    ${rd.bend_dose?`Bendamustine: ${total_bend_vials} vial (stok ${stok_bend}) <span class="badge ${stok_bend>=total_bend_vials?'bg':'br'}">${stok_bend>=total_bend_vials?'Cukup':'Kurang'}</span><br>`:''}
+    Ondansetron: ${total_ond} unit (stok ${stok_ond}) <span class="badge ${stok_ond>=total_ond?'bg':'br'}">${stok_ond>=total_ond?'Cukup':'Kurang'}</span><br>
+    Dexamethasone: ${total_dexa} amp (stok ${stok_dexa}) <span class="badge ${stok_dexa>=total_dexa?'bg':'br'}">${stok_dexa>=total_dexa?'Cukup':'Kurang'}</span>
+  </div></div>`;
+  document.getElementById('t-dispensing').innerHTML=dispHtml;
+
+  // PREMEDIKASI
+  document.getElementById('t-premedikasi').innerHTML=`
+    <div class="sec" style="margin-bottom:9px"><i class="ti ti-syringe"></i> Premedikasi Antiemetik</div>
+    <ul class="ul-list">
+      <li><i class="ti ti-check"></i><div><strong>Ondansetron</strong> 0.15 mg/kg IV (maks 8 mg) — 30 menit sebelum kemoterapi, ulangi tiap 12 jam</div></li>
+      <li><i class="ti ti-check"></i><div><strong>Paracetamol</strong> 10–15 mg/kg PO — opsional, 30–60 menit sebelum kemo</div></li>
+      <li><i class="ti ti-alert-triangle" style="color:#e65100"></i><div><strong>Dexamethasone:</strong> <em>Hanya digunakan bila protokol mengizinkan</em>. Steroid dapat memengaruhi aktivitas CAR-T. Jangan berikan rutin menjelang infusi tanpa persetujuan DPJP dan protokol manufaktur.</div></li>
+    </ul>
+    ${rd.rtx?`<div class="divider"></div>
+    <div class="sec" style="margin-bottom:9px"><i class="ti ti-syringe"></i> Premedikasi Rituximab</div>
+    <ul class="ul-list">
+      <li><i class="ti ti-check"></i><div>Paracetamol 500–1000 mg PO + Difenhidramin 25–50 mg IV — 30 menit sebelum Rituximab</div></li>
+      <li><i class="ti ti-check"></i><div>Metilprednisolon 100 mg IV bila ada riwayat reaksi infus sebelumnya</div></li>
+      <li><i class="ti ti-check"></i><div>Monitor TTV tiap 15 menit selama 1 jam pertama, lalu tiap 30 menit</div></li>
+      <li><i class="ti ti-alert-triangle" style="color:#e65100"></i><div>Rate infus: mulai 50 mg/jam → naikkan bertahap tiap 30 menit hingga maks 400 mg/jam. Infus perdana lebih lambat.</div></li>
+      ${hbv==='pos'?'<li><i class="ti ti-alert-triangle" style="color:#c62828"></i><div><strong>HBsAg positif:</strong> Pastikan profilaksis Entekavir/Tenofovir sudah dimulai dan viral load HBV dipantau.</div></li>':''}
+    </ul>`:''}
+    <div class="divider"></div>
+    <div class="sec" style="margin-bottom:9px"><i class="ti ti-shield-check"></i> Profilaksis Infeksi</div>
+    <ul class="ul-list">
+      <li><i class="ti ti-check"></i><div><strong>Kotrimoksazol</strong> — mulai pasca-LD, lanjut hingga rekonstituisi imun (CD4 >200/µL)</div></li>
+      <li><i class="ti ti-check"></i><div><strong>Asiklovir / Valgansiklovir</strong> — profilaksis HSV/VZV/CMV sesuai protokol</div></li>
+      <li><i class="ti ti-check"></i><div><strong>Flukonazol / Posakonazol</strong> — profilaksis antifungal sesuai risiko dan protokol</div></li>
+    </ul>
+    ${pakai_mesna&&rd.cy_dose?`<div class="divider"></div>
+    <div class="sec" style="margin-bottom:9px"><i class="ti ti-clock"></i> Jadwal Mesna</div>
+    <ul class="ul-list">
+      <li><i class="ti ti-check"></i><div>Dosis: ${mesna_per_dose} mg/dosis × 3 dosis = ${roundDose(mesna_per_dose*3,1)} mg/hari</div></li>
+      <li><i class="ti ti-check"></i><div>T=0 (bersamaan mulai Cy): ${mesna_per_dose} mg IV</div></li>
+      <li><i class="ti ti-check"></i><div>T+4 jam: ${mesna_per_dose} mg IV</div></li>
+      <li><i class="ti ti-check"></i><div>T+8 jam: ${mesna_per_dose} mg IV</div></li>
+      <li><i class="ti ti-check"></i><div>Larutkan dalam NaCl 0.9% 50 mL, infus 15–30 menit</div></li>
+    </ul>`:''}
+  `;
+
+  // HIDRASI
+  document.getElementById('t-hidrasi').innerHTML=`
+    ${rd.cy_dose?`<div class="hcard"><div class="ht"><i class="ti ti-clock"></i> Pre-hidrasi (2–4 jam sebelum Cyclophosphamide)</div>
+    <p>• Volume: <strong>${Math.round(bb*15)}–${Math.round(bb*20)} mL</strong> (15–20 mL/kg)</p>
+    <p>• Cairan: NaCl 0.9% atau Ringer Laktat</p>
+    <p>• Target urine output: ≥ 2 mL/kg/jam sebelum Cy diberikan</p></div>
+    <div class="hcard"><div class="ht"><i class="ti ti-droplet-half-2"></i> Post-hidrasi (4–8 jam pasca Cyclophosphamide)</div>
+    <p>• Volume: <strong>${Math.round(bb*20)}–${Math.round(bb*30)} mL</strong> selama 4–8 jam</p>
+    <p>• Pasang kateter urine bila BB <15 kg atau risiko sistitis tinggi</p>
+    <p>• Pantau warna urine — hematuria → tingkatkan hidrasi + mesna tambahan</p></div>`:''}
+    <div class="hcard"><div class="ht"><i class="ti ti-alert-circle"></i> Target & Monitoring</div>
+    <p>• Urine output: <strong>≥ 2 mL/kg/jam</strong></p>
+    <p>• Urinalisis harian (hematuria, proteinuria)</p>
+    <p>• Timbang badan harian</p>
+    <p>• Elektrolit (Na, K, Mg, PO4): D-5 dan D-3</p>
+    <p>• Kreatinin, ureum: setiap hari LD bila eGFR terganggu</p></div>
+    ${rd.flu_dose?`<div class="hcard" style="background:#e3f2fd;border-color:#90caf9"><div class="ht" style="color:#0d47a1"><i class="ti ti-info-circle"></i> Catatan Fludarabine</div>
+    <p style="color:#1565c0">• Larutkan dalam NaCl 0.9% 100 mL, infus 30 menit</p>
+    <p style="color:#1565c0">• Tidak memerlukan hidrasi agresif khusus</p>
+    <p style="color:#1565c0">• CBC harian — fludarabine myelosuppressive kuat; nadir 10–14 hari</p>
+    <p style="color:#1565c0">• Pantau neurotoksisitas (jarang, terutama dosis tinggi)</p></div>`:''}
+  `;
+
+  // RESCUE READINESS
+  const tociOk=stok_toci>=2;
+  const mpredOk=stok_mpred>=2;
+  const leveOk=stok_leve>=2;
+  const icuOk=icu_avail==='yes';
+  document.getElementById('t-rescue').innerHTML=`
+    <div class="sec" style="margin-bottom:9px"><i class="ti ti-first-aid-kit"></i> Kesiapan CRS/ICANS Rescue</div>
+    <table class="tbl" style="margin-bottom:12px">
+      <thead><tr><th>Item Rescue</th><th>Stok Tersedia</th><th>Minimum</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Tocilizumab (vial 8 mg/kg)</td><td>${stok_toci} vial</td><td>2 vial</td><td><span class="badge ${tociOk?'bg':'br'}">${tociOk?'Siap':'KURANG'}</span></td></tr>
+        <tr><td>Metilprednisolon 125 mg (vial)</td><td>${stok_mpred} vial</td><td>2 vial</td><td><span class="badge ${mpredOk?'bg':'br'}">${mpredOk?'Siap':'Perlu konfirmasi'}</span></td></tr>
+        <tr><td>Levetiracetam (vial/tab)</td><td>${stok_leve} unit</td><td>2 unit</td><td><span class="badge ${leveOk?'bg':'br'}">${leveOk?'Siap':'Perlu konfirmasi'}</span></td></tr>
+        <tr><td>ICU/PICU</td><td>${icu_avail==='yes'?'Tersedia':icu_avail==='limited'?'Terbatas':'Tidak tersedia'}</td><td>Tersedia</td><td><span class="badge ${icuOk?'bg':icu_avail==='limited'?'by':'br'}">${icuOk?'Siap':icu_avail==='limited'?'Terbatas':'NO-GO'}</span></td></tr>
+      </tbody>
+    </table>
+    <div class="alert ai"><i class="ti ti-info-circle"></i><div>Selain di atas, pastikan tersedia: benzodiazepine rescue (midazolam/diazepam), epinefrin 1:1000, vasopressor IV, oksigen/CPAP, dan akses ke imaging bila diperlukan untuk ICANS (MRI).</div></div>
+  `;
+
+  // VERIFIKASI
+  const prot_src=document.getElementById('proto_source').value||'—';
+  const prod_name=document.getElementById('cart_product').options[document.getElementById('cart_product').selectedIndex]?.text||'—';
+  const diag=document.getElementById('diagnosis').options[document.getElementById('diagnosis').selectedIndex]?.text||'—';
+  const tgl_disp=startDate?fmtDate(parseLocalDate(startDate)):'—';
+  document.getElementById('t-verif').innerHTML=`
+    <div class="sec" style="margin-bottom:9px"><i class="ti ti-writing"></i> Pharmacy Dispensing Worksheet</div>
+    <table class="tbl" style="margin-bottom:12px">
+      <tr><td style="color:#666;width:40%">Tanggal worksheet</td><td>${new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})}</td></tr>
+      <tr><td style="color:#666">Produk CAR-T</td><td>${prod_name}</td></tr>
+      <tr><td style="color:#666">Diagnosis</td><td>${diag}</td></tr>
+      <tr><td style="color:#666">Sumber protokol LD</td><td>${prot_src}</td></tr>
+      <tr><td style="color:#666">BSA</td><td>${bsa.toFixed(3)} m²</td></tr>
+      <tr><td style="color:#666">eGFR</td><td>${egfr!==null?egfr.toFixed(0)+' mL/min/1.73m²':'tidak diinput'}</td></tr>
+      <tr><td style="color:#666">Tanggal mulai LD (D-5)</td><td>${tgl_disp}</td></tr>
+      <tr><td style="color:#666">Go/No-go status</td><td><span class="badge ${goStatus==='ok'?'bg':goStatus==='warn'?'by':'br'}">${goLabel[goStatus]}</span></td></tr>
+    </table>
+    <div class="verif-row">
+      <div class="verif-field"><label>Dihitung oleh (Farmasi)</label><div class="line"></div></div>
+      <div class="verif-field"><label>Diverifikasi oleh (Apoteker)</label><div class="line"></div></div>
+      <div class="verif-field"><label>Disetujui oleh (DPJP)</label><div class="line"></div></div>
+    </div>
+    <div class="verif-row" style="margin-top:10px">
+      <div class="verif-field"><label>Tanggal / Jam</label><div class="line"></div></div>
+      <div class="verif-field"><label>Tanggal / Jam</label><div class="line"></div></div>
+      <div class="verif-field"><label>Tanggal / Jam</label><div class="line"></div></div>
+    </div>
+    <div class="alert aw" style="margin-top:12px"><i class="ti ti-alert-triangle"></i><div>Worksheet ini adalah alat bantu kalkulasi. Dosis final, kesesuaian protokol, dan kelayakan pasien wajib diverifikasi oleh farmasi klinis dan DPJP sebelum dispensing. Tidak menggantikan tanggung jawab klinis.</div></div>
+  `;
+
+  document.getElementById('output').classList.add('show');
+  document.getElementById('output').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+updateRegimen();
+</script>
+</body>
+</html>

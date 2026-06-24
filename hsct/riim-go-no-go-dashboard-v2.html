@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>RIIM Go/No-Go Dashboard v2</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;font-size:14px;background:#f8f7f4;color:#1a1a18;min-height:100vh}
+.hdr{background:#1a1a18;color:#fff;padding:12px 18px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:6px}
+.hdr-brand{font-size:10px;color:#888;letter-spacing:.06em;text-transform:uppercase}
+.hdr-title{font-size:14px;font-weight:500}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.badge{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:500}
+.bg{background:#3b3b37;color:#aaa;border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer;border:none;color:#ccc}
+.bg:hover{background:#555}
+.tabs{display:flex;overflow-x:auto;background:#fff;border-bottom:1px solid #e5e3dc;padding:0 14px;gap:0}
+.tab{padding:9px 13px;border:none;background:none;cursor:pointer;font-size:12px;color:#6b6b69;border-bottom:2px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.tab.active{color:#1a1a18;border-bottom-color:#1a1a18;font-weight:500}
+.tdot{width:6px;height:6px;border-radius:50%;background:#d1d5db;flex-shrink:0}
+.tdot.pass{background:#10b981}.tdot.fail{background:#ef4444}.tdot.warn{background:#f59e0b}
+.content{padding:14px 18px;max-width:880px;margin:0 auto}
+.sec{background:#fff;border:0.5px solid #e5e3dc;border-radius:10px;padding:14px;margin-bottom:10px}
+.st{font-size:11px;font-weight:500;color:#6b6b69;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+.f{display:flex;flex-direction:column;gap:3px}
+.f label{font-size:11px;color:#6b6b69}
+.f input,.f select,.f textarea{border:0.5px solid #d1d0c9;border-radius:6px;padding:6px 9px;font-size:13px;background:#fff;color:#1a1a18;width:100%}
+.f input[type=number]{-moz-appearance:textfield}
+.f textarea{resize:vertical;min-height:56px}
+.ci{display:flex;align-items:flex-start;gap:8px;padding:7px 9px;border-radius:6px;cursor:pointer;border:0.5px solid #e5e3dc;background:#fafaf9;user-select:none}
+.ci:hover{background:#f3f2ef}
+.ci input[type=checkbox]{width:15px;height:15px;margin-top:2px;cursor:pointer;accent-color:#1a1a18;flex-shrink:0}
+.ci label{font-size:12px;cursor:pointer;line-height:1.4}
+.ci.crit label::after{content:" ★";color:#ef4444;font-size:10px}
+.ci.done{background:#f0fdf4;border-color:#86efac}
+.ci.cfail{background:#fef2f2;border-color:#fca5a5}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.sp{background:#f9faf9;border:0.5px solid #e5e3dc;border-radius:7px;padding:10px;margin-top:8px}
+.sr{display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:0.5px solid #f0eff0}
+.sr:last-child{border-bottom:none}
+.pill{padding:2px 9px;border-radius:20px;font-size:11px;font-weight:500;display:inline-block}
+.p-pass{background:#d1fae5;color:#065f46}.p-fail{background:#fee2e2;color:#991b1b}
+.p-warn{background:#fef3c7;color:#92400e}.p-na{background:#f3f4f6;color:#6b7280}
+.al{border-radius:7px;padding:8px 12px;font-size:12px;margin-bottom:6px;display:flex;align-items:flex-start;gap:7px}
+.al-crit{background:#fee2e2;border-left:3px solid #ef4444;color:#991b1b}
+.al-warn{background:#fef3c7;border-left:3px solid #f59e0b;color:#92400e}
+.al-pass{background:#d1fae5;border-left:3px solid #10b981;color:#065f46}
+.al-info{background:#eff6ff;border-left:3px solid #3b82f6;color:#1d4ed8}
+.btn{padding:7px 14px;border-radius:7px;border:0.5px solid #d1d0c9;background:#fff;cursor:pointer;font-size:12px;font-weight:500;display:inline-flex;align-items:center;gap:5px}
+.btn:hover{background:#f3f2ef}
+.btn-p{background:#1a1a18;color:#fff;border-color:#1a1a18}
+.btn-p:hover{background:#333}
+.abar{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.fp{border-radius:10px;padding:18px;text-align:center;margin-bottom:14px}
+.fp-go{background:#d1fae5;border:2px solid #10b981}
+.fp-cond{background:#fef3c7;border:2px solid #f59e0b}
+.fp-nogo{background:#fee2e2;border:2px solid #ef4444}
+.fi{font-size:36px;margin-bottom:6px}
+.fl{font-size:20px;font-weight:500;margin-bottom:3px}
+.fs{font-size:12px;opacity:.8}
+.sum-table{width:100%;border-collapse:collapse;font-size:12px}
+.sum-table th{background:#f3f2ef;padding:7px 10px;text-align:left;font-weight:500;font-size:11px;color:#6b6b69;text-transform:uppercase}
+.sum-table td{padding:7px 10px;border-bottom:0.5px solid #e5e3dc}
+.obj-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid #f0eff0}
+.obj-row:last-child{border-bottom:none}
+.obj-label{font-size:12px;color:#6b6b69;flex:1}
+.obj-input{width:90px;border:0.5px solid #d1d0c9;border-radius:5px;padding:4px 7px;font-size:12px;background:#fff}
+.obj-unit{font-size:11px;color:#888;width:50px}
+.obj-result{width:80px;text-align:right}
+.signoff-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.signoff-item{background:#f9faf9;border:0.5px solid #e5e3dc;border-radius:7px;padding:10px}
+.signoff-item .role{font-size:11px;color:#6b6b69;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.signoff-item input{width:100%;border:0.5px solid #d1d0c9;border-radius:5px;padding:5px 8px;font-size:12px;background:#fff}
+.cp-note{background:#eff6ff;border:0.5px solid #bfdbfe;border-radius:7px;padding:10px;font-size:12px;color:#1e40af;margin-bottom:10px}
+@media print{.tabs,.abar,.btn,.hdr{display:none!important}body{background:#fff}.content{max-width:100%;padding:0}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div>
+    <div class="hdr-brand">drAisyi EduCare · Pediatric HSCT Program</div>
+    <div class="hdr-title">RIIM Pre-Admission & Protective Environment Go/No-Go Dashboard</div>
+  </div>
+  <div class="hdr-right">
+    <span style="font-size:11px;color:#888" id="checkpoint-label">Checkpoint: Pre-Admission</span>
+    <button class="bg" onclick="toggleCheckpoint()"><i class="ti ti-refresh"></i> Ganti Checkpoint</button>
+    <span class="badge p-na" id="main-badge">Belum dinilai</span>
+  </div>
+</div>
+
+<div class="tabs" id="tab-bar">
+  <button class="tab active" onclick="showTab(0)" id="tab0"><div class="tdot" id="d0"></div>Identitas</button>
+  <button class="tab" onclick="showTab(1)" id="tab1"><div class="tdot" id="d1"></div>Protective Env.</button>
+  <button class="tab" onclick="showTab(2)" id="tab2"><div class="tdot" id="d2"></div>Cleaning & IC</button>
+  <button class="tab" onclick="showTab(3)" id="tab3"><div class="tdot" id="d3"></div>Alat & Emergency</button>
+  <button class="tab" onclick="showTab(4)" id="tab4"><div class="tdot" id="d4"></div>CVC & Infusi</button>
+  <button class="tab" onclick="showTab(5)" id="tab5"><div class="tdot" id="d5"></div>Darah & Farmasi</button>
+  <button class="tab" onclick="showTab(6)" id="tab6"><div class="tdot" id="d6"></div>Keluarga</button>
+  <button class="tab" onclick="showTab(7)" id="tab7"><div class="tdot" id="d7"></div>ICU Bridge</button>
+  <button class="tab" onclick="showTab(8)" id="tab8"><i class="ti ti-clipboard-check" style="font-size:13px"></i> Final</button>
+</div>
+
+<div class="content">
+
+<!-- TAB 0: IDENTITAS -->
+<div id="p0">
+<div class="sec">
+  <div class="st"><i class="ti ti-user"></i> Identitas Pasien</div>
+  <div class="g2" style="margin-bottom:8px">
+    <div class="f"><label>Kode Pasien</label><input type="text" id="kode" placeholder="HSCT-2025-001"></div>
+    <div class="f"><label>Inisial</label><input type="text" id="inisial" placeholder="ARP"></div>
+    <div class="f"><label>Usia</label><input type="text" id="usia" placeholder="8 tahun 3 bulan"></div>
+    <div class="f"><label>BB / TB</label><input type="text" id="bbtb" placeholder="24 kg / 122 cm"></div>
+    <div class="f"><label>Diagnosis</label><input type="text" id="diag" placeholder="ALL B-cell CR2"></div>
+    <div class="f"><label>Tanggal Masuk RIIM</label><input type="date" id="tgl_masuk" oninput="updateTimeline()"></div>
+  </div>
+</div>
+<div class="sec">
+  <div class="st"><i class="ti ti-dna"></i> Parameter HSCT</div>
+  <div class="g3">
+    <div class="f"><label>Jenis HSCT</label>
+      <select id="jenis_hsct" onchange="updateStatus()">
+        <option value="">-- Pilih --</option>
+        <option value="allo">Allogeneic</option>
+        <option value="auto">Autologous</option>
+      </select>
+    </div>
+    <div class="f"><label>Donor</label>
+      <select id="donor">
+        <option value="msd">MSD</option><option value="mud">MUD</option>
+        <option value="haplo">Haploidentical</option><option value="cord">Cord blood</option>
+        <option value="na">N/A (Autologous)</option>
+      </select>
+    </div>
+    <div class="f"><label>Conditioning</label>
+      <select id="cond_type">
+        <option value="mac">MAC</option><option value="ric">RIC</option><option value="nma">NMA</option>
+      </select>
+    </div>
+    <div class="f"><label>Mulai Conditioning</label><input type="date" id="tgl_cond" oninput="updateTimeline()"></div>
+    <div class="f"><label>Day 0</label><input type="date" id="tgl_d0" oninput="updateTimeline()"></div>
+    <div class="f"><label>Checkpoint</label>
+      <select id="checkpoint_sel" onchange="updateCheckpointLabel()">
+        <option value="preadmit">Pre-Admission RIIM</option>
+        <option value="precond">Pre-Conditioning (H-1)</option>
+      </select>
+    </div>
+  </div>
+</div>
+<div class="sec">
+  <div class="st"><i class="ti ti-virus"></i> Status Klinis & Risiko</div>
+  <div class="g2">
+    <div class="f"><label>Infeksi Aktif</label>
+      <select id="infeksi" onchange="updateStatus()">
+        <option value="tidak">Tidak ada</option>
+        <option value="terkontrol">Ada, terkontrol (dalam terapi)</option>
+        <option value="aktif">Ada, BELUM terkontrol</option>
+      </select>
+    </div>
+    <div class="f"><label>Clearance dari ID/DPJP</label>
+      <select id="clearance_id" onchange="updateStatus()">
+        <option value="na">N/A (tidak ada infeksi)</option>
+        <option value="ya">Sudah ada clearance</option>
+        <option value="belum">Belum ada clearance</option>
+      </select>
+    </div>
+    <div class="f"><label>Kolonisasi MDRO</label>
+      <select id="mdro" onchange="updateStatus()">
+        <option value="tidak">Tidak terdeteksi</option>
+        <option value="ya">Positif</option>
+        <option value="belum">Belum diperiksa</option>
+      </select>
+    </div>
+    <div class="f"><label>Status Demam saat ini</label>
+      <select id="demam" onchange="updateStatus()">
+        <option value="tidak">Tidak demam</option>
+        <option value="ya">Demam aktif (≥38°C)</option>
+        <option value="resolusi">Resolusi, dalam terapi</option>
+      </select>
+    </div>
+    <div class="f"><label>Estimasi Risiko ICU</label>
+      <select id="risiko_icu" onchange="updateStatus()">
+        <option value="rendah">Rendah</option>
+        <option value="sedang">Sedang</option>
+        <option value="tinggi">Tinggi</option>
+      </select>
+    </div>
+    <div class="f"><label>Catatan Klinis / Kebutuhan Khusus</label><textarea id="catatan" placeholder="Alergi, MDRO pathway, obat aktif..."></textarea></div>
+  </div>
+  <div class="sp" id="timeline-panel">
+    <div class="st" style="margin-bottom:6px"><i class="ti ti-calendar-event"></i> Timeline Kritis</div>
+    <div id="timeline-content"><span style="color:#888;font-size:12px">Isi tanggal untuk melihat timeline.</span></div>
+  </div>
+</div>
+<div class="abar"><button class="btn btn-p" onclick="showTab(1)">Lanjut: Protective Environment <i class="ti ti-arrow-right"></i></button></div>
+</div>
+
+<!-- TAB 1: PROTECTIVE ENVIRONMENT -->
+<div id="p1" style="display:none">
+<div class="al al-crit"><i class="ti ti-alert-triangle"></i><div>Item bertanda <strong>★</strong> = critical. Satu saja tidak terpenuhi → <strong>NO-GO</strong>. Untuk allogeneic HSCT, seluruh PE wajib dipenuhi.</div></div>
+<div id="pe-allo-note" class="al al-info" style="display:none"><i class="ti ti-info-circle"></i><div>Pasien ini Allogeneic HSCT — <strong>Protective Environment lengkap bersifat wajib</strong> sesuai CDC/IDSA guidelines.</div></div>
+<div class="sec">
+  <div class="st"><i class="ti ti-wind"></i> Verifikasi Objektif Airflow & Filtrasi</div>
+  <div class="obj-row">
+    <span class="obj-label">Pressure differential aktual</span>
+    <input class="obj-input" type="number" id="obj_pd" placeholder="0.0" step="0.1" oninput="updateStatus()">
+    <span class="obj-unit">Pa</span>
+    <span class="obj-result"><span class="pill p-na" id="pd-pill">—</span></span>
+  </div>
+  <div class="obj-row">
+    <span class="obj-label">ACH aktual</span>
+    <input class="obj-input" type="number" id="obj_ach" placeholder="0" oninput="updateStatus()">
+    <span class="obj-unit">/jam</span>
+    <span class="obj-result"><span class="pill p-na" id="ach-pill">—</span></span>
+  </div>
+  <div class="obj-row">
+    <span class="obj-label">Tanggal validasi HEPA terakhir</span>
+    <input class="obj-input" type="date" id="obj_hepa_date" style="width:140px" oninput="updateStatus()">
+    <span class="obj-unit"></span>
+    <span class="obj-result"><span class="pill p-na" id="hepa-date-pill">—</span></span>
+  </div>
+  <div class="obj-row">
+    <span class="obj-label">Alarm tekanan: uji terakhir</span>
+    <select class="obj-input" id="obj_alarm_test" onchange="updateStatus()" style="width:120px">
+      <option value="">— Pilih —</option><option value="pass">Pass</option><option value="fail">Fail</option>
+    </select>
+    <span class="obj-unit"></span>
+    <span class="obj-result"><span class="pill p-na" id="alarm-pill">—</span></span>
+  </div>
+  <div class="obj-row">
+    <span class="obj-label">Daily airflow log hari ini</span>
+    <select class="obj-input" id="obj_airflow_log" onchange="updateStatus()" style="width:120px">
+      <option value="">— Pilih —</option><option value="done">Selesai</option><option value="belum">Belum</option>
+    </select>
+    <span class="obj-unit"></span>
+    <span class="obj-result"><span class="pill p-na" id="airlog-pill">—</span></span>
+  </div>
+  <div class="obj-row">
+    <span class="obj-label">Diverifikasi oleh (nama/jabatan)</span>
+    <input class="obj-input" type="text" id="obj_verif" placeholder="Nama petugas" style="width:160px">
+    <span class="obj-unit"></span>
+    <span class="obj-result"></span>
+  </div>
+</div>
+<div class="sec">
+  <div class="st"><i class="ti ti-building"></i> Checklist PE</div>
+  <div class="cg">
+    <div class="ci crit" data-id="hepa"><input type="checkbox" id="hepa"><label for="hepa">HEPA tersedia dan tervalidasi</label></div>
+    <div class="ci crit" data-id="tekpos"><input type="checkbox" id="tekpos"><label for="tekpos">Tekanan positif stabil vs koridor</label></div>
+    <div class="ci crit" data-id="pressurediff"><input type="checkbox" id="pressurediff"><label for="pressurediff">Pressure differential ≥2.5 Pa tercatat</label></div>
+    <div class="ci" data-id="ach_check"><input type="checkbox" id="ach_check"><label for="ach_check">ACH memenuhi target (≥12/jam)</label></div>
+    <div class="ci" data-id="monitor_air"><input type="checkbox" id="monitor_air"><label for="monitor_air">Monitoring airflow harian terdokumentasi</label></div>
+    <div class="ci crit" data-id="alarm_tekanan"><input type="checkbox" id="alarm_tekanan"><label for="alarm_tekanan">Alarm tekanan tersedia dan berfungsi</label></div>
+    <div class="ci" data-id="pintu_sc"><input type="checkbox" id="pintu_sc"><label for="pintu_sc">Pintu self-closing berfungsi</label></div>
+    <div class="ci" data-id="segel"><input type="checkbox" id="segel"><label for="segel">Ruangan tersegel baik (tidak ada celah)</label></div>
+    <div class="ci crit" data-id="konstruksi"><input type="checkbox" id="konstruksi"><label for="konstruksi">Tidak ada kebocoran/jamur/debu konstruksi aktif</label></div>
+  </div>
+</div>
+<div class="sp">
+  <div class="sr"><span>Status Protective Environment</span><span class="pill p-na" id="pe-status">—</span></div>
+  <div class="sr"><span>Item kritis terpenuhi</span><span id="pe-crit-count" style="font-size:12px">0/5</span></div>
+  <div id="pe-alerts" style="margin-top:6px"></div>
+</div>
+<div class="abar"><button class="btn" onclick="showTab(0)"><i class="ti ti-arrow-left"></i> Kembali</button><button class="btn btn-p" onclick="showTab(2)">Lanjut: Cleaning & IC <i class="ti ti-arrow-right"></i></button></div>
+</div>
+
+<!-- TAB 2: CLEANING -->
+<div id="p2" style="display:none">
+<div class="sec">
+  <div class="st"><i class="ti ti-spray"></i> Verifikasi Terminal Cleaning</div>
+  <div class="g2" style="margin-bottom:8px">
+    <div class="f"><label>Tanggal & Jam Cleaning</label><input type="datetime-local" id="cl_waktu"></div>
+    <div class="f"><label>Nama Petugas Cleaning</label><input type="text" id="cl_petugas" placeholder="Nama petugas"></div>
+    <div class="f"><label>Jenis Disinfektan</label><input type="text" id="cl_disinfektan_nama" placeholder="Mis. Bacillocid 0.5%"></div>
+    <div class="f"><label>Contact Time (menit)</label><input type="number" id="cl_contact_time" placeholder="Mis. 10"></div>
+    <div class="f"><label>Supervisor Sign-off</label><input type="text" id="cl_supervisor" placeholder="Nama supervisor"></div>
+  </div>
+  <div class="cg">
+    <div class="ci crit" data-id="cl_selesai"><input type="checkbox" id="cl_selesai"><label for="cl_selesai">Terminal cleaning selesai dilakukan</label></div>
+    <div class="ci" data-id="cl_disinfektan"><input type="checkbox" id="cl_disinfektan"><label for="cl_disinfektan">Disinfektan sesuai SOP (jenis & konsentrasi)</label></div>
+    <div class="ci" data-id="cl_contact"><input type="checkbox" id="cl_contact"><label for="cl_contact">Contact time terpenuhi</label></div>
+    <div class="ci" data-id="cl_hightouch"><input type="checkbox" id="cl_hightouch"><label for="cl_hightouch">High-touch surface (rail, switch, handle)</label></div>
+    <div class="ci" data-id="cl_toilet"><input type="checkbox" id="cl_toilet"><label for="cl_toilet">Toilet & wastafel dibersihkan</label></div>
+    <div class="ci" data-id="cl_log"><input type="checkbox" id="cl_log"><label for="cl_log">Cleaning log lengkap & ditandatangani</label></div>
+  </div>
+</div>
+<div class="sec">
+  <div class="st"><i class="ti ti-shield-check"></i> Infection Control Readiness</div>
+  <div class="cg">
+    <div class="ci" data-id="ic_tanaman"><input type="checkbox" id="ic_tanaman"><label for="ic_tanaman">Tidak ada bunga/tanaman di ruangan</label></div>
+    <div class="ci" data-id="ic_barang"><input type="checkbox" id="ic_barang"><label for="ic_barang">Tidak ada barang non-esensial</label></div>
+    <div class="ci" data-id="ic_handrub"><input type="checkbox" id="ic_handrub"><label for="ic_handrub">Hand rub tersedia di titik strategis</label></div>
+    <div class="ci" data-id="ic_ppe"><input type="checkbox" id="ic_ppe"><label for="ic_ppe">PPE lengkap tersedia (masker, gaun, sarung tangan)</label></div>
+    <div class="ci" data-id="ic_poster"><input type="checkbox" id="ic_poster"><label for="ic_poster">Poster hand hygiene terpasang</label></div>
+    <div class="ci" data-id="ic_isolation" style="display:none"><input type="checkbox" id="ic_isolation"><label for="ic_isolation">Isolation pathway MDRO diaktifkan</label></div>
+  </div>
+</div>
+<div class="sp"><div class="sr"><span>Status Cleaning & IC</span><span class="pill p-na" id="cl-status">—</span></div></div>
+<div class="abar"><button class="btn" onclick="showTab(1)"><i class="ti ti-arrow-left"></i></button><button class="btn btn-p" onclick="showTab(3)">Lanjut: Alat & Emergency <i class="ti ti-arrow-right"></i></button></div>
+</div>
+
+<!-- TAB 3: ALAT -->
+<div id="p3" style="display:none">
+<div class="sec">
+  <div class="st"><i class="ti ti-device-heart-monitor"></i> Bedside Equipment</div>
+  <div class="cg">
+    <div class="ci" data-id="eq_bed"><input type="checkbox" id="eq_bed"><label for="eq_bed">Bed anak berfungsi dan bersih</label></div>
+    <div class="ci" data-id="eq_monitor"><input type="checkbox" id="eq_monitor"><label for="eq_monitor">Monitor tanda vital berfungsi</label></div>
+    <div class="ci" data-id="eq_pox"><input type="checkbox" id="eq_pox"><label for="eq_pox">Pulse oximeter akurat</label></div>
+    <div class="ci" data-id="eq_nurse_call"><input type="checkbox" id="eq_nurse_call"><label for="eq_nurse_call">Nurse call berfungsi</label></div>
+    <div class="ci" data-id="eq_timbang"><input type="checkbox" id="eq_timbang"><label for="eq_timbang">Timbangan terkalibrasi (anak)</label></div>
+    <div class="ci" data-id="eq_termo"><input type="checkbox" id="eq_termo"><label for="eq_termo">Termometer khusus pasien</label></div>
+  </div>
+</div>
+<div class="sec">
+  <div class="st"><i class="ti ti-first-aid-kit"></i> Emergency Readiness</div>
+  <div class="cg">
+    <div class="ci crit" data-id="eq_o2"><input type="checkbox" id="eq_o2"><label for="eq_o2">Oxygen source berfungsi dan cukup</label></div>
+    <div class="ci crit" data-id="eq_suction"><input type="checkbox" id="eq_suction"><label for="eq_suction">Suction berfungsi</label></div>
+    <div class="ci crit" data-id="eq_ambu"><input type="checkbox" id="eq_ambu"><label for="eq_ambu">Ambu bag ukuran anak tersedia</label></div>
+    <div class="ci crit" data-id="eq_trolley"><input type="checkbox" id="eq_trolley"><label for="eq_trolley">Emergency trolley lengkap & siap</label></div>
+    <div class="ci" data-id="eq_defib"><input type="checkbox" id="eq_defib"><label for="eq_defib">Defibrillator terdekat teridentifikasi</label></div>
+    <div class="ci" data-id="eq_airway"><input type="checkbox" id="eq_airway"><label for="eq_airway">Pediatric airway kit tersedia</label></div>
+  </div>
+</div>
+<div class="sec">
+  <div class="st"><i class="ti ti-pump"></i> Pump & Staff</div>
+  <div class="cg">
+    <div class="ci crit" data-id="eq_pump"><input type="checkbox" id="eq_pump"><label for="eq_pump">Infusion pump cukup untuk regimen awal</label></div>
+    <div class="ci" data-id="eq_syringe"><input type="checkbox" id="eq_syringe"><label for="eq_syringe">Syringe pump tersedia</label></div>
+    <div class="ci crit" data-id="eq_nurse_hsct"><input type="checkbox" id="eq_nurse_hsct"><label for="eq_nurse_hsct">Perawat terlatih HSCT bertugas</label></div>
+  </div>
+</div>
+<div class="sp"><div class="sr"><span>Status Alat & Emergency</span><span class="pill p-na" id="eq-status">—</span></div></div>
+<div class="abar"><button class="btn" onclick="showTab(2)"><i class="ti ti-arrow-left"></i></button><button class="btn btn-p" onclick="showTab(4)">Lanjut: CVC & Infusi <i class="ti ti-arrow-right"></i></button></div>
+</div>
+
+<!-- TAB 4: CVC & INFUSI -->
+<div id="p4" style="display:none">
+<div class="sec">
+  <div class="st"><i class="ti ti-needle"></i> CVC Care</div>
+  <div class="cg">
+    <div class="ci crit" data-id="cv_patent"><input type="checkbox" id="cv_patent"><label for="cv_patent">CVC patent semua lumen, dressing steril</label></div>
+    <div class="ci" data-id="cv_ns"><input type="checkbox" id="cv_ns"><label for="cv_ns">Normal saline flush tersedia</label></div>
+    <div class="ci" data-id="cv_heparin"><input type="checkbox" id="cv_heparin"><label for="cv_heparin">Heparin flush sesuai SOP lokal</label></div>
+    <div class="ci" data-id="cv_needleless"><input type="checkbox" id="cv_needleless"><label for="cv_needleless">Needleless connector tersedia</label></div>
+    <div class="ci crit" data-id="cv_bc"><input type="checkbox" id="cv_bc"><label for="cv_bc">Blood culture kit tersedia (tiap lumen)</label></div>
+    <div class="ci" data-id="cv_label"><input type="checkbox" id="cv_label"><label for="cv_label">Label identifikasi lumen terpasang</label></div>
+  </div>
+</div>
+<div class="sec">
+  <div class="st"><i class="ti ti-droplet"></i> Infusi & Transfusi</div>
+  <div class="cg">
+    <div class="ci crit" data-id="cv_pump_cukup"><input type="checkbox" id="cv_pump_cukup"><label for="cv_pump_cukup">Infusion pump cukup semua lumen aktif</label></div>
+    <div class="ci" data-id="cv_line"><input type="checkbox" id="cv_line"><label for="cv_line">Infusion line cukup (set lengkap)</label></div>
+    <div class="ci" data-id="cv_transset"><input type="checkbox" id="cv_transset"><label for="cv_transset">Transfusion set tersedia</label></div>
+    <div class="ci" data-id="cv_warmer"><input type="checkbox" id="cv_warmer"><label for="cv_warmer">Blood warmer tersedia (jika diperlukan)</label></div>
+    <div class="ci" data-id="cv_reaksi"><input type="checkbox" id="cv_reaksi"><label for="cv_reaksi">Form reaksi transfusi tersedia</label></div>
+    <div class="ci crit" data-id="cv_farmasi"><input type="checkbox" id="cv_farmasi"><label for="cv_farmasi">Akses farmasi 24 jam terkonfirmasi</label></div>
+    <div class="ci crit" data-id="cv_highalert"><input type="checkbox" id="cv_highalert"><label for="cv_highalert">Jalur obat high-alert terdefinisi</label></div>
+    <div class="ci" data-id="cv_compat"><input type="checkbox" id="cv_compat"><label for="cv_compat">Line compatibility chart tersedia</label></div>
+  </div>
+</div>
+<div class="sp"><div class="sr"><span>Status CVC & Infusi</span><span class="pill p-na" id="cv-status">—</span></div></div>
+<div class="abar"><button class="btn" onclick="showTab(3)"><i class="ti ti-arrow-left"></i></button><button class="btn btn-p" onclick="showTab(5)">Lanjut: Darah & Farmasi <i class="ti ti-arrow-right"></i></button></div>
+</div>
+
+<!-- TAB 5: DARAH & FARMASI -->
+<div id="p5" style="display:none">
+<div class="sec">
+  <div class="st"><i class="ti ti-droplet-half-2"></i> Blood Product Readiness</div>
+  <div class="al al-info" style="margin-bottom:8px"><i class="ti ti-info-circle"></i><div>EBMT: produk darah irradiasi wajib dimulai minimal saat conditioning untuk allo-HCT. CMV-safe sesuai kebijakan lokal.</div></div>
+  <div class="cg">
+    <div class="ci crit" data-id="bp_prc"><input type="checkbox" id="bp_prc"><label for="bp_prc">PRC leukoreduced tersedia / akses bank darah terkonfirmasi</label></div>
+    <div class="ci crit" data-id="bp_plt"><input type="checkbox" id="bp_plt"><label for="bp_plt">Platelet leukoreduced tersedia</label></div>
+    <div class="ci crit" data-id="bp_irrad"><input type="checkbox" id="bp_irrad"><label for="bp_irrad">Produk darah irradiasi tersedia / dapat diorder</label></div>
+    <div class="ci" data-id="bp_cmv"><input type="checkbox" id="bp_cmv"><label for="bp_cmv">CMV-safe policy ditentukan sesuai status donor-resipien</label></div>
+    <div class="ci crit" data-id="bp_abo"><input type="checkbox" id="bp_abo"><label for="bp_abo">ABO compatibility plan donor-resipien telah dibuat</label></div>
+    <div class="ci" data-id="bp_refrac"><input type="checkbox" id="bp_refrac"><label for="bp_refrac">Rencana platelet refractory tersedia jika risiko tinggi</label></div>
+    <div class="ci crit" data-id="bp_bbcontact"><input type="checkbox" id="bp_bbcontact"><label for="bp_bbcontact">Kontak darurat bank darah tersedia</label></div>
+  </div>
+</div>
+<div class="sec">
+  <div class="st"><i class="ti ti-pill"></i> Pharmacy Readiness (Ringkasan)</div>
+  <div class="cg">
+    <div class="ci crit" data-id="ph_cond"><input type="checkbox" id="ph_cond"><label for="ph_cond">Obat conditioning tersedia / siap dispensing</label></div>
+    <div class="ci crit" data-id="ph_antiinfeksi"><input type="checkbox" id="ph_antiinfeksi"><label for="ph_antiinfeksi">Anti-infeksi profilaksis (bacterial/viral/fungal) siap</label></div>
+    <div class="ci" data-id="ph_gvhd"><input type="checkbox" id="ph_gvhd"><label for="ph_gvhd">GVHD prophylaxis (CNI/MTX/MMF) siap</label></div>
+    <div class="ci" data-id="ph_rescue"><input type="checkbox" id="ph_rescue"><label for="ph_rescue">Rescue meds (mesna, G-CSF, dll) siap</label></div>
+    <div class="ci" data-id="ph_tdm"><input type="checkbox" id="ph_tdm"><label for="ph_tdm">TDM pathway tersedia (busulfan/CNI)</label></div>
+    <div class="ci" data-id="ph_defi"><input type="checkbox" id="ph_defi"><label for="ph_defi">Defibrotide tersedia jika high-risk VOD/SOS</label></div>
+  </div>
+  <div class="sp" style="margin-top:10px">
+    <div class="sr"><span>Status Pharmacy (keseluruhan)</span>
+      <select id="ph_overall" onchange="updateStatus()" style="border:0.5px solid #d1d0c9;border-radius:5px;padding:3px 8px;font-size:12px">
+        <option value="">— Pilih —</option>
+        <option value="ready">READY</option>
+        <option value="conditional">CONDITIONAL</option>
+        <option value="notready">NOT READY</option>
+      </select>
+    </div>
+  </div>
+</div>
+<div class="sp"><div class="sr"><span>Status Darah & Farmasi</span><span class="pill p-na" id="bp-status">—</span></div></div>
+<div class="abar"><button class="btn" onclick="showTab(4)"><i class="ti ti-arrow-left"></i></button><button class="btn btn-p" onclick="showTab(6)">Lanjut: Keluarga <i class="ti ti-arrow-right"></i></button></div>
+</div>
+
+<!-- TAB 6: KELUARGA -->
+<div id="p6" style="display:none">
+<div class="sec">
+  <div class="st"><i class="ti ti-users"></i> Caregiver Utama</div>
+  <div class="g2" style="margin-bottom:8px">
+    <div class="f"><label>Nama Caregiver</label><input type="text" id="fam_nama" placeholder="Nama caregiver utama"></div>
+    <div class="f"><label>Hubungan</label>
+      <select id="fam_hub"><option>Ibu</option><option>Ayah</option><option>Keduanya bergantian</option><option>Wali lain</option></select>
+    </div>
+  </div>
+  <div class="cg">
+    <div class="ci crit" data-id="fam_sehat"><input type="checkbox" id="fam_sehat"><label for="fam_sehat">Caregiver tidak demam/batuk/pilek/diare/ruam</label></div>
+    <div class="ci" data-id="fam_hh"><input type="checkbox" id="fam_hh"><label for="fam_hh">Edukasi hand hygiene selesai</label></div>
+    <div class="ci" data-id="fam_makan"><input type="checkbox" id="fam_makan"><label for="fam_makan">Edukasi larangan makanan berisiko selesai</label></div>
+    <div class="ci" data-id="fam_tanaman"><input type="checkbox" id="fam_tanaman"><label for="fam_tanaman">Edukasi larangan bunga/tanaman selesai</label></div>
+    <div class="ci" data-id="fam_batas"><input type="checkbox" id="fam_batas"><label for="fam_batas">Batas pengunjung dipahami dan disetujui</label></div>
+    <div class="ci" data-id="fam_log"><input type="checkbox" id="fam_log"><label for="fam_log">Visitor log tersedia</label></div>
+    <div class="ci" data-id="fam_barang"><input type="checkbox" id="fam_barang"><label for="fam_barang">Barang pribadi mudah dibersihkan</label></div>
+    <div class="ci" data-id="fam_warning"><input type="checkbox" id="fam_warning"><label for="fam_warning">Caregiver memahami warning signs (demam, perdarahan, kejang)</label></div>
+  </div>
+</div>
+<div class="sp"><div class="sr"><span>Status Keluarga</span><span class="pill p-na" id="fam-status">—</span></div></div>
+<div class="abar"><button class="btn" onclick="showTab(5)"><i class="ti ti-arrow-left"></i></button><button class="btn btn-p" onclick="showTab(7)">Lanjut: ICU Bridge <i class="ti ti-arrow-right"></i></button></div>
+</div>
+
+<!-- TAB 7: ICU BRIDGE -->
+<div id="p7" style="display:none">
+<div class="sec">
+  <div class="st"><i class="ti ti-building-hospital"></i> ICU Bridge & Deterioration Plan</div>
+  <div class="g2" style="margin-bottom:8px">
+    <div class="f"><label>Nama PIC ICU / PICU</label><input type="text" id="icu_pic" placeholder="Nama dokter/perawat PIC ICU"></div>
+    <div class="f"><label>No. Kontak ICU (ext/HP)</label><input type="text" id="icu_no" placeholder="Ext / nomor HP"></div>
+    <div class="f"><label>Estimasi Waktu Transfer (menit)</label><input type="number" id="icu_transfer_time" placeholder="Mis. 5"></div>
+    <div class="f"><label>Status Ketersediaan Bed ICU</label>
+      <select id="icu_bed" onchange="updateStatus()">
+        <option value="tersedia">Tersedia</option>
+        <option value="terbatas">Terbatas (perlu konfirmasi)</option>
+        <option value="penuh">Penuh saat ini</option>
+      </select>
+    </div>
+  </div>
+  <div class="cg">
+    <div class="ci crit" data-id="icu_aware"><input type="checkbox" id="icu_aware"><label for="icu_aware">ICU sudah di-brief mengenai pasien ini</label></div>
+    <div class="ci crit" data-id="icu_jalur"><input type="checkbox" id="icu_jalur"><label for="icu_jalur">Jalur transfer RIIM → ICU jelas dan aman</label></div>
+    <div class="ci" data-id="icu_tmonitor"><input type="checkbox" id="icu_tmonitor"><label for="icu_tmonitor">Transport monitor tersedia</label></div>
+    <div class="ci" data-id="icu_o2port"><input type="checkbox" id="icu_o2port"><label for="icu_o2port">Portable oxygen untuk transfer</label></div>
+    <div class="ci" data-id="icu_suction_port"><input type="checkbox" id="icu_suction_port"><label for="icu_suction_port">Portable suction untuk transfer</label></div>
+    <div class="ci" data-id="icu_pump_port"><input type="checkbox" id="icu_pump_port"><label for="icu_pump_port">Pump portable untuk transfer</label></div>
+    <div class="ci" data-id="icu_note"><input type="checkbox" id="icu_note"><label for="icu_note">Emergency transfer note / SBAR siap</label></div>
+    <div class="ci" data-id="icu_resus"><input type="checkbox" id="icu_resus"><label for="icu_resus">Obat resusitasi tersedia di RIIM</label></div>
+    <div class="ci" data-id="icu_abx"><input type="checkbox" id="icu_abx"><label for="icu_abx">Antibiotik stat pathway tersedia</label></div>
+    <div class="ci" data-id="icu_eskalasi"><input type="checkbox" id="icu_eskalasi"><label for="icu_eskalasi">Kriteria eskalasi ke ICU terdefinisi</label></div>
+  </div>
+</div>
+<div class="sp"><div class="sr"><span>Status ICU Bridge</span><span class="pill p-na" id="icu-status">—</span></div></div>
+<div class="abar"><button class="btn" onclick="showTab(6)"><i class="ti ti-arrow-left"></i></button><button class="btn btn-p" onclick="showTab(8)">Lihat Keputusan Final <i class="ti ti-clipboard-check"></i></button></div>
+</div>
+
+<!-- TAB 8: FINAL -->
+<div id="p8" style="display:none">
+<div class="fp fp-nogo" id="final-panel">
+  <div class="fi" id="final-icon">⏳</div>
+  <div class="fl" id="final-label">Lengkapi semua tab</div>
+  <div class="fs" id="final-sub">Belum ada data cukup</div>
+</div>
+<div id="critical-alerts"></div>
+<div class="sec">
+  <div class="st"><i class="ti ti-checklist"></i> Ringkasan Per Domain</div>
+  <table class="sum-table">
+    <thead><tr><th>Domain</th><th>Status</th><th>Skor</th></tr></thead>
+    <tbody id="sum-body"></tbody>
+  </table>
+</div>
+<div class="sec">
+  <div class="st"><i class="ti ti-writing"></i> Sign-Off Multidisiplin</div>
+  <div class="signoff-grid">
+    <div class="signoff-item"><div class="role">Perawat RIIM</div><input type="text" id="so_perawat" placeholder="Nama & jam"></div>
+    <div class="signoff-item"><div class="role">IPCN / Infection Control</div><input type="text" id="so_ipcn" placeholder="Nama & jam"></div>
+    <div class="signoff-item"><div class="role">Teknik / Fasilitas</div><input type="text" id="so_teknik" placeholder="Nama & jam (PE)"></div>
+    <div class="signoff-item"><div class="role">Farmasi</div><input type="text" id="so_farmasi" placeholder="Nama & jam"></div>
+    <div class="signoff-item"><div class="role">DPJP HSCT</div><input type="text" id="so_dpjp" placeholder="Nama & jam"></div>
+    <div class="signoff-item"><div class="role">PIC ICU / PICU</div><input type="text" id="so_icu" placeholder="Nama & jam"></div>
+  </div>
+</div>
+<div class="sec" id="print-summary">
+  <div class="st"><i class="ti ti-file-text"></i> Pre-Admission Summary</div>
+  <div style="background:#f9faf9;border-radius:7px;padding:12px;font-size:12px;line-height:1.9" id="sum-text">Lengkapi data untuk ringkasan.</div>
+</div>
+<div class="abar">
+  <button class="btn btn-p" onclick="window.print()"><i class="ti ti-printer"></i> Cetak</button>
+  <button class="btn" onclick="copySum()"><i class="ti ti-copy"></i> Salin</button>
+  <button class="btn" onclick="resetAll()"><i class="ti ti-refresh"></i> Reset</button>
+</div>
+</div>
+
+</div><!-- /content -->
+
+<script>
+var CRIT = {
+  pe:['hepa','tekpos','pressurediff','alarm_tekanan','konstruksi'],
+  cl:['cl_selesai'],
+  eq:['eq_o2','eq_suction','eq_ambu','eq_trolley','eq_pump','eq_nurse_hsct'],
+  cv:['cv_patent','cv_bc','cv_pump_cukup','cv_farmasi','cv_highalert'],
+  bp:['bp_prc','bp_plt','bp_irrad','bp_abo','bp_bbcontact'],
+  fam:['fam_sehat'],
+  icu:['icu_aware','icu_jalur']
+};
+var ALL = {
+  pe:['hepa','tekpos','pressurediff','ach_check','monitor_air','alarm_tekanan','pintu_sc','segel','konstruksi'],
+  cl:['cl_selesai','cl_disinfektan','cl_contact','cl_hightouch','cl_toilet','cl_log','ic_tanaman','ic_barang','ic_handrub','ic_ppe','ic_poster'],
+  eq:['eq_bed','eq_monitor','eq_pox','eq_nurse_call','eq_timbang','eq_termo','eq_o2','eq_suction','eq_ambu','eq_trolley','eq_defib','eq_airway','eq_pump','eq_syringe','eq_nurse_hsct'],
+  cv:['cv_patent','cv_ns','cv_heparin','cv_needleless','cv_bc','cv_label','cv_pump_cukup','cv_line','cv_transset','cv_warmer','cv_reaksi','cv_farmasi','cv_highalert','cv_compat'],
+  bp:['bp_prc','bp_plt','bp_irrad','bp_cmv','bp_abo','bp_refrac','bp_bbcontact','ph_cond','ph_antiinfeksi','ph_gvhd','ph_rescue','ph_tdm','ph_defi'],
+  fam:['fam_sehat','fam_hh','fam_makan','fam_tanaman','fam_batas','fam_log','fam_barang','fam_warning'],
+  icu:['icu_aware','icu_jalur','icu_tmonitor','icu_o2port','icu_suction_port','icu_pump_port','icu_note','icu_resus','icu_abx','icu_eskalasi']
+};
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function parseLD(s){if(!s)return null;var p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2]);}
+function fmtD(d){return d?d.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}):'—';}
+
+function g(id){return document.getElementById(id);}
+function gv(id){var e=g(id);return e?e.value:'';}
+function gc(id){var e=g(id);return e?e.checked:false;}
+
+document.querySelectorAll('.ci').forEach(function(el){
+  el.addEventListener('click',function(e){
+    if(e.target.type==='checkbox') return;
+    var cb=el.querySelector('input[type=checkbox]');
+    if(cb){cb.checked=!cb.checked;updateCI(el,cb);updateStatus();}
+  });
+  var cb=el.querySelector('input[type=checkbox]');
+  if(cb){
+    cb.addEventListener('click',function(e){e.stopPropagation();updateCI(el,cb);updateStatus();});
+  }
+});
+
+function updateCI(el,cb){
+  el.classList.toggle('done',cb.checked);
+  var id=el.getAttribute('data-id');
+  var isCrit=Object.values(CRIT).some(function(arr){return arr.indexOf(id)>=0;});
+  if(isCrit) el.classList.toggle('cfail',!cb.checked);
+}
+
+function getScore(domain){
+  var ids=ALL[domain],total=ids.length,done=0;
+  ids.forEach(function(id){var e=g(id);if(e&&e.type==='checkbox'&&e.checked)done++;});
+  return {total:total,done:done,pct:total?Math.round(done/total*100):0};
+}
+function hasCF(domain){
+  return CRIT[domain].some(function(id){var e=g(id);return e&&!e.checked;});
+}
+function pillFor(pct,cf){
+  if(cf) return ['p-fail','Critical Failure'];
+  if(pct>=90) return ['p-pass','Siap'];
+  if(pct>=60) return ['p-warn','Kondisional'];
+  return ['p-fail','Belum siap'];
+}
+function dotFor(pct,cf){return cf?'fail':pct>=90?'pass':pct>=60?'warn':'fail';}
+
+function setPill(id,cls,txt){var e=g(id);if(!e)return;e.className='pill '+cls;e.textContent=txt;}
+function setDot(n,cls){var e=g('d'+n);if(e){e.className='tdot '+cls;}}
+
+function updateObjFields(){
+  var pd=parseFloat(gv('obj_pd')||'');
+  var pdp=g('pd-pill');
+  if(pdp){if(isNaN(pd)){pdp.className='pill p-na';pdp.textContent='—';}
+  else if(pd>=2.5){pdp.className='pill p-pass';pdp.textContent=pd.toFixed(1)+' Pa ✓';}
+  else{pdp.className='pill p-fail';pdp.textContent=pd.toFixed(1)+' Pa ✗';}}
+
+  var ach=parseFloat(gv('obj_ach')||'');
+  var achp=g('ach-pill');
+  if(achp){if(isNaN(ach)){achp.className='pill p-na';achp.textContent='—';}
+  else if(ach>=12){achp.className='pill p-pass';achp.textContent=Math.round(ach)+'/jam ✓';}
+  else{achp.className='pill p-fail';achp.textContent=Math.round(ach)+'/jam ✗';}}
+
+  var hdp=g('hepa-date-pill');
+  if(hdp){var hd=parseLD(gv('obj_hepa_date'));
+  if(!hd){hdp.className='pill p-na';hdp.textContent='—';}
+  else{var months=(new Date()-hd)/(30*24*3600*1000);
+  if(months<=12){hdp.className='pill p-pass';hdp.textContent='Valid ✓';}
+  else{hdp.className='pill p-fail';hdp.textContent='>12 bln lalu ✗';}}}
+
+  var at=gv('obj_alarm_test');var atp=g('alarm-pill');
+  if(atp){if(!at){atp.className='pill p-na';atp.textContent='—';}
+  else if(at==='pass'){atp.className='pill p-pass';atp.textContent='Pass ✓';}
+  else{atp.className='pill p-fail';atp.textContent='Fail ✗';}}
+
+  var al=gv('obj_airflow_log');var alp=g('airlog-pill');
+  if(alp){if(!al){alp.className='pill p-na';alp.textContent='—';}
+  else if(al==='done'){alp.className='pill p-pass';alp.textContent='Selesai ✓';}
+  else{alp.className='pill p-fail';alp.textContent='Belum ✗';}}
+}
+
+function updateStatus(){
+  updateObjFields();
+  var jenis=gv('jenis_hsct');
+  var alloNote=g('pe-allo-note');
+  if(alloNote) alloNote.style.display=jenis==='allo'?'':'none';
+
+  var infeksi=gv('infeksi');
+  var mdro=gv('mdro');
+  var risikoICU=gv('risiko_icu');
+  var icuBed=gv('icu_bed');
+  var phOverall=gv('ph_overall');
+  var clearanceID=gv('clearance_id');
+  var demam=gv('demam');
+
+  var icIsolation=g('ic_isolation');
+  if(icIsolation) icIsolation.style.display=mdro==='ya'?'':'none';
+
+  var domains=['pe','cl','eq','cv','bp','fam','icu'];
+  var scores={},cfs={},pills={};
+  domains.forEach(function(d){
+    scores[d]=getScore(d);cfs[d]=hasCF(d);
+    pills[d]=pillFor(scores[d].pct,cfs[d]);
+  });
+
+  var peCrit=CRIT.pe.filter(function(id){var e=g(id);return e&&e.checked;}).length;
+  var peCritEl=g('pe-crit-count');if(peCritEl)peCritEl.textContent=peCrit+'/'+CRIT.pe.length;
+
+  setPill('pe-status',pills.pe[0],pills.pe[1]);
+  setPill('cl-status',pills.cl[0],pills.cl[1]);
+  setPill('eq-status',pills.eq[0],pills.eq[1]);
+  setPill('cv-status',pills.cv[0],pills.cv[1]);
+  setPill('bp-status',pills.bp[0],pills.bp[1]);
+  setPill('fam-status',pills.fam[0],pills.fam[1]);
+  setPill('icu-status',pills.icu[0],pills.icu[1]);
+
+  setDot(1,dotFor(scores.pe.pct,cfs.pe));
+  setDot(2,dotFor(scores.cl.pct,cfs.cl));
+  setDot(3,dotFor(scores.eq.pct,cfs.eq));
+  setDot(4,dotFor(scores.cv.pct,cfs.cv));
+  setDot(5,dotFor(scores.bp.pct,cfs.bp));
+  setDot(6,dotFor(scores.fam.pct,cfs.fam));
+  setDot(7,dotFor(scores.icu.pct,cfs.icu));
+
+  var peAlerts=g('pe-alerts');
+  if(peAlerts){
+    var pah='';
+    var pd=parseFloat(gv('obj_pd')||'');
+    if(!isNaN(pd)&&pd<2.5) pah+='<div class="al al-crit" style="margin-top:4px;font-size:11px"><i class="ti ti-alert-triangle"></i> Pressure differential '+pd.toFixed(1)+' Pa — di bawah target ≥2.5 Pa</div>';
+    var ach=parseFloat(gv('obj_ach')||'');
+    if(!isNaN(ach)&&ach<12) pah+='<div class="al al-warn" style="margin-top:4px;font-size:11px"><i class="ti ti-alert-triangle"></i> ACH '+Math.round(ach)+'/jam — di bawah target ≥12/jam</div>';
+    peAlerts.innerHTML=pah;
+  }
+}
+
+function updateTimeline(){
+  var tc=parseLD(gv('tgl_cond'));
+  var td=parseLD(gv('tgl_d0'));
+  var html='';
+  if(tc){
+    var d1=new Date(tc);d1.setDate(d1.getDate()-1);
+    html+='<div class="sr"><span>RIIM siap sebelum</span><span style="font-size:12px;color:#1d4ed8">'+fmtD(d1)+'</span></div>';
+    html+='<div class="sr"><span>Mulai conditioning</span><span style="font-size:12px;color:#1d4ed8">'+fmtD(tc)+'</span></div>';
+  }
+  if(td){
+    html+='<div class="sr"><span>Day 0 (infusi)</span><span style="font-size:12px;color:#1d4ed8">'+fmtD(td)+'</span></div>';
+    var m14=new Date(td);m14.setDate(m14.getDate()+14);
+    html+='<div class="sr"><span>Target engraftment (D+14)</span><span style="font-size:12px;color:#1d4ed8">'+fmtD(m14)+'</span></div>';
+  }
+  var tc2=g('timeline-content');if(tc2)tc2.innerHTML=html||'<span style="color:#888;font-size:12px">Isi tanggal.</span>';
+  updateStatus();
+}
+
+function showTab(n){
+  for(var i=0;i<9;i++){
+    var p=g('p'+i);if(p)p.style.display=i===n?'':'none';
+    var t=g('tab'+i);if(t)t.className='tab'+(i===n?' active':'');
+  }
+  if(n===8) renderFinal();
+}
+
+function toggleCheckpoint(){
+  var s=g('checkpoint_sel');
+  if(!s)return;
+  s.value=s.value==='preadmit'?'precond':'preadmit';
+  updateCheckpointLabel();
+}
+function updateCheckpointLabel(){
+  var v=gv('checkpoint_sel');
+  var el=g('checkpoint-label');
+  if(el)el.textContent='Checkpoint: '+(v==='precond'?'Pre-Conditioning (H-1)':'Pre-Admission RIIM');
+}
+
+function renderFinal(){
+  updateStatus();
+  var infeksi=gv('infeksi'),clearance=gv('clearance_id'),mdro=gv('mdro'),demam=gv('demam');
+  var risikoICU=gv('risiko_icu'),icuBed=gv('icu_bed'),phOverall=gv('ph_overall');
+  var jenis=gv('jenis_hsct');
+
+  var noGo=[];
+  if(hasCF('pe')) noGo.push('Kegagalan kritis Protective Environment (HEPA/tekanan/alarm/konstruksi)');
+  if(!gc('cl_selesai')) noGo.push('Terminal cleaning belum selesai');
+  if(!gc('eq_o2')||!gc('eq_suction')||!gc('eq_ambu')||!gc('eq_trolley')) noGo.push('Emergency equipment tidak lengkap (O₂/suction/ambu bag/trolley)');
+  if(!gc('eq_nurse_hsct')) noGo.push('Perawat terlatih HSCT belum bertugas');
+  if(!gc('eq_pump')) noGo.push('Infusion pump tidak cukup untuk regimen awal');
+  if(!gc('fam_sehat')) noGo.push('Caregiver sakit — tidak boleh masuk RIIM');
+  if(infeksi==='aktif'&&clearance!=='ya') noGo.push('Infeksi aktif BELUM terkontrol tanpa clearance ID/DPJP');
+  if(demam==='ya') noGo.push('Pasien demam aktif — re-evaluasi kelayakan masuk RIIM');
+  if(phOverall==='notready') noGo.push('Pharmacy readiness NOT READY — obat conditioning/profilaksis tidak siap');
+  if(!gc('bp_prc')||!gc('bp_plt')||!gc('bp_irrad')) noGo.push('Blood product kritis (PRC/PLT irradiasi) tidak tersedia');
+  if(risikoICU==='tinggi'&&!gc('icu_aware')) noGo.push('Risiko ICU tinggi — ICU belum di-brief mengenai pasien ini');
+  if(risikoICU==='tinggi'&&icuBed==='penuh') noGo.push('Risiko ICU tinggi — bed ICU penuh, eskalasi tidak dapat dijamin');
+
+  var cond=[];
+  if(infeksi==='terkontrol') cond.push('Infeksi aktif terkontrol — pastikan clearance ID/DPJP terdokumentasi');
+  if(mdro==='ya') cond.push('MDRO positif — isolation pathway harus diaktifkan');
+  if(mdro==='belum'&&jenis==='allo') cond.push('Skrining MDRO belum selesai pada allogeneic HSCT');
+  if(!gc('icu_aware')&&risikoICU!=='tinggi') cond.push('ICU bridge belum diinformasi (risiko non-tinggi, tetap dianjurkan)');
+  if(icuBed==='terbatas') cond.push('Ketersediaan bed ICU terbatas — konfirmasi ulang sebelum transfer');
+  if(phOverall==='conditional') cond.push('Pharmacy conditional — verifikasi kelengkapan sebelum D-1 conditioning');
+  if(getScore('pe').pct<90&&!hasCF('pe')) cond.push('Beberapa item PE non-kritis belum terpenuhi');
+  if(getScore('cv').pct<80) cond.push('Beberapa item CVC/infusi perlu dilengkapi');
+
+  var verdict,icon,fc,sub;
+  if(noGo.length>0){verdict='NO-GO — Pasien BELUM boleh masuk RIIM';icon='🚫';fc='fp-nogo';sub=noGo.length+' critical failure harus diselesaikan terlebih dahulu';}
+  else if(cond.length>0){verdict='CONDITIONAL READY';icon='⚠️';fc='fp-cond';sub=cond.length+' item kondisional perlu ditindaklanjuti';}
+  else{verdict='GO — RIIM SIAP';icon='✅';fc='fp-go';sub='Semua item kritis terpenuhi. Lakukan verifikasi akhir bersama tim.';}
+
+  var fp=g('final-panel');
+  if(fp)fp.className='fp '+fc;
+  var fi=g('final-icon');if(fi)fi.textContent=icon;
+  var fl=g('final-label');if(fl)fl.textContent=verdict;
+  var fs=g('final-sub');if(fs)fs.textContent=sub;
+
+  var mb=g('main-badge');
+  if(mb){
+    if(noGo.length>0){mb.className='badge p-fail';mb.textContent='NO-GO';}
+    else if(cond.length>0){mb.className='badge p-warn';mb.textContent='Conditional';}
+    else{mb.className='badge p-pass';mb.textContent='GO ✓';}
+  }
+
+  var ah='';
+  noGo.forEach(function(r){ah+='<div class="al al-crit"><i class="ti ti-x"></i><div><strong>Critical Failure:</strong> '+esc(r)+'</div></div>';});
+  cond.forEach(function(r){ah+='<div class="al al-warn"><i class="ti ti-alert-triangle"></i><div>'+esc(r)+'</div></div>';});
+  var ca=g('critical-alerts');if(ca)ca.innerHTML=ah;
+
+  var domains=['pe','cl','eq','cv','bp','fam','icu'];
+  var dnames=['Protective Environment','Cleaning & IC','Alat & Emergency','CVC & Infusi','Darah & Farmasi','Keluarga','ICU Bridge'];
+  var sb='';
+  domains.forEach(function(d,i){
+    var s=getScore(d);var cf=hasCF(d);var p=pillFor(s.pct,cf);
+    sb+='<tr><td>'+dnames[i]+'</td><td><span class="pill '+p[0]+'">'+p[1]+'</span></td><td>'+s.done+'/'+s.total+' ('+s.pct+'%)</td></tr>';
+  });
+  var sumBody=g('sum-body');if(sumBody)sumBody.innerHTML=sb;
+
+  var now=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  var cp=gv('checkpoint_sel')==='precond'?'Pre-Conditioning (H-1)':'Pre-Admission RIIM';
+  var domains2=['pe','cl','eq','cv','bp','fam','icu'];
+  var dnames2=['Protective Env.','Cleaning & IC','Alat & Emergency','CVC & Infusi','Darah & Farmasi','Keluarga','ICU Bridge'];
+  var domRows='';
+  domains2.forEach(function(d,i){var s=getScore(d);var cf=hasCF(d);var p=pillFor(s.pct,cf);domRows+=dnames2[i]+': '+p[1]+' ('+s.done+'/'+s.total+')\n';});
+
+  var soFields=['so_perawat','so_ipcn','so_teknik','so_farmasi','so_dpjp','so_icu'];
+  var soNames=['Perawat RIIM','IPCN','Teknik/Fasilitas','Farmasi','DPJP HSCT','PIC ICU'];
+  var soRows='';
+  soFields.forEach(function(id,i){var v=gv(id);if(v)soRows+=soNames[i]+': '+esc(v)+'\n';});
+
+  var sumEl=g('sum-text');
+  if(sumEl)sumEl.innerHTML=
+    '<strong>drAisyi EduCare · RIIM Pre-Admission Summary</strong><br>'+
+    'Checkpoint: '+cp+' | '+now+'<br><br>'+
+    '<strong>Pasien:</strong> Kode '+esc(gv('kode'))+' | '+esc(gv('inisial'))+' | Usia: '+esc(gv('usia'))+'<br>'+
+    '<strong>Diagnosis:</strong> '+esc(gv('diag'))+'<br>'+
+    '<strong>HSCT:</strong> '+esc(gv('jenis_hsct').toUpperCase())+' | Donor: '+esc(gv('donor'))+' | Conditioning: '+esc(gv('cond_type').toUpperCase())+'<br>'+
+    '<strong>Day 0:</strong> '+fmtD(parseLD(gv('tgl_d0')))+'<br>'+
+    '<strong>Infeksi:</strong> '+esc(gv('infeksi'))+' | <strong>MDRO:</strong> '+esc(gv('mdro'))+' | <strong>Risiko ICU:</strong> '+esc(gv('risiko_icu'))+'<br><br>'+
+    '<strong>Status Domain:</strong><br>'+
+    domains2.map(function(d,i){var s=getScore(d);var cf=hasCF(d);var p=pillFor(s.pct,cf);return dnames2[i]+': '+p[1]+' ('+s.done+'/'+s.total+')';}).join('<br>')+'<br><br>'+
+    (noGo.length?'<strong>Critical Failures:</strong><br>'+noGo.map(function(r,i){return (i+1)+'. '+esc(r);}).join('<br>')+'<br><br>':'')+
+    (cond.length?'<strong>Item Kondisional:</strong><br>'+cond.map(function(r,i){return (i+1)+'. '+esc(r);}).join('<br>')+'<br><br>':'')+
+    '<strong>Sign-Off:</strong><br>'+
+    soFields.map(function(id,i){return soNames[i]+': '+(esc(gv(id))||'—');}).join('<br>')+'<br><br>'+
+    '<strong>KEPUTUSAN: '+esc(verdict)+'</strong><br>'+
+    '<strong>Catatan:</strong> '+esc(gv('catatan'));
+}
+
+function copySum(){
+  var el=g('sum-text');
+  if(!el)return;
+  var txt=el.innerText||el.textContent;
+  if(navigator.clipboard){navigator.clipboard.writeText(txt);}
+  else{var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}
+  alert('Summary disalin ke clipboard.');
+}
+
+function resetAll(){
+  if(!confirm('Reset semua data? Tindakan ini tidak dapat dibatalkan.'))return;
+  document.querySelectorAll('input[type=checkbox]').forEach(function(c){c.checked=false;});
+  document.querySelectorAll('input[type=text],input[type=number],input[type=date],input[type=datetime-local],textarea').forEach(function(i){i.value='';});
+  document.querySelectorAll('select').forEach(function(s){s.selectedIndex=0;});
+  document.querySelectorAll('.ci').forEach(function(el){el.classList.remove('done','cfail');});
+  updateStatus();
+  showTab(0);
+}
+
+updateStatus();
+</script>
+</body>
+</html>

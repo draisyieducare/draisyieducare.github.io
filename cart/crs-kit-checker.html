@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CAR-T Kit</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Segoe UI,Arial,sans-serif;background:#e8f4f8;color:#1e293b;font-size:13px}
+#app{max-width:900px;margin:0 auto;padding:14px 12px 60px}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.col{flex:1;min-width:140px;display:flex;flex-direction:column;gap:3px}
+label{font-size:11px;font-weight:700;color:#64748b}
+input,select{border:1.5px solid #cbd5e1;border-radius:6px;padding:5px 8px;font-size:12px;width:100%}
+input:focus,select:focus{outline:none;border-color:#1a5f7a}
+.card{background:#fff;border:2px solid #b8dce8;border-radius:10px;padding:14px;margin-bottom:12px}
+.sec{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#1a5f7a;margin:14px 0 8px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tab{padding:6px 14px;border:2px solid #b8dce8;border-radius:18px;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#64748b}
+.tab.on{background:#1a5f7a;color:#fff;border-color:#1a5f7a}
+.page{display:none}.page.on{display:block}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dc{border:2px solid #b8dce8;border-radius:8px;padding:10px;background:#fafcfe;margin-bottom:0}
+.dc.ok{border-color:#2a9d5c;background:#f0faf5}
+.dc-name{font-weight:800;font-size:13px}
+.dc-cls{font-size:11px;color:#64748b;font-style:italic;margin-bottom:2px}
+.prio{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700;display:inline-block;margin-bottom:6px}
+.ck-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px}
+.ck-row input[type=checkbox]{width:15px;height:15px;margin-top:1px;accent-color:#2a9d5c;cursor:pointer;flex-shrink:0}
+.gng{border-radius:10px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+.gng.p{background:#f1f5f9;border:3px solid #94a3b8}
+.gng.g{background:linear-gradient(135deg,#d1fae5,#a7f3d0);border:3px solid #059669}
+.gng.n{background:linear-gradient(135deg,#fee2e2,#fecaca);border:3px solid #dc2626}
+.gng.c{background:linear-gradient(135deg,#fef3c7,#fde68a);border:3px solid #d97706}
+.gi{font-size:34px;flex-shrink:0}
+.gh{font-size:16px;font-weight:900}
+.gp{font-size:12px;margin-top:2px}
+.gr{font-size:12px;font-weight:700;margin-top:2px}
+.miss{background:#fff5f5;border:2px solid #fca5a5;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:none}
+.mi{display:flex;align-items:center;gap:7px;font-size:12px;padding:2px 0;border-bottom:1px solid #fee2e2}
+.mi:last-child{border-bottom:none}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dose-box{background:linear-gradient(135deg,#dbeafe,#bfdbfe);border:1.5px solid #93c5fd;border-radius:10px;padding:12px 14px;margin-bottom:12px;display:none}
+.dose-box h3{font-size:13px;font-weight:800;color:#1e3a8a;margin-bottom:8px}
+.drow{display:flex;justify-content:space-between;padding:4px 8px;background:#fff;border-radius:5px;border:1px solid #bfdbfe;margin-bottom:4px;font-size:11px}
+.dn{color:#1e40af;font-weight:600}.dv{color:#1d4ed8;font-weight:800}
+.tbar{padding:5px 9px;border-radius:6px;font-size:11px;font-weight:700;margin-top:6px}
+.tok{background:#d1fae5;color:#065f46;border-left:3px solid #059669}
+.tno{background:#fee2e2;color:#b91c1c;border-left:3px solid #dc2626}
+.btn{padding:8px 16px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin-right:6px;margin-bottom:6px}
+.b1{background:#1a5f7a;color:#fff}.b2{background:#2a9d5c;color:#fff}.bo{background:#fff;color:#1a5f7a;border:2px solid #1a5f7a}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:center;justify-content:center}
+.ov.on{display:flex}
+.modal{background:#fff;border-radius:12px;max-width:680px;width:95%;max-height:88vh;overflow-y:auto;padding:20px}
+.pt{width:100%;border-collapse:collapse;font-size:11px}
+.pt th{background:#1a5f7a;color:#fff;padding:5px 7px;text-align:left}
+.pt td{border:1px solid #e2e8f0;padding:4px 7px;vertical-align:top}
+.pt tr:nth-child(even) td{background:#f8fafc}
+.pinfo{background:#f0f7fb;border:1.5px solid #b8dce8;border-radius:6px;padding:8px 10px;margin-bottom:8px;font-size:11px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}
+.pf{display:flex;justify-content:space-between;margin-top:14px;padding-top:10px;border-top:2px solid #b8dce8;font-size:11px;color:#64748b}
+.sl{border-bottom:1px solid #94a3b8;width:155px;margin-top:16px}
+</style>
+</head>
+<body>
+
+<div style="background:linear-gradient(135deg,#1a5f7a,#0d3d54);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;margin-bottom:0">
+  <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#e63946,#f4a261);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;flex-shrink:0">dA</div>
+  <div>
+    <div style="font-weight:800;font-size:15px">CAR-T Emergency Kit Readiness &amp; D0 Go/No-Go Checker</div>
+    <div style="font-size:11px;opacity:.8;margin-top:2px">drAisyi EduCare &middot; CRS &middot; ICANS &middot; Anaphylaxis &middot; Bedside Safety</div>
+  </div>
+  <div style="margin-left:auto;background:#e63946;color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Pre-Infusion D0</div>
+</div>
+
+<div id="app">
+
+  <div class="sec">Informasi Pasien</div>
+  <div class="card">
+    <div class="row">
+      <div class="col"><label>No. RM / Inisial</label><input id="xpid" placeholder="RM-XXXX / AS"></div>
+      <div class="col"><label>Berat Badan (kg)</label><input id="xbb" type="number" min="1" max="200" placeholder="e.g. 25"></div>
+      <div class="col"><label>Target D0</label><input id="xd0" type="date"></div>
+    </div>
+  </div>
+
+  <div class="dose-box" id="dbox">
+    <h3>Kalkulasi Dosis</h3>
+    <div id="dgrid"></div>
+  </div>
+
+  <div class="gng p" id="gng">
+    <div class="gi">🔲</div>
+    <div><div class="gh">Belum Dievaluasi</div><div class="gp">Centang ketersediaan obat lalu klik Evaluasi.</div></div>
+  </div>
+
+  <div class="miss" id="miss"><div style="color:#e63946;font-weight:800;font-size:13px;margin-bottom:6px">Item Belum Terpenuhi</div><div id="misslist"></div></div>
+
+  <div class="sec">Kit Checklist</div>
+  <div class="tabs" id="kitabs"></div>
+  <div id="kitpages"></div>
+
+  <div class="sec">Farmasi &amp; Verifikasi</div>
+  <div class="card">
+    <div class="row">
+      <div class="col"><label>PIC Farmasi</label><input id="xfpic" placeholder="Nama apoteker"></div>
+      <div class="col"><label>Jam Layanan</label><input id="xfhrs" placeholder="07.00-21.00 / 24 jam"></div>
+      <div class="col"><label>Intensivist/PICU</label><input id="xsicu" placeholder="Nama dan nomor"></div>
+      <div class="col"><label>DPJP</label><input id="xdpjp" placeholder="Nama DPJP"></div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:20px">
+    <button class="btn b1" id="btneval">Evaluasi Kesiapan D0</button>
+    <button class="btn b2" id="btnprint">Print Checklist</button>
+    <button class="btn bo" id="btnreset">Reset</button>
+  </div>
+
+</div>
+
+<div class="ov" id="ov">
+  <div class="modal">
+    <div style="font-weight:800;font-size:16px;color:#1a5f7a;margin-bottom:2px">Checklist CAR-T Emergency Kit</div>
+    <div style="font-size:11px;color:#64748b;margin-bottom:10px">drAisyi EduCare &middot; CAR-T Safety Toolkit</div>
+    <div class="tabs" id="ptabs"></div>
+    <div id="pcontent"></div>
+    <div class="pf">
+      <div><div>PIC Farmasi: <b id="ppic"></b></div><div class="sl"></div><div style="font-size:10px;margin-top:2px">Tanda tangan Farmasi</div></div>
+      <div style="text-align:right"><div>DPJP: <b id="pdpjp"></b></div><div class="sl" style="margin-left:auto"></div><div style="font-size:10px;margin-top:2px">Tanda tangan DPJP</div></div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button class="btn b1" onclick="window.print()">Print / PDF</button>
+      <button class="btn bo" id="btnclose">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var D = [
+  {id:"toci",  name:"Tocilizumab IV",                cls:"Anti-IL-6 receptor antibody",       prio:"critical",kit:"crs",toci:1},
+  {id:"dexa",  name:"Dexamethasone IV",              cls:"Kortikosteroid",                    prio:"critical",kit:"crs"},
+  {id:"mpred", name:"Methylprednisolone IV",         cls:"Kortikosteroid",                    prio:"high",    kit:"crs"},
+  {id:"hcort", name:"Hydrocortisone IV",             cls:"Kortikosteroid",                    prio:"high",    kit:"crs"},
+  {id:"cairan",name:"Cairan Resusitasi",             cls:"NaCl 0.9% / RL / Albumin 5%",      prio:"critical",kit:"crs"},
+  {id:"vaso",  name:"Vasopressor Norepinephrine",    cls:"ICU infusion - lini utama",         prio:"critical",kit:"crs"},
+  {id:"abx",   name:"Antibiotik Empiris Neutropenia",cls:"Anti-pseudomonal beta-lactam",      prio:"high",    kit:"crs"},
+  {id:"para",  name:"Paracetamol",                   cls:"Antipiretik",                       prio:"moderate",kit:"crs"},
+  {id:"leve",  name:"Levetiracetam",                 cls:"Antikonvulsan rescue",              prio:"critical",kit:"icans"},
+  {id:"midaz", name:"Midazolam / Lorazepam IV",      cls:"Benzodiazepin rescue seizure",      prio:"critical",kit:"icans"},
+  {id:"diaz",  name:"Diazepam Rektal",               cls:"Rescue seizure alternatif",         prio:"high",    kit:"icans"},
+  {id:"htsal", name:"NaCl 3% atau Mannitol",         cls:"Hiperosmolar cerebral edema",       prio:"high",    kit:"icans"},
+  {id:"eeg",   name:"Akses EEG",                     cls:"Monitoring neurologi",              prio:"high",    kit:"icans"},
+  {id:"neuro", name:"Konsultasi Neurologi",           cls:"On-call neurologi",                 prio:"high",    kit:"icans"},
+  {id:"ctmri", name:"CT atau MRI Readiness",         cls:"Neuroimaging emergensi",            prio:"moderate",kit:"icans"},
+  {id:"epi",   name:"Epinephrine IM",                cls:"Adrenalin lini pertama anafilaksis",prio:"critical",kit:"ana"},
+  {id:"o2",    name:"Oksigen O2",                    cls:"NRM / nasal kanul / HFNC",          prio:"critical",kit:"ana"},
+  {id:"antih", name:"Antihistamin IV",               cls:"Difenhidramin cetirizine",          prio:"high",    kit:"ana"},
+  {id:"salbu", name:"Salbutamol Nebulisasi",         cls:"Bronkodilator",                     prio:"high",    kit:"ana"},
+  {id:"hcorta",name:"Hydrocortisone IV Ana",         cls:"Kortikosteroid anafilaksis",        prio:"high",    kit:"ana"},
+  {id:"airway",name:"Airway Equipment",              cls:"BVM laringoskop ETT suction",       prio:"critical",kit:"ana"},
+  {id:"mon",   name:"Monitor Multifungsi",           cls:"SpO2 TD HR suhu RR",               prio:"critical",kit:"bed"},
+  {id:"pump",  name:"Infusion Pump",                 cls:"Syringe pump volumetrik",           prio:"critical",kit:"bed"},
+  {id:"crash", name:"Crash Cart Resusitasi",         cls:"Termasuk defibrilator",             prio:"critical",kit:"bed"},
+  {id:"kult",  name:"Botol Kultur Darah",            cls:"Aerob dan anaerob",                 prio:"high",    kit:"bed"},
+  {id:"labs",  name:"Akses Lab STAT",                cls:"CBC CRP ferritin LFT kreatinin",   prio:"high",    kit:"bed"},
+  {id:"icub",  name:"Konfirmasi Bed ICU PICU",       cls:"Reserved bila eskalasi",            prio:"critical",kit:"bed"}
+];
+
+var K = [
+  {id:"crs",  icon:"🔴",title:"CRS Core Kit",   bg:"#fef2f2"},
+  {id:"icans",icon:"🧠",title:"ICANS Kit",       bg:"#faf5ff"},
+  {id:"ana",  icon:"⚡", title:"Anaphylaxis Kit", bg:"#fff7ed"},
+  {id:"bed",  icon:"🛏", title:"Bedside Support", bg:"#f0fdf4"}
+];
+
+var PC = {
+  critical:{l:"KRITIS",bg:"#ffd6d6",c:"#b91c1c"},
+  high:    {l:"TINGGI",bg:"#fde8cc",c:"#92400e"},
+  moderate:{l:"SEDANG",bg:"#fef9c3",c:"#78350f"}
+};
+
+var ST = {};
+D.forEach(function(d){ ST[d.id]={ok:false,loc:"",jam:"",exp:"",lot:"",v80:"",v200:"",v400:""}; });
+
+function Q(id){ return document.getElementById(id); }
+function GV(id){ var e=Q(id); return e?e.value.trim():""; }
+function CK(id){ var e=Q("ck_"+id); return e&&e.checked; }
+
+function buildKits(){
+  var tabs = Q("kitabs"), pages = Q("kitpages");
+  tabs.innerHTML=""; pages.innerHTML="";
+  K.forEach(function(k,i){
+    var tb = document.createElement("button");
+    tb.className="tab"+(i===0?" on":"");
+    tb.textContent=k.icon+" "+k.title;
+    tb.onclick=function(){ showTab(k.id); };
+    tabs.appendChild(tb);
+
+    var pg = document.createElement("div");
+    pg.className="page"+(i===0?" on":"");
+    pg.id="pg_"+k.id;
+
+    var wrap = document.createElement("div");
+    wrap.style.cssText="background:#fff;border:2px solid #b8dce8;border-radius:10px;overflow:hidden;margin-bottom:12px";
+
+    var hdr = document.createElement("div");
+    hdr.style.cssText="padding:10px 14px;font-weight:800;font-size:14px;display:flex;align-items:center;gap:8px;background:"+k.bg;
+    hdr.innerHTML="<span style='font-size:18px'>"+k.icon+"</span>"+k.title;
+    wrap.appendChild(hdr);
+
+    var grid = document.createElement("div");
+    grid.className="dg";
+    grid.style.padding="10px";
+
+    D.filter(function(d){ return d.kit===k.id; }).forEach(function(d){
+      grid.appendChild(makeCard(d));
+    });
+
+    wrap.appendChild(grid);
+    pg.appendChild(wrap);
+    pages.appendChild(pg);
+  });
+}
+
+function makeCard(d){
+  var p = PC[d.prio];
+  var div = document.createElement("div");
+  div.className="dc";
+  div.id="dc_"+d.id;
+
+  var ckr = document.createElement("div");
+  ckr.className="ck-row";
+  var ck = document.createElement("input");
+  ck.type="checkbox"; ck.id="ck_"+d.id;
+  ck.onchange=function(){ onCk(d.id,this.checked); };
+  ckr.appendChild(ck);
+
+  var info = document.createElement("div");
+  var nm = document.createElement("div"); nm.className="dc-name"; nm.textContent=d.name;
+  var cl = document.createElement("div"); cl.className="dc-cls"; cl.textContent=d.cls;
+  var pr = document.createElement("span"); pr.className="prio";
+  pr.style.background=p.bg; pr.style.color=p.c; pr.textContent=p.l;
+  info.appendChild(nm); info.appendChild(cl); info.appendChild(pr);
+  ckr.appendChild(info);
+  div.appendChild(ckr);
+
+  var fields = [["loc","Lokasi","Depo / kulkas"],["jam","Jam Akses","07-21 / 24 jam"],["exp","Expiry",""],["lot","Lot/Stok","Lot# / unit"]];
+  var grid = document.createElement("div"); grid.className="dg";
+  fields.forEach(function(f){
+    var col = document.createElement("div"); col.className="col";
+    var lbl = document.createElement("label"); lbl.textContent=f[1];
+    var inp = document.createElement("input");
+    inp.id=f[0]+"_"+d.id; inp.placeholder=f[2];
+    if(f[0]==="exp") inp.type="month";
+    inp.onchange=function(){ ST[d.id][f[0]]=this.value; };
+    col.appendChild(lbl); col.appendChild(inp);
+    grid.appendChild(col);
+  });
+  div.appendChild(grid);
+
+  if(d.toci){
+    var tr = document.createElement("div");
+    tr.style.cssText="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px";
+    ["v80","v200","v400"].forEach(function(vf,vi){
+      var vc = document.createElement("div"); vc.className="col";
+      var vl = document.createElement("label"); vl.textContent=["Vial 80mg","Vial 200mg","Vial 400mg"][vi];
+      var vi2 = document.createElement("input");
+      vi2.type="number"; vi2.id=vf+"_"+d.id; vi2.min="0"; vi2.placeholder="0";
+      vi2.oninput=function(){ ST[d.id][vf]=this.value; updateToci(); };
+      vc.appendChild(vl); vc.appendChild(vi2);
+      tr.appendChild(vc);
+    });
+    div.appendChild(tr);
+    var bar = document.createElement("div"); bar.id="tbar"; div.appendChild(bar);
+  }
+  return div;
+}
+
+function onCk(id, checked){
+  ST[id].ok = checked;
+  var dc = Q("dc_"+id);
+  if(dc) dc.className = "dc"+(checked?" ok":"");
+}
+
+function showTab(kid){
+  document.querySelectorAll("#kitabs .tab").forEach(function(t){ t.classList.remove("on"); });
+  document.querySelectorAll("#kitpages .page").forEach(function(p){ p.classList.remove("on"); });
+  K.forEach(function(k,i){
+    if(k.id===kid){
+      document.querySelectorAll("#kitabs .tab")[i].classList.add("on");
+      Q("pg_"+kid).classList.add("on");
+    }
+  });
+}
+
+function getDoses(){
+  var bb = parseFloat(GV("xbb"))||0;
+  if(!bb) return null;
+  var td = bb<30 ? 12*bb : Math.min(8*bb,800);
+  return {td:td, bb:bb,
+    dexa: Math.min(0.5*bb,10).toFixed(1),
+    para: Math.min(15*bb,1000).toFixed(0),
+    epi:  Math.min(0.01*bb,0.5).toFixed(2),
+    leve: Math.min(30*bb,3000).toFixed(0),
+    c1:   (10*bb).toFixed(0), c2:(20*bb).toFixed(0)
+  };
+}
+
+function updateDoseBox(){
+  var ds = getDoses();
+  var box = Q("dbox"), grid = Q("dgrid");
+  if(!ds){ box.style.display="none"; return; }
+  box.style.display="";
+  var rows = [
+    ["Tocilizumab",(ds.bb<30?"12":"8")+" mg/kg = "+ds.td.toFixed(0)+" mg/dosis"],
+    ["Dexamethasone IV","0.5 mg/kg = "+ds.dexa+" mg"],
+    ["Paracetamol","15 mg/kg = "+ds.para+" mg"],
+    ["Epinephrine IM","0.01 mg/kg = "+ds.epi+" mg"],
+    ["Levetiracetam","30 mg/kg = "+ds.leve+" mg IV"],
+    ["Cairan Bolus",ds.c1+"-"+ds.c2+" mL"]
+  ];
+  grid.innerHTML="";
+  rows.forEach(function(r){
+    var row=document.createElement("div"); row.className="drow";
+    var a=document.createElement("span"); a.className="dn"; a.textContent=r[0];
+    var b=document.createElement("span"); b.className="dv"; b.textContent=r[1];
+    row.appendChild(a); row.appendChild(b); grid.appendChild(row);
+  });
+  updateToci();
+}
+
+function updateToci(){
+  var bar = Q("tbar"); if(!bar) return;
+  var ds = getDoses(); if(!ds){ bar.innerHTML=""; return; }
+  var mg = (parseInt(Q("v80_toci")&&Q("v80_toci").value)||0)*80
+          +(parseInt(Q("v200_toci")&&Q("v200_toci").value)||0)*200
+          +(parseInt(Q("v400_toci")&&Q("v400_toci").value)||0)*400;
+  var nd = ds.td>0 ? mg/ds.td : 0;
+  var ok2=nd>=2, ok4=nd>=4;
+  bar.className="tbar "+(ok2?"tok":"tno");
+  bar.textContent=mg+" mg = "+nd.toFixed(1)+" dosis ("+ds.td.toFixed(0)+" mg/dosis) | 2 dosis: "+(ok2?"OK":"KURANG")+" | 4 dosis: "+(ok4?"OK":"KURANG");
+}
+
+function evaluate(){
+  var ds = getDoses();
+  var bb = ds ? ds.bb : 0;
+  var crit=[],high=[],mod=[];
+
+  D.forEach(function(d){
+    var ok = ST[d.id].ok;
+    if(d.toci && bb && ok){
+      var mg=(parseInt(Q("v80_toci")&&Q("v80_toci").value)||0)*80+(parseInt(Q("v200_toci")&&Q("v200_toci").value)||0)*200+(parseInt(Q("v400_toci")&&Q("v400_toci").value)||0)*400;
+      if(mg < (bb<30?12*bb:Math.min(8*bb,800))*2) ok=false;
+    }
+    var dc=Q("dc_"+d.id);
+    if(dc){ dc.className="dc"+(ok?" ok":""); }
+    if(!ok){
+      if(d.prio==="critical") crit.push(d);
+      else if(d.prio==="high") high.push(d);
+      else mod.push(d);
+    }
+  });
+
+  var reasons=[];
+  crit.forEach(function(d){ reasons.push({c:"#b91c1c",t:"KRITIS: "+d.name}); });
+  high.forEach(function(d){ reasons.push({c:"#92400e",t:"TINGGI: "+d.name}); });
+  if(!GV("xfpic")||!GV("xfhrs")) reasons.push({c:"#92400e",t:"PIC farmasi atau jam layanan belum diisi"});
+  if(!GV("xsicu")) reasons.push({c:"#92400e",t:"Kontak intensivist/PICU belum diisi"});
+
+  var noGo=crit.length>0;
+  var cond=!noGo&&(high.length>0||!GV("xfpic")||!GV("xsicu"));
+  var panel=Q("gng"), cls, icon, title, desc;
+
+  if(noGo){cls="n";icon="🚫";title="NO-GO: Jangan Infus CAR-T";desc=crit.length+" item KRITIS belum tersedia.";}
+  else if(cond){cls="c";icon="⚠️";title="CONDITIONAL: Lengkapi Sebelum D0";desc="Beberapa item perlu dilengkapi.";}
+  else{cls="g";icon="✅";title="GO: Kit Siap untuk D0";desc="Semua item kritis dikonfirmasi.";}
+
+  panel.className="gng "+cls;
+  panel.innerHTML="";
+  var gi=document.createElement("div"); gi.className="gi"; gi.textContent=icon;
+  var gd=document.createElement("div");
+  var gh=document.createElement("div"); gh.className="gh"; gh.textContent=title;
+  var gp=document.createElement("div"); gp.className="gp"; gp.textContent=desc;
+  gd.appendChild(gh); gd.appendChild(gp);
+  reasons.forEach(function(r){
+    var gr=document.createElement("div"); gr.className="gr"; gr.style.color=r.c; gr.textContent=r.t;
+    gd.appendChild(gr);
+  });
+  panel.appendChild(gi); panel.appendChild(gd);
+
+  var miss=[].concat(crit,high,mod);
+  var mbox=Q("miss"), ml=Q("misslist");
+  if(miss.length>0){
+    mbox.style.display="";
+    ml.innerHTML="";
+    miss.forEach(function(d){
+      var mi=document.createElement("div"); mi.className="mi";
+      var dot=document.createElement("div"); dot.className="dot";
+      dot.style.background=d.prio==="critical"?"#dc2626":d.prio==="high"?"#f97316":"#eab308";
+      var tx=document.createElement("span"); tx.innerHTML="<b>"+d.name+"</b>&nbsp;<span style='color:#64748b;font-size:11px'>"+PC[d.prio].l+"</span>";
+      mi.appendChild(dot); mi.appendChild(tx); ml.appendChild(mi);
+    });
+  } else mbox.style.display="none";
+}
+
+var PSCOPE="all";
+function buildPTabs(){
+  var pt=Q("ptabs"); pt.innerHTML="";
+  [["all","Semua"],["ward","Ruang Rawat"],["icu","ICU/PICU"]].forEach(function(s){
+    var b=document.createElement("button");
+    b.className="tab"+(s[0]==="all"?" on":"");
+    b.textContent=s[1];
+    b.onclick=function(){
+      PSCOPE=s[0];
+      document.querySelectorAll("#ptabs .tab").forEach(function(t){ t.classList.remove("on"); });
+      b.classList.add("on");
+      renderPrint();
+    };
+    pt.appendChild(b);
+  });
+}
+
+var ICU_IDS=["vaso","hcort","mpred","abx","cairan","toci","dexa","leve","htsal","eeg","mon","pump","crash","icub"];
+var WARD_IDS=["toci","dexa","cairan","epi","o2","antih","airway","para","leve","midaz","mon","crash","kult","labs"];
+
+function renderPrint(){
+  Q("ppic").textContent=GV("xfpic")||"—";
+  Q("pdpjp").textContent=GV("xdpjp")||"—";
+  var list = PSCOPE==="icu" ? D.filter(function(d){return ICU_IDS.indexOf(d.id)>=0;})
+           : PSCOPE==="ward" ? D.filter(function(d){return WARD_IDS.indexOf(d.id)>=0;})
+           : D;
+
+  var pc=Q("pcontent"); pc.innerHTML="";
+
+  var info=document.createElement("div"); info.className="pinfo";
+  [["RM:",GV("xpid")||"—"],["BB:",GV("xbb")+" kg"],["D0:",GV("xd0")||"—"],
+   ["PIC Farmasi:",GV("xfpic")||"—"],["Jam:",GV("xfhrs")||"—"],["DPJP:",GV("xdpjp")||"—"]
+  ].forEach(function(r){
+    var d=document.createElement("div"); d.innerHTML="<b>"+r[0]+"</b> "+r[1];
+    info.appendChild(d);
+  });
+  pc.appendChild(info);
+
+  var tbl=document.createElement("table"); tbl.className="pt";
+  var th=document.createElement("thead");
+  th.innerHTML="<tr><th></th><th>Obat</th><th>Prioritas</th><th>Status</th><th>Lokasi</th><th>Jam</th><th>Expiry</th><th>Lot</th></tr>";
+  tbl.appendChild(th);
+  var tb2=document.createElement("tbody");
+  list.forEach(function(d,i){
+    var ok=ST[d.id].ok, p=PC[d.prio];
+    var tr=document.createElement("tr");
+    tr.style.background=i%2===0?"#fff":"#f8fafc";
+    var lv=Q("loc_"+d.id)?Q("loc_"+d.id).value||"—":"—";
+    var jv=Q("jam_"+d.id)?Q("jam_"+d.id).value||"—":"—";
+    var ev=Q("exp_"+d.id)?Q("exp_"+d.id).value||"—":"—";
+    var lv2=Q("lot_"+d.id)?Q("lot_"+d.id).value||"—":"—";
+    tr.innerHTML="<td><div style='width:13px;height:13px;border:2px solid #94a3b8;border-radius:3px;background:"+(ok?"#d1fae5":"#fff")+"'></div></td>"
+      +"<td><b>"+d.name+"</b><br><span style='color:#64748b'>"+d.cls+"</span></td>"
+      +"<td style='font-size:10px;font-weight:700;color:"+p.c+"'>"+p.l+"</td>"
+      +"<td style='font-weight:700;color:"+(ok?"#059669":"#dc2626")+"'>"+(ok?"Ada":"Belum")+"</td>"
+      +"<td>"+lv+"</td><td>"+jv+"</td><td>"+ev+"</td><td>"+lv2+"</td>";
+    tb2.appendChild(tr);
+  });
+  tbl.appendChild(tb2);
+  pc.appendChild(tbl);
+  var note=document.createElement("div");
+  note.style.cssText="font-size:10px;color:#64748b;border-top:1px dashed #cbd5e1;padding-top:5px;margin-top:6px";
+  note.textContent="Hanya untuk verifikasi internal. Konfirmasi ulang dengan farmasi sebelum D0. | drAisyi EduCare";
+  pc.appendChild(note);
+}
+
+function doReset(){
+  if(!confirm("Reset semua data?")) return;
+  D.forEach(function(d){
+    ST[d.id]={ok:false,loc:"",jam:"",exp:"",lot:"",v80:"",v200:"",v400:""};
+    var dc=Q("dc_"+d.id); if(dc) dc.className="dc";
+    var ck=Q("ck_"+d.id); if(ck) ck.checked=false;
+    ["loc_","jam_","exp_","lot_"].forEach(function(p){ var e=Q(p+d.id); if(e) e.value=""; });
+  });
+  ["v80_toci","v200_toci","v400_toci"].forEach(function(id){ var e=Q(id); if(e) e.value=""; });
+  ["xpid","xbb","xd0","xfpic","xfhrs","xsicu","xdpjp"].forEach(function(id){ var e=Q(id); if(e) e.value=""; });
+  Q("gng").className="gng p";
+  Q("gng").innerHTML="<div class='gi'>🔲</div><div><div class='gh'>Belum Dievaluasi</div><div class='gp'>Centang ketersediaan obat lalu klik Evaluasi.</div></div>";
+  Q("miss").style.display="none";
+  Q("dbox").style.display="none";
+  var tb=Q("tbar"); if(tb) tb.textContent="";
+}
+
+Q("xbb").addEventListener("input", updateDoseBox);
+Q("btneval").addEventListener("click", evaluate);
+Q("btnprint").addEventListener("click", function(){ buildPTabs(); renderPrint(); Q("ov").classList.add("on"); });
+Q("btnclose").addEventListener("click", function(){ Q("ov").classList.remove("on"); });
+Q("btnreset").addEventListener("click", doReset);
+
+buildKits();
+</script>
+</body>
+</html>

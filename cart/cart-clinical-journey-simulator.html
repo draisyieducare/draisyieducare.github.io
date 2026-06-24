@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CAR-T Clinical Journey Simulator – drAisyi EduCare</title>
+<style>
+:root{
+  --bg:#f0f4f8;--bg2:#ffffff;--bg3:#e8edf3;--bg4:#f8fafc;
+  --text:#1a2535;--text2:#4a5568;--text3:#718096;
+  --blue:#1d6fa5;--blue-l:#dbeafe;--blue-m:#60a5fa;
+  --teal:#0d7a6e;--teal-l:#ccfbf1;--teal-m:#2dd4bf;
+  --amber:#b45309;--amber-l:#fef3c7;--amber-m:#fbbf24;
+  --red:#b91c1c;--red-l:#fee2e2;--red-m:#f87171;
+  --green:#15803d;--green-l:#dcfce7;--green-m:#4ade80;
+  --gray:#4b5563;--gray-l:#f1f5f9;
+  --border:#d1d5db;--border2:#e5e7eb;
+  --radius:10px;--shadow:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
+  --sidebar:230px;
+}
+.dark{
+  --bg:#0d1520;--bg2:#1a2535;--bg3:#0d1520;--bg4:#1e2d40;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;
+  --blue:#60a5fa;--blue-l:#1e3a5f;
+  --teal:#2dd4bf;--teal-l:#0f3d38;
+  --amber:#fbbf24;--amber-l:#3d2600;
+  --red:#f87171;--red-l:#3d0000;
+  --green:#4ade80;--green-l:#052e16;
+  --gray-l:#1e2d40;--border:#334155;--border2:#1e2d40;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.65;background:var(--bg);color:var(--text);min-height:100vh}
+h1{font-size:20px;font-weight:700}h2{font-size:16px;font-weight:700}h3{font-size:14px;font-weight:700}
+a{color:var(--blue);text-decoration:none}
+button{cursor:pointer;font-family:inherit;transition:all .15s}
+input,select,textarea{font-family:inherit;font-size:13px;background:var(--bg2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:7px 10px;width:100%;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(29,111,165,.15)}
+.btn{border:none;border-radius:7px;padding:8px 16px;font-size:13px;font-weight:600}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{opacity:.9}
+.btn-teal{background:var(--teal);color:#fff}.btn-teal:hover{opacity:.9}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2)}.btn-outline:hover{background:var(--bg3)}
+.btn-sm{padding:5px 11px;font-size:12px}
+.btn-danger{background:var(--red);color:#fff}
+
+/* Layout */
+#shell{display:flex;min-height:100vh}
+#sidebar{width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;height:100vh;overflow-y:auto;z-index:200}
+#main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
+#topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:100}
+#page-area{padding:20px;flex:1}
+
+/* Sidebar */
+.sb-logo{padding:14px 14px 10px;border-bottom:1px solid var(--border)}
+.sb-brand{font-size:11px;font-weight:800;color:var(--teal);letter-spacing:.3px}
+.sb-sub{font-size:10px;color:var(--text3);margin-top:1px}
+.sb-sec{font-size:9.5px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;padding:10px 14px 3px}
+.sb-nav{list-style:none}
+.sb-nav li a{display:flex;align-items:center;gap:7px;padding:6px 14px;font-size:12px;color:var(--text2);border-left:3px solid transparent;transition:all .12s}
+.sb-nav li a:hover{background:var(--bg3);color:var(--text)}
+.sb-nav li a.active{background:var(--blue-l);color:var(--blue);border-left-color:var(--blue);font-weight:700}
+.sb-nav li a .n{font-size:10px;font-weight:700;width:16px;height:16px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;color:var(--text3);flex-shrink:0}
+.sb-nav li a.active .n{background:var(--blue);color:#fff}
+.sb-footer{margin-top:auto;padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:6px}
+
+/* Page */
+.page{display:none}.page.active{display:block}
+.page-header{margin-bottom:16px}
+.page-header h2{color:var(--teal)}
+.page-header p{font-size:12px;color:var(--text3);margin-top:3px}
+
+/* Cards */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.card+.card{margin-top:12px}
+.card-title{font-size:11px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--border2)}
+
+/* Forms */
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.fg label{font-size:11.5px;font-weight:700;color:var(--text2)}
+.fg .hint{font-size:10.5px;color:var(--text3)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+/* Status badges */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-green{background:var(--green-l);color:var(--green)}
+.badge-amber{background:var(--amber-l);color:var(--amber)}
+.badge-red{background:var(--red-l);color:var(--red)}
+.badge-blue{background:var(--blue-l);color:var(--blue)}
+.badge-teal{background:var(--teal-l);color:var(--teal)}
+.badge-gray{background:var(--gray-l);color:var(--gray)}
+
+/* Traffic light */
+.traffic{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:8px;font-weight:700;font-size:14px;margin-bottom:12px}
+.tl-go{background:var(--green-l);border:1.5px solid var(--green);color:var(--green)}
+.tl-caution{background:var(--amber-l);border:1.5px solid var(--amber);color:var(--amber)}
+.tl-stop{background:var(--red-l);border:1.5px solid var(--red);color:var(--red)}
+
+/* Result blocks */
+.rb{background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:12px;margin-top:8px}
+.rb h4{font-size:10.5px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.cl{list-style:none;padding:0}
+.cl li{padding:3px 0 3px 20px;position:relative;font-size:12.5px}
+.cl li::before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}
+.cl-warn li::before{content:"⚠";color:var(--amber)}
+.cl-stop li::before{content:"✗";color:var(--red)}
+.cl-q li::before{content:"→";color:var(--blue)}
+
+/* Panels */
+.panel-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.alert{padding:9px 13px;border-radius:7px;font-size:12px;border-left:3px solid;margin-top:8px}
+.alert-info{background:var(--blue-l);border-color:var(--blue);color:var(--blue)}
+.alert-warn{background:var(--amber-l);border-color:var(--amber);color:var(--amber)}
+.alert-danger{background:var(--red-l);border-color:var(--red);color:var(--red)}
+.alert-success{background:var(--green-l);border-color:var(--green);color:var(--green)}
+
+/* Timeline */
+.tl-wrap{display:flex;flex-direction:column}
+.tl-item{display:flex;gap:10px;cursor:pointer}
+.tl-spine{display:flex;flex-direction:column;align-items:center}
+.tl-dot{width:30px;height:30px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;background:var(--bg2);z-index:1;transition:all .2s}
+.tl-item.open .tl-dot,.tl-item:hover .tl-dot{border-color:var(--teal);background:var(--teal);color:#fff}
+.tl-line{width:2px;flex:1;background:var(--border);margin:3px 0}
+.tl-body{padding-bottom:12px;flex:1;min-width:0}
+.tl-head{font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:4px 0}
+.tl-detail{display:none;margin-top:6px}
+.tl-item.open .tl-detail{display:block}
+
+/* Tab system */
+.tabs{display:flex;gap:2px;border-bottom:2px solid var(--border);margin-bottom:12px}
+.tab{padding:6px 13px;font-size:11.5px;font-weight:700;color:var(--text3);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px}
+.tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+
+/* Flashcard grid */
+.fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px}
+.fc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:11px;cursor:pointer;min-height:54px;transition:all .18s}
+.fc:hover{border-color:var(--teal)}
+.fc.flipped{background:var(--teal-l);border-color:var(--teal)}
+.fc-front{font-size:12px;font-weight:800;color:var(--teal)}
+.fc-back{display:none;font-size:11.5px}
+.fc.flipped .fc-front{display:none}
+.fc.flipped .fc-back{display:block}
+
+/* Game */
+.gi{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:11px;margin-bottom:7px;cursor:pointer;font-size:12.5px;transition:all .15s}
+.gi:hover{border-color:var(--blue)}
+.gi.g-correct{background:var(--green-l);border-color:var(--green)}
+.gi.g-wrong{background:var(--red-l);border-color:var(--red)}
+.gi.g-missed{border-color:var(--amber);border-style:dashed}
+
+/* Progress */
+.pbar{height:5px;background:var(--bg3);border-radius:3px;margin-top:5px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:3px;transition:width .4s}
+
+/* Print */
+@media print{
+  #sidebar,#topbar{display:none!important}
+  #main{margin-left:0}
+  #page-area{padding:0}
+  .card{box-shadow:none;break-inside:avoid}
+  .no-print{display:none!important}
+}
+@media(max-width:680px){
+  #sidebar{display:none}
+  #main{margin-left:0}
+  .grid2,.grid3{grid-template-columns:1fr}
+  .panel-row{grid-template-columns:1fr}
+}
+.mt4{margin-top:4px}.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}
+.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}
+.flex{display:flex}.gap8{gap:8px}.gap12{gap:12px}.fw{flex-wrap:wrap}.ic{align-items:center}
+.w100{width:100%}.text-sm{font-size:12px}.text-xs{font-size:11px}.muted{color:var(--text3)}
+pre.code{font-size:11px;white-space:pre-wrap;background:var(--bg3);padding:10px;border-radius:6px;font-family:monospace;line-height:1.5}
+</style>
+</head>
+<body>
+<div id="shell">
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-brand">🧬 drAisyi EduCare</div>
+    <div class="sb-sub">CAR-T Clinical Journey Simulator</div>
+  </div>
+  <div class="sb-sec">Pasien & Kelayakan</div>
+  <ul class="sb-nav">
+    <li><a href="javascript:void(0)" onclick="go('snap')" id="n-snap" class="active"><span class="n">1</span>Patient Snapshot</a></li>
+    <li><a href="javascript:void(0)" onclick="go('elig')" id="n-elig"><span class="n">2</span>Eligibility Gate</a></li>
+  </ul>
+  <div class="sb-sec">Pra-Manufacturing</div>
+  <ul class="sb-nav">
+    <li><a href="javascript:void(0)" onclick="go('aph')" id="n-aph"><span class="n">3</span>Apheresis Readiness</a></li>
+    <li><a href="javascript:void(0)" onclick="go('sm')" id="n-sm"><span class="n">4</span>Starting Material Risk</a></li>
+    <li><a href="javascript:void(0)" onclick="go('bridge')" id="n-bridge"><span class="n">5</span>Bridging Strategy</a></li>
+  </ul>
+  <div class="sb-sec">Manufacturing</div>
+  <ul class="sb-nav">
+    <li><a href="javascript:void(0)" onclick="go('journey')" id="n-journey"><span class="n">6</span>Journey Map</a></li>
+    <li><a href="javascript:void(0)" onclick="go('update')" id="n-update"><span class="n">7</span>Manufacturing Update</a></li>
+    <li><a href="javascript:void(0)" onclick="go('qc')" id="n-qc"><span class="n">8</span>QC & Release</a></li>
+  </ul>
+  <div class="sb-sec">Infusion Pathway</div>
+  <ul class="sb-nav">
+    <li><a href="javascript:void(0)" onclick="go('lympho')" id="n-lympho"><span class="n">9</span>Lymphodepletion Gate</a></li>
+    <li><a href="javascript:void(0)" onclick="go('infday')" id="n-infday"><span class="n">10</span>Infusion Day</a></li>
+    <li><a href="javascript:void(0)" onclick="go('tox')" id="n-tox"><span class="n">11</span>Toxicity Anticipation</a></li>
+  </ul>
+  <div class="sb-sec">MDT & Edukasi</div>
+  <ul class="sb-nav">
+    <li><a href="javascript:void(0)" onclick="go('dev')" id="n-dev"><span class="n">12</span>Deviation & OOS</a></li>
+    <li><a href="javascript:void(0)" onclick="go('mdt')" id="n-mdt"><span class="n">13</span>MDT Summary</a></li>
+    <li><a href="javascript:void(0)" onclick="go('glos')" id="n-glos"><span class="n">14</span>Glosarium Klinis</a></li>
+  </ul>
+  <div class="sb-footer">
+    <button class="btn btn-outline btn-sm" onclick="toggleDark()" style="flex:1">🌙 Dark</button>
+    <button class="btn btn-outline btn-sm" onclick="resetAll()" style="flex:1">↺ Reset</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="topbar">
+    <div>
+      <div style="font-size:13px;font-weight:700;color:var(--teal)" id="tb-title">Patient Snapshot</div>
+      <div class="text-xs muted">Dokter Hematologi-Onkologi Anak | drAisyi EduCare</div>
+    </div>
+    <div class="flex gap8 fw">
+      <span class="badge badge-teal">Educational Interpretation</span>
+      <span class="badge badge-gray">Bukan instruksi manufacturing</span>
+    </div>
+  </div>
+
+  <div id="page-area">
+
+  <!-- ============ 1. PATIENT SNAPSHOT ============ -->
+  <div id="p-snap" class="page active">
+    <div class="page-header"><h2>👤 Patient Snapshot</h2><p>Masukkan data klinis pasien untuk digunakan di seluruh modul.</p></div>
+    <div class="card">
+      <div class="card-title">Identitas & Diagnosis</div>
+      <div class="grid2">
+        <div class="fg"><label>Diagnosis</label><input id="s-diag" value="B-ALL relaps/refrakter" placeholder="mis. B-ALL R/R"></div>
+        <div class="fg"><label>Usia (tahun)</label><input id="s-age" type="number" value="8"></div>
+        <div class="fg"><label>Berat Badan (kg)</label><input id="s-wt" type="number" value="24"></div>
+        <div class="fg"><label>Status CD19</label><select id="s-cd19"><option value="2">Positif (>20%)</option><option value="1">Heterogeneous/dim</option><option value="0">Negatif</option></select></div>
+      </div>
+      <div class="card-title mt12">Beban Penyakit</div>
+      <div class="grid3">
+        <div class="fg"><label>MRD / Bone Marrow</label><select id="s-bm"><option value="0">CR/MRD-negatif</option><option value="1">MRD-positif</option><option value="2" selected>Blasts 5–25%</option><option value="3">Blasts >25%</option></select></div>
+        <div class="fg"><label>Status CNS</label><select id="s-cns"><option value="0" selected>CNS1</option><option value="1">CNS2</option><option value="2">CNS3 (aktif)</option></select></div>
+        <div class="fg"><label>Ekstramedular</label><select id="s-em"><option value="0" selected>Tidak ada</option><option value="1">Ada, terkontrol</option><option value="2">Ada, aktif/besar</option></select></div>
+      </div>
+      <div class="card-title mt12">Riwayat Terapi</div>
+      <div class="grid2">
+        <div class="fg"><label>Lini terapi sebelumnya</label><select id="s-lines"><option value="0">1 lini</option><option value="1" selected>2 lini</option><option value="2">3 lini</option><option value="3">≥4 lini</option></select></div>
+        <div class="fg"><label>Prior HSCT</label><select id="s-hsct"><option value="0" selected>Tidak ada</option><option value="1">Ya, >6 bulan lalu</option><option value="2">Ya, <6 bulan lalu</option></select></div>
+        <div class="fg"><label>Steroid terakhir</label><select id="s-ster"><option value="0" selected>>7 hari lalu</option><option value="1">3–7 hari lalu</option><option value="2"><3 hari lalu</option></select></div>
+        <div class="fg"><label>Kemoterapi terakhir</label><select id="s-kemo"><option value="0" selected>>14 hari lalu</option><option value="1">7–14 hari lalu</option><option value="2"><7 hari lalu</option></select></div>
+      </div>
+      <div class="card-title mt12">Status Klinis</div>
+      <div class="grid3">
+        <div class="fg"><label>Performance Status (Lansky)</label><select id="s-ps"><option value="0">≥80%</option><option value="1" selected>60–70%</option><option value="2">40–50%</option><option value="3"><40%</option></select></div>
+        <div class="fg"><label>Status infeksi</label><select id="s-inf"><option value="0" selected>Tidak ada</option><option value="1">Terkontrol</option><option value="2">Aktif</option></select></div>
+        <div class="fg"><label>Fungsi organ</label><select id="s-org"><option value="0" selected>Normal</option><option value="1">Terganggu ringan</option><option value="2">Terganggu sedang-berat</option></select></div>
+      </div>
+      <div class="card-title mt12">Target Timeline</div>
+      <div class="grid3">
+        <div class="fg"><label>Target Apheresis</label><input id="s-da" type="date"></div>
+        <div class="fg"><label>Target Lymphodepletion</label><input id="s-dl" type="date"></div>
+        <div class="fg"><label>Target Infusion</label><input id="s-di" type="date"></div>
+      </div>
+      <div class="mt12 flex gap8">
+        <button class="btn btn-teal" onclick="evalSnap()">🔍 Interpretasi Snapshot</button>
+        <button class="btn btn-outline" onclick="go('elig')">→ Lanjut ke Eligibility Gate</button>
+      </div>
+    </div>
+    <div id="snap-out" class="mt12"></div>
+  </div>
+
+  <!-- ============ 2. ELIGIBILITY GATE ============ -->
+  <div id="p-elig" class="page">
+    <div class="page-header"><h2>✅ CAR-T Eligibility Gate</h2><p>Interpretasi edukatif kelayakan CAR-T. Bukan keputusan klinis absolut — selalu diskusikan dalam MDT.</p></div>
+    <div class="card">
+      <div class="card-title">Parameter Kelayakan</div>
+      <div class="grid2">
+        <div class="fg"><label>Diagnosis sesuai indikasi</label><select id="e-dx"><option value="2">Ya – B-ALL R/R</option><option value="1">Mungkin (indikasi berkembang)</option><option value="0">Tidak sesuai indikasi saat ini</option></select></div>
+        <div class="fg"><label>Target antigen (CD19)</label><select id="e-ag"><option value="2">Positif jelas (>20%)</option><option value="1">Heterogeneous/dim</option><option value="0">Negatif</option></select></div>
+        <div class="fg"><label>Status penyakit</label><select id="e-ds"><option value="2">Relaps/refrakter, belum dalam CR</option><option value="1">CR tapi MRD-positif</option><option value="0">Active disease dengan blast >50%</option></select></div>
+        <div class="fg"><label>Performance status</label><select id="e-ps"><option value="2">≥60% (Lansky)</option><option value="1">40–50%</option><option value="0"><40%</option></select></div>
+        <div class="fg"><label>Fungsi organ</label><select id="e-org"><option value="2">Normal semua organ</option><option value="1">Gangguan ringan 1 organ</option><option value="0">Gangguan berat / multi-organ</option></select></div>
+        <div class="fg"><label>Status infeksi</label><select id="e-inf"><option value="2">Tidak ada</option><option value="1">Ada, terkontrol</option><option value="0">Infeksi aktif tidak terkontrol</option></select></div>
+        <div class="fg"><label>Status CNS</label><select id="e-cns"><option value="2">CNS1</option><option value="1">CNS2</option><option value="0">CNS3 aktif</option></select></div>
+        <div class="fg"><label>Alternatif terapi tersedia</label><select id="e-alt"><option value="0">Tidak ada / sudah exhausted</option><option value="1">Ada, terbatas</option><option value="2">Ada pilihan lain</option></select></div>
+      </div>
+      <button class="btn btn-teal mt12" onclick="evalElig()">🔍 Interpretasi Eligibility</button>
+    </div>
+    <div id="elig-out" class="mt12"></div>
+  </div>
+
+  <!-- ============ 3. APHERESIS READINESS ============ -->
+  <div id="p-aph" class="page">
+    <div class="page-header"><h2>🩸 Apheresis Readiness</h2><p>Evaluasi kesiapan klinis pasien sebelum leukapheresis. Cut-off numerik dapat berbeda antar protokol dan institusi.</p></div>
+    <div class="card">
+      <div class="grid3">
+        <div class="fg"><label>Hb (g/dL)</label><input id="a-hb" type="number" step=".1" value="9.5"></div>
+        <div class="fg"><label>Trombosit (×10³/µL)</label><input id="a-plt" type="number" value="85"></div>
+        <div class="fg"><label>ALC (×10³/µL)</label><input id="a-alc" type="number" step=".01" value="0.5"></div>
+        <div class="fg"><label>CD3+ absolute (bila ada)</label><input id="a-cd3" type="number" step=".01" placeholder="Opsional"></div>
+        <div class="fg"><label>Akses vaskular</label><select id="a-av"><option value="2">CVC berfungsi baik</option><option value="1">CVC ada, masalah minor</option><option value="0">Belum ada / perlu pasang</option></select></div>
+        <div class="fg"><label>Status hemodinamik</label><select id="a-hd"><option value="2">Stabil</option><option value="1">Perlu observasi</option><option value="0">Tidak stabil</option></select></div>
+        <div class="fg"><label>Infeksi aktif</label><select id="a-inf"><option value="0">Tidak ada</option><option value="1">Ada, terkontrol</option><option value="2">Aktif / demam</option></select></div>
+        <div class="fg"><label>Steroid saat ini</label><select id="a-st"><option value="0">Tidak ada / ≤0.5 mg/kg/hr</option><option value="1">0.5–1 mg/kg/hr</option><option value="2">>1 mg/kg/hr</option></select></div>
+        <div class="fg"><label>Kemoterapi limfotoksik terakhir</label><select id="a-lt"><option value="0">>14 hari lalu</option><option value="1">7–14 hari lalu</option><option value="2"><7 hari lalu</option></select></div>
+      </div>
+      <button class="btn btn-teal mt12" onclick="evalAph()">🔍 Evaluasi Kesiapan Apheresis</button>
+    </div>
+    <div id="aph-out" class="mt12"></div>
+  </div>
+
+  <!-- ============ 4. STARTING MATERIAL RISK ============ -->
+  <div id="p-sm" class="page">
+    <div class="page-header"><h2>🔬 Starting Material Risk</h2><p>Interpretasi klinis risiko kualitas sel sebelum manufacturing. Bukan penilaian teknis laboratorium.</p></div>
+    <div class="card">
+      <div class="grid2">
+        <div class="fg"><label>ALC pre-apheresis (×10³/µL)</label><input id="sm-alc" type="number" step=".01" value="0.5"></div>
+        <div class="fg"><label>CD3+ (%, bila ada)</label><input id="sm-cd3" type="number" placeholder="Opsional"></div>
+        <div class="fg"><label>Kemoterapi intensif sebelumnya</label><select id="sm-ki"><option value="0">Tidak ada / ringan</option><option value="1">Multi-lini / intensif</option><option value="2">Pasca HSCT / sangat intensif</option></select></div>
+        <div class="fg"><label>Steroid baru dihentikan</label><select id="sm-st"><option value="0">>7 hari lalu</option><option value="1">3–7 hari lalu</option><option value="2"><3 hari lalu</option></select></div>
+        <div class="fg"><label>Prior HSCT</label><select id="sm-hs"><option value="0">Tidak ada</option><option value="1">Ya, >6 bulan</option><option value="2">Ya, <6 bulan</option></select></div>
+        <div class="fg"><label>Infeksi/inflamasi aktif</label><select id="sm-inf"><option value="0">Tidak ada</option><option value="1">Terkontrol</option><option value="2">Aktif</option></select></div>
+        <div class="fg"><label>Beban penyakit</label><select id="sm-bd"><option value="0">Rendah/CR</option><option value="1">Sedang (blast 5–25%)</option><option value="2">Tinggi (blast >25%)</option></select></div>
+        <div class="fg"><label>Performance status</label><select id="sm-ps"><option value="0">≥80%</option><option value="1">60–70%</option><option value="2">≤50%</option></select></div>
+      </div>
+      <button class="btn btn-teal mt12" onclick="evalSM()">🔍 Analisis Starting Material Risk</button>
+    </div>
+    <div id="sm-out" class="mt12"></div>
+  </div>
+
+  <!-- ============ 5. BRIDGING STRATEGY ============ -->
+  <div id="p-bridge" class="page">
+    <div class="page-header"><h2>💊 Bridging Therapy Strategy</h2><p>Panduan pemilihan strategi bridging untuk menyeimbangkan disease control dan preservasi T-cell fitness.</p></div>
+    <div class="card">
+      <div class="grid2">
+        <div class="fg"><label>Beban penyakit saat ini</label><select id="br-bd"><option value="0">Rendah / MRD-positif saja</option><option value="1">Sedang (blast 5–25%)</option><option value="2">Tinggi (blast >25%)</option></select></div>
+        <div class="fg"><label>Tempo progresivitas</label><select id="br-tp"><option value="0">Lambat / stabil</option><option value="1">Sedang</option><option value="2">Cepat / agresif</option></select></div>
+        <div class="fg"><label>Estimasi waktu manufacturing (hari)</label><input id="br-mfg" type="number" value="21"></div>
+        <div class="fg"><label>Cadangan sumsum tulang</label><select id="br-bm"><option value="0">Baik</option><option value="1">Terbatas</option><option value="2">Sangat terbatas</option></select></div>
+        <div class="fg"><label>Risiko infeksi saat ini</label><select id="br-inf"><option value="0">Rendah</option><option value="1">Sedang</option><option value="2">Tinggi</option></select></div>
+        <div class="fg"><label>Prior terapi limfotoksik berat</label><select id="br-lt"><option value="0">Tidak ada / minimal</option><option value="1">Ada</option><option value="2">Sangat intensif / pasca HSCT</option></select></div>
+      </div>
+      <button class="btn btn-teal mt12" onclick="evalBridge()">🔍 Rekomendasi Strategi Bridging</button>
+    </div>
+    <div id="bridge-out" class="mt12"></div>
+  </div>
+
+  <!-- ============ 6. MANUFACTURING JOURNEY MAP ============ -->
+  <div id="p-journey" class="page">
+    <div class="page-header"><h2>🗺️ Manufacturing Journey Map</h2><p>Klik setiap tahap untuk memahami makna klinis, red flags, dan pertanyaan MDT.</p></div>
+    <div class="card">
+      <div id="journey-wrap" class="tl-wrap"></div>
+    </div>
+  </div>
+
+  <!-- ============ 7. MANUFACTURING UPDATE INTERPRETER ============ -->
+  <div id="p-update" class="page">
+    <div class="page-header"><h2>📡 Manufacturing Update Interpreter</h2><p>Terjemahkan update dari tim manufacturing ke dalam implikasi klinis dan keputusan bridging/lymphodepletion.</p></div>
+    <div class="card">
+      <div class="fg"><label>Update dari tim manufacturing</label>
+        <select id="upd-sel" onchange="evalUpdate()">
+          <option value="">— Pilih update —</option>
+          <option value="ok">Culture progressing well / on track</option>
+          <option value="slow">Expansion slow / below expected</option>
+          <option value="lowcount">Low viable cell count mid-process</option>
+          <option value="trans">Transduction borderline</option>
+          <option value="sterp">Sterility pending (final)</option>
+          <option value="contam">Contamination concern</option>
+          <option value="delay">Product delayed</option>
+          <option value="fail">Product failed / manufacturing failure</option>
+        </select>
+      </div>
+    </div>
+    <div id="upd-out" class="mt12"></div>
+  </div>
+
+  <!-- ============ 8. QC & RELEASE ============ -->
+  <div id="p-qc" class="page">
+    <div class="page-header"><h2>📋 QC & Release Interpretation</h2><p>Interpretasi klinis hasil pengujian release produk CAR-T. Final release decision follows QA/QC and regulatory pathway.</p></div>
+    <div class="card">
+      <div class="grid3">
+        <div class="fg"><label>Cell Dose</label><select id="q-dose"><option value="2">Adequate (target tercapai)</option><option value="1">Borderline (80–99% target)</option><option value="0">Low (<80% target)</option></select></div>
+        <div class="fg"><label>Viabilitas</label><select id="q-viab"><option value="2">Pass (≥70%)</option><option value="1">Borderline (60–70%)</option><option value="0">Fail (<60%)</option><option value="-1">Tidak diketahui</option></select></div>
+        <div class="fg"><label>Identity</label><select id="q-id"><option value="2">Pass</option><option value="0">Fail</option><option value="-1">Tidak diketahui</option></select></div>
+        <div class="fg"><label>Purity</label><select id="q-pur"><option value="2">Pass</option><option value="1">Borderline</option><option value="0">Fail</option><option value="-1">Tidak diketahui</option></select></div>
+        <div class="fg"><label>CAR Expression</label><select id="q-car"><option value="2">Pass</option><option value="1">Borderline</option><option value="0">Fail</option><option value="-1">Tidak diketahui</option></select></div>
+        <div class="fg"><label>Sterility</label><select id="q-ster"><option value="2">Final negatif</option><option value="1">Preliminary pending</option><option value="0">Positif</option><option value="-1">Tidak diketahui</option></select></div>
+        <div class="fg"><label>Endotoxin</label><select id="q-endo"><option value="2">Pass</option><option value="0">Fail</option><option value="-1">Tidak diketahui</option></select></div>
+        <div class="fg"><label>Mycoplasma</label><select id="q-myco"><option value="2">Pass</option><option value="1">Pending</option><option value="0">Positif</option><option value="-1">Tidak diketahui</option></select></div>
+        <div class="fg"><label>Potency</label><select id="q-pot"><option value="2">Pass</option><option value="1">Borderline</option><option value="0">Fail</option><option value="-1">Tidak diketahui</option></select></div>
+        <div class="fg"><label>CoA Status</label><select id="q-coa"><option value="2">Tersedia & lengkap</option><option value="1">Pending</option><option value="0">Tidak tersedia</option></select></div>
+        <div class="fg"><label>Release Status (QA)</label><select id="q-rel"><option value="2">Fully released</option><option value="1">Conditional / partial</option><option value="0">Not released</option></select></div>
+        <div class="fg"><label>Verifikasi identitas produk-pasien</label><select id="q-id2"><option value="2">Terverifikasi</option><option value="0">Belum / ada discrepancy</option></select></div>
+      </div>
+      <button class="btn btn-teal mt12" onclick="evalQC()">🔍 Interpretasi QC & Release</button>
+    </div>
+    <div id="qc-out" class="mt12"></div>
+  </div>
+
+  <!-- ============ 9. LYMPHODEPLETION GATE ============ -->
+  <div id="p-lympho" class="page">
+    <div class="page-header"><h2>⚡ Lymphodepletion Gatekeeper</h2><p>Evaluasi kelayakan memulai lymphodepleting chemotherapy.</p></div>
+    <div class="card">
+      <div class="card-title">Status Produk</div>
+      <div class="grid3">
+        <div class="fg"><label>Product release status</label><select id="l-rel"><option value="2">Fully released</option><option value="1">QC pending (non-critical)</option><option value="0">Not released / CoA unavailable</option></select></div>
+        <div class="fg"><label>CoA tersedia</label><select id="l-coa"><option value="2">Ya</option><option value="0">Tidak</option></select></div>
+        <div class="fg"><label>Tanggal infusion confirmed</label><select id="l-inf"><option value="2">Ya, dikonfirmasi</option><option value="0">Belum dikonfirmasi</option></select></div>
+      </div>
+      <div class="card-title mt12">Status Pasien</div>
+      <div class="grid3">
+        <div class="fg"><label>Infeksi aktif</label><select id="l-infx"><option value="2">Tidak ada</option><option value="1">Terkontrol</option><option value="0">Aktif / tidak terkontrol</option></select></div>
+        <div class="fg"><label>Stabilitas penyakit</label><select id="l-ds"><option value="2">Stabil / terkontrol</option><option value="1">Progresif tapi tidak kritis</option><option value="0">Sangat progresif / fulminan</option></select></div>
+        <div class="fg"><label>Fungsi ginjal</label><select id="l-ren"><option value="2">Normal</option><option value="1">Gangguan ringan-sedang</option><option value="0">Gagal ginjal</option></select></div>
+        <div class="fg"><label>Fungsi hati</label><select id="l-hep"><option value="2">Normal</option><option value="1">Gangguan ringan-sedang</option><option value="0">Gagal hati</option></select></div>
+      </div>
+      <div class="card-title mt12">Kesiapan Institusi</div>
+      <div class="grid3">
+        <div class="fg"><label>Bed rawat inap</label><select id="l-bed"><option value="2">Tersedia</option><option value="0">Tidak tersedia</option></select></div>
+        <div class="fg"><label>ICU/PICU backup</label><select id="l-icu"><option value="2">Siap</option><option value="1">Perlu koordinasi</option><option value="0">Tidak siap</option></select></div>
+        <div class="fg"><label>Tocilizumab (≥2 dosis)</label><select id="l-toci"><option value="2">Tersedia ≥2 dosis</option><option value="1">1 dosis saja</option><option value="0">Tidak tersedia</option></select></div>
+        <div class="fg"><label>Steroid rescue</label><select id="l-ster"><option value="2">Tersedia</option><option value="0">Tidak tersedia</option></select></div>
+        <div class="fg"><label>Antiepilepsi/seizure rescue</label><select id="l-ae"><option value="2">Siap</option><option value="0">Tidak siap</option></select></div>
+        <div class="fg"><label>Tim CAR-T terlatih</label><select id="l-tim"><option value="2">Lengkap</option><option value="1">Sebagian</option><option value="0">Tidak siap</option></select></div>
+        <div class="fg"><label>Chain-of-identity diverifikasi</label><select id="l-coi"><option value="2">Ya</option><option value="0">Belum</option></select></div>
+      </div>
+      <button class="btn btn-teal mt12" onclick="evalLympho()">🔍 Evaluasi Gatekeeper</button>
+    </div>
+    <div id="lympho-out" class="mt12"></div>
+  </div>
+
+  <!-- ============ 10. INFUSION DAY ============ -->
+  <div id="p-infday" class="page">
+    <div class="page-header"><h2>💉 Infusion Day Readiness</h2><p>Checklist klinis menyeluruh sebelum infusion CAR-T dilakukan.</p></div>
+    <div id="infday-content"></div>
+  </div>
+
+  <!-- ============ 11. EARLY TOXICITY ANTICIPATION ============ -->
+  <div id="p-tox" class="page">
+    <div class="page-header"><h2>🔥 Early Toxicity Anticipation</h2><p>Edukasi klinis mengenai toksisitas awal pasca infusion CAR-T pada anak.</p></div>
+    <div class="card">
+      <div class="grid2">
+        <div class="fg"><label>Beban penyakit saat infusion</label><select id="t-bd"><option value="0">Rendah</option><option value="1" selected>Sedang</option><option value="2">Tinggi</option></select></div>
+        <div class="fg"><label>Status infeksi pre-infusion</label><select id="t-inf"><option value="0" selected>Tidak ada</option><option value="1">Terkontrol</option><option value="2">Ada risiko tinggi</option></select></div>
+        <div class="fg"><label>Riwayat CNS disease</label><select id="t-cns"><option value="0" selected>Tidak ada</option><option value="1">CNS2 riwayat</option><option value="2">CNS3 sebelumnya</option></select></div>
+        <div class="fg"><label>Risiko baseline neurologis</label><select id="t-neuro"><option value="0" selected>Normal</option><option value="1">Ada riwayat seizure/encephalopathy</option></select></div>
+      </div>
+      <button class="btn btn-teal mt12" onclick="evalTox()">🔍 Antisipasi Toksisitas</button>
+    </div>
+    <div id="tox-out" class="mt12"></div>
+  </div>
+
+  <!-- ============ 12. DEVIATION & OOS ============ -->
+  <div id="p-dev" class="page">
+    <div class="page-header"><h2>⚠️ Deviation & OOS Discussion</h2><p>Panduan klinis menghadapi deviasi dan produk Out of Specification dalam konteks CAR-T.</p></div>
+    <div class="card">
+      <div class="fg"><label>Pilih skenario</label>
+        <select id="dev-sel" onchange="evalDev()">
+          <option value="">— Pilih skenario deviasi / OOS —</option>
+          <option value="temp">Temperature excursion saat transport</option>
+          <option value="delay">Product transport delay</option>
+          <option value="label">Label discrepancy</option>
+          <option value="sterp">Sterility preliminary pending</option>
+          <option value="sterpos">Sterility positif</option>
+          <option value="viab">Viabilitas borderline</option>
+          <option value="dose">Cell dose rendah</option>
+          <option value="potency">Potency borderline</option>
+          <option value="coa">CoA tidak lengkap</option>
+          <option value="idmatch">Chain-of-identity mismatch</option>
+          <option value="ldstart">LD sudah dimulai, produk belum released</option>
+        </select>
+      </div>
+    </div>
+    <div id="dev-out" class="mt12"></div>
+  </div>
+
+  <!-- ============ 13. MDT SUMMARY ============ -->
+  <div id="p-mdt" class="page">
+    <div class="page-header"><h2>📄 MDT Summary</h2><p>Ringkasan clinical-manufacturing meeting yang dapat dicetak.</p></div>
+    <div class="flex gap8 mb12 fw no-print">
+      <button class="btn btn-teal" onclick="buildMDT()">🔄 Generate Summary</button>
+      <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+      <button class="btn btn-outline" onclick="copyMDT()">📋 Copy</button>
+      <button class="btn btn-outline btn-sm" onclick="resetAll()">↺ Reset Semua</button>
+    </div>
+    <div id="mdt-out"></div>
+  </div>
+
+  <!-- ============ 14. GLOSARIUM ============ -->
+  <div id="p-glos" class="page">
+    <div class="page-header"><h2>📚 Glosarium Klinis CAR-T</h2><p>Klik kartu untuk melihat definisi, makna klinis, dan pertanyaan relevan bagi dokter.</p></div>
+    <div id="glos-grid" class="fc-grid mt8"></div>
+  </div>
+
+  </div><!-- /page-area -->
+
+  <!-- FOOTER DISCLAIMER -->
+  <div style="background:var(--amber-l);border-top:1px solid var(--amber-m);padding:10px 20px">
+    <p style="font-size:11px;color:var(--amber)"><strong>⚠️ Disclaimer:</strong> Toolkit ini dibuat untuk edukasi dokter hematologi-onkologi anak dalam memahami alur klinis dan clinical-manufacturing interface terapi CAR-T. Tidak dimaksudkan sebagai SOP manufacturing, instruksi teknis produksi, keputusan release QA/QC, atau pengganti clinical judgment. Keputusan pasien harus mengikuti protokol lokal, regulasi, dan rapat MDT.</p>
+  </div>
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+// ============================================================
+// UTILITIES
+// ============================================================
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function v(id){const el=document.getElementById(id);return el?el.value:''}
+function iv(id){return parseInt(v(id))||0}
+function fv(id){return parseFloat(v(id))||0}
+function show(id,html){const el=document.getElementById(id);if(el){el.innerHTML=html;el.style.display='block'}}
+
+const TITLES={snap:'Patient Snapshot',elig:'Eligibility Gate',aph:'Apheresis Readiness',sm:'Starting Material Risk',bridge:'Bridging Strategy',journey:'Journey Map',update:'Manufacturing Update',qc:'QC & Release',lympho:'Lymphodepletion Gate',infday:'Infusion Day',tox:'Toxicity Anticipation',dev:'Deviation & OOS',mdt:'MDT Summary',glos:'Glosarium Klinis'};
+
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-nav a').forEach(a=>a.classList.remove('active'));
+  const pg=document.getElementById('p-'+id);if(pg)pg.classList.add('active');
+  const nav=document.getElementById('n-'+id);if(nav)nav.classList.add('active');
+  document.getElementById('tb-title').textContent=TITLES[id]||'';
+  if(id==='journey')buildJourney();
+  if(id==='glos')buildGlos();
+  if(id==='infday')buildInfday();
+  if(id==='mdt')buildMDT();
+  window.scrollTo(0,0);
+  saveLS();
+}
+
+function toggleDark(){document.documentElement.classList.toggle('dark');saveLS()}
+
+let STATE={};
+function saveLS(){try{localStorage.setItem('cart_edu_v2',JSON.stringify(collectState()))}catch(e){}}
+function collectState(){
+  const st={};
+  document.querySelectorAll('input,select,textarea').forEach(el=>{if(el.id)st[el.id]=el.value});
+  return st;
+}
+function loadLS(){try{const d=localStorage.getItem('cart_edu_v2');if(d){const st=JSON.parse(d);Object.entries(st).forEach(([k,val])=>{const el=document.getElementById(k);if(el)el.value=val})}}catch(e){}}
+function resetAll(){if(confirm('Reset semua data? Tidak bisa dibatalkan.')){localStorage.removeItem('cart_edu_v2');location.reload()}}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function rb(title,items,cls=''){return`<div class="rb"><h4>${title}</h4><ul class="cl ${cls}">${items.map(i=>`<li>${esc(i)}</li>`).join('')}</ul></div>`}
+function traffic(cls,label){return`<div class="traffic ${cls}">${label}</div>`}
+function alertBox(cls,txt){return`<div class="alert ${cls}">${txt}</div>`}
+function badges(...bs){return`<div class="flex gap8 fw mb8">${bs.map(([t,c])=>`<span class="badge badge-${c}">${esc(t)}</span>`).join('')}</div>`}
+
+// ============================================================
+// 1. PATIENT SNAPSHOT
+// ============================================================
+function evalSnap(){
+  const bm=iv('s-bm'),cns=iv('s-cns'),em=iv('s-em');
+  const lines=iv('s-lines'),hsct=iv('s-hsct'),ps=iv('s-ps');
+  const inf=iv('s-inf'),org=iv('s-org'),ster=iv('s-ster');
+  const cd19=iv('s-cd19');
+  const diag=esc(v('s-diag')),age=esc(v('s-age')),wt=esc(v('s-wt'));
+
+  let burden=bm+cns+em;
+  let risk='Rendah';let riskC='badge-green';
+  if(burden>=4||ps>=2||org>=2){risk='Tinggi';riskC='badge-red';}
+  else if(burden>=2||ps>=1||inf>=1){risk='Sedang';riskC='badge-amber';}
+
+  let urgency='Elektif';let urgC='badge-green';
+  if(bm===3||cns===2||em===2||ps>=2){urgency='Kritis / Segera';urgC='badge-red';}
+  else if(bm>=2||em>=1||ps===1){urgency='Perlu percepatan';urgC='badge-amber';}
+
+  const cd19txt=['Positif ✓','Heterogeneous – diskusi','Negatif – CAR-T CD19 tidak sesuai'][cd19===2?0:cd19===1?1:2];
+
+  const questions=[
+    'Apakah CD19 sudah dikonfirmasi dari biopsi/aspirat terbaru?',
+    'Apakah ada bukti heterogenitas antigen yang dapat menyebabkan relaps CD19-negatif?',
+    'Apakah ada opsi terapi lain yang lebih baik sebelum CAR-T?',
+    lines>=2?'Pasien sudah mendapat ≥3 lini – identifikasi apakah CAR-T masih aman dan efektif':'',
+    hsct>=1?'Pasien pernah HSCT – perhatikan T-cell fitness dan timeline':'',
+    ster>=1?'Steroid baru diberikan – pertimbangkan dampak terhadap lymphopenia':'',
+    inf>=1?'Ada infeksi – harus dioptimalkan sebelum apheresis':''
+  ].filter(Boolean);
+
+  show('snap-out',`
+    <div class="card">
+      ${badges([`Diagnosis: ${diag}`,'blue'],[`Usia: ${age} thn / ${wt} kg`,'gray'],[`CD19: ${cd19txt}`,cd19===2?'teal':cd19===1?'amber':'red'])}
+      <div class="panel-row">
+        <div class="rb"><h4>Kategori Risiko Klinis</h4>
+          <span class="badge badge-${riskC}" style="font-size:15px;padding:6px 18px">${risk}</span>
+          <div class="pbar mt8"><div class="pbar-fill" style="width:${burden*16}%;background:var(--${riskC.replace('badge-','')})"></div></div>
+          <p class="text-xs muted mt4">Berdasarkan disease burden, performance status, dan fungsi organ</p>
+        </div>
+        <div class="rb"><h4>Urgensi Klinis</h4>
+          <span class="badge badge-${urgC}" style="font-size:15px;padding:6px 18px">${urgency}</span>
+          <p class="text-xs muted mt4">Mempengaruhi prioritas scheduling apheresis dan bridging</p>
+        </div>
+      </div>
+      ${rb('Pertanyaan Kunci Sebelum Referral CAR-T',questions,'cl-q')}
+      ${alertBox('alert-info','Educational interpretation. Diskusikan semua temuan dalam MDT sebelum keputusan referral.')}
+    </div>`);
+  saveLS();
+}
+
+// ============================================================
+// 2. ELIGIBILITY GATE
+// ============================================================
+function evalElig(){
+  const dx=iv('e-dx'),ag=iv('e-ag'),ds=iv('e-ds');
+  const ps=iv('e-ps'),org=iv('e-org'),inf=iv('e-inf');
+  const cns=iv('e-cns'),alt=iv('e-alt');
+
+  const absExcl=[];
+  if(dx===0)absExcl.push('Diagnosis tidak sesuai indikasi CAR-T saat ini');
+  if(ag===0)absExcl.push('Antigen target (CD19) negatif – CAR-T CD19 tidak akan efektif');
+  if(org===0&&false){}
+  if(inf===0&&false){}
+
+  const concerns=[];
+  if(ag===1)concerns.push('CD19 heterogeneous – diskusi risiko relaps antigen-negatif setelah CAR-T');
+  if(ps===1)concerns.push('PS 40–50% – evaluasi apakah dapat ditingkatkan sebelum apheresis');
+  if(ps===0)concerns.push('PS <40% – kemampuan toleransi toxicity CAR-T perlu dikaji mendalam');
+  if(org===1)concerns.push('Gangguan organ ringan – monitor ketat, mungkin masih eligible');
+  if(org===0)concerns.push('Gangguan organ berat – kontraindikasi relatif, butuh MDT');
+  if(inf===1)concerns.push('Infeksi terkontrol – optimalkan sebelum apheresis');
+  if(inf===0&&false){}
+  if(cns===1)concerns.push('CNS2 – diskusikan profilaksis dan implikasinya');
+  if(cns===0)concerns.push('CNS3 aktif – pertimbangkan terapi CNS sebelum CAR-T');
+  if(alt===2)concerns.push('Ada alternatif terapi lain – pastikan CAR-T adalah pilihan terbaik saat ini');
+  if(ds===0)concerns.push('Blast sangat tinggi – perlu bridging untuk debulk sebelum apheresis');
+
+  let verdict,vcls;
+  if(absExcl.length>0){verdict='❌ Tidak Layak (saat ini)';vcls='tl-stop';}
+  else if(concerns.length>=3||ps===0||org===0){verdict='⚠️ Butuh Optimisasi / Diskusi MDT';vcls='tl-caution';}
+  else if(concerns.length>=1){verdict='🔶 Potentially Eligible – Optimisasi Diperlukan';vcls='tl-caution';}
+  else{verdict='✅ Potentially Eligible';vcls='tl-go';}
+
+  const mdtQ=[
+    'Apakah ini waktu yang tepat untuk CAR-T atau ada jendela yang lebih optimal?',
+    'Apakah bridging therapy diperlukan untuk debulk dan stabilisasi sebelum apheresis?',
+    'Bagaimana rencana jika CD19 loss setelah CAR-T?',
+    'Apakah keluarga sudah mendapatkan informasi risiko-manfaat secara komprehensif?',
+    'Apakah ada clinical trial yang relevan untuk pasien ini?'
+  ];
+
+  show('elig-out',`
+    <div class="card">
+      <div class="traffic ${vcls}">${verdict}</div>
+      ${absExcl.length?rb('❌ Kontraindikasi / Eksklusii',absExcl,'cl-stop'):''}
+      ${concerns.length?rb('⚠️ Hal yang Perlu Dioptimalkan / Didiskusikan',concerns,'cl-warn'):''}
+      ${rb('❓ Pertanyaan untuk MDT',mdtQ,'cl-q')}
+      ${alertBox('alert-warn','Educational eligibility interpretation. Bukan keputusan klinis absolut. Keputusan akhir ada pada MDT.')}
+    </div>`);
+  saveLS();
+}
+
+// ============================================================
+// 3. APHERESIS READINESS
+// ============================================================
+function evalAph(){
+  const hb=fv('a-hb'),plt=fv('a-plt'),alc=fv('a-alc');
+  const av=iv('a-av'),hd=iv('a-hd'),inf=iv('a-inf');
+  const st=iv('a-st'),lt=iv('a-lt');
+
+  const stops=[],warns=[],oks=[],mfgQ=[];
+
+  if(hd===0){stops.push('Hemodinamik tidak stabil – apheresis tidak aman dilakukan');}
+  else if(hd===1){warns.push('Hemodinamik perlu observasi ketat selama prosedur');}
+  else oks.push('Hemodinamik stabil');
+
+  if(hb<7)stops.push(`Hb ${hb} g/dL – sangat rendah, perlu transfusi PRC dan stabilisasi terlebih dahulu`);
+  else if(hb<9)warns.push(`Hb ${hb} g/dL – borderline, pertimbangkan transfusi pre-apheresis`);
+  else oks.push(`Hb ${hb} g/dL – acceptable`);
+
+  if(plt<50)stops.push(`Trombosit ${plt} ×10³ – sangat rendah, risiko perdarahan tinggi, koreksi terlebih dahulu`);
+  else if(plt<75)warns.push(`Trombosit ${plt} ×10³ – borderline, pertimbangkan transfusi trombosit`);
+  else oks.push(`Trombosit ${plt} ×10³ – acceptable`);
+
+  if(alc<0.2)stops.push(`ALC ${alc} ×10³ – sangat rendah, prediksi starting material sangat buruk`);
+  else if(alc<0.5)warns.push(`ALC ${alc} ×10³ – borderline, risiko yield suboptimal`);
+  else oks.push(`ALC ${alc} ×10³ – adequate`);
+
+  if(av===0)stops.push('Akses vaskular belum ada – harus dipasang sebelum apheresis');
+  else if(av===1)warns.push('Akses vaskular ada masalah minor – konfirmasi dengan tim apheresis');
+  else oks.push('Akses vaskular berfungsi baik');
+
+  if(inf===2)stops.push('Infeksi aktif/demam – tunda apheresis hingga infeksi terkontrol');
+  else if(inf===1)warns.push('Infeksi terkontrol – pantau ketat, pertimbangkan timing');
+  else oks.push('Tidak ada infeksi aktif');
+
+  if(st===2)warns.push('Steroid dosis tinggi – akan menekan jumlah dan fungsi T-cell secara signifikan');
+  else if(st===1)warns.push('Steroid dosis sedang – diskusikan taper sebelum apheresis bila memungkinkan');
+
+  if(lt===2)warns.push('Kemoterapi limfotoksik <7 hari – pertimbangkan delay apheresis');
+  else if(lt===1)warns.push('Kemoterapi limfotoksik 7–14 hari – pantau ALC recovery');
+
+  mfgQ.push('Berapa target minimum ALC/CD3 yang diterima program Anda untuk lanjut ke manufacturing?','Apakah ada protokol rescue bila koleksi pertama tidak mencukupi?','Apakah perlu pemeriksaan CD3 absolute sebelum jadwal apheresis?','Berapa volume leukapheresate yang ditargetkan?');
+
+  const status=stops.length?'tl-stop':warns.length?'tl-caution':'tl-go';
+  const label=stops.length?'⛔ Tunda Apheresis – Ada Masalah Kritis':warns.length?'⚠️ Optimalkan Sebelum Apheresis':'✅ Siap untuk Apheresis';
+
+  show('aph-out',`
+    <div class="card">
+      <div class="traffic ${status}">${label}</div>
+      ${stops.length?rb('🔴 Harus Dikoreksi Sebelum Apheresis',stops,'cl-stop'):''}
+      ${warns.length?rb('🟡 Perlu Perhatian',warns,'cl-warn'):''}
+      ${oks.length?rb('🟢 Parameter Acceptable',oks):''}
+      ${rb('❓ Pertanyaan untuk Tim Apheresis / Cell Processing',mfgQ,'cl-q')}
+      ${alertBox('alert-info','Cut-off numerik dapat berbeda antar protokol dan institusi. Konfirmasi dengan tim cell processing.')}
+    </div>`);
+  saveLS();
+}
+
+// ============================================================
+// 4. STARTING MATERIAL RISK
+// ============================================================
+function evalSM(){
+  const alc=fv('sm-alc'),cd3=fv('sm-cd3');
+  const ki=iv('sm-ki'),st=iv('sm-st'),hs=iv('sm-hs');
+  const inf=iv('sm-inf'),bd=iv('sm-bd'),ps=iv('sm-ps');
+
+  let score=0;
+  if(alc<0.2)score+=3;else if(alc<0.5)score+=1;
+  if(cd3&&cd3<20)score+=2;
+  score+=ki+st+hs+inf+bd+ps;
+
+  let risk,rcls;
+  if(score>=6){risk='TINGGI';rcls='badge-red';}
+  else if(score>=3){risk='SEDANG';rcls='badge-amber';}
+  else{risk='RENDAH';rcls='badge-green';}
+
+  const factors=[];
+  if(alc<0.5)factors.push(`ALC ${alc} ×10³ – jumlah sel T yang tersedia untuk koleksi terbatas`);
+  if(cd3&&cd3<20)factors.push(`CD3+ ${cd3}% – proporsi T-cell sangat rendah dalam leukapheresate`);
+  if(ki>=1)factors.push('Kemoterapi intensif sebelumnya – kemungkinan T-cell exhaustion dan deplesi');
+  if(st>=1)factors.push('Steroid baru dihentikan – efek supresi limfosit masih berlangsung');
+  if(hs>=1)factors.push('Prior HSCT – T-cell repertoire mungkin belum pulih sepenuhnya');
+  if(inf>=1)factors.push('Inflamasi/infeksi aktif – sitokin proinflamasi mengganggu kultur dan ekspansi');
+  if(bd>=1)factors.push('Beban penyakit tinggi – tumor microenvironment dapat menekan fungsi T-cell');
+  if(ps>=1)factors.push('Performance status rendah – korelasi dengan T-cell fitness yang buruk');
+
+  const implications=[];
+  if(risk==='TINGGI'){
+    implications.push('Risiko tinggi manufacturing failure atau cell dose rendah');
+    implications.push('Diskusikan kemungkinan re-apheresis dalam contingency plan');
+    implications.push('Pertimbangkan apakah ada waktu untuk optimalkan kondisi sebelum apheresis');
+    implications.push('Siapkan rencana bridging alternatif bila produk gagal');
+  } else if(risk==='SEDANG'){
+    implications.push('Ada risiko yield suboptimal – pantau update manufacturing');
+    implications.push('Siapkan rencana contingency bila cell dose borderline');
+    implications.push('Komunikasikan risiko ini kepada keluarga');
+  } else {
+    implications.push('Starting material diprediksi adequate untuk manufacturing standard');
+    implications.push('Pantau update IPC secara rutin dari tim manufacturing');
+  }
+
+  const mfgQ=['Apakah program ini memiliki cut-off minimum ALC/CD3 untuk lanjut ke manufacturing?','Apa yang dilakukan bila yield koleksi di bawah target minimum?','Apakah ada protokol untuk "high-risk" starting material di program ini?','Berapa estimasi waktu konfirmasi awal dari tim processing?'];
+
+  show('sm-out',`
+    <div class="card">
+      <div class="flex ic gap8 mb8">
+        <span class="badge ${rcls}" style="font-size:15px;padding:6px 20px">Risiko ${risk}</span>
+        <span class="text-xs muted">Skor edukatif: ${score}</span>
+      </div>
+      <div class="pbar mb12"><div class="pbar-fill" style="width:${Math.min(score*8,100)}%;background:var(--${rcls.replace('badge-','')})"></div></div>
+      ${factors.length?rb('⚠️ Faktor Risiko Utama',factors,'cl-warn'):''}
+      ${rb('📌 Implikasi untuk Klinisi',implications,risk==='TINGGI'?'cl-stop':risk==='SEDANG'?'cl-warn':'')}
+      ${rb('❓ Pertanyaan untuk Tim Manufacturing',mfgQ,'cl-q')}
+      ${alertBox('alert-info','Interpretasi ini bersifat klinis-edukatif. Penilaian teknis starting material dilakukan oleh tim cell processing.')}
+    </div>`);
+  saveLS();
+}
+
+// ============================================================
+// 5. BRIDGING STRATEGY
+// ============================================================
+function evalBridge(){
+  const bd=iv('br-bd'),tp=iv('br-tp'),bm=iv('br-bm');
+  const inf=iv('br-inf'),lt=iv('br-lt');
+  const mfg=parseInt(v('br-mfg'))||21;
+
+  let strategy,stratCls,rationale;
+  const total=bd+tp;
+
+  if(total===0&&inf===0&&bm===0){
+    strategy='Watchful Waiting / Tanpa Bridging';stratCls='badge-teal';
+    rationale='Disease burden rendah dan stabil. Observasi ketat selama manufacturing window. Risiko bridging mungkin melebihi manfaatnya.';
+  } else if(total<=1&&bm<=1&&lt>=1){
+    strategy='Bridging Minimal – Kortikosteroid Dosis Rendah';stratCls='badge-blue';
+    rationale='Kontrol penyakit ringan dengan meminimalkan dampak terhadap T-cell fitness. Steroid dosis rendah mungkin cukup.';
+  } else if(total<=2&&bm<=1){
+    strategy='Low-Intensity Chemotherapy (mis. VP-16 oral, TKI bila relevan)';stratCls='badge-blue';
+    rationale='Kontrol penyakit sedang dengan preservasi marrow reserve. Hindari agen sangat mielotoksik.';
+  } else if(total===2&&lt<=1){
+    strategy='Imunoterapi / Targeted Therapy (mis. blinatumomab, inotuzumab bila sesuai)';stratCls='badge-amber';
+    rationale='Kontrol blast yang lebih efektif dengan dampak minimal pada T-cell. Perhatikan wash-out period sebelum CAR-T.';
+  } else {
+    strategy='Kemoterapi Intensif (hanya jika sangat dibutuhkan secara klinis)';stratCls='badge-red';
+    rationale='Diperlukan untuk kontrol penyakit yang agresif. Risiko sitopenia, infeksi, dan T-cell exhaustion tinggi. Optimalkan jarak ke apheresis (≥14 hari).';
+  }
+
+  const warnings=[];
+  if(mfg<14)warnings.push('Estimasi manufacturing <14 hari – window bridging sangat sempit');
+  if(lt>=2)warnings.push('Riwayat kemoterapi sangat intensif – T-cell fitness mungkin sudah terkompromis');
+  if(inf>=2)warnings.push('Risiko infeksi tinggi – kemoterapi bridging dapat memperburuk kondisi infeksi');
+  if(bm>=2)warnings.push('Cadangan sumsum tulang sangat terbatas – hindari kemoterapi mielotoksik berat');
+
+  const MDTq=[
+    'Kapan target apheresis dan berapa lama manufacturing window?',
+    'Apa rencana monitoring respons penyakit selama bridging (BMP, imaging)?',
+    'Apakah ada wash-out requirement untuk bridging yang dipilih sebelum apheresis?',
+    'Bagaimana rencana jika penyakit progresif meskipun bridging?'
+  ];
+
+  show('bridge-out',`
+    <div class="card">
+      <div class="rb">
+        <h4>Rekomendasi Strategi</h4>
+        <span class="badge ${stratCls}" style="font-size:13px;padding:5px 16px">${strategy}</span>
+        <p class="text-sm mt8">${esc(rationale)}</p>
+      </div>
+      ${warnings.length?rb('⚠️ Peringatan Klinis',warnings,'cl-warn'):''}
+      ${rb('❓ Pertanyaan untuk MDT',MDTq,'cl-q')}
+      ${alertBox('alert-amber','Pesan utama: Bridging harus menyeimbangkan kontrol penyakit dan preservasi T-cell fitness. Diskusikan dalam MDT.')}
+    </div>`);
+  saveLS();
+}
+
+// ============================================================
+// 6. MANUFACTURING JOURNEY MAP
+// ============================================================
+const JOURNEY_STEPS=[
+  {n:1,title:'Leukapheresis',sub:'Koleksi starting material',color:'teal',
+   what:'Darah pasien dialirkan melalui apheresis machine. Limfosit (terutama T-cell) dipisahkan dari komponen lain. Leukapheresate ini menjadi starting material.',
+   why:'Kualitas dan kuantitas T-cell yang dikumpulkan di sini menentukan keseluruhan proses manufacturing. Tidak ada kompensasi untuk starting material yang buruk.',
+   ask:['Berapa yield T-cell yang diperoleh?','Apakah viabilitas awal acceptable?','Apakah ada catatan khusus dari prosedur apheresis?'],
+   red:['ALC pre-apheresis sangat rendah','Prosedur apheresis bermasalah','Waktu pemrosesan awal terlambat'],
+   mdt:['Apakah ada rencana re-apheresis bila yield pertama tidak cukup?']},
+  {n:2,title:'Starting Material Assessment',sub:'Evaluasi awal oleh tim processing',color:'blue',
+   what:'Tim cell processing menilai kualitas leukapheresate: jumlah sel, viabilitas, proporsi T-cell, dan kondisi umum.',
+   why:'Dokter perlu mengetahui apakah starting material diterima (accept) atau ada catatan risiko yang mempengaruhi ekspektasi produk akhir.',
+   ask:['Apakah starting material accept atau ada catatan risiko?','Berapa % CD3+ dalam leukapheresate?','Apakah viabilitas awal ≥70%?'],
+   red:['Starting material rejected','Viabilitas awal <70%','CD3 sangat rendah'],
+   mdt:['Apakah perlu mengubah target cell dose berdasarkan starting material?']},
+  {n:3,title:'T-Cell Selection / Enrichment',sub:'Isolasi populasi sel target',color:'teal',
+   what:'T-cell (CD4+ dan CD8+) diisolasi dari leukapheresate menggunakan sistem seleksi berbasis platform tertutup. Tujuannya memperkaya populasi T-cell sebelum modifikasi.',
+   why:'Efisiensi seleksi menentukan berapa banyak sel yang tersedia untuk transduction dan ekspansi. Bila CD3 sangat rendah, recovery setelah seleksi bisa sangat terbatas.',
+   ask:['Berapa recovery T-cell setelah seleksi?','Apakah ada catatan IPC pada tahap ini?'],
+   red:['Recovery T-cell <30%','Kontaminasi non-T-cell dominan'],
+   mdt:['Apakah ada protocol adjustment untuk pasien low-CD3?']},
+  {n:4,title:'T-Cell Activation',sub:'Persiapan sel untuk modifikasi',color:'amber',
+   what:'T-cell diaktivasi untuk memasuki siklus proliferasi agar siap menerima transgene. Proses ini menggunakan stimuli yang mengaktifkan reseptor T-cell.',
+   why:'Aktivasi yang inadequate menurunkan efisiensi transduction. T-cell exhausted (dari pasien heavily pretreated) bisa merespons aktivasi dengan buruk.',
+   ask:['Apakah ada catatan tentang respons aktivasi?','Apakah viabilitas pasca aktivasi stable?'],
+   red:['Sel tidak merespons aktivasi','Viabilitas turun drastis pasca aktivasi'],
+   mdt:['Apakah T-cell exhaustion mungkin berperan?']},
+  {n:5,title:'Genetic Modification / Transduction',sub:'Insersi gen CAR ke T-cell',color:'blue',
+   what:'Gen yang mengkode reseptor CAR dimasukkan ke dalam T-cell, menjadikan sel ini mampu mengenali antigen target (CD19). Proses menggunakan viral vector atau metode lain.',
+   why:'Efisiensi transduction menentukan persentase sel yang akhirnya mengekspresikan CAR. Ini adalah langkah yang secara teknis paling kritis dalam manufacturing.',
+   ask:['Bagaimana efisiensi transduction (% CAR expression)?','Apakah ada catatan tentang kualitas vector?'],
+   red:['CAR expression sangat rendah (<15%)','Kontaminasi pada tahap ini'],
+   mdt:['Apakah target CAR expression masih dalam rentang yang diharapkan?']},
+  {n:6,title:'Expansion',sub:'Perbanyakan sel CAR-T',color:'teal',
+   what:'Sel CAR-T diekspansi dalam kultur untuk mencapai jumlah target (cell dose). Ini berlangsung beberapa hari dalam kondisi terkontrol.',
+   why:'Ekspansi yang tidak cukup berarti cell dose akhir mungkin di bawah target. Ekspansi berlebihan dapat mempengaruhi phenotype sel dan potensi in-vivo.',
+   ask:['Apakah ekspansi berjalan sesuai target?','Apakah ada update kurva pertumbuhan?'],
+   red:['Ekspansi sangat lambat','Kontaminasi selama kultur','Sel tidak ekspansi'],
+   mdt:['Apakah ada kemungkinan menunda infusion bila ekspansi belum cukup?']},
+  {n:7,title:'Harvest & Formulation',sub:'Pemanenan dan formulasi produk akhir',color:'amber',
+   what:'Sel dipanen, dihitung, diformulasi dalam larutan yang sesuai, diisi ke kantong infusion, dan bila kriopreservasi maka diproses untuk penyimpanan.',
+   why:'Cell count pasca harvest menentukan dose final. Dokter perlu tahu cell dose yang tersedia sebelum bisa merencanakan infusion.',
+   ask:['Berapa cell dose final yang berhasil dipanen?','Apakah sesuai target atau borderline?'],
+   red:['Cell dose jauh di bawah target','Kesalahan formulasi'],
+   mdt:['Apakah cell dose cukup untuk memberikan respons yang diharapkan pada pasien ini?']},
+  {n:8,title:'In-Process Control (IPC)',sub:'Pemantauan kualitas selama proses',color:'blue',
+   what:'Selama manufacturing, dilakukan pengukuran berkala pada titik-titik kritis: viabilitas, jumlah sel, CAR expression interim, dan parameter proses.',
+   why:'IPC yang gagal adalah tanda peringatan dini masalah manufaktur. Hasil IPC bisa mengindikasikan apakah proses perlu dilanjutkan, disesuaikan, atau dihentikan.',
+   ask:['Apakah semua IPC checkpoint terpenuhi?','Apakah ada OOT (out-of-trend)?'],
+   red:['IPC viabilitas turun progresif','IPC CAR expression sangat rendah di mid-process'],
+   mdt:['Apakah ada update IPC yang perlu disampaikan ke tim klinis?']},
+  {n:9,title:'QC / Release Testing',sub:'Pengujian kualitas produk final',color:'teal',
+   what:'Produk final diuji untuk semua parameter release: viabilitas, identitas, purity, CAR expression, potency, sterility, endotoxin, mycoplasma, dan lainnya.',
+   why:'Semua release criteria harus terpenuhi sebelum produk boleh diinfusikan. Klinisi harus memahami setiap parameter dan implikasi klinisnya.',
+   ask:['Kapan semua hasil QC tersedia?','Apakah ada parameter yang masih pending?','Apakah CoA sudah diterbitkan?'],
+   red:['Sterility positif','Endotoxin fail','Identity fail','Mycoplasma positif','CoA tidak tersedia'],
+   mdt:['JANGAN mulai lymphodepletion sebelum QC status jelas dan CoA tersedia.']},
+  {n:10,title:'Product Handover',sub:'Serah terima ke tim klinis',color:'amber',
+   what:'Produk released diserahkan dari tim manufacturing ke tim klinis dengan dokumentasi lengkap: CoA, label produk, chain-of-identity verification, kondisi transport.',
+   why:'Ini adalah momen kritis chain-of-identity. Satu kesalahan di sini bisa berarti salah pasien – sentinel event yang tidak boleh terjadi.',
+   ask:['Apakah label produk sesuai dengan identitas pasien?','Apakah handover form ditandatangani?','Apakah kondisi transport sesuai spesifikasi?'],
+   red:['Label tidak cocok dengan pasien','Handover form tidak lengkap','Temperature log menunjukkan excursion'],
+   mdt:['Verifikasi double-check wajib dilakukan oleh dua petugas berbeda.']},
+  {n:11,title:'Lymphodepletion',sub:'Kondisioning pra-infusion (H-5 s/d H-1)',color:'blue',
+   what:'Kemoterapi kondisioning (biasanya Fludarabin-Siklofosfamid atau sejenisnya) diberikan untuk mengurangi limfosit endogen, meningkatkan sitokin homeostasis (IL-7, IL-15), dan menciptakan "ruang" bagi sel CAR-T.',
+   why:'LD meningkatkan peluang ekspansi in-vivo CAR-T yang signifikan. PENTING: LD tidak boleh dimulai sebelum produk released dan CoA tersedia.',
+   ask:['Apakah produk sudah released sebelum LD dimulai?','Apakah fungsi ginjal cukup untuk regimen LD?'],
+   red:['LD dimulai sebelum produk released','Infeksi aktif saat LD','Fungsi organ tidak adekuat untuk LD'],
+   mdt:['Kapan window infusion setelah selesai LD? Apakah timing produk sesuai?']},
+  {n:12,title:'CAR-T Infusion (Day 0)',sub:'Pemberian produk ke pasien',color:'teal',
+   what:'Produk CAR-T diinfusikan intravena setelah verifikasi identitas final dan thawing (bila kriopreservasi). Pasien dipantau ketat untuk reaksi awal dan gejala CRS/ICANS.',
+   why:'Monitoring intensif diperlukan sejak menit pertama infusion. Tim harus siap dengan protokol manajemen CRS grade 1–4 dan ICANS.',
+   ask:['Apakah semua checklist infusion day sudah terpenuhi?','Apakah tocilizumab tersedia minimal 2 dosis?'],
+   red:['Demam saat infusion dimulai','Produk identitas belum terverifikasi','Tocilizumab tidak tersedia'],
+   mdt:['Siapa yang on-call untuk eskalasi CRS/ICANS pada hari 0–14?']},
+  {n:13,title:'In-Vivo Expansion & Toxicity Monitoring',sub:'H+1 sampai H+30+',color:'blue',
+   what:'Setelah infusion, sel CAR-T berekspansi in-vivo. Puncak ekspansi biasanya H+7 sampai H+14. Pemantauan ketat untuk CRS, ICANS, dan toksisitas lain diperlukan.',
+   why:'Periode ini adalah yang paling berbahaya. CRS grade 3–4 dan ICANS grade 3–4 dapat mengancam jiwa dan memerlukan eskalasi ke ICU/PICU.',
+   ask:['Apakah ada monitoring protokol CRS/ICANS yang terstandarisasi?','Kapan re-assessment respons tumor direncanakan?'],
+   red:['Demam tinggi persisten (≥38.5°C >3 hari)','Hipotensi yang membutuhkan vasopresor','Perubahan kesadaran / seizure','Ferritin sangat tinggi (>>10.000)'],
+   mdt:['Siapkan escalation pathway: kapan hubungi PICU, kapan mulai tocilizumab, kapan steroid.']}
+];
+
+function buildJourney(){
+  const el=document.getElementById('journey-wrap');
+  el.innerHTML=JOURNEY_STEPS.map((s,i)=>`
+    <div class="tl-item" id="tl-${s.n}" onclick="toggleTL(${s.n})">
+      <div class="tl-spine">
+        <div class="tl-dot" style="border-color:var(--${s.color})">${s.n}</div>
+        ${i<JOURNEY_STEPS.length-1?'<div class="tl-line"></div>':''}
+      </div>
+      <div class="tl-body">
+        <div class="tl-head">
+          <span>${s.title}</span>
+          <span class="badge badge-${s.color==='amber'?'amber':s.color==='blue'?'blue':'teal'} text-xs">${s.sub}</span>
+        </div>
+        <div class="tl-detail" id="tld-${s.n}">
+          <div class="card mt4">
+            <div class="tabs" id="tabs-${s.n}">
+              <button class="tab active" onclick="tlTab(event,${s.n},'w')">Apa yang terjadi?</button>
+              <button class="tab" onclick="tlTab(event,${s.n},'y')">Mengapa penting?</button>
+              <button class="tab" onclick="tlTab(event,${s.n},'a')">Pertanyaan ke manufacturing</button>
+              <button class="tab" onclick="tlTab(event,${s.n},'r')">Red Flags</button>
+            </div>
+            <div id="tlt-${s.n}-w" class="text-sm">${esc(s.what)}</div>
+            <div id="tlt-${s.n}-y" class="text-sm" style="display:none">${esc(s.why)}</div>
+            <div id="tlt-${s.n}-a" style="display:none"><ul class="cl cl-q">${s.ask.map(q=>`<li>${esc(q)}</li>`).join('')}</ul><ul class="cl cl-q mt4">${s.mdt.map(q=>`<li><strong>MDT:</strong> ${esc(q)}</li>`).join('')}</ul></div>
+            <div id="tlt-${s.n}-r" style="display:none"><ul class="cl cl-stop">${s.red.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleTL(n){
+  const el=document.getElementById('tl-'+n);
+  const det=document.getElementById('tld-'+n);
+  el.classList.toggle('open');
+  det.style.display=el.classList.contains('open')?'block':'none';
+}
+
+function tlTab(e,n,t){
+  e.stopPropagation();
+  ['w','y','a','r'].forEach(k=>{document.getElementById(`tlt-${n}-${k}`).style.display=k===t?'block':'none'});
+  document.querySelectorAll(`#tabs-${n} .tab`).forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+}
+
+// ============================================================
+// 7. MANUFACTURING UPDATE INTERPRETER
+// ============================================================
+const UPD_DATA={
+  ok:{title:'Culture Progressing Well',cls:'tl-go',
+    meaning:'Proses manufacturing berjalan sesuai rencana. Ekspansi sel terjadi sesuai timeline.',
+    bridge:'Tidak ada perubahan strategi bridging yang dibutuhkan saat ini.',
+    ld:'Lymphodepletion dapat direncanakan sesuai jadwal semula.',
+    ask:['Kapan estimasi release date?','Apakah semua QC testing sudah dijadwalkan?'],
+    mdt:false},
+  slow:{title:'Expansion Slow / Below Expected',cls:'tl-caution',
+    meaning:'Sel CAR-T berekspansi lebih lambat dari biasanya. Ini bisa karena T-cell exhaustion, kondisi kultur, atau faktor starting material.',
+    bridge:'Pertimbangkan apakah bridging therapy perlu diperpanjang untuk mengontrol penyakit lebih lama.',
+    ld:'Tunda keputusan lymphodepletion. Tunggu konfirmasi apakah proses dapat dilanjutkan dan kapan estimasi harvest.',
+    ask:['Apakah ekspansi masih dalam batas acceptable?','Berapa estimasi cell dose final bila tren ini berlanjut?','Apakah ada intervensi proses yang bisa dilakukan?'],
+    mdt:true},
+  lowcount:{title:'Low Viable Cell Count Mid-Process',cls:'tl-caution',
+    meaning:'Jumlah sel hidup di tengah proses lebih rendah dari target. Risiko cell dose rendah di produk akhir.',
+    bridge:'Kemungkinan perlu perpanjangan bridging. Diskusikan dengan tim manufacturing timeline baru.',
+    ld:'JANGAN memulai LD sampai ada kepastian produk akan mencapai minimum dose.',
+    ask:['Apakah masih ada waktu untuk recovery?','Berapa minimum cell dose yang bisa diharapkan?'],
+    mdt:true},
+  trans:{title:'Transduction Borderline',cls:'tl-caution',
+    meaning:'Persentase sel yang berhasil mengekspresikan CAR berada di batas bawah spesifikasi. Implikasi terhadap efikasi produk perlu dikaji.',
+    bridge:'Tidak ada perubahan bridging untuk saat ini. Tunggu hasil QC final CAR expression.',
+    ld:'Tunda keputusan LD sampai CAR expression dikonfirmasi dalam release testing.',
+    ask:['Berapa % CAR expression yang diperkirakan di produk akhir?','Apakah masih dalam batas release criteria?'],
+    mdt:true},
+  sterp:{title:'Sterility Pending (Final)',cls:'tl-caution',
+    meaning:'Hasil sterility final masih dalam inkubasi. Produk secara teknis belum bisa di-release hingga hasil negatif diperoleh.',
+    bridge:'Tidak ada perubahan bridging. Namun hati-hati dalam merencanakan LD.',
+    ld:'JANGAN memulai LD sampai sterility final NEGATIF dikonfirmasi. Ini adalah hard stop.',
+    ask:['Kapan hasil sterility final tersedia?','Apakah ada hasil interim yang bisa menjadi dasar conditional release per protokol?'],
+    mdt:true},
+  contam:{title:'Contamination Concern',cls:'tl-stop',
+    meaning:'Ada indikasi kontaminasi pada proses manufacturing. Ini bisa berarti batch perlu dihentikan dan diinvestigasi.',
+    bridge:'Siapkan kemungkinan perpanjangan signifikan bridging therapy. Diskusikan eskalasi bila penyakit progresif.',
+    ld:'JANGAN memulai LD. Tunggu investigasi QA dan keputusan lanjut.',
+    ask:['Apa sumber kontaminasi yang dicurigai?','Apakah batch dapat diselamatkan atau harus dihentikan?','Apakah ada kemungkinan re-apheresis?'],
+    mdt:true},
+  delay:{title:'Product Delayed',cls:'tl-caution',
+    meaning:'Jadwal release produk mundur dari rencana semula. Ini mempengaruhi seluruh timeline infusion.',
+    bridge:'Review apakah bridging therapy perlu diperpanjang atau disesuaikan.',
+    ld:'Tunda jadwal LD sesuai dengan jadwal produk yang baru.',
+    ask:['Berapa lama perkiraan delay?','Apa penyebab delay?','Apakah ada revisi timeline yang bisa diberikan?'],
+    mdt:true},
+  fail:{title:'Manufacturing Failure',cls:'tl-stop',
+    meaning:'Produk tidak berhasil dimanufaktur atau tidak memenuhi release criteria. Pasien tidak mendapatkan produk dari batch ini.',
+    bridge:'Siapkan strategi bridging jangka panjang untuk mengontrol penyakit. Diskusikan opsi terapi alternatif.',
+    ld:'TIDAK ADA indikasi LD karena tidak ada produk untuk diinfusikan.',
+    ask:['Apakah ada kemungkinan re-apheresis?','Apa akar penyebab failure?','Apakah ada program lain atau clinical trial yang bisa dipertimbangkan?'],
+    mdt:true}
+};
+
+function evalUpdate(){
+  const key=v('upd-sel');
+  if(!key)return;
+  const d=UPD_DATA[key];
+  show('upd-out',`
+    <div class="card">
+      <div class="traffic ${d.cls}">${esc(d.title)}</div>
+      <div class="rb"><h4>Makna Klinis</h4><p class="text-sm">${esc(d.meaning)}</p></div>
+      <div class="panel-row">
+        <div class="rb"><h4>Implikasi terhadap Bridging</h4><p class="text-sm">${esc(d.bridge)}</p></div>
+        <div class="rb"><h4>Implikasi terhadap Lymphodepletion</h4><p class="text-sm ${d.cls==='tl-stop'?'':''}"><strong>${esc(d.ld)}</strong></p></div>
+      </div>
+      ${rb('❓ Pertanyaan untuk Tim Manufacturing',d.ask,'cl-q')}
+      ${d.mdt?alertBox('alert-warn','MDT Discussion Diperlukan – Update ini mempengaruhi timeline klinis dan strategi manajemen pasien.'):''}
+    </div>`);
+}
+
+// ============================================================
+// 8. QC & RELEASE
+// ============================================================
+function evalQC(){
+  const dose=iv('q-dose'),viab=iv('q-viab'),id=iv('q-id');
+  const pur=iv('q-pur'),car=iv('q-car'),ster=iv('q-ster');
+  const endo=iv('q-endo'),myco=iv('q-myco'),pot=iv('q-pot');
+  const coa=iv('q-coa'),rel=iv('q-rel'),id2=iv('q-id2');
+
+  const stops=[],warnings=[],passes=[],qs=[];
+  let critical=false;
+
+  function chk(val,name,failTxt,borderTxt,passTxt){
+    if(val===0){stops.push(`${name}: ${failTxt}`);critical=true;}
+    else if(val===1)warnings.push(`${name}: ${borderTxt}`);
+    else if(val===2)passes.push(`${name}: ${passTxt}`);
+    else warnings.push(`${name}: Tidak diketahui – konfirmasi ke QA/QC`);
+  }
+
+  chk(dose,'Cell Dose','LOW – di bawah minimum, diskusi OOS diperlukan','Borderline (80–99%) – diskusi risk-benefit','Adequate (target tercapai)');
+  chk(viab,'Viabilitas','FAIL (<60%) – efikasi sangat diragukan','Borderline (60–70%) – perlu diskusi conditional release','PASS (≥70%)');
+
+  if(id===0){stops.push('Identity: FAIL – produk tidak terverifikasi sebagai T-cell/CAR+ STOP');critical=true;}
+  else if(id===2)passes.push('Identity: PASS');
+
+  chk(pur,'Purity','FAIL – proporsi sel target di bawah spesifikasi','Borderline – implikasi klinis perlu dikaji','PASS');
+  chk(car,'CAR Expression','FAIL/VERY LOW – efikasi sangat dipertanyakan','Borderline – diskusi OOS','PASS – ekspresi memadai');
+
+  if(ster===0){stops.push('Sterility: POSITIF – KONTAMINASI. Infusion TIDAK BOLEH dilakukan. Investigasi segera.');critical=true;}
+  else if(ster===1)warnings.push('Sterility: Preliminary pending – tunggu hasil final sebelum keputusan infusion/LD');
+  else if(ster===2)passes.push('Sterility: Final NEGATIF');
+
+  if(endo===0){stops.push('Endotoxin: FAIL – risiko sepsis/syok bila diinfusikan. STOP.');critical=true;}
+  else if(endo===2)passes.push('Endotoxin: PASS');
+
+  if(myco===0){stops.push('Mycoplasma: POSITIF – infusion TIDAK BOLEH dilakukan.');critical=true;}
+  else if(myco===1)warnings.push('Mycoplasma: Pending – tunggu hasil sebelum keputusan infusion');
+  else if(myco===2)passes.push('Mycoplasma: PASS');
+
+  chk(pot,'Potency','FAIL – aktivitas fungsional tidak terkonfirmasi','Borderline – diskusi OOS','PASS – aktivitas fungsional terkonfirmasi');
+
+  if(coa===0){stops.push('CoA: TIDAK TERSEDIA – infusion dan LD TIDAK BOLEH dilakukan tanpa CoA.');critical=true;}
+  else if(coa===1)warnings.push('CoA: Pending – JANGAN mulai LD sebelum CoA tersedia');
+  else passes.push('CoA: Tersedia dan lengkap');
+
+  if(rel===0){stops.push('Release Status: NOT RELEASED – produk belum disetujui QA untuk diinfusikan.');critical=true;}
+  else if(rel===1)warnings.push('Release Status: Conditional – ada parameter yang perlu dikonfirmasi');
+  else passes.push('Release Status: Fully Released by QA');
+
+  if(id2===0){stops.push('Verifikasi identitas produk-pasien: BELUM/ADA DISCREPANCY – HARD STOP. Investigasi chain-of-identity.');critical=true;}
+  else passes.push('Identitas produk-pasien: Terverifikasi');
+
+  qs.push('Apakah semua parameter release sudah dikonfirmasi oleh QA?','Apakah ada parameter yang masih pending dan kapan hasilnya?','Apakah CoA sudah diterbitkan dan diterima?');
+  if(warnings.length)qs.push('Untuk parameter borderline: apakah ada precedent conditional release di protokol program ini?');
+
+  const overall=critical?'tl-stop':warnings.length?'tl-caution':'tl-go';
+  const overlabel=critical?'⛔ DO NOT INFUSE – Ada Parameter Kritis yang Gagal':warnings.length?'⚠️ Conditional – Diskusi QA/QC & MDT Diperlukan':'✅ Semua Parameter Pass – Fully Released';
+
+  show('qc-out',`
+    <div class="card">
+      <div class="traffic ${overall}">${overlabel}</div>
+      ${stops.length?rb('🔴 Parameter Kritis / Hard Stop',stops,'cl-stop'):''}
+      ${warnings.length?rb('🟡 Parameter Borderline / Pending',warnings,'cl-warn'):''}
+      ${passes.length?rb('🟢 Parameter Pass',passes):''}
+      ${rb('❓ Pertanyaan untuk QA/QC & Tim Manufacturing',qs,'cl-q')}
+      ${alertBox('alert-info','Final release decision follows QA/QC and regulatory pathway. Interpretasi ini bersifat klinis-edukatif.')}
+    </div>`);
+  saveLS();
+}
+
+// ============================================================
+// 9. LYMPHODEPLETION GATE
+// ============================================================
+function evalLympho(){
+  const rel=iv('l-rel'),coa=iv('l-coa'),inf_c=iv('l-inf');
+  const infx=iv('l-infx'),ds=iv('l-ds'),ren=iv('l-ren'),hep=iv('l-hep');
+  const bed=iv('l-bed'),icu=iv('l-icu'),toci=iv('l-toci');
+  const ster=iv('l-ster'),ae=iv('l-ae'),tim=iv('l-tim'),coi=iv('l-coi');
+
+  const hardstop=[],cautions=[],oks=[];
+
+  if(rel===0)hardstop.push('Produk belum released – JANGAN MULAI LD');
+  else if(rel===1)cautions.push('QC masih partially pending – parameter kritis harus dikonfirmasi sebelum LD hari pertama');
+  else oks.push('Produk fully released');
+
+  if(coa===0)hardstop.push('CoA tidak tersedia – JANGAN MULAI LD');
+  else oks.push('CoA tersedia');
+
+  if(inf_c===0)cautions.push('Tanggal infusion belum dikonfirmasi – pastikan window pasca LD sesuai dengan ketersediaan produk');
+  else oks.push('Tanggal infusion dikonfirmasi');
+
+  if(infx===0)hardstop.push('Infeksi aktif tidak terkontrol – tunda LD hingga infeksi diatasi');
+  else if(infx===1)cautions.push('Ada infeksi terkontrol – monitor ketat selama LD');
+  else oks.push('Tidak ada infeksi aktif');
+
+  if(ren===0)hardstop.push('Gagal ginjal – LD tidak aman tanpa konsultasi nefrologis dan dosis-adjustment');
+  else if(ren===1)cautions.push('Fungsi ginjal terganggu – pertimbangkan dose reduction regimen LD');
+  else oks.push('Fungsi ginjal adequate');
+
+  if(hep===0)hardstop.push('Gagal hati – LD tidak aman');
+  else oks.push('Fungsi hati adequate');
+
+  if(bed===0)hardstop.push('Bed rawat inap tidak tersedia – tunda LD');
+  else oks.push('Bed tersedia');
+
+  if(toci===0)hardstop.push('Tocilizumab tidak tersedia – WAJIB ada sebelum memulai LD');
+  else if(toci===1)cautions.push('Hanya 1 dosis tocilizumab – idealnya ≥2 dosis tersedia');
+  else oks.push('Tocilizumab ≥2 dosis tersedia');
+
+  if(icu===0)hardstop.push('ICU/PICU backup tidak siap – tidak aman memulai CAR-T pathway');
+  else if(icu===1)cautions.push('ICU/PICU perlu koordinasi tambahan – selesaikan sebelum infusion');
+  else oks.push('ICU/PICU backup siap');
+
+  if(ster===0)cautions.push('Steroid rescue belum tersedia – siapkan segera');
+  else oks.push('Steroid rescue siap');
+
+  if(ae===0)cautions.push('Seizure rescue/antiepilepsi belum siap – siapkan sebelum infusion');
+  else oks.push('Seizure rescue siap');
+
+  if(tim===0)hardstop.push('Tim CAR-T terlatih tidak siap – infusion tidak aman dilakukan');
+  else if(tim===1)cautions.push('Tim tidak lengkap – pastikan semua anggota terlatih hadir saat infusion');
+  else oks.push('Tim terlatih lengkap');
+
+  if(coi===0)hardstop.push('Chain-of-identity belum diverifikasi – HARD STOP');
+  else oks.push('Chain-of-identity terverifikasi');
+
+  const status=hardstop.length?'tl-stop':cautions.length?'tl-caution':'tl-go';
+  const label=hardstop.length?'⛔ STOP – Jangan Mulai Lymphodepletion':cautions.length?'⚠️ CONDITIONAL – Review Item Berikut Sebelum Memulai LD':'✅ GO – Lymphodepletion Dapat Dimulai';
+
+  STATE.lympho={status:hardstop.length?'STOP':cautions.length?'CAUTION':'GO',hardstop,cautions,oks};
+
+  show('lympho-out',`
+    <div class="card">
+      <div class="traffic ${status}">${label}</div>
+      ${hardstop.length?rb('🔴 Hard Stop – Harus Diselesaikan Sebelum LD',hardstop,'cl-stop'):''}
+      ${cautions.length?rb('🟡 Perlu Review / Optimisasi',cautions,'cl-warn'):''}
+      ${oks.length?rb('🟢 Sudah Terpenuhi',oks):''}
+      ${alertBox('alert-danger','PERINGATAN: Jangan pernah memulai lymphodepletion sebelum produk released dan CoA tersedia. Bila LD sudah dimulai dan produk gagal dirilis, pasien berada dalam kondisi imunosupresi berat tanpa terapi definitif.')}
+    </div>`);
+  saveLS();
+}
+
+// ============================================================
+// 10. INFUSION DAY
+// ============================================================
+function buildInfday(){
+  const items=[
+    {g:'Identitas Pasien & Produk',items:['Identitas pasien diverifikasi dengan 2 identifier (nama lengkap + tanggal lahir / MRN)','Label produk dicocokkan dengan bracelet pasien – dilakukan 2 petugas berbeda','Barcode produk berhasil di-scan dan match di sistem','Chain-of-identity diverifikasi dan didokumentasikan','Chain-of-custody handover form ditandatangani']},
+    {g:'Kondisi Produk',items:['Kondisi kantong produk diperiksa (tidak bocor, tidak rusak)','Warna dan kejernihan produk diperiksa','Temperature log transport dikonfirmasi dalam spesifikasi','Tanggal kadaluarsa produk dikonfirmasi','CoA tersedia dan sesuai']},
+    {g:'Kesiapan Obat Emergency',items:['Tocilizumab ≥2 dosis tersedia di unit','Deksametason / metilprednisolon siap','Antiepilepsi (mis. levetiracetam) siap','Antihistamin dan antipiretik disiapkan','Epinefrin dan obat anafilaksis siap']},
+    {g:'Kesiapan Unit & Tim',items:['Monitor vital sign terpasang','Oksigen dan suction tersedia','Akses IV berfungsi dan dikonfirmasi','Tim CAR-T semua hadir (dokter, perawat terlatih)','Jalur eskalasi ke ICU/PICU dikonfirmasi','CRS/ICANS monitoring sheet siap diisi']},
+    {g:'Baseline Klinis',items:['Neurologic baseline assessment terdokumentasi (ICANS CARTOX-10 atau sejenisnya)','Tanda vital baseline dicatat','Suhu baseline dicatat (bila demam → evaluasi dulu)','Informed consent infusion CAR-T sudah diperoleh dan tersimpan']}
+  ];
+
+  let html=`<div class="card"><h3 style="color:var(--teal);margin-bottom:12px">✅ Infusion Day Readiness Checklist</h3>`;
+  items.forEach(g=>{
+    html+=`<div class="rb mb8"><h4>${esc(g.g)}</h4><ul class="cl">${g.items.map(it=>`<li><label style="cursor:pointer;display:flex;gap:8px;align-items:flex-start"><input type="checkbox" style="width:auto;margin-top:2px" onchange="updateInfScore()"> <span>${esc(it)}</span></label></li>`).join('')}</ul></div>`;
+  });
+  html+=`<div id="inf-score" class="alert alert-info mt8">✓ Tandai setiap item yang sudah terpenuhi</div>`;
+  html+=`</div>`;
+  document.getElementById('infday-content').innerHTML=html;
+}
+
+function updateInfScore(){
+  const total=document.querySelectorAll('#infday-content input[type=checkbox]').length;
+  const checked=document.querySelectorAll('#infday-content input[type=checkbox]:checked').length;
+  const pct=Math.round(checked/total*100);
+  const cls=pct===100?'alert-success':pct>=80?'alert-warn':'alert-danger';
+  const label=pct===100?'✅ READY – Semua item terpenuhi':pct>=80?`⚠️ ${checked}/${total} item – Selesaikan sisa item sebelum infusion`:`⛔ ${checked}/${total} item – Belum siap untuk infusion`;
+  const el=document.getElementById('inf-score');
+  if(el){el.className=`alert ${cls} mt8`;el.textContent=label;}
+}
+
+// ============================================================
+// 11. TOXICITY ANTICIPATION
+// ============================================================
+function evalTox(){
+  const bd=iv('t-bd'),inf=iv('t-inf'),cns=iv('t-cns'),neuro=iv('t-neuro');
+  const crsRisk=bd>=2?'Tinggi':bd>=1?'Sedang':'Rendah-Sedang';
+  const icansRisk=cns>=1||neuro>=1?'Meningkat':bd>=2?'Sedang':'Rendah';
+
+  const monitoring=[];
+  if(bd>=2){monitoring.push('Monitoring vital sign setiap 2–4 jam H0–H7');monitoring.push('Ferritin, CRP, IL-6 setiap hari selama puncak ekspansi (H5–H14)');}
+  else{monitoring.push('Monitoring vital sign setiap 4–8 jam H0–H7');monitoring.push('Ferritin, CRP setiap 2–3 hari');}
+  monitoring.push('CBC, LFT, RFT setiap hari H0–H7');
+  monitoring.push('Neurologic assessment harian (ICANS CARTOX-10 atau setara)');
+  if(cns>=1)monitoring.push('EEG baseline dipertimbangkan bila riwayat CNS disease');
+
+  const crsFlag=['Demam ≥38.5°C persisten >24 jam','Hipotensi membutuhkan cairan atau vasopresor','Hipoksia membutuhkan oksigen','Ferritin meningkat cepat (>10.000)'];
+  const icansFlagg=['Kebingungan / disorientasi akut','Dysphasia atau aphasia','Tremor atau myoclonus','Seizure (hard stop – escalate immediately)','Perubahan kesadaran'];
+  const overlap=['Demam pada H3–H14 bisa CRS atau infeksi – perlu evaluasi keduanya','PCT/kultur bila ada kecurigaan infeksi overlapping CRS','Jangan tunda manajemen CRS bila tanda CRS jelas'];
+
+  show('tox-out',`
+    <div class="card">
+      <div class="panel-row mb8">
+        <div class="rb"><h4>Prediksi Risiko CRS</h4><span class="badge badge-${bd>=2?'red':bd>=1?'amber':'teal'}" style="font-size:14px;padding:5px 16px">${esc(crsRisk)}</span><p class="text-xs muted mt4">Terutama dipengaruhi oleh disease burden saat infusion</p></div>
+        <div class="rb"><h4>Prediksi Risiko ICANS</h4><span class="badge badge-${icansRisk==='Meningkat'?'red':icansRisk==='Sedang'?'amber':'teal'}" style="font-size:14px;padding:5px 16px">${esc(icansRisk)}</span><p class="text-xs muted mt4">Meningkat bila ada riwayat CNS disease atau baseline neurotoksisitas</p></div>
+      </div>
+      ${rb('📊 Intensitas Monitoring yang Disarankan',monitoring,'cl-q')}
+      <div class="panel-row">
+        ${rb('🔥 Red Flags CRS – Pertimbangkan Tocilizumab',crsFlag,'cl-stop')}
+        ${rb('🧠 Red Flags ICANS – Eskalasi Segera',icansFlagg,'cl-stop')}
+      </div>
+      ${rb('⚠️ Overlap Infeksi vs CRS – Perhatikan',overlap,'cl-warn')}
+      ${alertBox('alert-info','Gunakan grading ASTCT 2019 untuk CRS dan ICANS. Keputusan intervensi mengikuti protokol lokal dan panduan EBMT/EHA CAR-T.')}
+    </div>`);
+  saveLS();
+}
+
+// ============================================================
+// 12. DEVIATION & OOS
+// ============================================================
+const DEV_DATA={
+  temp:{title:'Temperature Excursion saat Transport',cls:'tl-stop',
+    concern:'Produk mungkin mengalami kerusakan sel akibat suhu di luar spesifikasi. Viabilitas dan potency dapat terpengaruh.',
+    action:['Stop semua proses – jangan thaw atau infusikan produk','Hubungi QA/QC segera','Dokumentasikan excursion log secara lengkap','Tunggu investigasi dan risk assessment QA'],
+    who:['QA/QC Officer (prioritas utama)','Cell processing supervisor','Medical director program'],
+    timeline:true,ld:true,
+    doc:['Temperature excursion log','QA investigation report','CAPA form']},
+  delay:{title:'Product Transport Delay',cls:'tl-caution',
+    concern:'Extended time di luar kondisi optimal dapat mempengaruhi kualitas produk. Perlu evaluasi dampak terhadap viabilitas.',
+    action:['Dokumentasikan total waktu delay dan kondisi selama delay','Hubungi QA untuk evaluasi apakah produk masih acceptable','Revisi timeline infusion bila diperlukan'],
+    who:['QA/QC','Tim logistik','Physician'],
+    timeline:true,ld:false,
+    doc:['Transport log','Time-temperature record','Laporan delay']},
+  label:{title:'Label Discrepancy',cls:'tl-stop',
+    concern:'RISIKO TERTINGGI – kemungkinan salah pasien atau salah produk. Ini adalah potential sentinel event.',
+    action:['STOP semua proses SEGERA','Jangan sentuh atau pindahkan produk','Hubungi QA dan supervisor SEGERA','Investigasi chain-of-identity dari awal'],
+    who:['QA segera','Supervisor manufacturing','Medical director','Kepala tim klinis'],
+    timeline:true,ld:true,
+    doc:['Discrepancy report','Chain-of-identity investigation record']},
+  sterp:{title:'Sterility Preliminary Pending',cls:'tl-caution',
+    concern:'Hasil final sterility belum tersedia. Tidak ada bukti kontaminasi, namun juga belum ada konfirmasi negatif.',
+    action:['Jangan mulai LD sampai sterility final NEGATIF dikonfirmasi','Komunikasikan ke tim klinis bahwa ada delay potensial','Tanyakan timeline hasil final'],
+    who:['QA/QC','Clinical director'],
+    timeline:true,ld:true,
+    doc:['Interim sterility report','Timeline konfirmasi dari QA']},
+  sterpos:{title:'Sterility POSITIF',cls:'tl-stop',
+    concern:'KONTAMINASI DIKONFIRMASI. Infusion TIDAK BOLEH dilakukan dalam kondisi apapun.',
+    action:['STOP – produk tidak dapat diinfusikan','Hubungi QA dan medical director SEGERA','Informasikan ke keluarga pasien dengan hati-hati','Diskusikan opsi terapi alternatif atau re-apheresis'],
+    who:['QA segera','Medical director','Tim klinis','Keluarga pasien (melalui dokter)'],
+    timeline:true,ld:true,
+    doc:['Sterility positive report','QA investigation','CAPA']},
+  viab:{title:'Viabilitas Borderline',cls:'tl-caution',
+    concern:'Viabilitas di bawah spesifikasi ideal. Sel yang tidak viable tidak berkontribusi pada efikasi. Risiko respons suboptimal.',
+    action:['Laporkan ke QA untuk evaluasi conditional release','Diskusikan dalam MDT risk-benefit infusion vs tidak infus','Dokumentasikan keputusan dengan informed consent khusus'],
+    who:['QA','Clinical committee','Medical director'],
+    timeline:false,ld:false,
+    doc:['CoA dengan catatan viabilitas','Risk-benefit documentation','Informed consent tambahan']},
+  dose:{title:'Cell Dose Rendah',cls:'tl-caution',
+    concern:'Dosis di bawah target dikaitkan dengan potensi respons yang lebih rendah dan risiko failure lebih tinggi.',
+    action:['Diskusikan dalam MDT: infus dengan dosis rendah vs tidak infus vs re-apheresis','Pertimbangkan kondisi klinis pasien dan urgensi','Dokumentasikan keputusan'],
+    who:['Clinical committee','QA','Medical director'],
+    timeline:false,ld:false,
+    doc:['Cell count report','OOS discussion documentation','Informed consent']},
+  potency:{title:'Potency Borderline',cls:'tl-caution',
+    concern:'Aktivitas fungsional sel di batas bawah spesifikasi. Kemampuan membunuh sel tumor mungkin suboptimal.',
+    action:['Diskusikan dalam MDT','Pertimbangkan risiko klinis bila tidak ada alternatif terapi','Dokumentasikan proses keputusan'],
+    who:['Clinical committee','QA'],
+    timeline:false,ld:false,
+    doc:['Potency test result','Risk-benefit documentation']},
+  coa:{title:'CoA Tidak Lengkap',cls:'tl-stop',
+    concern:'Certificate of Analysis tidak lengkap berarti produk secara resmi belum di-release. Ini adalah prerequisite absolut untuk infusion.',
+    action:['JANGAN mulai LD atau infusion','Hubungi QA untuk timeline penerbitan CoA','Pastikan semua parameter sudah tersedia'],
+    who:['QA/QC','Manufacturing supervisor'],
+    timeline:true,ld:true,
+    doc:['CoA draft','Checklist parameter yang pending']},
+  idmatch:{title:'Chain-of-Identity Mismatch',cls:'tl-stop',
+    concern:'SENTINEL EVENT POTENTIAL – produk mungkin tidak sesuai dengan pasien. Ini adalah kesalahan yang tidak boleh terjadi.',
+    action:['STOP SEMUA PROSES SEGERA','Jangan infusikan sampai investigasi selesai','Hubungi QA dan semua pihak terkait','Dokumentasikan seluruh kejadian'],
+    who:['QA segera','Supervisor','Medical director','Komite keselamatan pasien'],
+    timeline:true,ld:true,
+    doc:['Chain-of-identity investigation report','Incident report','CAPA']},
+  ldstart:{title:'LD Sudah Dimulai, Produk Belum Released',cls:'tl-stop',
+    concern:'SITUASI KRITIS – pasien dalam kondisi imunosupresi berat tanpa kepastian produk tersedia. Ini adalah kesalahan prosedur serius.',
+    action:['Hubungi medical director dan QA SEGERA','Pastikan upaya maksimal untuk mempercepat release produk','Siapkan rencana manajemen supportif bila produk tidak tersedia','Dokumentasikan seluruh kejadian untuk analisis']
+    ,who:['Medical director (segera)','QA/QC','Keamanan pasien / risk management'],
+    timeline:true,ld:true,
+    doc:['Incident report','Timeline documentation','CAPA formal']}
+};
+
+function evalDev(){
+  const key=v('dev-sel');
+  if(!key)return;
+  const d=DEV_DATA[key];
+  show('dev-out',`
+    <div class="card">
+      <h3 style="margin-bottom:8px">${esc(d.title)}</h3>
+      <div class="traffic ${d.cls}">${d.cls==='tl-stop'?'⛔ Hard Stop – Tindakan Segera Diperlukan':'⚠️ Perlu Eskalasi dan Diskusi'}</div>
+      <div class="rb mb8"><h4>Clinical Concern</h4><p class="text-sm">${esc(d.concern)}</p></div>
+      <div class="panel-row">
+        ${rb('⚡ Immediate Action',d.action,'cl-stop')}
+        ${rb('👥 Siapa yang Harus Dilibatkan',d.who,'cl-q')}
+      </div>
+      <div class="panel-row">
+        <div class="rb"><h4>Dampak terhadap Timeline Pasien</h4><p class="text-sm">${d.timeline?'<strong>Ya</strong> – timeline CAR-T pasien perlu direvisi':'Kemungkinan tidak mempengaruhi timeline secara langsung'}</p></div>
+        <div class="rb"><h4>Apakah LD Harus Ditunda?</h4><p class="text-sm ${d.ld?'':''}"><strong>${d.ld?'YA – TUNDA LD sampai isu selesai':'Belum tentu – evaluasi case-by-case'}</strong></p></div>
+      </div>
+      ${rb('📄 Dokumen yang Diperlukan',d.doc)}
+      ${alertBox('alert-info','Semua deviasi dan OOS harus dikelola sesuai sistem manajemen mutu institusi. Tool ini hanya untuk orientasi klinis-edukatif.')}
+    </div>`);
+}
+
+// ============================================================
+// 13. MDT SUMMARY
+// ============================================================
+function buildMDT(){
+  const diag=esc(v('s-diag')),age=esc(v('s-age')),wt=esc(v('s-wt'));
+  const da=esc(v('s-da')),dl=esc(v('s-dl')),di=esc(v('s-di'));
+  const now=new Date().toLocaleDateString('id-ID',{year:'numeric',month:'long',day:'numeric'});
+
+  const sections=[
+    ['Data Pasien',`Diagnosis: ${diag} | Usia: ${age} tahun | BB: ${wt} kg`],
+    ['Target Timeline',`Apheresis: ${da||'–'} | Lymphodepletion: ${dl||'–'} | Infusion: ${di||'–'}`],
+    ['Catatan untuk MDT','Lengkapi semua modul sebelum mencetak summary ini untuk mendapatkan interpretasi yang komprehensif.'],
+    ['Status Eligibility','→ Lihat modul Eligibility Gate'],
+    ['Apheresis Readiness','→ Lihat modul Apheresis Readiness'],
+    ['Starting Material Risk','→ Lihat modul Starting Material Risk'],
+    ['Bridging Strategy','→ Lihat modul Bridging Strategy'],
+    ['Manufacturing Status','→ Lihat modul Manufacturing Update'],
+    ['QC & Release','→ Lihat modul QC & Release'],
+    ['Lymphodepletion Gate','→ Lihat modul Lymphodepletion Gate'],
+    ['Unresolved Issues','Identifikasi semua item yang masih tertunda dari modul-modul di atas'],
+  ];
+
+  const mdtQ=['Apakah semua pre-CAR-T criteria terpenuhi?','Apakah ada risiko yang belum teratasi?','Apakah keluarga sudah mendapat informasi lengkap?','Keputusan MDT: Proceed / Defer / Perlu informasi tambahan'];
+
+  show('mdt-out',`
+    <div class="card" id="mdt-printable">
+      <div style="border-bottom:2px solid var(--teal);padding-bottom:10px;margin-bottom:14px">
+        <div class="sb-brand" style="font-size:14px">🧬 drAisyi EduCare – CAR-T Clinical Journey Simulator</div>
+        <div class="text-xs muted">CAR-T Clinical-Manufacturing Meeting Summary | ${now}</div>
+        <div class="text-xs muted">Educational interpretation only – Bukan pengganti keputusan klinis atau MDT</div>
+      </div>
+      ${sections.map(([t,c])=>`
+        <div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border2)">
+          <div class="text-xs muted">${t}</div>
+          <div class="text-sm" style="margin-top:2px">${c}</div>
+        </div>`).join('')}
+      ${rb('❓ Pertanyaan Final MDT',mdtQ,'cl-q')}
+      <div style="margin-top:14px;padding-top:10px;border-top:1px solid var(--border2)">
+        <div class="text-xs muted">Keputusan MDT: <span style="font-weight:700">[ ] Proceed &nbsp;&nbsp; [ ] Defer &nbsp;&nbsp; [ ] Perlu informasi tambahan</span></div>
+        <div class="text-xs muted mt4">Tanda tangan koordinator MDT: ____________________________</div>
+      </div>
+      ${alertBox('alert-info','Toolkit ini untuk edukasi dokter hematologi-onkologi anak. Bukan SOP manufacturing, bukan instruksi teknis, bukan pengganti clinical judgment. Keputusan mengikuti protokol lokal, regulasi, dan MDT.')}
+    </div>`);
+}
+
+function copyMDT(){
+  const el=document.getElementById('mdt-out');
+  if(!el)return;
+  const txt=el.innerText;
+  navigator.clipboard.writeText(txt).then(()=>alert('Summary disalin ke clipboard')).catch(()=>alert('Tidak dapat menyalin'));
+}
+
+// ============================================================
+// 14. GLOSARIUM
+// ============================================================
+const GLOS=[
+  {term:'CAR-T',def:'Chimeric Antigen Receptor T-cell. Sel T pasien yang dimodifikasi secara genetik untuk mengekspresikan reseptor yang mengenali antigen spesifik pada sel tumor.',klinis:'Terapi sel hidup – bukan kemoterapi konvensional. Sel yang diinfusikan berekspansi in-vivo dan dapat persisten jangka panjang.',q:'Antigen apa yang menjadi target CAR-T untuk pasien ini? Bagaimana rencana bila terjadi antigen loss?'},
+  {term:'Leukapheresis',def:'Prosedur pemisahan leukosit dari darah menggunakan mesin apheresis. Produknya disebut leukapheresate – ini adalah starting material CAR-T.',klinis:'Kualitas dan kuantitas leukapheresate menentukan seluruh proses manufacturing. ALC dan CD3 sebelum apheresis adalah prediktor utama.',q:'Berapa ALC minimum yang diterima program ini untuk lanjut ke manufacturing? Apakah ada protokol rescue bila yield tidak cukup?'},
+  {term:'Starting Material',def:'Sel atau bahan biologis awal yang digunakan dalam manufacturing CAR-T – dalam konteks autologous, ini adalah leukapheresate pasien sendiri.',klinis:'Tidak ada kompensasi untuk starting material berkualitas buruk. T-cell exhausted, ALC rendah, dan inflamasi aktif adalah faktor risiko utama.',q:'Apakah starting material sudah diassess oleh tim processing? Apa kategori risikonya?'},
+  {term:'T-Cell Fitness',def:'Kondisi fungsional sel T – kemampuan untuk berekspansi, bertahan hidup, dan melakukan fungsi efektornya secara optimal.',klinis:'T-cell fitness yang buruk (exhaustion, senescence) berkorelasi dengan outcome CAR-T yang lebih buruk. Terapi sebelumnya sangat mempengaruhi fitness.',q:'Apakah ada data phenotyping T-cell (misalnya exhaustion markers) dari pasien ini?'},
+  {term:'T-Cell Exhaustion',def:'Kondisi disfungsional sel T yang ditandai ekspresi berlebihan inhibitory receptors (PD-1, TIM-3, LAG-3) dan berkurangnya fungsi efektor.',klinis:'Pasien dengan heavily pretreated disease atau tumor burden tinggi sering memiliki exhausted T-cells, yang menurunkan kualitas starting material.',q:'Apakah prior therapy pasien memengaruhi T-cell exhaustion? Bagaimana strategi untuk mengoptimalkan kondisi ini?'},
+  {term:'Transduction',def:'Proses insersi gen CAR ke dalam sel T menggunakan viral vector (lentiviral atau retroviral) atau metode non-viral.',klinis:'Efisiensi transduction (% CAR+ cells) adalah salah satu CQA paling penting. T-cell exhausted biasanya memiliki efisiensi transduction lebih rendah.',q:'Berapa % CAR expression yang menjadi release criteria di program ini?'},
+  {term:'CAR Expression',def:'Persentase sel T yang berhasil mengekspresikan reseptor CAR di permukaannya setelah proses transduction.',klinis:'CAR expression adalah surrogate marker untuk "berapa banyak sel yang aktif menarget tumor". Nilai terlalu rendah dikaitkan dengan respons suboptimal.',q:'Berapa % CAR expression produk yang akan diterima pasien ini? Apakah ada data historis respons per level CAR expression?'},
+  {term:'Expansion (in vitro)',def:'Perbanyakan sel CAR-T dalam kultur setelah transduction untuk mencapai jumlah target (cell dose).',klinis:'Ekspansi yang buruk mengindikasikan masalah pada starting material atau proses. Update "slow expansion" dari manufacturing adalah sinyal untuk siapkan contingency.',q:'Apakah ekspansi berjalan on-track? Kapan estimasi harvest?'},
+  {term:'In-Process Control (IPC)',def:'Pemeriksaan kualitas yang dilakukan selama proses manufacturing pada titik-titik kritis.',klinis:'IPC yang gagal adalah early warning. Klinisi tidak melakukan IPC, namun perlu meminta update dari manufacturing bila ada concern.',q:'Apakah semua IPC checkpoint sudah terpenuhi? Ada OOT?'},
+  {term:'Critical Quality Attribute (CQA)',def:'Karakteristik produk (fisik, kimia, biologis) yang harus memenuhi spesifikasi untuk menjamin keamanan dan efikasi.',klinis:'CQA yang gagal berarti produk tidak boleh dirilis. Setiap CQA memiliki implikasi klinis yang berbeda.',q:'CQA mana yang paling kritis untuk produk ini? Mana yang borderline?'},
+  {term:'CoA (Certificate of Analysis)',def:'Dokumen resmi yang merangkum semua hasil QC release testing dan menyatakan bahwa produk memenuhi (atau tidak memenuhi) release specification.',klinis:'CoA adalah syarat mutlak sebelum infusion. Tanpa CoA, produk secara resmi belum dirilis dan TIDAK BOLEH diinfusikan.',q:'Kapan CoA akan diterbitkan? Siapa yang akan menerimanya di pihak klinis?'},
+  {term:'Release Testing',def:'Serangkaian pengujian QC yang dilakukan pada produk final untuk memastikan keamanan, identitas, purity, potency, dan sterilitas.',klinis:'Hasil release testing menentukan apakah produk boleh diinfusikan. Klinisi harus memahami setiap parameter dan batasannya.',q:'Apakah semua release test sudah selesai? Adakah yang masih pending?'},
+  {term:'OOS (Out of Specification)',def:'Hasil QC yang tidak memenuhi spesifikasi yang ditetapkan dalam release criteria.',klinis:'OOS memerlukan formal investigation oleh QA dan diskusi MDT sebelum keputusan infusion. Tidak boleh diinfusikan tanpa proses ini.',q:'Parameter apa yang OOS? Apa implikasi klinisnya? Apakah ada preseden untuk conditional release?'},
+  {term:'Deviation',def:'Penyimpangan dari prosedur, spesifikasi, atau parameter yang telah ditetapkan selama proses manufacturing atau handling produk.',klinis:'Deviasi mayor dapat mempengaruhi keputusan release dan timeline infusion. Klinisi perlu diinformasikan bila ada deviasi yang relevan.',q:'Apakah ada deviasi dalam proses manufacturing atau transport? Apa dampaknya terhadap produk?'},
+  {term:'Chain of Identity',def:'Sistem dokumentasi dan verifikasi yang memastikan identitas pasien terhubung dengan produknya sepanjang seluruh proses CAR-T.',klinis:'CoI adalah safety critical. Pelanggaran CoI dapat berarti pasien menerima produk orang lain – potensi sentinel event.',q:'Apakah CoI sudah diverifikasi oleh dua petugas berbeda? Apakah ada discrepancy?'},
+  {term:'Chain of Custody',def:'Dokumentasi siapa yang memegang/memiliki produk pada setiap tahap, mulai dari manufacturing hingga infusion.',klinis:'CoC memastikan produk dapat ditelusuri bila ada masalah. Handover form yang tidak ditandatangani adalah gap dokumentasi serius.',q:'Apakah handover form dari manufacturing ke klinis sudah ditandatangani?'},
+  {term:'Lymphodepletion (LD)',def:'Kemoterapi kondisioning pra-CAR-T yang bertujuan mengurangi limfosit endogen dan menciptakan homeostatic space untuk ekspansi CAR-T in-vivo.',klinis:'LD meningkatkan peluang ekspansi CAR-T secara signifikan. TIDAK BOLEH dimulai sebelum produk released. Imunosupresi pasca LD sangat dalam.',q:'Apakah produk sudah released sebelum LD dimulai? Bagaimana fungsi organ untuk toleransi regimen LD?'},
+  {term:'CRS (Cytokine Release Syndrome)',def:'Sindrom inflamasi sistemik akibat aktivasi masif sel imun pasca infusion CAR-T, ditandai demam, hipotensi, dan hipoksia.',klinis:'CRS grade 1–2 umumnya dapat dikelola. CRS grade 3–4 memerlukan ICU dan tocilizumab. Manajemen mengacu pada ASTCT grading 2019.',q:'Apakah protokol manajemen CRS sudah tersedia dan dipahami tim? Apakah tocilizumab tersedia ≥2 dosis?'},
+  {term:'ICANS',def:'Immune Effector Cell-Associated Neurotoxicity Syndrome. Toksisitas neurologis pasca CAR-T, ditandai ensefalopati, seizure, atau edema serebri.',klinis:'ICANS dapat terjadi bersamaan atau setelah CRS. Baseline neurologic assessment sebelum infusion penting untuk diagnosis dini.',q:'Apakah ada baseline neurologic assessment? Bagaimana protokol deteksi dini ICANS di unit ini?'},
+  {term:'IEC-HS',def:'Immune Effector Cell-Associated HLH-like Syndrome. Sindrom mirip HLH yang dapat terjadi sebagai komplikasi CAR-T, ditandai hiperferritinemia, sitopenia, dan disfungsi organ.',klinis:'Lebih jarang dari CRS/ICANS namun mortalitas tinggi. Ferritin >10.000 dengan disfungsi organ harus dipertimbangkan IEC-HS.',q:'Apakah ada protokol untuk diagnosis dan manajemen IEC-HS di program ini?'},
+  {term:'Bridging Therapy',def:'Terapi yang diberikan kepada pasien selama periode antara apheresis dan infusion CAR-T, dengan tujuan mengontrol penyakit tanpa mengorbankan T-cell fitness.',klinis:'Bridging harus menyeimbangkan disease control dan preservasi T-cell fitness. Kemoterapi terlalu intensif mendekati apheresis dapat merusak starting material.',q:'Apakah bridging yang dipilih sudah disetujui MDT? Apa rencana monitoring selama manufacturing window?'}
+];
+
+function buildGlos(){
+  const el=document.getElementById('glos-grid');
+  el.innerHTML=GLOS.map((g,i)=>`
+    <div class="fc" id="fc-${i}" onclick="flipFC(${i})">
+      <div class="fc-front">${esc(g.term)}</div>
+      <div class="fc-back">
+        <div style="font-weight:800;font-size:11px;color:var(--teal)">${esc(g.term)}</div>
+        <div class="mt4">${esc(g.def)}</div>
+        <div class="mt4"><span class="badge badge-blue text-xs">Klinis</span><br><span class="text-xs">${esc(g.klinis)}</span></div>
+        <div class="mt4"><span class="badge badge-teal text-xs">Tanyakan</span><br><span class="text-xs">${esc(g.q)}</span></div>
+      </div>
+    </div>`).join('');
+}
+
+function flipFC(i){document.getElementById('fc-'+i).classList.toggle('flipped')}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded',()=>{
+  loadLS();
+  go('snap');
+  buildJourney();
+});
+</script>
+</body>
+</html>

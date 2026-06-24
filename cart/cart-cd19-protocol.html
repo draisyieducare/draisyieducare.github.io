@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pediatric CAR-T CD19 Protocol | drAisyiEduCare</title>
+<style>
+:root{--navy:#1a3a5c;--blue:#2563a8;--lblue:#dbeafe;--lgray:#f3f4f6;--gray:#6b7280;--red:#dc2626;--orange:#ea580c;--green:#16a34a;--border:#cbd5e1;--warn:#fef3c7;--warnb:#d97706;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;font-size:11px;color:#1e293b;background:#e8edf2;}
+.app-header{background:var(--navy);color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.app-header h1{font-size:15px;font-weight:700;letter-spacing:.3px;}
+.app-header .sub{font-size:10px;opacity:.8;}
+.btn-bar{display:flex;gap:8px;flex-wrap:wrap;}
+.btn{padding:6px 14px;border:none;border-radius:4px;cursor:pointer;font-size:11px;font-weight:600;transition:all .2s;}
+.btn-primary{background:#2563a8;color:#fff;}.btn-primary:hover{background:#1d4e8f;}
+.btn-success{background:#16a34a;color:#fff;}.btn-success:hover{background:#138b3f;}
+.btn-danger{background:#dc2626;color:#fff;}.btn-danger:hover{background:#b91c1c;}
+.btn-outline{background:#fff;color:var(--navy);border:1.5px solid var(--navy);}.btn-outline:hover{background:var(--lblue);}
+.container{max-width:1100px;margin:0 auto;padding:16px;}
+.section{background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:14px;overflow:hidden;}
+.sec-head{background:var(--navy);color:#fff;padding:7px 14px;font-weight:700;font-size:11.5px;display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;}
+.sec-head span.ico{font-size:14px;}
+.sec-body{padding:12px 14px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.field{display:flex;flex-direction:column;gap:3px;}
+.field label{font-size:10px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;}
+.field input,.field select,.field textarea{border:1px solid var(--border);border-radius:3px;padding:5px 7px;font-size:11px;color:#1e293b;background:#fff;transition:border .15s;}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--blue);}
+.field textarea{resize:vertical;min-height:48px;}
+.bsa-display{background:var(--lblue);border:1px solid var(--blue);border-radius:3px;padding:5px 8px;font-weight:700;color:var(--blue);font-size:12px;}
+.alert-box{border-radius:4px;padding:8px 12px;margin:8px 0;font-size:10.5px;}
+.alert-warn{background:var(--warn);border-left:3px solid var(--warnb);color:#92400e;}
+.alert-danger{background:#fee2e2;border-left:3px solid var(--red);color:#7f1d1d;}
+.alert-info{background:var(--lblue);border-left:3px solid var(--blue);color:#1e3a5f;}
+.alert-hs{background:#fff3cd;border:2px solid #ea580c;border-radius:6px;padding:10px 14px;margin:8px 0;}
+.alert-hs .hs-title{color:#ea580c;font-weight:700;font-size:12px;margin-bottom:4px;}
+table{width:100%;border-collapse:collapse;font-size:10.5px;}
+th{background:var(--lblue);color:var(--navy);font-weight:700;padding:5px 7px;text-align:left;border:1px solid var(--border);}
+td{padding:4px 7px;border:1px solid var(--border);vertical-align:top;}
+td input,td select,td textarea{width:100%;border:none;background:transparent;font-size:10.5px;padding:1px;outline:none;}
+td textarea{resize:none;min-height:30px;}
+tr:nth-child(even) td{background:#f8fafc;}
+.cb-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
+.cb-item{display:flex;align-items:center;gap:4px;font-size:10.5px;}
+.cb-item input[type=checkbox]{width:13px;height:13px;accent-color:var(--blue);}
+.grade-table th{text-align:center;}
+.grade1{background:#f0fdf4;}.grade2{background:#fefce8;}.grade3{background:#fff7ed;}.grade4{background:#fef2f2;}
+#alerts-panel{margin:12px 0;}
+.val-alert{background:#fee2e2;border:1px solid #fca5a5;border-radius:4px;padding:6px 10px;margin:4px 0;font-size:10.5px;color:#7f1d1d;}
+.val-alert strong{display:block;margin-bottom:1px;}
+/* PRINT PROTOCOL OUTPUT */
+#protocol-output{display:none;}
+.proto-page{background:#fff;width:210mm;min-height:297mm;padding:10mm 12mm;margin:0 auto 10px;box-shadow:0 2px 12px rgba(0,0,0,.15);position:relative;}
+.proto-head{border-bottom:3px solid var(--navy);padding-bottom:6px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-start;}
+.proto-head-left h2{color:var(--navy);font-size:14px;font-weight:700;}
+.proto-head-left p{color:var(--blue);font-size:10px;}
+.proto-head-right{text-align:right;font-size:9px;color:var(--gray);}
+.proto-sec{margin-bottom:7px;}
+.proto-sec-title{background:var(--navy);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;margin-bottom:4px;letter-spacing:.3px;}
+.proto-sec-title.blue{background:var(--blue);}
+.proto-grid2{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
+.proto-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;}
+.proto-field{font-size:9.5px;margin-bottom:2px;}
+.proto-field .lbl{font-weight:700;color:var(--navy);font-size:8.5px;text-transform:uppercase;}
+.proto-field .val{color:#1e293b;}
+.proto-table{width:100%;border-collapse:collapse;font-size:8.5px;margin-top:2px;}
+.proto-table th{background:var(--lblue);color:var(--navy);padding:3px 5px;border:1px solid var(--border);font-size:8.5px;}
+.proto-table td{padding:2px 5px;border:1px solid var(--border);font-size:8.5px;}
+.proto-footer{position:absolute;bottom:8mm;left:12mm;right:12mm;border-top:1px solid var(--border);padding-top:4px;display:flex;justify-content:space-between;font-size:8px;color:var(--gray);}
+.sign-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px;}
+.sign-box{border:1px solid var(--border);border-radius:3px;padding:6px 8px;font-size:8.5px;}
+.sign-box .role{font-weight:700;color:var(--navy);margin-bottom:16px;}
+.sign-box .line{border-top:1px solid #94a3b8;padding-top:2px;color:var(--gray);}
+.ref-box{background:var(--lgray);border-radius:3px;padding:6px 8px;font-size:8px;color:var(--gray);margin-top:4px;}
+.disclaimer{background:#fff3cd;border:1px solid #d97706;border-radius:3px;padding:5px 8px;font-size:8px;color:#92400e;margin-top:4px;}
+.page-label{text-align:center;font-size:9px;color:var(--gray);margin-top:4px;}
+.tox-tbl th:first-child{width:70px;}
+.crs-badge{display:inline-block;padding:1px 6px;border-radius:10px;font-size:8px;font-weight:700;color:#fff;}
+.g1{background:#16a34a;}.g2{background:#ca8a04;}.g3{background:#ea580c;}.g4{background:#dc2626;}
+.checklist li{font-size:10px;margin:2px 0;list-style:none;display:flex;gap:5px;}
+.checklist li::before{content:'☐';color:var(--navy);}
+@media print{
+  body{background:#fff;}
+  .app-header,.container>.section,.btn-bar,.no-print{display:none!important;}
+  #protocol-output{display:block!important;}
+  .proto-page{box-shadow:none;margin:0;page-break-after:always;width:100%;padding:8mm 10mm;}
+  .proto-page:last-child{page-break-after:auto;}
+}
+.collapsible-body{transition:max-height .3s ease;}
+.collapsed .collapsible-body{display:none;}
+.sec-head .toggle{margin-left:auto;font-size:12px;transition:transform .2s;}
+.collapsed .sec-head .toggle{transform:rotate(-90deg);}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div>
+    <div class="app-header h1" style="font-size:15px;font-weight:700;">🧬 Pediatric CD19 CAR-T Cell Therapy Protocol</div>
+    <div class="sub">Protokol Ringkas Terapi Sel CAR-T CD19 Pediatrik | drAisyiEduCare</div>
+  </div>
+  <div class="btn-bar">
+    <button class="btn btn-success" onclick="generateProtocol()">⚡ Generate Protocol</button>
+    <button class="btn btn-primary" onclick="printProtocol()">🖨️ Print / Save PDF</button>
+    <button class="btn btn-danger" onclick="resetForm()">↺ Reset</button>
+    <button class="btn btn-outline" onclick="toggleLang()">🌐 EN/ID</button>
+  </div>
+</div>
+
+<div class="container">
+
+<div id="alerts-panel"></div>
+
+<!-- SECTION 1: PATIENT DETAILS -->
+<div class="section" id="s1">
+  <div class="sec-head" onclick="toggleSection('s1')"><span class="ico">👤</span> 1. Patient Details — Data Pasien <span class="toggle">▼</span></div>
+  <div class="collapsible-body sec-body">
+    <div class="grid3">
+      <div class="field"><label>Nama / Inisial</label><input id="pt_name" placeholder="e.g. AN (inisial)"></div>
+      <div class="field"><label>MRN</label><input id="pt_mrn" placeholder="No. Rekam Medis"></div>
+      <div class="field"><label>Tanggal Lahir</label><input id="pt_dob" type="date"></div>
+      <div class="field"><label>Usia</label><input id="pt_age" placeholder="e.g. 8 tahun 3 bulan"></div>
+      <div class="field"><label>Jenis Kelamin</label><select id="pt_sex"><option value="">Pilih</option><option>Laki-laki</option><option>Perempuan</option></select></div>
+      <div class="field"><label>Golongan Darah</label><input id="pt_abo" placeholder="e.g. A Rh+"></div>
+      <div class="field"><label>Berat Badan (kg)</label><input id="pt_wt" type="number" step="0.1" oninput="calcBSA()" placeholder="kg"></div>
+      <div class="field"><label>Tinggi Badan (cm)</label><input id="pt_ht" type="number" step="0.1" oninput="calcBSA()" placeholder="cm"></div>
+      <div class="field"><label>BSA (Mosteller)</label><div class="bsa-display" id="bsa_display">— m²</div></div>
+      <div class="field"><label>CMV IgG</label><select id="pt_cmv"><option value="">Pilih</option><option>Positif</option><option>Negatif</option><option>Tidak diketahui</option></select></div>
+      <div class="field"><label>Diagnosis</label><input id="pt_dx" placeholder="e.g. B-ALL relaps/refrakter"></div>
+      <div class="field"><label>Status Penyakit</label><select id="pt_status"><option value="">Pilih</option><option>Relapse pertama</option><option>Relapse kedua</option><option>Refrakter</option><option>Relapse pasca HSCT</option><option>MRD persisten</option></select></div>
+      <div class="field"><label>BM Blast (%)</label><input id="pt_blast" type="number" placeholder="%"></div>
+      <div class="field"><label>MRD</label><input id="pt_mrd" placeholder="e.g. MRD+ 0.01%"></div>
+      <div class="field"><label>Status SSP</label><select id="pt_cns"><option value="">Pilih</option><option>CNS1 (negatif)</option><option>CNS2 (sel blast &lt;5/µL)</option><option>CNS3 (blast ≥5/µL atau gejala)</option></select></div>
+      <div class="field"><label>Extramedullary Disease</label><select id="pt_em"><option value="">Pilih</option><option>Tidak ada</option><option>Ada — detail di bawah</option></select></div>
+      <div class="field"><label>Performance Status</label><input id="pt_ps" placeholder="e.g. Lansky 70 / ECOG 1"></div>
+      <div class="field"><label>EF Jantung (%)</label><input id="pt_ef" type="number" placeholder="%" oninput="validateOrgans()"></div>
+      <div class="field"><label>eGFR / CrCl (mL/min/1.73m²)</label><input id="pt_gfr" type="number" placeholder="" oninput="validateOrgans()"></div>
+      <div class="field"><label>AST (U/L)</label><input id="pt_ast" type="number" placeholder="" oninput="validateOrgans()"></div>
+      <div class="field"><label>ALT (U/L)</label><input id="pt_alt" type="number" placeholder="" oninput="validateOrgans()"></div>
+      <div class="field"><label>Bilirubin Total (µmol/L)</label><input id="pt_bili" type="number" placeholder="" oninput="validateOrgans()"></div>
+    </div>
+    <div class="grid2" style="margin-top:8px;">
+      <div class="field"><label>Infeksi Aktif</label><select id="pt_inf" onchange="validateOrgans()"><option value="">Pilih</option><option value="no">Tidak ada</option><option value="yes">Ada — detail:</option></select></div>
+      <div class="field"><label>Detail Infeksi (jika ada)</label><input id="pt_inf_detail" placeholder="Spesifikasi infeksi aktif"></div>
+      <div class="field"><label>Akses Vena Sentral</label><input id="pt_cvc" placeholder="e.g. PICC double lumen, CVC terpasang"></div>
+      <div class="field"><label>Ekstramedular / Catatan Lain</label><input id="pt_notes" placeholder="Catatan klinis tambahan"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2: CAR-T PRODUCT -->
+<div class="section" id="s2">
+  <div class="sec-head" onclick="toggleSection('s2')"><span class="ico">🧪</span> 2. CAR-T Product Details — Detail Produk CAR-T <span class="toggle">▼</span></div>
+  <div class="collapsible-body sec-body">
+    <div class="grid3">
+      <div class="field"><label>Target Antigen</label><select id="prod_ag"><option>CD19</option><option>CD22</option><option>BCMA</option><option>CD19+CD22 (dual)</option><option>Custom</option></select></div>
+      <div class="field"><label>Jenis Produk</label><select id="prod_type"><option>In-house / institutional</option><option>Commercial (approved)</option><option>Clinical trial</option><option>Compassionate use</option></select></div>
+      <div class="field"><label>Cell Source</label><select id="prod_source"><option>Autologous</option><option>Allogeneic</option></select></div>
+      <div class="field"><label>Tanggal Apheresis</label><input id="prod_aph" type="date"></div>
+      <div class="field"><label>Tanggal Mulai Manufaktur</label><input id="prod_mfg" type="date"></div>
+      <div class="field"><label>Expected Release Date</label><input id="prod_rel" type="date"></div>
+      <div class="field"><label>Planned Infusion Date (Day 0)</label><input id="prod_d0" type="date" onchange="buildTimeline()"></div>
+      <div class="field"><label>Planned Dose (×10⁶ CAR-T cells/kg)</label><input id="prod_dose" type="number" step="0.1" placeholder="e.g. 0.2–5.0" oninput="calcCartDose()"></div>
+      <div class="field"><label>Calculated Total Dose</label><div class="bsa-display" id="cart_dose_display">— ×10⁶ cells</div></div>
+    </div>
+    <div style="margin-top:10px;">
+      <div class="field"><label>Product Release Criteria — Status</label></div>
+      <table style="margin-top:4px;">
+        <tr><th>Parameter</th><th>Required</th><th>Status</th><th>Catatan</th></tr>
+        <tr><td>Sterility</td><td>Passed</td><td><select style="font-size:10px;border:none;width:100%;"><option>Pending</option><option>Passed</option><option>Failed</option></select></td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Viability</td><td>≥70%</td><td><select style="font-size:10px;border:none;width:100%;"><option>Pending</option><option>Passed</option><option>Failed</option></select></td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Endotoxin</td><td>Passed</td><td><select style="font-size:10px;border:none;width:100%;"><option>Pending</option><option>Passed</option><option>Failed</option></select></td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Mycoplasma</td><td>Negatif</td><td><select style="font-size:10px;border:none;width:100%;"><option>Pending</option><option>Negatif</option><option>Positif</option></select></td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Transduction Efficiency</td><td>Per SOP</td><td><select style="font-size:10px;border:none;width:100%;"><option>Pending</option><option>Passed</option><option>Failed</option></select></td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Certificate of Analysis (CoA)</td><td>Tersedia</td><td><select id="prod_coa" style="font-size:10px;border:none;width:100%;" onchange="validateOrgans()"><option value="">Pilih</option><option value="yes">Ya — tersedia</option><option value="no">Belum tersedia</option></select></td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Produk tersedia sebelum Lymphodepletion?</td><td>Harus Ya</td><td><select id="prod_avail" style="font-size:10px;border:none;width:100%;" onchange="validateOrgans()"><option value="">Pilih</option><option value="yes">Ya</option><option value="no">Belum</option></select></td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3: INDICATION & ELIGIBILITY -->
+<div class="section" id="s3">
+  <div class="sec-head" onclick="toggleSection('s3')"><span class="ico">✅</span> 3. Indikasi & Kelayakan (Eligibility) <span class="toggle">▼</span></div>
+  <div class="collapsible-body sec-body">
+    <div class="cb-group">
+      <label class="cb-item"><input type="checkbox" id="ind1"> Relapsed/refrakter CD19+ B-ALL</label>
+      <label class="cb-item"><input type="checkbox" id="ind2"> Relapse pasca HSCT</label>
+      <label class="cb-item"><input type="checkbox" id="ind3"> MRD persisten / high-risk MRD</label>
+      <label class="cb-item"><input type="checkbox" id="ind4"> B-NHL / DLBCL pediatrik</label>
+      <label class="cb-item"><input type="checkbox" id="ind5"> Bukan kandidat kemoterapi kuratif standar</label>
+      <label class="cb-item"><input type="checkbox" id="ind6"> Indikasi lain:</label>
+      <input id="ind6_detail" placeholder="Spesifikasi" style="border:1px solid var(--border);border-radius:3px;padding:3px 6px;font-size:10.5px;width:200px;">
+    </div>
+    <div style="margin-top:10px;">
+      <div style="font-weight:700;font-size:10.5px;color:var(--navy);margin-bottom:6px;">Checklist Kelayakan Pra-CAR-T (wajib konfirmasi)</div>
+      <table>
+        <tr><th>Kriteria</th><th>Konfirmasi</th><th>Catatan</th></tr>
+        <tr><td>Penyakit antigen-positif terkonfirmasi (flow/IHC)</td><td><select style="font-size:10px;border:none;"><option>Pending</option><option>Ya</option><option>Tidak</option></select></td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Status penyakit sebelum lymphodepletion dinilai</td><td><select style="font-size:10px;border:none;"><option>Pending</option><option>Ya</option><option>Tidak</option></select></td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Tidak ada infeksi tidak terkontrol</td><td><select style="font-size:10px;border:none;" id="elig_inf"><option>Pending</option><option>Konfirmasi</option><option>Infeksi aktif — review board</option></select></td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Fungsi organ adekuat</td><td><select style="font-size:10px;border:none;"><option>Pending</option><option>Adekuat</option><option>Borderline — diskusi</option></select></td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Produk tersedia sebelum lymphodepletion dimulai</td><td><select style="font-size:10px;border:none;" id="elig_prod"><option>Pending</option><option>Konfirmasi</option><option>Belum — tunda</option></select></td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Informed consent pasien/wali tersedia</td><td><select style="font-size:10px;border:none;" id="elig_consent"><option>Pending</option><option>Ya — tersedia</option><option>Belum</option></select></td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Jalur eskalasi PICU tersedia dan siap</td><td><select style="font-size:10px;border:none;" id="elig_picu"><option>Pending</option><option>Siap</option><option>Belum tersedia — tunda</option></select></td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Tocilizumab tersedia di unit</td><td><select style="font-size:10px;border:none;" id="elig_toci"><option>Pending</option><option>Tersedia</option><option>Tidak tersedia — tunda</option></select></td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4: BRIDGING THERAPY -->
+<div class="section" id="s4">
+  <div class="sec-head" onclick="toggleSection('s4')"><span class="ico">🔗</span> 4. Bridging Therapy Plan <span class="toggle">▼</span></div>
+  <div class="collapsible-body sec-body">
+    <div class="alert-info">Bridging therapy bertujuan mengontrol penyakit sambil menghindari infeksi berat, sitopenia berkepanjangan, atau kerusakan organ yang dapat mengganggu lymphodepletion dan infus CAR-T.</div>
+    <table style="margin-top:8px;">
+      <tr><th>Regimen/Obat</th><th>Dosis</th><th>Rute</th><th>Jadwal</th><th>Tgl Mulai</th><th>Tgl Stop</th><th>Tujuan</th><th>Wasouth</th></tr>
+      <tr><td><input placeholder="e.g. Vincristine"></td><td><input placeholder="dosis"></td><td><input placeholder="IV"></td><td><input placeholder="D1,8,15"></td><td><input type="date"></td><td><input type="date"></td><td><input placeholder="Disease control"></td><td><input placeholder="≥7 hari"></td></tr>
+      <tr><td><input></td><td><input></td><td><input></td><td><input></td><td><input type="date"></td><td><input type="date"></td><td><input></td><td><input></td></tr>
+      <tr><td><input></td><td><input></td><td><input></td><td><input></td><td><input type="date"></td><td><input type="date"></td><td><input></td><td><input></td></tr>
+    </table>
+    <div class="field" style="margin-top:8px;"><label>Catatan Bridging</label><textarea id="bridging_notes" placeholder="Catatan toksisitas, modifikasi dosis, dll."></textarea></div>
+  </div>
+</div>
+
+<!-- SECTION 5: LYMPHODEPLETION -->
+<div class="section" id="s5">
+  <div class="sec-head" onclick="toggleSection('s5')"><span class="ico">💊</span> 5. Lymphodepletion Regimen Builder <span class="toggle">▼</span></div>
+  <div class="collapsible-body sec-body">
+    <div class="alert-warn">⚠️ Regimen akhir harus mengikuti protokol produk spesifik, penyesuaian renal, fungsi organ, dan persetujuan CAR-T board. Dosis contoh di bawah hanya untuk panduan. Verifikasi dengan farmasi dan SOP institusi.</div>
+    <div class="grid2" style="margin-top:8px;">
+      <div class="field"><label>Pilih Regimen Dasar</label>
+        <select id="ld_preset" onchange="loadLDPreset()">
+          <option value="">— Custom / Isi Manual —</option>
+          <option value="flucy3">Flu/Cy 3-day (standar)</option>
+          <option value="tisalike">Tisagenlecleucel-like B-ALL (contoh)</option>
+          <option value="nocy">Alternatif tanpa Cyclophosphamide</option>
+        </select>
+      </div>
+      <div class="field"><label>Tanggal Mulai Lymphodepletion</label><input id="ld_start" type="date" onchange="buildTimeline()"></div>
+    </div>
+    <table style="margin-top:8px;" id="ld_table">
+      <tr><th>Obat</th><th>Dosis/m² atau /kg</th><th>Dosis Kalkulasi</th><th>Rute</th><th>Durasi Inf.</th><th>Hari</th><th>Adj. Renal/Hepatik</th><th>Hidrasi/Mesna</th></tr>
+      <tr><td><input id="ld1_drug" placeholder="e.g. Fludarabine"></td><td><input id="ld1_dose" placeholder="e.g. 30 mg/m²" oninput="calcLDDose(1)"></td><td><div class="bsa-display" id="ld1_calc" style="font-size:9px;padding:2px 5px;">—</div></td><td><input id="ld1_route" placeholder="IV"></td><td><input id="ld1_dur" placeholder="e.g. 30 menit"></td><td><input id="ld1_days" placeholder="D-5 s/d D-3"></td><td><input id="ld1_adj" placeholder="Sesuaikan GFR"></td><td><input id="ld1_hyd" placeholder="Normal saline"></td></tr>
+      <tr><td><input id="ld2_drug"></td><td><input id="ld2_dose" oninput="calcLDDose(2)"></td><td><div class="bsa-display" id="ld2_calc" style="font-size:9px;padding:2px 5px;">—</div></td><td><input id="ld2_route"></td><td><input id="ld2_dur"></td><td><input id="ld2_days"></td><td><input id="ld2_adj"></td><td><input id="ld2_hyd"></td></tr>
+      <tr><td><input id="ld3_drug"></td><td><input id="ld3_dose" oninput="calcLDDose(3)"></td><td><div class="bsa-display" id="ld3_calc" style="font-size:9px;padding:2px 5px;">—</div></td><td><input id="ld3_route"></td><td><input id="ld3_dur"></td><td><input id="ld3_days"></td><td><input id="ld3_adj"></td><td><input id="ld3_hyd"></td></tr>
+    </table>
+    <div class="field" style="margin-top:8px;"><label>Catatan Lymphodepletion</label><textarea id="ld_notes" placeholder="Catatan penyesuaian, pertimbangan khusus..."></textarea></div>
+  </div>
+</div>
+
+<!-- SECTION 6: CAR-T INFUSION PLAN -->
+<div class="section" id="s6">
+  <div class="sec-head" onclick="toggleSection('s6')"><span class="ico">💉</span> 6. CAR-T Infusion Plan — Rencana Infus <span class="toggle">▼</span></div>
+  <div class="collapsible-body sec-body">
+    <div class="grid3">
+      <div class="field"><label>Day 0 — Tanggal & Waktu</label><input id="inf_d0dt" type="datetime-local"></div>
+      <div class="field"><label>Lokasi Infus</label><select id="inf_loc"><option>Ruang rawat biasa</option><option>Ruang HEPA filter</option><option>PICU standby</option><option>PICU</option></select></div>
+      <div class="field"><label>Dokter Jaga / PJ Infus</label><input id="inf_doc" placeholder="Nama/inisial PJ"></div>
+    </div>
+    <div style="margin-top:8px;font-weight:700;font-size:10.5px;color:var(--navy);">Premedikasi (jangan rutin gunakan kortikosteroid kecuali ada indikasi protokol atau klinis)</div>
+    <div class="cb-group" style="margin-top:4px;">
+      <label class="cb-item"><input type="checkbox" checked> Parasetamol 15 mg/kg PO/IV 30–60 menit sebelum infus</label>
+      <label class="cb-item"><input type="checkbox" checked> Antihistamin (Difenhidramin 1 mg/kg IV, maks 50 mg)</label>
+      <label class="cb-item"><input type="checkbox"> Kortikosteroid (jika diindikasikan protokol/kondisi klinis)</label>
+    </div>
+    <div style="margin-top:8px;font-weight:700;font-size:10.5px;color:var(--navy);">Obat Emergensi — Konfirmasi Ketersediaan</div>
+    <div class="cb-group" style="margin-top:4px;">
+      <label class="cb-item"><input type="checkbox" id="em_toci"> Tocilizumab — kalkulasi dosis di bawah</label>
+      <label class="cb-item"><input type="checkbox"> Deksametason / Metilprednisolon</label>
+      <label class="cb-item"><input type="checkbox"> Antihistamin IV</label>
+      <label class="cb-item"><input type="checkbox"> Adrenalin (epinefrin) 1:1000</label>
+      <label class="cb-item"><input type="checkbox"> Cairan IV (NaCl 0.9%, RL)</label>
+      <label class="cb-item"><input type="checkbox"> Oksigen + alat bantu napas</label>
+      <label class="cb-item"><input type="checkbox"> Akses vasopressor</label>
+      <label class="cb-item"><input type="checkbox"> Antikonvulsan (Diazepam, Fenitoin, Levetiracetam)</label>
+    </div>
+    <div class="alert-info" style="margin-top:8px;">
+      <strong>Tocilizumab Dosing:</strong><br>
+      • BB &lt;30 kg: <strong>12 mg/kg IV</strong><br>
+      • BB ≥30 kg: <strong>8 mg/kg IV</strong>, maksimum <strong>800 mg/dosis</strong><br>
+      • Interval pengulangan dan jumlah dosis maksimal mengikuti SOP institusi/label produk.<br>
+      <span id="toci_calc" style="font-weight:700;color:var(--blue);"></span>
+    </div>
+    <div class="field" style="margin-top:8px;"><label>Rencana Monitoring Tanda Vital</label><textarea id="inf_vs" placeholder="e.g. Tiap 15 menit selama infus, tiap 1 jam 4 jam pertama, tiap 4 jam 24 jam pertama..."></textarea></div>
+    <div class="field"><label>Catatan Thawing/Handling Produk</label><textarea id="inf_thaw" placeholder="e.g. Thaw di water bath 37°C, infus dalam 30 menit setelah thaw, jangan re-freeze..."></textarea></div>
+    <div class="field"><label>Jalur Eskalasi PICU</label><textarea id="inf_picu_path" placeholder="e.g. Kontak PICU: ext..., Kriteria transfer: CRS Gr 3+, ICANS Gr 2+..."></textarea></div>
+  </div>
+</div>
+
+<!-- SECTION 7: SUPPORTIVE CARE -->
+<div class="section" id="s7">
+  <div class="sec-head" onclick="toggleSection('s7')"><span class="ico">🛡️</span> 7. Supportive Care & Profilaksis <span class="toggle">▼</span></div>
+  <div class="collapsible-body sec-body">
+    <div class="alert-info">Produk darah harus leukodeplesi dan iradiasi sesuai kebijakan transfusi institusi untuk pasien cellular therapy. Pasien demam harus ditangani sebagai kemungkinan infeksi/neutropenia febril bahkan jika CRS dicurigai.</div>
+    <table style="margin-top:8px;">
+      <tr><th>Kategori</th><th>Agen / Rencana</th><th>Dosis & Jadwal</th><th>Durasi</th><th>Catatan</th></tr>
+      <tr><td>Profilaksis Antiviral</td><td><input placeholder="e.g. Asiklovir"></td><td><input></td><td><input></td><td><input></td></tr>
+      <tr><td>Antibakteri (saat neutropenia)</td><td><input placeholder="e.g. Levofloksasin"></td><td><input></td><td><input></td><td><input></td></tr>
+      <tr><td>Antifungal</td><td><input placeholder="e.g. Flukonazol/Vorikonazol"></td><td><input></td><td><input></td><td><input></td></tr>
+      <tr><td>Profilaksis PJP</td><td><input placeholder="e.g. Co-trimoksazol/Pentamidin"></td><td><input></td><td><input></td><td><input></td></tr>
+      <tr><td>Profilaksis TLS</td><td><input placeholder="e.g. Allopurinol/Rasburikase"></td><td><input></td><td><input></td><td><input></td></tr>
+      <tr><td>Antiemetik</td><td><input placeholder="e.g. Ondansetron"></td><td><input></td><td><input></td><td><input></td></tr>
+      <tr><td>Suport Transfusi</td><td><input placeholder="PRC/TC irradiasi-leukodeplesi"></td><td><input></td><td><input></td><td><input></td></tr>
+      <tr><td>Monitoring/Suplementasi IVIG</td><td><input placeholder="Cek IgG, target >400 mg/dL"></td><td><input></td><td><input></td><td><input></td></tr>
+      <tr><td>Kebijakan G-CSF</td><td><input placeholder="Umumnya ditunda pasca infus"></td><td><input></td><td><input></td><td><input></td></tr>
+      <tr><td>Profilaksis Kejang</td><td><input placeholder="Pertimbangkan sesuai risiko ICANS"></td><td><input></td><td><input></td><td><input></td></tr>
+      <tr><td>Suport Nutrisi</td><td><input placeholder="Diet sesuai fase, konsultasi gizi"></td><td><input></td><td><input></td><td><input></td></tr>
+      <tr><td>Supresi Menstruasi / Fertilitas</td><td><input placeholder="Sesuai usia, gender, SOP lokal"></td><td><input></td><td><input></td><td><input></td></tr>
+      <tr><td>Kontrol Infeksi & Isolasi</td><td><input placeholder="HEPA, masker N95, hand hygiene protocol"></td><td><input></td><td><input></td><td><input></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- SECTION 8: CRS MONITORING -->
+<div class="section" id="s8">
+  <div class="sec-head" onclick="toggleSection('s8')"><span class="ico">🌡️</span> 8. CRS Monitoring & Manajemen (ASTCT 2019) <span class="toggle">▼</span></div>
+  <div class="collapsible-body sec-body">
+    <table class="tox-tbl">
+      <tr><th>Grade</th><th>Demam</th><th>Hipotensi</th><th>Hipoksia</th><th>Manajemen</th></tr>
+      <tr class="grade1"><td><span class="crs-badge g1">Grade 1</span></td><td>≥38°C</td><td>Tidak ada</td><td>Tidak ada</td><td>Perawatan suportif, workup infeksi, antibiotik jika neutropeni</td></tr>
+      <tr class="grade2"><td><span class="crs-badge g2">Grade 2</span></td><td>≥38°C</td><td>Respons cairan, tanpa vasopressor</td><td>O₂ aliran rendah (&lt;6 L/min)</td><td>Pertimbangkan tocilizumab sesuai SOP/protokol produk. Pertimbangkan kortikosteroid jika persisten, risiko tinggi, atau progresif</td></tr>
+      <tr class="grade3"><td><span class="crs-badge g3">Grade 3</span></td><td>≥38°C</td><td>Perlu vasopressor (tanpa vasopressin)</td><td>O₂ aliran tinggi/HFNC/masker non-rebreather</td><td>Eskalasi PICU. Tocilizumab + kortikosteroid. Monitoring ketat</td></tr>
+      <tr class="grade4"><td><span class="crs-badge g4">Grade 4</span></td><td>≥38°C</td><td>Perlu vasopressor + vasopressin</td><td>Ventilasi mekanik / CPAP</td><td>PICU, suport organ, tocilizumab + kortikosteroid dosis tinggi, eskalasi multidisiplin</td></tr>
+    </table>
+    <div class="alert-warn" style="margin-top:8px;">⚠️ Tocilizumab diindikasikan untuk CRS, BUKAN untuk ICANS terisolasi kecuali ada CRS konkuren.</div>
+  </div>
+</div>
+
+<!-- SECTION 9: ICANS -->
+<div class="section" id="s9">
+  <div class="sec-head" onclick="toggleSection('s9')"><span class="ico">🧠</span> 9. ICANS Monitoring & Manajemen <span class="toggle">▼</span></div>
+  <div class="collapsible-body sec-body">
+    <div class="alert-info">Lakukan pemeriksaan neurologis baseline sebelum infus. Monitor harian: sakit kepala, konfusi, afasia, tremor, kejang, penurunan kesadaran. Hindari sedatif yang tidak perlu. Gunakan ICE score untuk anak kooperatif; CAPD atau penilaian neurologis pediatrik untuk anak lebih kecil.</div>
+    <table class="tox-tbl" style="margin-top:8px;">
+      <tr><th>Grade</th><th>Gambaran Klinis</th><th>Manajemen</th></tr>
+      <tr class="grade1"><td><span class="crs-badge g1">Grade 1</span></td><td>ICE score 7–9 (atau setara). Ringan</td><td>Monitoring ketat, singkirkan penyebab metabolik/infeksius</td></tr>
+      <tr class="grade2"><td><span class="crs-badge g2">Grade 2</span></td><td>ICE score 3–6. Sedang</td><td>Pertimbangkan kortikosteroid. Waspadai neurologi/PICU</td></tr>
+      <tr class="grade3"><td><span class="crs-badge g3">Grade 3</span></td><td>ICE score 0–2. Berat</td><td>Pertimbangkan PICU. Kortikosteroid. EEG/neuroimaging jika diindikasikan</td></tr>
+      <tr class="grade4"><td><span class="crs-badge g4">Grade 4</span></td><td>ICE 0 / tidak responsif. Kejang tidak terkontrol, edema serebri</td><td>PICU, proteksi jalan napas, kortikosteroid dosis tinggi, manajemen kejang/edema</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- SECTION 10: IEC-HS ALERT -->
+<div class="section" id="s10">
+  <div class="sec-head" onclick="toggleSection('s10')"><span class="ico">🚨</span> 10. IEC-HS / HLH-Like Toxicity Alert <span class="toggle">▼</span></div>
+  <div class="collapsible-body sec-body">
+    <div class="alert-hs">
+      <div class="hs-title">🚨 CURIGA IEC-HS (Immune Effector Cell-associated HLH-like Syndrome)</div>
+      <div style="margin-bottom:6px;font-size:10px;">Pertimbangkan IEC-HS bila terdapat kombinasi:</div>
+      <div class="cb-group">
+        <label class="cb-item"><input type="checkbox"> Demam persisten atau rekuren</label>
+        <label class="cb-item"><input type="checkbox"> Ferritin meningkat cepat atau sangat tinggi</label>
+        <label class="cb-item"><input type="checkbox"> Sitopenia memburuk</label>
+        <label class="cb-item"><input type="checkbox"> Hipofibrinogenemia</label>
+        <label class="cb-item"><input type="checkbox"> D-dimer meningkat</label>
+        <label class="cb-item"><input type="checkbox"> Transaminitis</label>
+        <label class="cb-item"><input type="checkbox"> Koagulopati</label>
+        <label class="cb-item"><input type="checkbox"> Disfungsi organ</label>
+        <label class="cb-item"><input type="checkbox"> Terjadi independen atau tidak proporsional terhadap CRS</label>
+      </div>
+      <div style="margin-top:8px;font-weight:700;font-size:10px;color:#ea580c;">TINDAKAN SEGERA:</div>
+      <ul style="font-size:10px;margin-top:4px;padding-left:16px;">
+        <li>Review CAR-T board segera</li>
+        <li>Singkirkan infeksi dan relapse</li>
+        <li>Periksa: ferritin, fibrinogen, D-dimer, PT/aPTT, LFT, trigliserida, CBC</li>
+        <li>Pertimbangkan terapi imunomodulasi sesuai SOP institusi</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 11: TIMELINE -->
+<div class="section" id="s11">
+  <div class="sec-head" onclick="toggleSection('s11')"><span class="ico">📅</span> 11. Day-by-Day Timeline <span class="toggle">▼</span></div>
+  <div class="collapsible-body sec-body">
+    <div id="timeline_table">
+      <table>
+        <tr><th>Fase / Hari</th><th>Tanggal (otomatis)</th><th>Kegiatan Utama</th><th>Monitoring</th><th>Catatan</th></tr>
+        <tr><td>Pra-Apheresis</td><td id="t_preaph">—</td><td>Konfirmasi dx, antigen, skrining infeksi, fungsi organ, consent, akses vena</td><td>Laboratorium lengkap, ekokardiografi</td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Apheresis</td><td id="t_aph">—</td><td>Leukaferesis. Serahkan produk ke pemrosesan/manufaktur. Catat hasil koleksi</td><td>CBC, LFT, status infeksi</td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Periode Manufaktur</td><td>—</td><td>Monitoring penyakit, bridging jika diindikasikan, review mingguan</td><td>CBC periodik, evaluasi penyakit</td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Day −7 s/d −6</td><td id="t_d7">—</td><td>Penilaian akhir: CBC, kimia, LFT, CRP/ferritin, koagulasi, status infeksi, rencana release produk</td><td>Laboratorium pra-kondisi lengkap</td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Lymphodepletion (D−5 s/d D−3/−2)</td><td id="t_ld">—</td><td>Kemoterapi kondisioning sesuai regimen terpilih. Monitor toksisitas dan keseimbangan cairan</td><td>CBC harian, elektrolit, fungsi renal</td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Day −1</td><td id="t_d1m">—</td><td>Hari istirahat/verifikasi. Konfirmasi produk, obat emergensi, jalur eskalasi PICU. Status CRS/ICANS baseline</td><td>Pemeriksaan neurologis baseline</td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Day 0 — Infus CAR-T</td><td id="t_d0">—</td><td>Infus CAR-T. Premedikasi. Monitoring tanda vital. Thaw dan handling produk sesuai SOP</td><td>Vital sign tiap 15 menit selama infus</td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Day +1 s/d +7</td><td id="t_d1to7">—</td><td>Penilaian CRS/ICANS harian. CBC, panel renal/hati, CRP/ferritin. Kultur dan antibiotik jika demam</td><td>Monitoring CRS/ICANS tiap shift</td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Day +8 s/d +14</td><td id="t_d8to14">—</td><td>Lanjutkan monitoring toksisitas/infeksi. Evaluasi sitopenia, koagulopati, tanda IEC-HS</td><td>Ferritin, fibrinogen, D-dimer</td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+        <tr><td>Day +15 s/d +28</td><td id="t_d15to28">—</td><td>Perencanaan discharge jika stabil. Monitoring rawat jalan. Penilaian respons sekitar Day +28/+30</td><td>MRD/BMP assessment, B-cell aplasia</td><td><input style="width:100%;border:none;font-size:10px;"></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 12-13: DISCHARGE & FOLLOW-UP -->
+<div class="section" id="s12">
+  <div class="sec-head" onclick="toggleSection('s12')"><span class="ico">🏥</span> 12–13. Kriteria Discharge & Follow-Up <span class="toggle">▼</span></div>
+  <div class="collapsible-body sec-body">
+    <div class="grid2">
+      <div>
+        <div style="font-weight:700;font-size:10.5px;color:var(--navy);margin-bottom:6px;">Checklist Kriteria Discharge</div>
+        <ul class="checklist">
+          <li>Afebril</li><li>Hemodinamik stabil</li><li>Tidak ada CRS ≥ grade 2 aktif</li>
+          <li>Tidak ada ICANS signifikan secara klinis</li><li>Tidak perlu O₂ atau vasopressor</li>
+          <li>Infeksi terkontrol</li><li>Asupan oral adekuat / rencana nutrisi tersedia</li>
+          <li>Kebutuhan transfusi dapat dikelola rawat jalan</li>
+          <li>Caregiver telah diedukasi</li><li>Akses emergensi 24 jam tersedia</li>
+          <li>Jarak dari rumah sakit sesuai kebijakan lokal</li>
+          <li>Jadwal follow-up terkonfirmasi</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:10.5px;color:var(--navy);margin-bottom:6px;">Jadwal Follow-Up Pasca Discharge</div>
+        <table>
+          <tr><th>Kunjungan</th><th>Hari</th><th>Monitoring Utama</th></tr>
+          <tr><td>FU-1</td><td>+7</td><td>CBC, kimia, LFT, infeksi</td></tr>
+          <tr><td>FU-2</td><td>+14</td><td>CBC, CRP/ferritin jika diindikasikan</td></tr>
+          <tr><td>FU-3</td><td>+21</td><td>IgG, B-cell aplasia, infeksi</td></tr>
+          <tr><td>FU-4</td><td>+28/+30</td><td>MRD, respons penyakit, BMP jika diindikasikan</td></tr>
+          <tr><td>Bulanan</td><td>+2–6 bln</td><td>CBC, kimia, IgG, MRD, surveilans infeksi, sitopenia lanjut</td></tr>
+          <tr><td>Long-term</td><td>>6 bln</td><td>Monitoring relaps, rencana vaksinasi, efek jangka panjang</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- PROTOCOL OUTPUT PAGES -->
+<div id="protocol-output">
+
+<div class="proto-page" id="proto-p1">
+  <div class="proto-head">
+    <div class="proto-head-left">
+      <h2>PROTOKOL CAR-T CD19 PEDIATRIK — RINGKASAN PASIEN</h2>
+      <p>Pediatric CD19 CAR-T Cell Therapy Protocol | Patient-Specific Summary</p>
+    </div>
+    <div class="proto-head-right">
+      <div id="op_pageid">Halaman 1 dari 2</div>
+      <div id="op_date"></div>
+      <div style="margin-top:2px;font-size:8px;color:#dc2626;font-weight:700;">DRAFT — BELUM DISETUJUI CAR-T BOARD</div>
+    </div>
+  </div>
+
+  <!-- Patient + Product Side by Side -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;">
+    <div class="proto-sec">
+      <div class="proto-sec-title">A. DATA PASIEN</div>
+      <div id="op_patient"></div>
+    </div>
+    <div class="proto-sec">
+      <div class="proto-sec-title blue">B. DETAIL PRODUK CAR-T</div>
+      <div id="op_product"></div>
+    </div>
+  </div>
+
+  <div class="proto-sec">
+    <div class="proto-sec-title">C. INDIKASI & ELIGIBILITAS</div>
+    <div id="op_indication"></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;">
+    <div class="proto-sec">
+      <div class="proto-sec-title blue">D. BRIDGING THERAPY</div>
+      <div id="op_bridging"></div>
+    </div>
+    <div class="proto-sec">
+      <div class="proto-sec-title">E. LYMPHODEPLETION</div>
+      <div id="op_ld"></div>
+    </div>
+  </div>
+
+  <div class="proto-sec">
+    <div class="proto-sec-title blue">F. RENCANA INFUS CAR-T (DAY 0)</div>
+    <div id="op_infusion"></div>
+  </div>
+
+  <div class="proto-sec">
+    <div class="proto-sec-title">G. SUPPORTIVE CARE & PROFILAKSIS</div>
+    <div id="op_support" style="font-size:8.5px;"></div>
+  </div>
+
+  <div class="disclaimer">⚠️ <strong>SAFETY DISCLAIMER:</strong> Template protokol terstruktur ini tidak menggantikan SOP institusi, informasi peresepan produk spesifik, verifikasi farmasis, atau persetujuan CAR-T board. Semua dosis dan regimen harus diverifikasi sebelum digunakan secara klinis.</div>
+  <div class="proto-footer">
+    <span>drAisyiEduCare | Pediatric Cellular Therapy Protocol Template</span>
+    <span id="op_footer1">Halaman 1 dari 2</span>
+  </div>
+</div>
+
+<div class="proto-page" id="proto-p2">
+  <div class="proto-head">
+    <div class="proto-head-left">
+      <h2>PROTOKOL CAR-T CD19 PEDIATRIK — MONITORING & TINDAK LANJUT</h2>
+      <p>Post-Infusion Monitoring, Toxicity Management, Discharge & Follow-Up</p>
+    </div>
+    <div class="proto-head-right">
+      <div>Halaman 2 dari 2</div>
+      <div id="op_date2"></div>
+      <div id="op_ptname2" style="font-weight:700;color:var(--navy);font-size:10px;"></div>
+    </div>
+  </div>
+
+  <div class="proto-sec">
+    <div class="proto-sec-title">H. TIMELINE HARIAN CAR-T</div>
+    <div id="op_timeline"></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;">
+    <div class="proto-sec">
+      <div class="proto-sec-title blue">I. PANDUAN CRS (ASTCT 2019)</div>
+      <table class="proto-table">
+        <tr><th>Grade</th><th>Klinis</th><th>Tindakan</th></tr>
+        <tr><td><span class="crs-badge g1" style="font-size:7px;">G1</span></td><td>Demam saja</td><td>Suportif, antibiotik jika neutropeni</td></tr>
+        <tr><td><span class="crs-badge g2" style="font-size:7px;">G2</span></td><td>Hipotensi respons cairan / O₂ rendah</td><td>Tocilizumab ± kortikosteroid</td></tr>
+        <tr><td><span class="crs-badge g3" style="font-size:7px;">G3</span></td><td>Vasopressor / O₂ tinggi</td><td>PICU, Tocilizumab + kortikosteroid</td></tr>
+        <tr><td><span class="crs-badge g4" style="font-size:7px;">G4</span></td><td>Ventilasi mekanik</td><td>PICU, suport organ penuh</td></tr>
+      </table>
+    </div>
+    <div class="proto-sec">
+      <div class="proto-sec-title">J. PANDUAN ICANS</div>
+      <table class="proto-table">
+        <tr><th>Grade</th><th>ICE Score</th><th>Tindakan</th></tr>
+        <tr><td><span class="crs-badge g1" style="font-size:7px;">G1</span></td><td>7–9</td><td>Monitoring ketat, singkirkan metabolik/infeksi</td></tr>
+        <tr><td><span class="crs-badge g2" style="font-size:7px;">G2</span></td><td>3–6</td><td>Kortikosteroid, waspadai neurologi/PICU</td></tr>
+        <tr><td><span class="crs-badge g3" style="font-size:7px;">G3</span></td><td>0–2</td><td>PICU, kortikosteroid, EEG/neuroimaging</td></tr>
+        <tr><td><span class="crs-badge g4" style="font-size:7px;">G4</span></td><td>0/tdk resp</td><td>PICU, proteksi airway, dosis tinggi</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="proto-sec">
+    <div class="proto-sec-title blue">K. 🚨 ALERT IEC-HS</div>
+    <div style="font-size:8.5px;background:#fff3cd;border:1px solid #ea580c;border-radius:3px;padding:5px 8px;">
+      Curiga IEC-HS bila: demam persisten/rekuren + ferritin sangat tinggi + sitopenia + hipofibrinogenemia + D-dimer ↑ + transaminitis ± koagulopati. 
+      <strong>Tindakan:</strong> Review CAR-T board segera. Periksa ferritin, fibrinogen, D-dimer, PT/aPTT, LFT, TG, CBC. Singkirkan infeksi dan relapse. Pertimbangkan imunomodulasi sesuai SOP.
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;">
+    <div class="proto-sec">
+      <div class="proto-sec-title">L. KRITERIA DISCHARGE</div>
+      <div style="font-size:8.5px;">Afebril · Hemodinamik stabil · Tidak ada CRS ≥ Gr2 · Tidak ada ICANS signifikan · Tidak perlu O₂/vasopressor · Infeksi terkontrol · Asupan oral adekuat · Caregiver teredukasi · Akses emergensi 24 jam · Jadwal FU terkonfirmasi</div>
+    </div>
+    <div class="proto-sec">
+      <div class="proto-sec-title blue">M. FOLLOW-UP PASCA DISCHARGE</div>
+      <div style="font-size:8.5px;">D+7: CBC, kimia · D+14: CBC, LFT · D+21: IgG, B-cell aplasia · D+28/30: MRD, respons · Bulanan: CBC, kimia, IgG, surveilans infeksi · Jangka panjang: relaps, vaksinasi, efek lanjut</div>
+    </div>
+  </div>
+
+  <div class="proto-sec">
+    <div class="proto-sec-title">N. TANDA TANGAN & PERSETUJUAN</div>
+    <div class="sign-grid">
+      <div class="sign-box"><div class="role">Konsultan Pengampu</div><div class="line">Nama & TTD</div></div>
+      <div class="sign-box"><div class="role">Program Lead CAR-T</div><div class="line">Nama & TTD</div></div>
+      <div class="sign-box"><div class="role">Farmasis</div><div class="line">Nama & TTD</div></div>
+      <div class="sign-box"><div class="role">Cell Processing</div><div class="line">Nama & TTD</div></div>
+      <div class="sign-box"><div class="role">Perawat Koordinator</div><div class="line">Nama & TTD</div></div>
+      <div class="sign-box"><div class="role">Kontak PICU</div><div class="line">Nama & Ext.</div></div>
+    </div>
+  </div>
+
+  <div class="ref-box">
+    <strong>Evidence & Validation Notes:</strong> (1) Lee DW et al. ASTCT Consensus Grading for CRS and Neurologic Toxicity. Biol Blood Marrow Transplant 2019. (2) Shimabukuro-Vornhagen A et al. Cytokine release syndrome. J Immunother Cancer 2018. (3) EBMT/EHA CAR-T Cell Handbook. (4) EBMT/JACIE Best Practice Recommendations for CAR-T Cell Therapy. (5) Product-specific prescribing information for lymphodepletion regimen — verify with local pharmacy. (6) Sandler RD et al. ASTCT IEC-HS Consensus Recommendations 2023.
+  </div>
+  <div class="disclaimer">⚠️ Tool ini adalah template protokol terstruktur dan tidak menggantikan SOP institusi, informasi peresepan produk spesifik, verifikasi farmasis, atau persetujuan CAR-T board.</div>
+  <div class="proto-footer">
+    <span>drAisyiEduCare | Pediatric Cellular Therapy Protocol Template</span>
+    <span>Halaman 2 dari 2</span>
+  </div>
+</div>
+</div><!-- /protocol-output -->
+
+<script>
+var lang='id';
+function toggleLang(){lang=lang==='id'?'en':'id';alert('Language toggle (EN/ID): Full bilingual mode — coming in next version. Interface is primarily in Bahasa Indonesia.');}
+
+function toggleSection(id){
+  var el=document.getElementById(id);
+  el.classList.toggle('collapsed');
+}
+
+function calcBSA(){
+  var wt=parseFloat(document.getElementById('pt_wt').value);
+  var ht=parseFloat(document.getElementById('pt_ht').value);
+  if(wt>0&&ht>0){
+    var bsa=Math.sqrt((wt*ht)/3600);
+    document.getElementById('bsa_display').textContent=bsa.toFixed(2)+' m²';
+    calcLDDose(1);calcLDDose(2);calcLDDose(3);
+    calcCartDose();
+    calcToci();
+  }else{
+    document.getElementById('bsa_display').textContent='— m²';
+  }
+}
+
+function getBSA(){
+  var wt=parseFloat(document.getElementById('pt_wt').value);
+  var ht=parseFloat(document.getElementById('pt_ht').value);
+  if(wt>0&&ht>0)return Math.sqrt((wt*ht)/3600);
+  return null;
+}
+
+function getWT(){return parseFloat(document.getElementById('pt_wt').value)||null;}
+
+function calcCartDose(){
+  var dose=parseFloat(document.getElementById('prod_dose').value);
+  var wt=getWT();
+  if(dose&&wt){
+    var total=(dose*wt).toFixed(2);
+    document.getElementById('cart_dose_display').textContent=total+' ×10⁶ cells';
+  }else{document.getElementById('cart_dose_display').textContent='—';}
+}
+
+function calcToci(){
+  var wt=getWT();
+  if(!wt){document.getElementById('toci_calc').textContent='';return;}
+  var dpmkg=wt<30?12:8;
+  var calc_dose=dpmkg*wt;
+  var final=Math.min(calc_dose,800);
+  document.getElementById('toci_calc').textContent=
+    'Tocilizumab untuk pasien ini: '+dpmkg+' mg/kg × '+wt+' kg = '+calc_dose.toFixed(1)+' mg'+
+    (calc_dose>800?' → CAP 800 mg':'')+
+    ' → Berikan '+final.toFixed(0)+' mg IV';
+}
+
+function calcLDDose(n){
+  var bsa=getBSA();
+  var wt=getWT();
+  var doseStr=(document.getElementById('ld'+n+'_dose')||{}).value||'';
+  var calcEl=document.getElementById('ld'+n+'_calc');
+  if(!calcEl)return;
+  var match=doseStr.match(/([\d.]+)\s*mg\/(m²|kg)/i);
+  if(!match){calcEl.textContent='—';return;}
+  var num=parseFloat(match[1]);
+  var unit=match[2].toLowerCase();
+  if(unit==='m²'&&bsa){calcEl.textContent=(num*bsa).toFixed(1)+' mg';}
+  else if(unit==='kg'&&wt){calcEl.textContent=(num*wt).toFixed(1)+' mg';}
+  else{calcEl.textContent='—';}
+}
+
+function loadLDPreset(){
+  var p=document.getElementById('ld_preset').value;
+  if(p==='flucy3'){
+    document.getElementById('ld1_drug').value='Fludarabine';
+    document.getElementById('ld1_dose').value='30 mg/m²';
+    document.getElementById('ld1_route').value='IV';
+    document.getElementById('ld1_dur').value='30 menit';
+    document.getElementById('ld1_days').value='Day -5 s/d Day -3';
+    document.getElementById('ld1_adj').value='Sesuaikan jika GFR <30';
+    document.getElementById('ld1_hyd').value='NaCl 0.9%';
+    document.getElementById('ld2_drug').value='Cyclophosphamide';
+    document.getElementById('ld2_dose').value='500 mg/m²';
+    document.getElementById('ld2_route').value='IV';
+    document.getElementById('ld2_dur').value='60 menit';
+    document.getElementById('ld2_days').value='Day -5 s/d Day -3';
+    document.getElementById('ld2_adj').value='Sesuaikan fungsi renal';
+    document.getElementById('ld2_hyd').value='Hidrasi agresif + Mesna';
+    document.getElementById('ld_notes').value='Verify with product-specific protocol and local CAR-T board approval. Dosis contoh — bukan standar final.';
+  }else if(p==='tisalike'){
+    document.getElementById('ld1_drug').value='Fludarabine';
+    document.getElementById('ld1_dose').value='30 mg/m²';
+    document.getElementById('ld1_route').value='IV';
+    document.getElementById('ld1_dur').value='30 menit';
+    document.getElementById('ld1_days').value='Day -4 s/d Day -1';
+    document.getElementById('ld1_hyd').value='NaCl 0.9%';
+    document.getElementById('ld2_drug').value='Cyclophosphamide';
+    document.getElementById('ld2_dose').value='500 mg/m²';
+    document.getElementById('ld2_route').value='IV';
+    document.getElementById('ld2_dur').value='60 menit';
+    document.getElementById('ld2_days').value='Day -4 s/d Day -3';
+    document.getElementById('ld2_hyd').value='Hidrasi + Mesna';
+    document.getElementById('ld_notes').value='Tisagenlecleucel-like regimen (contoh pediatrik/remaja B-ALL). Infus CAR-T 2–14 hari setelah lymphodepletion selesai. WAJIB verifikasi dengan protokol produk spesifik dan SOP lokal.';
+  }else if(p==='nocy'){
+    document.getElementById('ld1_drug').value='Fludarabine';
+    document.getElementById('ld1_dose').value='30 mg/m²';
+    document.getElementById('ld1_route').value='IV';
+    document.getElementById('ld1_dur').value='30 menit';
+    document.getElementById('ld1_days').value='Day -4 s/d Day -2';
+    document.getElementById('ld2_drug').value='Bendamustine (pertimbangkan jika Cy kontraindikasi)';
+    document.getElementById('ld2_dose').value='Sesuai protokol lokal';
+    document.getElementById('ld2_route').value='IV';
+    document.getElementById('ld_notes').value='Regimen alternatif jika Cyclophosphamide kontraindikasi (hemorrhagic cystitis, renal dysfunction berat). Konsultasikan dengan CAR-T board dan farmasi.';
+  }
+  calcLDDose(1);calcLDDose(2);calcLDDose(3);
+}
+
+function addDate(d0,days){
+  var d=new Date(d0);
+  d.setDate(d.getDate()+days);
+  return d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+}
+
+function buildTimeline(){
+  var d0str=document.getElementById('prod_d0').value;
+  if(!d0str)return;
+  var d0=new Date(d0str);
+  document.getElementById('t_d0').textContent=addDate(d0str,0);
+  document.getElementById('t_d1m').textContent=addDate(d0str,-1);
+  document.getElementById('t_ld').textContent=addDate(d0str,-5)+' s/d '+addDate(d0str,-3);
+  document.getElementById('t_d7').textContent=addDate(d0str,-7)+' s/d '+addDate(d0str,-6);
+  document.getElementById('t_d1to7').textContent=addDate(d0str,1)+' s/d '+addDate(d0str,7);
+  document.getElementById('t_d8to14').textContent=addDate(d0str,8)+' s/d '+addDate(d0str,14);
+  document.getElementById('t_d15to28').textContent=addDate(d0str,15)+' s/d '+addDate(d0str,28);
+}
+
+function validateOrgans(){
+  var alerts=[];
+  var ef=parseFloat(document.getElementById('pt_ef').value);
+  var gfr=parseFloat(document.getElementById('pt_gfr').value);
+  var ast=parseFloat(document.getElementById('pt_ast').value);
+  var alt=parseFloat(document.getElementById('pt_alt').value);
+  var bili=parseFloat(document.getElementById('pt_bili').value);
+  var inf=document.getElementById('pt_inf').value;
+  var coa=document.getElementById('prod_coa').value;
+  var avail=document.getElementById('prod_avail').value;
+  var consent=document.getElementById('elig_consent').value;
+  var picu=document.getElementById('elig_picu').value;
+  var toci=document.getElementById('elig_toci').value;
+
+  if(ef&&ef<50)alerts.push({t:'EF Jantung Rendah ('+ef+'%)',d:'EF <50% — evaluasi kardiologi sebelum lymphodepletion. Diskusi di CAR-T board.'});
+  if(gfr&&gfr<30)alerts.push({t:'eGFR/CrCl Rendah ('+gfr+')',d:'Penyesuaian dosis Fludarabine dan Cyclophosphamide diperlukan. Diskusi dengan farmasis dan CAR-T board.'});
+  if(ast&&ast>100)alerts.push({t:'AST Meningkat ('+ast+' U/L)',d:'Evaluasi penyebab. Pertimbangkan penundaan jika hepatotoksisitas berat. Diskusi di CAR-T board.'});
+  if(alt&&alt>100)alerts.push({t:'ALT Meningkat ('+alt+' U/L)',d:'Evaluasi penyebab. Pertimbangkan penundaan jika hepatotoksisitas berat.'});
+  if(bili&&bili>34)alerts.push({t:'Bilirubin Meningkat ('+bili+' µmol/L)',d:'Evaluasi fungsi hati. Konsultasikan dengan CAR-T board sebelum melanjutkan.'});
+  if(inf==='yes')alerts.push({t:'Infeksi Aktif Terdeteksi',d:'Infeksi aktif harus terkontrol sebelum lymphodepletion. Tunda prosedur sampai infeksi teratasi. Diskusi di CAR-T board.'});
+  if(coa==='no')alerts.push({t:'Certificate of Analysis (CoA) Belum Tersedia',d:'CoA produk wajib tersedia dan diverifikasi sebelum infus. Koordinasikan dengan cell processing.'});
+  if(avail==='no')alerts.push({t:'Produk CAR-T Belum Tersedia Sebelum Lymphodepletion',d:'JANGAN mulai lymphodepletion sebelum produk konfirmasi tersedia dan siap. Diskusi di CAR-T board.'});
+  if(consent==='Belum')alerts.push({t:'Informed Consent Belum Tersedia',d:'Informed consent pasien/wali wajib ada sebelum apheresis dan lymphodepletion.'});
+  if(picu==='Belum tersedia — tunda')alerts.push({t:'Jalur Eskalasi PICU Belum Tersedia',d:'Pastikan PICU siap dan jalur eskalasi terkonfirmasi sebelum infus CAR-T.'});
+  if(toci==='Tidak tersedia — tunda')alerts.push({t:'Tocilizumab Tidak Tersedia',d:'Tocilizumab wajib tersedia sebelum dan selama periode post-infus. Tunda infus sampai tersedia.'});
+
+  var panel=document.getElementById('alerts-panel');
+  if(alerts.length===0){panel.innerHTML='';return;}
+  var html='<div style="background:#fee2e2;border:2px solid #dc2626;border-radius:6px;padding:10px 14px;margin-bottom:10px;">';
+  html+='<div style="font-weight:700;font-size:12px;color:#7f1d1d;margin-bottom:6px;">⚠️ '+alerts.length+' ALERT KLINIS — Diskusi di CAR-T Board Sebelum Melanjutkan</div>';
+  alerts.forEach(function(a){
+    html+='<div class="val-alert"><strong>🔴 '+a.t+'</strong>'+a.d+' → Diskusi di CAR-T board sebelum melanjutkan.</div>';
+  });
+  html+='</div>';
+  panel.innerHTML=html;
+}
+
+function fv(id,fallback){var el=document.getElementById(id);return el?(el.value||fallback||'—'):(fallback||'—');}
+function pf(lbl,val){return '<div class="proto-field"><span class="lbl">'+lbl+'</span><br><span class="val">'+(val||'—')+'</span></div>';}
+
+function generateProtocol(){
+  validateOrgans();
+  var now=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
+  document.getElementById('op_date').textContent='Tanggal: '+now;
+  document.getElementById('op_date2').textContent='Tanggal: '+now;
+  var bsa=document.getElementById('bsa_display').textContent;
+  var cartDose=document.getElementById('cart_dose_display').textContent;
+
+  // PAGE 1
+  document.getElementById('op_ptname2').textContent=fv('pt_name','—')+' | MRN: '+fv('pt_mrn','—');
+  document.getElementById('op_patient').innerHTML=
+    '<div class="proto-grid3">'+
+    pf('Nama/Inisial',fv('pt_name'))+pf('MRN',fv('pt_mrn'))+pf('Tgl Lahir',fv('pt_dob'))+
+    pf('Usia',fv('pt_age'))+pf('Jenis Kelamin',fv('pt_sex'))+pf('Gol. Darah',fv('pt_abo'))+
+    pf('BB',fv('pt_wt')+'  kg')+pf('TB',fv('pt_ht')+' cm')+pf('BSA',bsa)+
+    pf('CMV IgG',fv('pt_cmv'))+pf('Diagnosis',fv('pt_dx'))+pf('Status',fv('pt_status'))+
+    pf('BM Blast',fv('pt_blast')+'%')+pf('MRD',fv('pt_mrd'))+pf('CNS',fv('pt_cns'))+
+    pf('EM Disease',fv('pt_em'))+pf('PS',fv('pt_ps'))+pf('Infeksi Aktif',fv('pt_inf'))+
+    pf('EF Jantung',fv('pt_ef')+'%')+pf('eGFR/CrCl',fv('pt_gfr'))+pf('AST/ALT',fv('pt_ast')+'/'+fv('pt_alt')+' U/L')+
+    pf('Bilirubin',fv('pt_bili')+' µmol/L')+pf('CVC',fv('pt_cvc'))+pf('Catatan',fv('pt_notes'))+
+    '</div>';
+
+  document.getElementById('op_product').innerHTML=
+    '<div class="proto-grid2">'+
+    pf('Antigen Target',fv('prod_ag'))+pf('Jenis Produk',fv('prod_type'))+
+    pf('Cell Source',fv('prod_source'))+pf('Tgl Apheresis',fv('prod_aph'))+
+    pf('Mulai Manufaktur',fv('prod_mfg'))+pf('Expected Release',fv('prod_rel'))+
+    pf('Day 0 (Rencana)',fv('prod_d0'))+pf('Dosis',fv('prod_dose')+' ×10⁶/kg')+
+    pf('Total Dose',cartDose)+pf('CoA Tersedia',fv('prod_coa'))+
+    '</div>';
+
+  var inds=[];
+  ['Relapsed/refrakter CD19+ B-ALL','Relapse pasca HSCT','MRD persisten/high-risk','B-NHL/DLBCL pediatrik','Bukan kandidat kemoterapi kuratif'].forEach(function(v,i){
+    if(document.getElementById('ind'+(i+1)).checked)inds.push(v);
+  });
+  if(document.getElementById('ind6').checked)inds.push(fv('ind6_detail'));
+  document.getElementById('op_indication').innerHTML=
+    '<div style="font-size:8.5px;">'+
+    (inds.length?inds.map(function(v){return '✓ '+v;}).join(' · '):'— Belum dipilih —')+
+    '</div>';
+
+  document.getElementById('op_bridging').innerHTML=
+    '<div style="font-size:8px;color:var(--gray);">'+fv('bridging_notes','Lihat tabel bridging therapy')+'</div>';
+
+  document.getElementById('op_ld').innerHTML=
+    '<div class="proto-field"><span class="lbl">Regimen</span><br><span class="val">'+
+    (fv('ld1_drug')+'  '+fv('ld1_dose')+' '+fv('ld1_days'))+'</span></div>'+
+    '<div class="proto-field"><span class="lbl"></span><br><span class="val">'+
+    (fv('ld2_drug')+'  '+fv('ld2_dose')+' '+fv('ld2_days'))+'</span></div>'+
+    '<div class="proto-field"><span class="lbl">Catatan</span><br><span class="val" style="color:#ea580c;font-size:7.5px;">'+fv('ld_notes','Verifikasi SOP institusi')+'</span></div>';
+
+  document.getElementById('op_infusion').innerHTML=
+    '<div class="proto-grid3">'+
+    pf('Day 0',fv('inf_d0dt'))+pf('Lokasi',fv('inf_loc'))+pf('PJ Infus',fv('inf_doc'))+
+    '</div>'+
+    '<div class="proto-field" style="margin-top:3px;"><span class="lbl">Premedikasi</span><br><span class="val">Parasetamol 15mg/kg + Antihistamin IV · Kortikosteroid hanya jika diindikasikan · Monitor vital tiap 15 menit</span></div>'+
+    '<div class="proto-field"><span class="lbl">Eskalasi PICU</span><br><span class="val">'+fv('inf_picu_path','Konfirmasi jalur eskalasi PICU sebelum infus')+'</span></div>';
+
+  document.getElementById('op_support').innerHTML=
+    '✓ Antiviral · ✓ Antibakteri (neutropenia) · ✓ Antifungal · ✓ PJP profilaksis · ✓ TLS profilaksis · ✓ Antiemetik · ✓ Transfusi irradiasi+leukodeplesi · ✓ Monitor IgG · ✓ G-CSF sesuai SOP · ✓ Suport nutrisi · ✓ Kontrol infeksi & isolasi';
+
+  // PAGE 2 TIMELINE
+  var d0str=fv('prod_d0','');
+  var tl='<table class="proto-table"><tr><th>Fase</th><th>Tanggal</th><th>Kegiatan</th><th>Monitoring</th></tr>';
+  var phases=[
+    ['Pra-Apheresis','—','Konfirmasi dx, antigen, skrining infeksi, fungsi organ, consent, akses vena','Lab lengkap, ekokardiografi'],
+    ['Apheresis','—','Leukaferesis, serah produk, catat yield','CBC, status infeksi'],
+    ['Manufaktur','—','Monitor penyakit, bridging, review mingguan','CBC periodik'],
+    ['D-7 s/d D-6',d0str?addDate(d0str,-7)+' – '+addDate(d0str,-6):'—','Penilaian akhir, CBC, kimia, LFT, CRP/ferritin, koag, status infeksi, rencana release','Lab pra-kondisi'],
+    ['Lymphodepletion',d0str?addDate(d0str,-5)+' – '+addDate(d0str,-3):'—','Kemoterapi kondisioning, monitor toksisitas, keseimbangan cairan','CBC harian, elektrolit, renal'],
+    ['Day −1',d0str?addDate(d0str,-1):'—','Verifikasi produk, obat emergensi, PICU pathway, baseline CRS/ICANS','Pemeriksaan neurologis baseline'],
+    ['Day 0 — Infus',d0str?addDate(d0str,0):'—','Infus CAR-T, premedikasi, vital sign monitoring ketat','Vital tiap 15 menit'],
+    ['Day +1 – +7',d0str?addDate(d0str,1)+' – '+addDate(d0str,7):'—','Penilaian CRS/ICANS harian, CBC, renal/hati, CRP/ferritin, kultur jika demam','CRS/ICANS tiap shift'],
+    ['Day +8 – +14',d0str?addDate(d0str,8)+' – '+addDate(d0str,14):'—','Lanjut monitoring toksisitas/infeksi, evaluasi sitopenia, koagulopati, IEC-HS','Ferritin, fibrinogen, D-dimer'],
+    ['Day +15 – +28',d0str?addDate(d0str,15)+' – '+addDate(d0str,28):'—','Discharge planning, monitoring rawat jalan, penilaian respons D+28/30','MRD, B-cell aplasia'],
+  ];
+  phases.forEach(function(p){
+    tl+='<tr><td style="font-weight:700;white-space:nowrap;font-size:7.5px;">'+p[0]+'</td><td style="white-space:nowrap;font-size:7.5px;">'+p[1]+'</td><td style="font-size:7.5px;">'+p[2]+'</td><td style="font-size:7.5px;">'+p[3]+'</td></tr>';
+  });
+  tl+='</table>';
+  document.getElementById('op_timeline').innerHTML=tl;
+
+  document.getElementById('protocol-output').style.display='block';
+  document.getElementById('protocol-output').scrollIntoView({behavior:'smooth'});
+}
+
+function printProtocol(){
+  if(document.getElementById('protocol-output').style.display==='none'){
+    generateProtocol();
+  }
+  setTimeout(function(){window.print();},300);
+}
+
+function resetForm(){
+  if(!confirm('Reset semua data? Tindakan ini tidak dapat dibatalkan.'))return;
+  var inputs=document.querySelectorAll('input:not([type=checkbox]),select,textarea');
+  inputs.forEach(function(el){el.value='';});
+  var checks=document.querySelectorAll('input[type=checkbox]');
+  checks.forEach(function(el){el.checked=false;});
+  document.getElementById('bsa_display').textContent='— m²';
+  document.getElementById('cart_dose_display').textContent='—';
+  document.getElementById('toci_calc').textContent='';
+  document.getElementById('ld1_calc').textContent='—';
+  document.getElementById('ld2_calc').textContent='—';
+  document.getElementById('ld3_calc').textContent='—';
+  document.getElementById('alerts-panel').innerHTML='';
+  document.getElementById('protocol-output').style.display='none';
+}
+
+window.onload=function(){
+  calcBSA();
+  calcToci();
+};
+</script>
+</body>
+</html>

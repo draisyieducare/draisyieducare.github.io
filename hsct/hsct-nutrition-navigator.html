@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>drAisyiEduCare — Pediatric HSCT Nutrition Navigator</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f6fb;--card:#fff;--border:#cfe3f0;--text:#1e3a4f;--muted:#6b8fa8;
+  --blue:#2b8ec4;--bd:#1a5a80;--bl:#e8f4fb;
+  --green:#3aab8c;--yellow:#d99a3a;--rose:#c0667a;--purple:#7a6fba;--orange:#d4813a;
+  --sidebar:230px
+}
+body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px}
+.app{display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{background:#daeef9;height:100vh;position:sticky;top:0;overflow-y:auto;display:flex;flex-direction:column;border-right:1px solid var(--border)}
+.sb-logo{padding:.85rem 1rem;border-bottom:1px solid var(--border)}
+.logo{display:inline-block;background:#fff;border:2.5px solid var(--blue);border-radius:7px;padding:4px 11px;font-size:13px;font-weight:900;letter-spacing:.01em;box-shadow:0 2px 6px rgba(43,142,196,.18);margin-bottom:5px}
+.logo .l1{color:var(--bd)}.logo .l2{color:var(--blue)}.logo .l3{color:var(--bd)}
+.sb-appname{font-size:10px;font-weight:700;color:var(--bd);line-height:1.4}
+.sb-sub{font-size:9px;color:var(--muted);margin-top:1px}
+.sb-sec{padding:.35rem 0}
+.sb-lbl{font-size:9px;font-weight:700;letter-spacing:.08em;color:var(--muted);padding:.45rem 1rem .2rem;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:7px;padding:6px 1rem;cursor:pointer;color:#4a7a99;font-size:11px;border-left:2px solid transparent;transition:all .1s}
+.sb-item:hover{background:rgba(43,142,196,.1);color:var(--bd)}
+.sb-item.active{background:rgba(43,142,196,.18);color:var(--bd);border-left-color:var(--blue);font-weight:700}
+.sb-item .ico{font-size:12px;width:15px;text-align:center;flex-shrink:0}
+.sb-dot{width:6px;height:6px;border-radius:50%;margin-left:auto;flex-shrink:0}
+.d-ok{background:var(--green)}.d-w{background:var(--yellow)}.d-e{background:var(--rose)}.d-n{background:#b8d9ee}
+.sb-ft{padding:.6rem 1rem;margin-top:auto;border-top:1px solid var(--border)}
+
+/* TOPBAR */
+.main{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:.55rem 1.2rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:0 1px 3px rgba(43,142,196,.07)}
+.tb-left{display:flex;align-items:center;gap:8px}
+.logo-sm{display:inline-block;background:#fff;border:2px solid var(--blue);border-radius:5px;padding:2px 7px;font-size:10px;font-weight:900;flex-shrink:0}
+.tb-title{font-size:13px;font-weight:700;color:var(--text)}
+
+/* FLOW BAR */
+.flow-bar{background:#e3f2fb;border-bottom:1px solid var(--border);padding:5px 1rem;display:flex;align-items:center;gap:3px;overflow-x:auto;white-space:nowrap;flex-shrink:0}
+.fc{padding:2px 7px;border-radius:9px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid}
+.fc.done{background:#c8eedf;color:#145a38;border-color:#9ad4bb}
+.fc.act{background:var(--blue);color:#fff;border-color:var(--blue)}
+.fc.pend{background:#e8f4fb;color:var(--muted);border-color:#b8d9ee}
+.fa{color:#9bbdd4;font-size:9px;margin:0 1px}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:1rem 1.2rem}
+.page{display:none}.page.active{display:block}
+
+/* DISCLAIMER BANNER */
+.disc{background:#fef5e0;border:1px solid #e8c878;border-radius:8px;padding:8px 12px;font-size:10px;color:#7a4800;line-height:1.6;margin-bottom:.7rem}
+.priv{background:#e8f4fb;border:1px solid #9acce8;border-radius:8px;padding:7px 12px;font-size:10px;color:#1a4f70;margin-bottom:.7rem}
+.role-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:6px;margin-bottom:.7rem}
+.role-card{background:#fff;border:1px solid var(--border);border-radius:7px;padding:7px 10px}
+.role-title{font-size:10px;font-weight:700;color:var(--bd);margin-bottom:2px}
+.role-desc{font-size:10px;color:var(--muted);line-height:1.5}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.85rem;margin-bottom:.65rem;box-shadow:0 1px 3px rgba(43,142,196,.05)}
+.card-title{font-size:12px;font-weight:700;margin-bottom:.65rem;display:flex;align-items:center;gap:6px;color:var(--text)}
+.tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px}
+.t-blue{background:#cfe9f7;color:#1a5a80}.t-green{background:#c8eedf;color:#145a38}
+.t-rose{background:#f5d8de;color:#7a3040}.t-yellow{background:#faefd0;color:#7a4800}
+.t-purple{background:#e4dff5;color:#3d2a7a}.t-orange{background:#fde9d0;color:#7a3a00}
+
+/* FLOW BANNER */
+.fb{background:linear-gradient(135deg,#cde8f5,#ddf0fb);border:1px solid var(--border);border-radius:9px;padding:.8rem 1rem;margin-bottom:.65rem}
+.fb-title{font-size:10px;font-weight:700;color:var(--blue);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.04em}
+.fb-items{display:flex;flex-wrap:wrap;gap:5px}
+.fb-item{background:rgba(255,255,255,.65);border:1px solid #b8d9ee;border-radius:5px;padding:4px 8px;display:flex;align-items:center;gap:4px}
+.fbi-l{font-size:9px;color:var(--muted)}.fbi-v{font-size:11px;font-weight:700;color:var(--text)}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+@media(max-width:680px){.g2,.g3,.g4,.g5{grid-template-columns:1fr 1fr}.app{grid-template-columns:1fr}.sidebar{display:none}}
+
+/* FORM */
+.field{display:flex;flex-direction:column;gap:2px}
+.field label{font-size:10px;color:var(--muted);font-weight:700}
+.field input,.field select,.field textarea{padding:5px 8px;border:1px solid #cde4f0;border-radius:6px;font-size:12px;background:#fafcfe;width:100%}
+.field input:focus,.field select:focus{outline:none;border-color:var(--blue);background:#fff}
+.field input.af{background:#d8f4ec;border-color:#6dccaf;color:#0e5940}
+.field textarea{resize:vertical;min-height:50px}
+.sec{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin:.65rem 0 .3rem}
+.caveat{font-size:10px;color:var(--muted);font-style:italic;margin-top:4px;line-height:1.5}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(95px,1fr));gap:6px;margin-top:6px}
+.metric{background:#eef6fc;border-radius:7px;padding:8px 9px;border:1px solid #cde4f0}
+.metric.ok{background:#d8f4ec;border-color:#9ad4bb}
+.metric.warn{background:#faefd0;border-color:#e8c878}
+.metric.err{background:#f5d8de;border-color:#e0a0b0}
+.metric.info{background:#deeefa;border-color:#9acce8}
+.metric.purple{background:#ebe7f8;border-color:#bdb5e8}
+.metric.orange{background:#fde9d0;border-color:#e8b87a}
+.m-l{font-size:10px;color:var(--muted);margin-bottom:2px;font-weight:600}
+.m-v{font-size:14px;font-weight:700;color:var(--text)}
+.m-s{font-size:10px;color:#8baec4;margin-top:1px}
+
+/* ALERTS */
+.al{padding:6px 10px;border-radius:7px;font-size:11px;margin-top:5px;line-height:1.6;display:flex;gap:6px;align-items:flex-start}
+.al-ico{flex-shrink:0;font-size:13px}.al-body{flex:1}
+.al-s{background:#d8f4ec;border:1px solid #9ad4bb;color:#0e5940}
+.al-w{background:#faefd0;border:1px solid #e8c878;color:#7a4800}
+.al-e{background:#f5d8de;border:1px solid #e0a0b0;color:#7a3040}
+.al-i{background:#deeefa;border:1px solid #9acce8;color:#1a4f70}
+.al-p{background:#ebe7f8;border:1px solid #bdb5e8;color:#3d2a7a}
+.al-o{background:#fde9d0;border:1px solid #e8b87a;color:#7a3a00}
+
+/* BUTTONS */
+.btn{padding:6px 13px;border:none;border-radius:6px;font-size:11px;cursor:pointer;font-weight:700;display:inline-flex;align-items:center;gap:4px;transition:all .1s}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--bd)}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#2a9070}
+.btn-outline{background:#fff;border:1px solid #b8d9ee;color:var(--bd)}.btn-outline:hover{background:#eef6fc}
+.btn-sm{padding:4px 9px;font-size:10px}
+
+/* TABLE */
+table.t{width:100%;border-collapse:collapse;font-size:11px}
+table.t th{background:#e3f2fb;padding:5px 8px;text-align:left;font-weight:700;color:#1a5a80;border-bottom:1px solid #b8d9ee}
+table.t td{padding:5px 8px;border-bottom:1px solid #e8f4fb;vertical-align:top;color:#2a4a5e}
+table.t tr:hover td{background:#f0f8fd}
+table.t tr:last-child td{border-bottom:none}
+
+/* DECISION BOX */
+.dbox{border-left:3px solid;padding:9px 11px;border-radius:0 8px 8px 0;margin-top:6px}
+.dbox-green{border-color:var(--green);background:#d8f4ec}
+.dbox-yellow{border-color:var(--yellow);background:#faefd0}
+.dbox-rose{border-color:var(--rose);background:#f5d8de}
+.dbox-blue{border-color:var(--blue);background:#deeefa}
+.dbox-purple{border-color:var(--purple);background:#ebe7f8}
+.dbox-orange{border-color:var(--orange);background:#fde9d0}
+.dbox-title{font-size:12px;font-weight:700;margin-bottom:4px;color:var(--text)}
+.dbox ul{padding:0;list-style:none}
+.dbox li{font-size:11px;line-height:1.75;color:#2a4a5e;padding:1px 0;border-bottom:1px solid rgba(0,0,0,.04)}
+.dbox li:last-child{border:none}
+
+/* PN RECIPE */
+.recipe{background:#1e3a4f;color:#fff;border-radius:9px;padding:.9rem;margin-top:7px}
+.recipe-title{font-size:10px;font-weight:700;color:#6b9ab8;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.6rem}
+.rl{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:11px}
+.rl:last-child{border:none}
+.rl-l{color:#8bb8d4}.rl-v{color:#fff;font-weight:700}.rl-u{color:#6b9ab8;font-size:10px;margin-left:3px}
+.recipe-caveat{font-size:9px;color:#6b9ab8;border-top:1px solid rgba(255,255,255,.06);padding-top:6px;margin-top:4px;line-height:1.5}
+
+/* SAFETY */
+.sc{display:flex;align-items:flex-start;gap:7px;padding:6px 0;border-bottom:1px solid #e3f2fb}
+.sc:last-child{border:none}
+.sc-ico{font-size:14px;flex-shrink:0;margin-top:1px}
+.sc-title{font-size:11px;font-weight:700;margin-bottom:1px}
+.sc-desc{font-size:10px;color:var(--muted)}
+.sc-action{font-size:10px;color:var(--bd);font-style:italic;margin-top:1px}
+
+/* PHASE CARDS */
+.phase-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:.65rem}
+@media(max-width:680px){.phase-grid{grid-template-columns:repeat(4,1fr)}}
+.pc{border:2px solid #b8d9ee;border-radius:8px;padding:7px 3px;cursor:pointer;text-align:center;transition:all .1s;background:#fff}
+.pc:hover{border-color:var(--blue);background:#eef6fc}
+.pc.sel{border-color:var(--blue);background:var(--blue);color:#fff}
+.pc-ico{font-size:17px;margin-bottom:2px}
+.pc-name{font-size:9px;font-weight:700;line-height:1.3}
+
+/* MISC */
+.prog{background:#cde4f0;border-radius:4px;height:6px;overflow:hidden;margin-top:3px}
+.prog-fill{height:100%;border-radius:4px;transition:width .4s}
+.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.rck{display:flex;align-items:center;gap:6px;padding:5px 7px;border:1px solid #cde4f0;border-radius:6px;cursor:pointer;font-size:11px;background:#fff}
+.rck:hover{background:#eef6fc}
+.rck input{width:13px;height:13px;accent-color:var(--blue);flex-shrink:0}
+.o-ring{width:65px;height:65px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;text-align:center;flex-shrink:0}
+.or-low{background:#d8f4ec;color:#0e5940;border:3px solid var(--green)}
+.or-mod{background:#deeefa;color:#1a4f70;border:3px solid var(--blue)}
+.or-hi{background:#faefd0;color:#7a4800;border:3px solid var(--yellow)}
+.or-vhi{background:#f5d8de;color:#7a3040;border:3px solid var(--rose)}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:.75rem}
+.stat-n{font-size:24px;font-weight:700;color:var(--text)}.stat-l{font-size:11px;color:var(--muted);margin-top:2px}
+.dt-wrap{overflow-x:auto}
+.divider{border:none;border-top:1px solid var(--border);margin:.6rem 0}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:#e3f2fb}::-webkit-scrollbar-thumb{background:#8bb8d4;border-radius:2px}
+
+/* PRINT */
+@media print{
+  .sidebar,.topbar,.flow-bar,.sb-ft,.btn{display:none!important}
+  .app{grid-template-columns:1fr}
+  .page{display:block!important}
+  .card{break-inside:avoid;box-shadow:none;border:1px solid #ccc}
+  body{font-size:11pt}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══ SIDEBAR ═══ -->
+<nav class="sidebar">
+  <div class="sb-logo">
+    <div class="logo"><span class="l1">dr</span><span class="l2">Aisyi</span><span class="l3">EduCare</span></div>
+    <div class="sb-appname">Pediatric HSCT Nutrition Navigator</div>
+    <div class="sb-sub">Oral · Enteral · Parenteral Support</div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">① Assessment</div>
+    <div class="sb-item active" onclick="nav('p0',this)"><span class="ico">🔍</span>Skrining & Risiko<div class="sb-dot d-n" id="d-p0"></div></div>
+    <div class="sb-item" onclick="nav('p1',this)"><span class="ico">📏</span>Antropometri & Status Gizi<div class="sb-dot d-n" id="d-p1"></div></div>
+    <div class="sb-item" onclick="nav('p2',this)"><span class="ico">🔥</span>Energi, Protein & Cairan<div class="sb-dot d-n" id="d-p2"></div></div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">② HSCT Intelligence</div>
+    <div class="sb-item" onclick="nav('p3',this)"><span class="ico">🔬</span>Fase HSCT<div class="sb-dot d-n" id="d-p3"></div></div>
+    <div class="sb-item" onclick="nav('p4',this)"><span class="ico">🦷</span>Mukositis<div class="sb-dot d-n" id="d-p4"></div></div>
+    <div class="sb-item" onclick="nav('p5',this)"><span class="ico">⚡</span>GVHD GI<div class="sb-dot d-n" id="d-p5"></div></div>
+    <div class="sb-item" onclick="nav('p6',this)"><span class="ico">💧</span>Fluid Overload<div class="sb-dot d-n" id="d-p6"></div></div>
+    <div class="sb-item" onclick="nav('p7',this)"><span class="ico">⚠️</span>Refeeding Risk<div class="sb-dot d-n" id="d-p7"></div></div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">③ Prescription Draft</div>
+    <div class="sb-item" onclick="nav('p8',this)"><span class="ico">🗺️</span>Route Decision<div class="sb-dot d-n" id="d-p8"></div></div>
+    <div class="sb-item" onclick="nav('p9',this)"><span class="ico">💉</span>PN Builder (Draft)<div class="sb-dot d-n" id="d-p9"></div></div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">④ Safety & Monitoring</div>
+    <div class="sb-item" onclick="nav('p10',this)"><span class="ico">🔒</span>Safety Engine<div class="sb-dot d-n" id="d-p10"></div></div>
+    <div class="sb-item" onclick="nav('p11',this)"><span class="ico">📈</span>Monitoring Plan<div class="sb-dot d-n" id="d-p11"></div></div>
+    <div class="sb-item" onclick="nav('p12',this)"><span class="ico">📊</span>Risk Stratification<div class="sb-dot d-n" id="d-p12"></div></div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">⑤ Output</div>
+    <div class="sb-item" onclick="nav('p13',this)"><span class="ico">📋</span>Summary & Draft Plan<div class="sb-dot d-n" id="d-p13"></div></div>
+    <div class="sb-item" onclick="nav('p14',this)"><span class="ico">🔬</span>Research Dashboard<div class="sb-dot d-n" id="d-p14"></div></div>
+    <div class="sb-item" onclick="nav('p15',this)"><span class="ico">📚</span>Standards & Safety Notes<div class="sb-dot d-n" id="d-p15"></div></div>
+  </div>
+  <div class="sb-ft">
+    <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center" onclick="exportCSV()">⬇ Export CSV</button>
+  </div>
+</nav>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="logo-sm"><span style="color:#1a5a80">dr</span><span style="color:#2b8ec4">Aisyi</span><span style="color:#1a5a80">EduCare</span></div>
+      <div class="tb-title" id="tb-title">Skrining & Risiko</div>
+    </div>
+    <div style="display:flex;gap:5px">
+      <button class="btn btn-outline btn-sm" onclick="doReset()">🔄 Reset</button>
+      <button class="btn btn-primary btn-sm" onclick="nav('p13',null)">📋 Summary</button>
+    </div>
+  </div>
+
+  <!-- FLOW BAR -->
+  <div class="flow-bar">
+    <div class="fc pend" id="fc-p0" onclick="nav('p0',null)">①Skrining</div><span class="fa">→</span>
+    <div class="fc pend" id="fc-p1" onclick="nav('p1',null)">②Antro</div><span class="fa">→</span>
+    <div class="fc pend" id="fc-p2" onclick="nav('p2',null)">③Energi</div><span class="fa">→</span>
+    <div class="fc pend" id="fc-p3" onclick="nav('p3',null)">④Fase</div><span class="fa">→</span>
+    <div class="fc pend" id="fc-p4" onclick="nav('p4',null)">⑤Muko</div><span class="fa">→</span>
+    <div class="fc pend" id="fc-p5" onclick="nav('p5',null)">⑥GVHD</div><span class="fa">→</span>
+    <div class="fc pend" id="fc-p8" onclick="nav('p8',null)">⑦Route</div><span class="fa">→</span>
+    <div class="fc pend" id="fc-p9" onclick="nav('p9',null)">⑧PN</div><span class="fa">→</span>
+    <div class="fc pend" id="fc-p10" onclick="nav('p10',null)">⑨Safety</div><span class="fa">→</span>
+    <div class="fc pend" id="fc-p13" onclick="nav('p13',null)">⑩Summary</div>
+  </div>
+
+  <div class="content">
+
+<!-- ══════════════════════════════
+     P0: SKRINING & RISIKO
+══════════════════════════════ -->
+<div id="p0" class="page active">
+  <div class="disc">⚕️ <strong>Disclaimer:</strong> Toolkit ini merupakan alat bantu edukasi dan clinical decision support awal. Semua perhitungan dan rekomendasi harus diverifikasi oleh dokter, dietitian/nutritionist, farmasi klinik, dan tim HSCT. <strong>Bukan prescription/order otomatis.</strong></div>
+  <div class="priv">🔒 <strong>Privasi:</strong> Gunakan data terde-identifikasi. Jangan masukkan nama lengkap, nomor rekam medis, atau identitas pasien langsung. Gunakan kode/inisial opsional.</div>
+
+  <div class="card">
+    <div class="card-title">📋 Data Klinis (De-Identified)</div>
+    <div class="g3">
+      <div class="field"><label>Kode/Inisial Pasien (Opsional)</label><input id="pt-kode" placeholder="mis. Px-01 atau inisial"></div>
+      <div class="field"><label>Kode Internal (Opsional)</label><input id="pt-internal" placeholder="kode studi/internal"></div>
+      <div class="field"><label>Tanggal Asesmen</label><input id="pt-date" type="date"></div>
+    </div>
+    <div class="g3" style="margin-top:7px">
+      <div class="field"><label>Diagnosis Klinis</label><input id="pt-dx" placeholder="mis. ALL, AML, Thalassemia"></div>
+      <div class="field"><label>Jenis HSCT</label>
+        <select id="pt-hsct" onchange="S.hsct=this.value">
+          <option value="allo-mrd">Allo-HSCT MRD</option>
+          <option value="allo-mud">Allo-HSCT MUD</option>
+          <option value="allo-haplo">Allo-HSCT Haploidentik</option>
+          <option value="allo-cb">Allo-HSCT Cord Blood</option>
+          <option value="auto">Auto-HSCT</option>
+        </select>
+      </div>
+      <div class="field"><label>Conditioning</label>
+        <select id="pt-cond" onchange="S.conditioning=this.value">
+          <option value="MAC">MAC (Myeloablative)</option>
+          <option value="RIC">RIC (Reduced Intensity)</option>
+          <option value="NMA">NMA (Non-Myeloablative)</option>
+        </select>
+      </div>
+    </div>
+    <div class="g3" style="margin-top:7px">
+      <div class="field"><label>Hari HSCT</label><input id="pt-day" placeholder="mis. D+7" oninput="S.day=this.value"></div>
+      <div class="field"><label>Akses Vena</label>
+        <select id="pt-access" onchange="S.access=this.value">
+          <option value="central">Sentral (CVC/PICC/Port)</option>
+          <option value="peripheral">Perifer saja</option>
+        </select>
+      </div>
+      <div class="field"><label>Fase Saat Ini</label>
+        <select id="pt-fase" onchange="S.faseKlinis=this.value">
+          <option value="">— Belum dipilih —</option>
+          <option value="pre">Pre-HSCT</option>
+          <option value="cond">Conditioning</option>
+          <option value="aplasia">Aplasia/Neutropenia</option>
+          <option value="engraft">Engraftment</option>
+          <option value="agvhd">Acute GVHD</option>
+          <option value="cgvhd">Chronic GVHD</option>
+          <option value="icu">ICU/Critical</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚠️ Skrining Risiko Malnutrisi <span class="tag t-blue">Centang semua yang berlaku</span></div>
+    <div class="risk-grid">
+      <label class="rck"><input type="checkbox" id="rc1" onchange="calcRisk()"> Penurunan BB &gt;5% dalam 1 bulan</label>
+      <label class="rck"><input type="checkbox" id="rc2" onchange="calcRisk()"> Penurunan BB &gt;10% dalam 3 bulan</label>
+      <label class="rck"><input type="checkbox" id="rc3" onchange="calcRisk()"> Intake oral &lt;50% selama &gt;3 hari</label>
+      <label class="rck"><input type="checkbox" id="rc4" onchange="calcRisk()"> Intake oral &lt;75% selama &gt;7 hari</label>
+      <label class="rck"><input type="checkbox" id="rc5" onchange="calcRisk()"> Mukositis grade ≥3</label>
+      <label class="rck"><input type="checkbox" id="rc6" onchange="calcRisk()"> Diare / GVHD GI aktif</label>
+      <label class="rck"><input type="checkbox" id="rc7" onchange="calcRisk()"> Mual/muntah tidak terkontrol</label>
+      <label class="rck"><input type="checkbox" id="rc8" onchange="calcRisk()"> Infeksi aktif / Sepsis</label>
+      <label class="rck"><input type="checkbox" id="rc9" onchange="calcRisk()"> Steroid dosis tinggi</label>
+      <label class="rck"><input type="checkbox" id="rc10" onchange="calcRisk()"> VOD / SOS</label>
+      <label class="rck"><input type="checkbox" id="rc11" onchange="calcRisk()"> Edema / Asites signifikan</label>
+      <label class="rck"><input type="checkbox" id="rc12" onchange="calcRisk()"> Malnutrisi pre-HSCT</label>
+      <label class="rck"><input type="checkbox" id="rc13" onchange="calcRisk()"> Puasa / NPO berkepanjangan &gt;5 hari</label>
+      <label class="rck"><input type="checkbox" id="rc14" onchange="calcRisk()"> ICU / Critical illness</label>
+    </div>
+    <div id="risk-out" style="margin-top:7px"></div>
+    <p class="caveat">* Skrining ini bukan diagnosis malnutrisi final. Diagnosis gizi harus mengikuti asesmen klinis lengkap, antropometri, intake, laboratorium, dan evaluasi dietitian.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔬 Laboratorium Baseline</div>
+    <div class="g4">
+      <div class="field"><label>Albumin (g/dL)</label><input id="l-alb" type="number" step="0.1" placeholder="3.5–5" oninput="S.lab.alb=+this.value;checkLabs()"></div>
+      <div class="field"><label>Prealbumin (mg/dL)</label><input id="l-pre" type="number" step="0.1" placeholder="16–35" oninput="S.lab.pre=+this.value"></div>
+      <div class="field"><label>CRP (mg/L)</label><input id="l-crp" type="number" placeholder="&lt;10" oninput="S.lab.crp=+this.value;checkLabs()"></div>
+      <div class="field"><label>Gula Darah (mg/dL)</label><input id="l-gd" type="number" placeholder="70–100" oninput="S.lab.gd=+this.value;checkLabs()"></div>
+      <div class="field"><label>Trigliserida (mg/dL)</label><input id="l-tg" type="number" placeholder="&lt;150" oninput="S.lab.tg=+this.value;checkLabs()"></div>
+      <div class="field"><label>Fosfat (mg/dL)</label><input id="l-po4" type="number" step="0.1" placeholder="3–6" oninput="S.lab.po4=+this.value;checkLabs()"></div>
+      <div class="field"><label>Kalium (mEq/L)</label><input id="l-k" type="number" step="0.1" placeholder="3.5–5" oninput="S.lab.k=+this.value;checkLabs()"></div>
+      <div class="field"><label>Magnesium (mg/dL)</label><input id="l-mg" type="number" step="0.1" placeholder="1.7–2.4" oninput="S.lab.mg=+this.value;checkLabs()"></div>
+      <div class="field"><label>Bilirubin Total (mg/dL)</label><input id="l-bili" type="number" step="0.1" placeholder="&lt;1.2" oninput="S.lab.bili=+this.value;checkLabs()"></div>
+      <div class="field"><label>SGPT/ALT (U/L)</label><input id="l-alt" type="number" placeholder="&lt;40" oninput="S.lab.alt=+this.value;checkLabs()"></div>
+      <div class="field"><label>Kreatinin (mg/dL)</label><input id="l-cr" type="number" step="0.1" placeholder="&lt;1.0" oninput="S.lab.cr=+this.value;checkLabs()"></div>
+      <div class="field"><label>Ureum (mg/dL)</label><input id="l-ur" type="number" placeholder="10–50" oninput="S.lab.ur=+this.value"></div>
+    </div>
+    <div id="lab-out" style="margin-top:6px"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">👥 Role Strip — Peran Tim</div>
+    <div class="role-strip">
+      <div class="role-card"><div class="role-title">🩺 Dokter / Tim HSCT</div><div class="role-desc">Validasi klinis, keputusan akhir, tanda tangan order</div></div>
+      <div class="role-card"><div class="role-title">🥗 Nutritionist / Dietitian</div><div class="role-desc">Asesmen gizi, target nutrisi, implementasi diet</div></div>
+      <div class="role-card"><div class="role-title">💊 Farmasi Klinik</div><div class="role-desc">Validasi PN: osmolaritas, Ca–P, stabilitas, kompatibilitas</div></div>
+      <div class="role-card"><div class="role-title">💉 Perawat HSCT</div><div class="role-desc">Intake/output, monitoring toleransi, daily reporting</div></div>
+      <div class="role-card"><div class="role-title">🏥 Tim ICU / Infeksi</div><div class="role-desc">Kondisi kritis, sepsis, fluid overload, organ dysfunction</div></div>
+    </div>
+  </div>
+  <button class="btn btn-primary" onclick="markDone('p0');nav('p1',null)">Lanjut → Antropometri ▶</button>
+</div>
+
+<!-- ══════════════════════════════
+     P1: ANTROPOMETRI
+══════════════════════════════ -->
+<div id="p1" class="page">
+  <div id="fb-p1" class="fb" style="display:none"></div>
+  <div class="card">
+    <div class="card-title">📏 Data Antropometri</div>
+    <div class="g4">
+      <div class="field"><label>BB Aktual (kg)</label><input id="a-bb" type="number" step="0.1" oninput="S.bb=+this.value;calcAntro()"></div>
+      <div class="field"><label>Tinggi Badan (cm)</label><input id="a-tb" type="number" step="0.1" oninput="S.tb=+this.value;calcAntro()"></div>
+      <div class="field"><label>Usia (tahun)</label><input id="a-age" type="number" step="0.25" oninput="S.age=+this.value;calcAntro()"></div>
+      <div class="field"><label>Jenis Kelamin</label>
+        <select id="a-jk" onchange="S.jk=this.value;calcAntro()">
+          <option value="M">Laki-laki</option><option value="F">Perempuan</option>
+        </select>
+      </div>
+    </div>
+    <div class="g4" style="margin-top:7px">
+      <div class="field"><label>MUAC (cm) — Opsional</label><input id="a-muac" type="number" step="0.1" oninput="calcAntro()"></div>
+      <div class="field"><label>BB 1 bulan lalu (kg)</label><input id="a-bb1" type="number" step="0.1" oninput="calcAntro()"></div>
+      <div class="field"><label>BB 3 bulan lalu (kg)</label><input id="a-bb3" type="number" step="0.1" oninput="calcAntro()"></div>
+      <div class="field"><label>Edema / Asites</label>
+        <select id="a-edema" onchange="S.edema=+this.value;calcAntro()">
+          <option value="0">Tidak ada</option>
+          <option value="1.5">+1 ringan (~1.5 kg)</option>
+          <option value="3.5">+2 sedang (~3.5 kg)</option>
+          <option value="6">+3 berat/asites (~6 kg)</option>
+        </select>
+      </div>
+    </div>
+    <div class="field" style="margin-top:7px;max-width:240px">
+      <label>Target/Dry Weight jika diketahui (kg)</label>
+      <input id="a-dw" type="number" step="0.1" placeholder="opsional" oninput="calcAntro()">
+    </div>
+    <div id="antro-out" style="margin-top:7px"></div>
+    <p class="caveat">* Z-score memerlukan growth chart valid (WHO/CDC/LMS). Tool ini menampilkan estimasi % IBW sebagai acuan praktis, bukan z-score klinis tervalidasi. Konsultasikan dengan dietitian untuk asesmen pertumbuhan formal.</p>
+  </div>
+  <button class="btn btn-primary" onclick="markDone('p1');nav('p2',null)">Lanjut → Energi & Cairan ▶</button>
+</div>
+
+<!-- ══════════════════════════════
+     P2: ENERGI, PROTEIN & CAIRAN
+══════════════════════════════ -->
+<div id="p2" class="page">
+  <div id="fb-p2" class="fb" style="display:none"></div>
+  <div class="card">
+    <div class="card-title">🔥 BMR, TEE & Kebutuhan Energi</div>
+    <div class="g3">
+      <div class="field"><label>Metode BMR</label>
+        <select id="bmr-m" onchange="calcBMR()">
+          <option value="schofield">Schofield (Direkomendasikan anak)</option>
+          <option value="who">WHO</option>
+          <option value="hb">Harris-Benedict (Caveat: validasi terbatas anak)</option>
+        </select>
+      </div>
+      <div class="field"><label>Stress / Activity Factor</label>
+        <select id="sf" onchange="S.sf=+this.value;calcBMR()">
+          <option value="1.0">×1.0 Stabil / Pre-HSCT</option>
+          <option value="1.1">×1.1 Conditioning ringan</option>
+          <option value="1.2" selected>×1.2 Conditioning MAC / Aplasia</option>
+          <option value="1.3">×1.3 Infeksi / Engraftment</option>
+          <option value="1.4">×1.4 Sepsis / GVHD sedang</option>
+          <option value="1.5">×1.5 Sepsis berat / ICU</option>
+        </select>
+      </div>
+      <div class="field"><label>Kondisi Cairan</label>
+        <select id="fluid-m" onchange="S.fluidFactor=+this.value;calcBMR()">
+          <option value="1.0">Normal</option>
+          <option value="1.2">Kehilangan ekstra / Demam</option>
+          <option value="0.8">Restriksi ringan</option>
+          <option value="0.6">Restriksi sedang (VOD/edema)</option>
+          <option value="0.5">Restriksi berat (AKI/oliguria)</option>
+        </select>
+      </div>
+    </div>
+    <div class="g2" style="margin-top:7px">
+      <div class="field"><label>Cairan obat/antibiotik/transfusi/flush (mL/hari)</label>
+        <input id="drug-fluid" type="number" placeholder="mis. 300" oninput="S.drugFluid=+this.value;calcBMR()">
+      </div>
+      <div class="field"><label>Target protein (g/kg/hari) — sesuaikan per fase</label>
+        <select id="pro-target" onchange="S.proTarget=+this.value;calcBMR()">
+          <option value="1.5">1.5 g/kg (Pre-HSCT / stabil)</option>
+          <option value="2.0" selected>2.0 g/kg (Conditioning / engraftment)</option>
+          <option value="2.5">2.5 g/kg (Aplasia / aGVHD)</option>
+          <option value="3.0">3.0 g/kg (ICU / hipercatabolisme)</option>
+        </select>
+      </div>
+    </div>
+    <div id="bmr-out" style="margin-top:7px"></div>
+    <p class="caveat">* Kebutuhan energi pada HSCT sangat dinamis dan harus dititrasi berdasarkan toleransi, status metabolik, inflamasi, aktivitas, fungsi organ, dan target klinis. Angka ini merupakan estimasi awal.</p>
+  </div>
+  <button class="btn btn-primary" onclick="markDone('p2');nav('p3',null)">Lanjut → Fase HSCT ▶</button>
+</div>
+
+<!-- ══════════════════════════════
+     P3: FASE HSCT
+══════════════════════════════ -->
+<div id="p3" class="page">
+  <div id="fb-p3" class="fb" style="display:none"></div>
+  <div class="card">
+    <div class="card-title">🔬 Fase HSCT <span class="tag t-blue">→ Mengubah stress factor, protein target, rute</span></div>
+    <div class="phase-grid">
+      <div class="pc" onclick="selPhase('pre',this)"><div class="pc-ico">📋</div><div class="pc-name">Pre-HSCT</div></div>
+      <div class="pc" onclick="selPhase('cond',this)"><div class="pc-ico">💊</div><div class="pc-name">Conditioning</div></div>
+      <div class="pc" onclick="selPhase('aplasia',this)"><div class="pc-ico">🦠</div><div class="pc-name">Aplasia</div></div>
+      <div class="pc" onclick="selPhase('engraft',this)"><div class="pc-ico">🌱</div><div class="pc-name">Engraftment</div></div>
+      <div class="pc" onclick="selPhase('agvhd',this)"><div class="pc-ico">⚡</div><div class="pc-name">Acute GVHD</div></div>
+      <div class="pc" onclick="selPhase('cgvhd',this)"><div class="pc-ico">🔄</div><div class="pc-name">Chronic GVHD</div></div>
+      <div class="pc" onclick="selPhase('icu',this)"><div class="pc-ico">🏥</div><div class="pc-name">ICU/Critical</div></div>
+    </div>
+    <div id="phase-out"></div>
+  </div>
+  <button class="btn btn-primary" onclick="markDone('p3');nav('p4',null)">Lanjut → Mukositis ▶</button>
+</div>
+
+<!-- ══════════════════════════════
+     P4: MUKOSITIS
+══════════════════════════════ -->
+<div id="p4" class="page">
+  <div id="fb-p4" class="fb" style="display:none"></div>
+  <div class="card">
+    <div class="card-title">🦷 Mukositis Grade <span class="tag t-blue">→ Mempengaruhi rute nutrisi</span></div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:.65rem">
+      <div class="pc" onclick="selMuko(0,this)"><div class="pc-ico">😊</div><div class="pc-name">Grade 0<br><span style="font-size:8px;font-weight:400">Normal</span></div></div>
+      <div class="pc" onclick="selMuko(1,this)"><div class="pc-ico">😐</div><div class="pc-name">Grade 1<br><span style="font-size:8px;font-weight:400">Eritema</span></div></div>
+      <div class="pc" onclick="selMuko(2,this)"><div class="pc-ico">😟</div><div class="pc-name">Grade 2<br><span style="font-size:8px;font-weight:400">Ulser kecil</span></div></div>
+      <div class="pc" onclick="selMuko(3,this)"><div class="pc-ico">😣</div><div class="pc-name">Grade 3<br><span style="font-size:8px;font-weight:400">Tdk bisa telan</span></div></div>
+      <div class="pc" onclick="selMuko(4,this)"><div class="pc-ico">😱</div><div class="pc-name">Grade 4<br><span style="font-size:8px;font-weight:400">Tdk bisa makan</span></div></div>
+    </div>
+    <div id="muko-out"></div>
+    <p class="caveat">* Mukositis grade bukan satu-satunya penentu rute. Pertimbangkan juga: fungsi GI, risiko aspirasi, stabilitas hemodinamik, trombosit, dan protokol lokal.</p>
+  </div>
+  <button class="btn btn-primary" onclick="markDone('p4');nav('p5',null)">Lanjut → GVHD GI ▶</button>
+</div>
+
+<!-- ══════════════════════════════
+     P5: GVHD GI
+══════════════════════════════ -->
+<div id="p5" class="page">
+  <div id="fb-p5" class="fb" style="display:none"></div>
+  <div class="card">
+    <div class="card-title">⚡ GVHD GI — Faktor Rute & Toleransi Nutrisi <span class="tag t-blue">→ Rute & protein</span></div>
+    <div class="g3">
+      <div class="field"><label>Volume Diare (mL/hari)</label><input id="gv-vol" type="number" placeholder="mis. 800" oninput="calcGVHD()"></div>
+      <div class="field"><label>Volume Diare (mL/kg/hari)</label><input id="gv-mlkg" type="number" step="0.1" placeholder="otomatis" oninput="calcGVHD()"></div>
+      <div class="field"><label>Nyeri Abdomen</label>
+        <select id="gv-pain" onchange="calcGVHD()">
+          <option value="0">Tidak ada</option><option value="1">Ringan</option>
+          <option value="2">Sedang (perlu analgesik)</option><option value="3">Berat (kolik)</option>
+        </select>
+      </div>
+    </div>
+    <div class="g3" style="margin-top:7px">
+      <div class="field"><label>Ileus</label>
+        <select id="gv-ileus" onchange="calcGVHD()">
+          <option value="0">Tidak ada</option><option value="1">Parsial</option><option value="2">Total</option>
+        </select>
+      </div>
+      <div class="field"><label>Hematochezia</label>
+        <select id="gv-hema" onchange="calcGVHD()"><option value="0">Tidak ada</option><option value="1">Ada</option></select>
+      </div>
+      <div class="field"><label>Mual/Muntah</label>
+        <select id="gv-nausea" onchange="calcGVHD()">
+          <option value="0">Tidak ada/Ringan</option><option value="1">Sedang</option><option value="2">Berat/tidak terkontrol</option>
+        </select>
+      </div>
+    </div>
+    <div class="g3" style="margin-top:7px">
+      <div class="field"><label>Gejala GI Atas (muntah, disfagia)</label>
+        <select id="gv-upper" onchange="calcGVHD()">
+          <option value="0">Tidak ada</option><option value="1">Ada</option>
+        </select>
+      </div>
+      <div class="field"><label>Albumin (g/dL) — protein loss marker</label>
+        <input id="gv-alb" type="number" step="0.1" placeholder="mis. 2.8" oninput="calcGVHD()">
+      </div>
+    </div>
+    <div id="gvhd-out" style="margin-top:7px"></div>
+    <p class="caveat">* Tool ini tidak mendiagnosis atau menstaging GVHD secara final. Diagnosis dan staging GVHD harus dilakukan oleh tim klinis berdasarkan biopsi, klinis, dan protokol. Output di sini adalah estimasi derajat keterlibatan GI untuk kepentingan perencanaan nutrisi.</p>
+  </div>
+  <button class="btn btn-primary" onclick="markDone('p5');nav('p6',null)">Lanjut → Fluid Overload ▶</button>
+</div>
+
+<!-- ══════════════════════════════
+     P6: FLUID OVERLOAD
+══════════════════════════════ -->
+<div id="p6" class="page">
+  <div id="fb-p6" class="fb" style="display:none"></div>
+  <div class="card">
+    <div class="card-title">💧 Fluid Overload / Restriksi Cairan <span class="tag t-blue">→ Target cairan & PN volume</span></div>
+    <div class="g3">
+      <div class="field"><label>BB Baseline / Pre-HSCT (kg)</label><input id="fo-base" type="number" step="0.1" oninput="calcFO()"></div>
+      <div class="field"><label>BB Saat Ini (kg)</label><input id="fo-now" type="number" step="0.1" oninput="calcFO()"></div>
+      <div class="field"><label>Input Cairan 24 jam (mL)</label><input id="fo-in" type="number" oninput="calcFO()"></div>
+    </div>
+    <div class="g3" style="margin-top:7px">
+      <div class="field"><label>Output Cairan 24 jam (mL)</label><input id="fo-out" type="number" oninput="calcFO()"></div>
+      <div class="field"><label>Diuresis (mL/kg/jam)</label><input id="fo-uo" type="number" step="0.1" placeholder="mis. 1.0" oninput="calcFO()"></div>
+      <div class="field"><label>Kondisi Penyerta</label>
+        <select id="fo-cond" onchange="calcFO()">
+          <option value="none">Tidak ada kondisi khusus</option>
+          <option value="vod">VOD / SOS</option>
+          <option value="aki">AKI / Oliguria</option>
+          <option value="icu">ICU / Sepsis</option>
+          <option value="hf">Gangguan jantung</option>
+        </select>
+      </div>
+    </div>
+    <div id="fo-out2" style="margin-top:7px"></div>
+    <p class="caveat">* Estimasi fluid overload bersifat kalkulasi dan harus dikonfirmasi dengan pemeriksaan klinis, input-output chart harian, BB serial, dan kondisi organ aktual. Koordinasikan dengan tim nefrologi/ICU bila fluid overload berat.</p>
+  </div>
+  <button class="btn btn-primary" onclick="markDone('p6');nav('p7',null)">Lanjut → Refeeding Risk ▶</button>
+</div>
+
+<!-- ══════════════════════════════
+     P7: REFEEDING RISK
+══════════════════════════════ -->
+<div id="p7" class="page">
+  <div id="fb-p7" class="fb" style="display:none"></div>
+  <div class="card">
+    <div class="card-title">⚠️ Refeeding Syndrome Risk <span class="tag t-blue">→ Start kalori & eskalasi</span></div>
+    <div class="g4">
+      <div class="field"><label>Lama intake minimal/puasa (hari)</label><input id="rf-days" type="number" oninput="calcRefeeding()"></div>
+      <div class="field"><label>% Penurunan BB dari baseline</label><input id="rf-wl" type="number" step="0.5" oninput="calcRefeeding()"></div>
+      <div class="field"><label>Fosfat baseline (mg/dL)</label><input id="rf-po4" type="number" step="0.1" oninput="calcRefeeding()"></div>
+      <div class="field"><label>Status Gizi</label>
+        <select id="rf-status" onchange="calcRefeeding()">
+          <option value="0">Normal</option><option value="1">Gizi kurang</option>
+          <option value="2">Malnutrisi sedang</option><option value="3">Malnutrisi berat</option>
+        </select>
+      </div>
+    </div>
+    <div class="g4" style="margin-top:7px">
+      <div class="field"><label>Kalium (mEq/L)</label><input id="rf-k" type="number" step="0.1" oninput="calcRefeeding()"></div>
+      <div class="field"><label>Magnesium (mg/dL)</label><input id="rf-mg" type="number" step="0.1" oninput="calcRefeeding()"></div>
+      <div class="field"><label>Glukosa (mg/dL)</label><input id="rf-gd" type="number" oninput="calcRefeeding()"></div>
+      <div class="field"><label>Sepsis / Inflamasi aktif?</label>
+        <select id="rf-sep" onchange="calcRefeeding()">
+          <option value="0">Tidak</option><option value="1">Ringan</option><option value="2">Berat</option>
+        </select>
+      </div>
+    </div>
+    <div id="rf-out" style="margin-top:7px"></div>
+    <p class="caveat">* Panduan ini bersifat edukatif. Dosis thiamine dan protokol koreksi elektrolit harus mengikuti protokol lokal dan diverifikasi oleh tim klinis/farmasi.</p>
+  </div>
+  <button class="btn btn-primary" onclick="markDone('p7');nav('p8',null)">Lanjut → Route Decision ▶</button>
+</div>
+
+<!-- ══════════════════════════════
+     P8: ROUTE DECISION
+══════════════════════════════ -->
+<div id="p8" class="page">
+  <div id="fb-p8" class="fb" style="display:none"></div>
+  <div class="card">
+    <div class="card-title">🗺️ Route Decision Engine <span class="tag t-green">Rekomendasi awal — perlu verifikasi tim</span></div>
+    <div class="g3">
+      <div class="field"><label>Estimasi % Intake Oral saat ini</label><input id="rt-oral" type="number" min="0" max="100" placeholder="0–100" oninput="S.oralPct=+this.value;calcRoute()"></div>
+      <div class="field"><label>Fungsi GI</label>
+        <select id="rt-gi" onchange="S.giFx=this.value;calcRoute()">
+          <option value="normal">Normal / Fungsional</option>
+          <option value="partial">Parsial (mual, diare ringan-sedang)</option>
+          <option value="impaired">Terganggu (diare berat, ileus parsial)</option>
+          <option value="none">Tidak fungsional / Obstruksi</option>
+        </select>
+      </div>
+      <div class="field"><label>Kontraindikasi EN?</label>
+        <select id="rt-contra" onchange="calcRoute()">
+          <option value="no">Tidak ada</option>
+          <option value="yes">Ada (ileus total, perforasi, perdarahan aktif)</option>
+        </select>
+      </div>
+    </div>
+    <div class="g3" style="margin-top:7px">
+      <div class="field"><label>Risiko Aspirasi</label>
+        <select id="rt-asp" onchange="calcRoute()">
+          <option value="low">Rendah</option>
+          <option value="moderate">Sedang</option>
+          <option value="high">Tinggi</option>
+        </select>
+      </div>
+      <div class="field"><label>Stabilitas Hemodinamik</label>
+        <select id="rt-hemo" onchange="calcRoute()">
+          <option value="stable">Stabil</option>
+          <option value="unstable">Tidak stabil / vasopressor</option>
+        </select>
+      </div>
+      <div class="field"><label>Durasi estimasi intake tidak adekuat</label>
+        <select id="rt-dur" onchange="calcRoute()">
+          <option value="short">&lt;3 hari</option>
+          <option value="medium">3–7 hari</option>
+          <option value="long">&gt;7 hari</option>
+        </select>
+      </div>
+    </div>
+    <div class="g3" style="margin-top:7px">
+      <div class="field"><label>Trombosit / Risiko Perdarahan (pemasangan tube)</label>
+        <select id="rt-plt" onchange="calcRoute()">
+          <option value="ok">Aman (≥50.000 / terkoreksi)</option>
+          <option value="low">Trombositopenia (&lt;50.000)</option>
+          <option value="vlow">Berat (&lt;20.000 / perdarahan aktif)</option>
+        </select>
+      </div>
+      <div class="field"><label>Akses Vena Sentral (untuk PN)</label>
+        <select id="rt-cvc" onchange="calcRoute()">
+          <option value="yes">Tersedia (CVC/PICC/Port)</option>
+          <option value="no">Belum ada (perifer saja)</option>
+        </select>
+      </div>
+      <div class="field"><label>Risiko Refeeding (dari modul Refeeding)</label>
+        <select id="rt-rf" onchange="calcRoute()">
+          <option value="auto">Otomatis dari modul</option>
+          <option value="low">Rendah</option>
+          <option value="high">Tinggi / Sangat tinggi</option>
+        </select>
+      </div>
+    </div>
+    <div id="route-out" style="margin-top:7px"></div>
+    <p class="caveat">* Rekomendasi rute ini bersifat awal dan edukatif. Keputusan akhir harus mempertimbangkan kondisi klinis menyeluruh, protokol lokal, ketersediaan akses, dan keputusan tim multidisiplin.</p>
+  </div>
+  <button class="btn btn-primary" onclick="markDone('p8');nav('p9',null)">Lanjut → PN Builder ▶</button>
+</div>
+
+<!-- ══════════════════════════════
+     P9: PN BUILDER (DRAFT)
+══════════════════════════════ -->
+<div id="p9" class="page">
+  <div id="fb-p9" class="fb" style="display:none"></div>
+  <div class="disc">💉 <strong>Draft PN Calculation:</strong> Perhitungan ini merupakan estimasi awal. <strong>Wajib diverifikasi oleh farmasi klinik, dietitian, dan dokter</strong> sebelum diimplementasikan. Kompatibilitas Ca–P, osmolaritas, stabilitas, dan ketersediaan produk bergantung pada formulasi dan kondisi lokal.</div>
+  <div class="card">
+    <div class="card-title">💉 PN Builder — Draft Kalkulasi</div>
+    <div class="g4">
+      <div class="field"><label>BB / Dry Weight (kg)</label><input id="pn-bb" type="number" step="0.1" oninput="S.pn.bb=+this.value;buildPN()"></div>
+      <div class="field"><label>Target kalori (kcal/kg/hari)</label><input id="pn-tkcal" type="number" step="5" oninput="S.pn.tkcal=+this.value;buildPN()"></div>
+      <div class="field"><label>Protein target (g/kg/hari)</label><input id="pn-tpro" type="number" step="0.1" oninput="S.pn.tpro=+this.value;buildPN()"></div>
+      <div class="field"><label>Volume PN (mL/hari)</label><input id="pn-vol" type="number" oninput="S.pn.vol=+this.value;buildPN()"></div>
+    </div>
+    <div class="g4" style="margin-top:7px">
+      <div class="field"><label>Akses</label>
+        <select id="pn-acc" onchange="S.pn.acc=this.value;buildPN()">
+          <option value="central">Sentral (CVC/PICC)</option>
+          <option value="peripheral">Perifer (maks 900 mOsm/L)</option>
+        </select>
+      </div>
+      <div class="field"><label>Durasi Infus (jam)</label>
+        <select id="pn-hrs" onchange="S.pn.hrs=+this.value;buildPN()">
+          <option value="24">24 jam (kontinu)</option>
+          <option value="18">18 jam (siklik)</option>
+          <option value="12">12 jam (nokturnal)</option>
+        </select>
+      </div>
+      <div class="field"><label>GIR Maks (mg/kg/mnt)</label>
+        <select id="pn-girmax" onchange="S.pn.girMax=+this.value;buildPN()">
+          <option value="12">Bayi: 12</option><option value="10">Anak &lt;2th: 10</option>
+          <option value="8" selected>Anak 2–10th: 8</option><option value="6">Remaja: 6</option>
+        </select>
+      </div>
+      <div class="field"><label>Lipid Maks (g/kg/hari)</label>
+        <select id="pn-lipmax" onchange="S.pn.lipMax=+this.value;buildPN()">
+          <option value="3">3 g/kg (standar)</option><option value="2">2 g/kg (hati-hati)</option>
+          <option value="1">1 g/kg (TG tinggi/kolestasis)</option><option value="0">0 (tanpa lipid)</option>
+        </select>
+      </div>
+    </div>
+    <div class="sec">Elektrolit (per kg/hari) — Estimasi awal, sesuaikan per lab</div>
+    <div class="g5">
+      <div class="field"><label>Na (mEq/kg)</label><input id="pn-na" type="number" value="2" step="0.5" oninput="buildPN()"></div>
+      <div class="field"><label>K (mEq/kg)</label><input id="pn-k" type="number" value="2" step="0.5" oninput="buildPN()"></div>
+      <div class="field"><label>Ca (mEq/kg)</label><input id="pn-ca" type="number" value="1" step="0.25" oninput="buildPN()"></div>
+      <div class="field"><label>Fosfat (mmol/kg)</label><input id="pn-p" type="number" value="1" step="0.25" oninput="buildPN()"></div>
+      <div class="field"><label>Mg (mEq/kg)</label><input id="pn-mg" type="number" value="0.3" step="0.1" oninput="buildPN()"></div>
+    </div>
+    <div class="sec">Penyesuaian Khusus</div>
+    <div class="g3">
+      <div class="field"><label>Kolestasis / Disfungsi hati?</label>
+        <select id="pn-chol" onchange="buildPN()">
+          <option value="no">Tidak</option>
+          <option value="mild">Ringan — batasi Cu/Mn</option>
+          <option value="severe">Berat — stop Mn, kurangi lipid</option>
+        </select>
+      </div>
+      <div class="field"><label>Disfungsi Ginjal?</label>
+        <select id="pn-renal" onchange="buildPN()">
+          <option value="no">Tidak</option>
+          <option value="mild">AKI ringan — kurangi elektrolit</option>
+          <option value="rrt">RRT — konsultasi nefrologi</option>
+        </select>
+      </div>
+      <div class="field"><label>MVI / Multivitamin</label>
+        <select id="pn-mvi">
+          <option value="ped">MVI Pediatrik (dosis BB)</option>
+          <option value="adult">MVI Dewasa (bila &gt;40kg)</option>
+          <option value="none">Tidak (berikan terpisah)</option>
+        </select>
+      </div>
+    </div>
+    <div class="g3" style="margin-top:7px">
+      <div class="field"><label>Carnitine (opsional)</label>
+        <select id="pn-carn" onchange="buildPN()">
+          <option value="no">Tidak</option>
+          <option value="yes">Pertimbangkan (PN lama / neonatus / defisiensi)</option>
+        </select>
+      </div>
+      <div class="field"><label>Trace Element</label>
+        <select id="pn-te" onchange="buildPN()">
+          <option value="std">Standar pediatrik</option>
+          <option value="nomn">Tanpa Mangan (kolestasis)</option>
+          <option value="renal">Kurangi (disfungsi ginjal)</option>
+        </select>
+      </div>
+      <div class="field"><label>Insulin (catatan, bukan otomatis)</label>
+        <select id="pn-ins" onchange="buildPN()">
+          <option value="no">Tidak ada catatan</option>
+          <option value="yes">Hiperglikemia — pertimbangkan protokol insulin terpisah</option>
+        </select>
+      </div>
+    </div>
+    <div id="pn-out" style="margin-top:7px"></div>
+  </div>
+  <button class="btn btn-primary" onclick="markDone('p9');nav('p10',null)">Lanjut → Safety Engine ▶</button>
+</div>
+
+<!-- ══════════════════════════════
+     P10: SAFETY ENGINE
+══════════════════════════════ -->
+<div id="p10" class="page">
+  <div id="fb-p10" class="fb" style="display:none"></div>
+  <div class="card">
+    <div class="card-title">🔒 Safety Engine <span class="tag t-rose">Alert edukatif — verifikasi dengan farmasi/tim</span></div>
+    <div id="safety-out"><div class="al al-i"><div class="al-ico">ℹ️</div><div class="al-body">Lengkapi PN Builder dan data lab untuk safety check penuh.</div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📋 Referensi Batas Aman Pediatrik</div>
+    <table class="t">
+      <thead><tr><th>Parameter</th><th>Batas Aman</th><th>Alert</th><th>Implikasi Klinis</th></tr></thead>
+      <tbody>
+        <tr><td>GIR bayi (&lt;1th)</td><td>≤12 mg/kg/mnt</td><td>&gt;12</td><td>Hiperglikemia, stress metabolik</td></tr>
+        <tr><td>GIR anak 2–10th</td><td>≤8 mg/kg/mnt</td><td>&gt;8</td><td>Kurangi dextrose/perpanjang infus</td></tr>
+        <tr><td>GIR remaja</td><td>≤6 mg/kg/mnt</td><td>&gt;6</td><td>Sesuaikan target kalori</td></tr>
+        <tr><td>Lipid</td><td>≤3 g/kg/hari</td><td>&gt;3</td><td>Hipertrigliseridemia, kolestasis</td></tr>
+        <tr><td>Osmolaritas perifer</td><td>≤900 mOsm/L</td><td>&gt;900</td><td>Phlebitis, kerusakan vena</td></tr>
+        <tr><td>Dextrose perifer</td><td>≤12.5%</td><td>&gt;12.5%</td><td>Phlebitis — perlu CVC</td></tr>
+        <tr><td>Ca × P</td><td>&lt;7 mEq×mmol/L</td><td>≥7</td><td>Risiko presipitasi — bahaya emboli</td></tr>
+        <tr><td>Glukosa darah</td><td>80–180 mg/dL</td><td>&gt;180/&lt;60</td><td>Hiper/hipoglikemia</td></tr>
+        <tr><td>Trigliserida</td><td>&lt;250 mg/dL</td><td>&gt;400</td><td>Stop lipid, pankreatitis risk</td></tr>
+        <tr><td>Bilirubin Total</td><td>&lt;2 mg/dL</td><td>&gt;5</td><td>Kolestasis PN, evaluasi VOD</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <button class="btn btn-primary" onclick="markDone('p10');nav('p11',null)">Lanjut → Monitoring Plan ▶</button>
+</div>
+
+<!-- ══════════════════════════════
+     P11: MONITORING PLAN
+══════════════════════════════ -->
+<div id="p11" class="page">
+  <div id="fb-p11" class="fb" style="display:none"></div>
+  <div class="card">
+    <div class="card-title">📈 Monitoring Plan Otomatis <span class="tag t-green">Berdasarkan data yang diinput</span></div>
+    <div id="monitor-out"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📋 Panduan Monitoring Standar HSCT</div>
+    <table class="t">
+      <thead><tr><th>Parameter</th><th>Aplasia (D0–D+14)</th><th>Engraftment</th><th>Stabil / Late</th></tr></thead>
+      <tbody>
+        <tr><td>Berat badan</td><td>Harian</td><td>Harian</td><td>2–3×/minggu</td></tr>
+        <tr><td>Balance cairan</td><td>Tiap shift (8 jam)</td><td>Harian</td><td>Harian</td></tr>
+        <tr><td>Intake oral/EN (%)</td><td>Harian</td><td>Harian</td><td>Harian</td></tr>
+        <tr><td>Stool output</td><td>Harian</td><td>Harian</td><td>Bila ada keluhan</td></tr>
+        <tr><td>Glukosa darah</td><td>Tiap 4–6 jam (PN)</td><td>Tiap 8–12 jam</td><td>1×/hari</td></tr>
+        <tr><td>Trigliserida</td><td>2×/minggu</td><td>1×/minggu</td><td>1×/minggu</td></tr>
+        <tr><td>Fosfat</td><td>Harian</td><td>Harian (refeeding)</td><td>2–3×/minggu</td></tr>
+        <tr><td>Kalium, Magnesium</td><td>Harian</td><td>Harian</td><td>2–3×/minggu</td></tr>
+        <tr><td>Natrium, Klorida</td><td>Harian</td><td>Harian</td><td>2–3×/minggu</td></tr>
+        <tr><td>Bilirubin/LFT</td><td>2×/minggu</td><td>2×/minggu</td><td>1×/minggu</td></tr>
+        <tr><td>Kreatinin/Ureum</td><td>Harian</td><td>2–3×/minggu</td><td>1×/minggu</td></tr>
+        <tr><td>Albumin/Prealbumin</td><td>1×/minggu</td><td>1×/minggu</td><td>1–2×/minggu</td></tr>
+        <tr><td>Mukositis grade</td><td>Harian</td><td>Harian (sampai resolusi)</td><td>Bila relevan</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title">🚨 Red Flags — Eskalasi Segera</div>
+    <table class="t">
+      <thead><tr><th>Kondisi</th><th>Threshold</th><th>Tindakan</th></tr></thead>
+      <tbody>
+        <tr><td>Hipoglikemia</td><td>GD &lt;60 mg/dL</td><td>Koreksi segera, evaluasi rate PN/dextrose</td></tr>
+        <tr><td>Hiperglikemia berat</td><td>GD &gt;250 mg/dL</td><td>Kurangi GIR, pertimbangkan insulin infus</td></tr>
+        <tr><td>Hipertrigliseridemia berat</td><td>TG &gt;400 mg/dL</td><td>Stop lipid PN, evaluasi penyebab</td></tr>
+        <tr><td>Hipofosfatemia berat</td><td>Po4 &lt;1.5 mg/dL</td><td>Koreksi IV, tunda eskalasi nutrisi</td></tr>
+        <tr><td>Bilirubin tinggi</td><td>&gt;5 mg/dL</td><td>Evaluasi VOD, stop Mn, cyclic PN, kurangi lipid</td></tr>
+        <tr><td>Stool output berat</td><td>&gt;10 mL/kg/hari</td><td>Evaluasi GVHD, koreksi elektrolit, pertimbangkan PN</td></tr>
+        <tr><td>Fluid overload berat</td><td>FO &gt;10%</td><td>Restriksi ketat, koordinasi ICU/nefrologi</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <button class="btn btn-primary" onclick="markDone('p11');nav('p12',null)">Lanjut → Risk Stratification ▶</button>
+</div>
+
+<!-- ══════════════════════════════
+     P12: RISK STRATIFICATION
+══════════════════════════════ -->
+<div id="p12" class="page">
+  <div id="fb-p12" class="fb" style="display:none"></div>
+  <div class="card">
+    <div class="card-title">📊 Nutrition-Related Risk Stratification <span class="tag t-purple">Rule-based edukatif</span></div>
+    <div class="al al-i" style="margin-bottom:7px"><div class="al-ico">ℹ️</div><div class="al-body">Sebagian variabel diisi otomatis dari data sebelumnya. Lengkapi yang tersisa untuk stratifikasi lengkap.</div></div>
+    <div class="g3">
+      <div class="field"><label>Estimasi BMI/status gizi</label>
+        <select id="oc-bmi">
+          <option value="0">Normal (&gt;-1 SD)</option><option value="1">Gizi kurang (-1 s/d -2 SD)</option>
+          <option value="2">Malnutrisi sedang (-2 s/d -3 SD)</option><option value="3">Malnutrisi berat (&lt;-3 SD)</option>
+        </select>
+      </div>
+      <div class="field"><label>% Penurunan BB</label><input id="oc-wl" type="number" step="0.5" placeholder="dari antro"></div>
+      <div class="field"><label>Albumin (g/dL)</label><input id="oc-alb" type="number" step="0.1" placeholder="dari lab"></div>
+    </div>
+    <div class="g3" style="margin-top:7px">
+      <div class="field"><label>CRP (mg/L)</label><input id="oc-crp" type="number" placeholder="dari lab"></div>
+      <div class="field"><label>Keterlibatan GVHD GI</label>
+        <select id="oc-gvhd">
+          <option value="0">Tidak ada/minimal</option><option value="1">Ringan</option>
+          <option value="2">Sedang</option><option value="3">Berat</option><option value="4">Sangat berat</option>
+        </select>
+      </div>
+      <div class="field"><label>Grade Mukositis</label>
+        <select id="oc-muko">
+          <option value="0">0–1</option><option value="1">2</option><option value="2">3</option><option value="3">4</option>
+        </select>
+      </div>
+    </div>
+    <div class="g3" style="margin-top:7px">
+      <div class="field"><label>Infeksi / Sepsis</label>
+        <select id="oc-inf">
+          <option value="0">Tidak ada/terkontrol</option><option value="1">Infeksi minor</option><option value="2">Sepsis/berat</option>
+        </select>
+      </div>
+      <div class="field"><label>Fungsi Ginjal</label>
+        <select id="oc-renal">
+          <option value="0">Normal</option><option value="1">AKI ringan</option><option value="2">AKI berat/RRT</option>
+        </select>
+      </div>
+      <div class="field"><label>Intake Oral saat ini</label>
+        <select id="oc-intake">
+          <option value="0">≥75%</option><option value="1">50–75%</option><option value="2">&lt;50%</option><option value="3">Puasa/NPO</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:8px" onclick="calcRiskStrat()">📊 Hitung Risk Stratification</button>
+    <div id="riskstrat-out" style="margin-top:7px"></div>
+    <p class="caveat">* Risk stratification ini bersifat rule-based edukatif dan BUKAN prediksi outcome individual tervalidasi. Gunakan sebagai panduan prioritas intervensi, bukan sebagai prognosis klinis.</p>
+  </div>
+  <button class="btn btn-primary" onclick="markDone('p12');nav('p13',null)">Lanjut → Summary ▶</button>
+</div>
+
+<!-- ══════════════════════════════
+     P13: SUMMARY & DRAFT PLAN
+══════════════════════════════ -->
+<div id="p13" class="page">
+  <div id="fb-p13" class="fb" style="display:none"></div>
+  <div class="disc">📋 <strong>Draft Nutrition Plan:</strong> Ringkasan ini merupakan draft awal untuk diskusi tim. Bukan prescription/order final. Wajib diverifikasi oleh dokter, dietitian, dan farmasi sebelum diimplementasikan.</div>
+  <div id="summary-content"></div>
+  <div style="display:flex;gap:7px;margin-top:8px;flex-wrap:wrap">
+    <button class="btn btn-green" onclick="saveToResearch()">💾 Simpan ke Research</button>
+    <button class="btn btn-primary" onclick="showCopyText()">📋 Copy Ringkasan Teks</button>
+  </div>
+  <div id="copy-panel" style="display:none;margin-top:9px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+      <span style="font-size:11px;font-weight:700;color:var(--muted)">Pilih semua → Ctrl+C / Cmd+C</span>
+      <button class="btn btn-green btn-sm" onclick="copyText()">⎘ Copy Semua</button>
+    </div>
+    <textarea id="copy-area" readonly style="width:100%;height:380px;font-family:monospace;font-size:11px;padding:9px;border:1px solid #cde4f0;border-radius:6px;background:#f8fbfd;resize:vertical;line-height:1.6"></textarea>
+    <div id="copy-confirm" style="display:none;margin-top:4px" class="al al-s"><div class="al-ico">✅</div><div class="al-body">Berhasil di-copy! Paste ke Word, email, atau sistem rekam medis.</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     P14: RESEARCH DASHBOARD
+══════════════════════════════ -->
+<div id="p14" class="page">
+  <div class="priv">🔒 <strong>De-identified data only:</strong> Jangan masukkan nama lengkap atau nomor rekam medis. Export CSV tidak boleh berisi identitas pribadi pasien.</div>
+  <div class="card">
+    <div class="card-title">🔬 Research Dashboard <span class="tag t-purple">De-Identified Data</span></div>
+    <div class="g4">
+      <div class="stat-card"><div class="stat-n" id="rd-n">0</div><div class="stat-l">Total Entri</div></div>
+      <div class="stat-card"><div class="stat-n" id="rd-kcal">—</div><div class="stat-l">Rata-rata Kalori (kcal)</div></div>
+      <div class="stat-card"><div class="stat-n" id="rd-pro">—</div><div class="stat-l">Rata-rata Protein (g)</div></div>
+      <div class="stat-card"><div class="stat-n" id="rd-stool">—</div><div class="stat-l">Rata-rata Stool (mL)</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📈 Input Monitoring Harian (De-Identified)</div>
+    <div class="g4">
+      <div class="field"><label>Kode Pasien (bukan nama/MR)</label><input id="mn-kode" placeholder="mis. Px-01"></div>
+      <div class="field"><label>Hari HSCT</label><input id="mn-day" placeholder="D+5"></div>
+      <div class="field"><label>BB (kg)</label><input id="mn-bb" type="number" step="0.1"></div>
+      <div class="field"><label>Kalori (kcal)</label><input id="mn-kcal" type="number"></div>
+    </div>
+    <div class="g4" style="margin-top:6px">
+      <div class="field"><label>Protein (g)</label><input id="mn-pro" type="number" step="0.1"></div>
+      <div class="field"><label>Rute</label>
+        <select id="mn-route">
+          <option value="oral">Oral</option><option value="oral+ons">Oral+ONS</option>
+          <option value="en">EN</option><option value="pn">PN</option><option value="en+pn">EN+PN</option>
+        </select>
+      </div>
+      <div class="field"><label>% Intake Oral</label><input id="mn-oral" type="number" min="0" max="100"></div>
+      <div class="field"><label>Balance Cairan (mL)</label><input id="mn-bal" type="number"></div>
+    </div>
+    <div class="g4" style="margin-top:6px">
+      <div class="field"><label>Stool Output (mL)</label><input id="mn-stool" type="number"></div>
+      <div class="field"><label>Gula Darah (mg/dL)</label><input id="mn-gd" type="number"></div>
+      <div class="field"><label>TG (mg/dL)</label><input id="mn-tg" type="number"></div>
+      <div class="field"><label>Fosfat (mg/dL)</label><input id="mn-po4" type="number" step="0.1"></div>
+    </div>
+    <div class="g4" style="margin-top:6px">
+      <div class="field"><label>Bilirubin (mg/dL)</label><input id="mn-bili" type="number" step="0.1"></div>
+      <div class="field"><label>Kreatinin (mg/dL)</label><input id="mn-cr" type="number" step="0.1"></div>
+      <div class="field"><label>Mukositis Grade</label><select id="mn-muko"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+      <div class="field"><label>Fase HSCT</label><input id="mn-fase" placeholder="mis. D+5 aplasia"></div>
+    </div>
+    <button class="btn btn-green" style="margin-top:7px" onclick="addMonitor()">+ Tambah Entri</button>
+  </div>
+  <div class="card">
+    <div class="card-title">📊 Dataset De-Identified</div>
+    <div id="rd-table"><p style="color:var(--muted);font-size:11px;text-align:center;padding:1rem">Belum ada data.</p></div>
+    <div style="display:flex;gap:6px;margin-top:7px">
+      <button class="btn btn-green btn-sm" onclick="exportCSV()">⬇ Export CSV (De-Identified)</button>
+      <button class="btn btn-outline btn-sm" onclick="clearMonitor()">🗑 Hapus Semua</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     P15: STANDARDS & SAFETY NOTES
+══════════════════════════════ -->
+<div id="p15" class="page">
+  <div class="card">
+    <div class="card-title">📚 Standards & Safety Notes</div>
+    <div class="al al-i" style="margin-bottom:7px"><div class="al-ico">📋</div><div class="al-body"><strong>Halaman ini berisi referensi standar klinis dan catatan keamanan penggunaan tool.</strong></div></div>
+
+    <div class="sec">1. Prinsip Utama Nutrisi pada HSCT Anak</div>
+    <table class="t">
+      <thead><tr><th>Prinsip</th><th>Keterangan</th></tr></thead>
+      <tbody>
+        <tr><td>GI tract first</td><td>Oral/EN diprioritaskan bila saluran cerna masih fungsional dan aman</td></tr>
+        <tr><td>PN sebagai complement/alternatif</td><td>PN dipertimbangkan bila oral/EN tidak adekuat atau tidak memungkinkan</td></tr>
+        <tr><td>Nutrisi dinamis</td><td>Target nutrisi harus dimonitor dan disesuaikan harian sesuai kondisi klinis</td></tr>
+        <tr><td>Safety first pada PN</td><td>GIR, lipid, elektrolit, osmolaritas, Ca–P, organ function harus dipantau ketat</td></tr>
+        <tr><td>Refeeding prevention</td><td>Mulai lambat pada pasien berisiko, koreksi elektrolit dulu, escalate bertahap</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sec">2. Indikasi PN pada HSCT Anak</div>
+    <div class="dbox dbox-blue">
+      <ul>
+        <li>• Intake oral/EN tidak adekuat (&lt;50–60% target) selama &gt;3–5 hari</li>
+        <li>• Mukositis berat (grade 3–4) dengan intake gagal</li>
+        <li>• Ileus / obstruksi / perforasi GI</li>
+        <li>• GVHD GI berat dengan bowel rest diperlukan</li>
+        <li>• Ketidakstabilan hemodinamik berat yang menghalangi EN</li>
+        <li>• Perdarahan GI aktif signifikan</li>
+        <li>• EN kontraindikasi atau tidak toleran setelah trial adekuat</li>
+      </ul>
+    </div>
+
+    <div class="sec">3. Safety PN — Checklist Farmasi</div>
+    <table class="t">
+      <thead><tr><th>Parameter</th><th>Target</th><th>Tindakan bila abnormal</th></tr></thead>
+      <tbody>
+        <tr><td>GIR</td><td>Sesuai usia (6–12 mg/kg/mnt)</td><td>Kurangi dextrose/perpanjang infus</td></tr>
+        <tr><td>Lipid</td><td>≤3 g/kg/hari</td><td>Kurangi, pantau TG</td></tr>
+        <tr><td>Ca × P</td><td>&lt;7 mEq×mmol/L</td><td>Pisahkan/encerkan — BAHAYA EMBOLI</td></tr>
+        <tr><td>Osmolaritas perifer</td><td>≤900 mOsm/L</td><td>Gunakan CVC</td></tr>
+        <tr><td>Kolestasis</td><td>Bili &lt;2 mg/dL</td><td>Stop Mn, kurangi Cu, cyclic PN, kurangi lipid</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sec">4. Refeeding Syndrome — Prinsip Pencegahan</div>
+    <div class="dbox dbox-yellow">
+      <ul>
+        <li>• Identifikasi pasien berisiko: malnutrisi, NPO &gt;5 hari, weight loss &gt;10%</li>
+        <li>• Koreksi elektrolit berat (fosfat, K, Mg) SEBELUM memulai nutrisi agresif</li>
+        <li>• Berikan thiamine pada pasien risiko tinggi — ikuti protokol lokal</li>
+        <li>• Mulai kalori rendah (25–50% target), escalate bertahap tiap 2–3 hari</li>
+        <li>• Monitor fosfat, K, Mg lebih sering (tiap 6–12 jam) pada 48–72 jam pertama</li>
+        <li>• TAHAN eskalasi bila terjadi penurunan elektrolit signifikan</li>
+      </ul>
+    </div>
+
+    <div class="sec">5. Limitations Tool Ini</div>
+    <div class="dbox dbox-rose">
+      <ul>
+        <li>• Tool ini merupakan alat bantu edukasi dan clinical decision support AWAL</li>
+        <li>• Tidak menggantikan asesmen klinis, dietitian, farmasi, atau keputusan tim</li>
+        <li>• Kalkulasi BMR/TEE adalah estimasi — nilai aktual dipengaruhi banyak faktor</li>
+        <li>• PN Builder menghasilkan draft — bukan resep final yang siap ditulis</li>
+        <li>• Risk stratification bukan prediksi outcome tervalidasi</li>
+        <li>• Kompatibilitas Ca–P dan osmolaritas harus diverifikasi farmasi dengan software khusus</li>
+        <li>• Tidak ada data yang dikirim ke server — semua kalkulasi lokal di browser</li>
+        <li>• Tidak menggunakan CDN atau library eksternal</li>
+      </ul>
+    </div>
+
+    <div class="sec">6. Validation Checklist Tool</div>
+    <table class="t">
+      <thead><tr><th>Item</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Tidak ada identitas pribadi/institusi</td><td>✅ De-identified</td></tr>
+        <tr><td>Input menggunakan kode, bukan nama/MR</td><td>✅ Kode opsional</td></tr>
+        <tr><td>Bahasa hati-hati (rekomendasi awal, draft)</td><td>✅ Semua modul</td></tr>
+        <tr><td>PN Builder memiliki caveat farmasi</td><td>✅ Tersedia</td></tr>
+        <tr><td>Risk stratification bukan prediksi outcome</td><td>✅ Labeled edukatif</td></tr>
+        <tr><td>Export CSV de-identified</td><td>✅ Tanpa nama/MR</td></tr>
+        <tr><td>Disclaimer di setiap modul kritis</td><td>✅ Tersedia</td></tr>
+        <tr><td>Tanpa CDN/library eksternal</td><td>✅ Self-contained</td></tr>
+        <tr><td>Data tidak dikirim ke server</td><td>✅ Lokal browser</td></tr>
+        <tr><td>Mobile responsive</td><td>✅ CSS responsive</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+// ═══════════════════════════════════════
+// GLOBAL STATE
+// ═══════════════════════════════════════
+const S={
+  hsct:'allo-mrd',conditioning:'MAC',day:'',access:'central',faseKlinis:'',
+  bb:0,tb:0,age:0,jk:'M',edema:0,bsa:0,bbEff:0,bbIdeal:0,pctIBW:0,
+  sf:1.2,fluidFactor:1.0,drugFluid:0,proTarget:2.0,bmr:0,tee:0,cairan:0,cairanSisa:0,
+  phase:null,phaseId:null,phaseSF:1.2,phaseProtein:2.0,phaseRoute:'EN',
+  mukoGrade:null,mukoRoute:'oral',
+  gvhdGrade:0,gvhdRoute:'oral',gvhdProExtra:0,
+  foPct:0,foFlag:false,foCond:'none',
+  rfRisk:'RENDAH',rfStartPct:100,rfThiamine:'Thiamine rutin dalam MVI',
+  oralPct:0,giFx:'normal',finalRoute:'oral',
+  riskScore:0,riskLevel:'rendah',
+  riskStratLevel:'rendah',
+  pn:{bb:0,tkcal:0,tpro:0,vol:0,acc:'central',hrs:24,girMax:8,lipMax:3,
+      proG:0,dexG:0,lipG:0,gir:0,osm:0,totalKcal:0,caP:0,dexPct:0,
+      na:0,k:0,ca:0,p:0,mg:0,chol:'no',renal:'no'},
+  lab:{alb:0,pre:0,crp:0,gd:0,tg:0,po4:0,k:0,mg:0,bili:0,alt:0,cr:0,ur:0},
+  done:{}
+};
+let monitorData=[];
+
+// ═══════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════
+const R=(n,d=1)=>{if(isNaN(n)||!isFinite(n))return 0;const f=10**d;return Math.round(n*f)/f;};
+const RV=n=>{if(isNaN(n)||!isFinite(n))return 0;return Math.round(n);};
+function al(cls,ico,msg){return`<div class="al ${cls}"><div class="al-ico">${ico}</div><div class="al-body">${msg}</div></div>`;}
+function mt(val,lbl,sub,cls=''){return`<div class="metric ${cls}"><div class="m-l">${lbl}</div><div class="m-v">${val}</div>${sub?`<div class="m-s">${sub}</div>`:''}</div>`;}
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+const PT={p0:'Skrining & Risiko',p1:'Antropometri & Status Gizi',p2:'Energi, Protein & Cairan',p3:'Fase HSCT',p4:'Mukositis',p5:'GVHD GI',p6:'Fluid Overload',p7:'Refeeding Risk',p8:'Route Decision',p9:'PN Builder (Draft)',p10:'Safety Engine',p11:'Monitoring Plan',p12:'Risk Stratification',p13:'Summary & Draft Plan',p14:'Research Dashboard',p15:'Standards & Safety Notes'};
+
+function nav(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(n=>n.classList.remove('active'));
+  const pg=document.getElementById(id);if(pg)pg.classList.add('active');
+  if(el){el.classList.add('active');}else{
+    document.querySelectorAll('.sb-item').forEach(n=>{
+      if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'"))n.classList.add('active');
+    });
+  }
+  const tt=document.getElementById('tb-title');if(tt)tt.textContent=PT[id]||id;
+  updateFlowChips(id);renderFB(id);
+  if(id==='p8')calcRoute();
+  if(id==='p9')fillPNFromState();
+  if(id==='p10')runSafety();
+  if(id==='p11')renderMonitorPlan();
+  if(id==='p12')fillRiskStratFromState();
+  if(id==='p13')genSummary();
+}
+
+function markDone(id){S.done[id]=true;updateDots();}
+function updateDots(){
+  Object.keys(PT).forEach(id=>{
+    const d=document.getElementById('d-'+id);
+    if(d)d.className='sb-dot '+(S.done[id]?'d-ok':'d-n');
+  });
+}
+function updateFlowChips(activeId){
+  ['p0','p1','p2','p3','p4','p5','p8','p9','p10','p13'].forEach(id=>{
+    const el=document.getElementById('fc-'+id);if(!el)return;
+    el.className='fc '+(id===activeId?'act':S.done[id]?'done':'pend');
+  });
+}
+
+function renderFB(id){
+  const el=document.getElementById('fb-'+id);if(!el)return;
+  const items=[];
+  if(S.bb>0)items.push({l:'BB',v:R(S.bbEff||S.bb,1)+' kg'});
+  if(S.tee>0)items.push({l:'TEE',v:RV(S.tee)+' kcal'});
+  if(S.cairan>0)items.push({l:'Cairan',v:RV(S.cairan)+' mL'});
+  if(S.phase)items.push({l:'Fase',v:S.phase});
+  if(S.mukoGrade!==null)items.push({l:'Mukositis',v:'Grade '+S.mukoGrade});
+  if(S.gvhdGrade)items.push({l:'GVHD GI',v:'Grade '+S.gvhdGrade});
+  if(S.foFlag)items.push({l:'Fluid Overload',v:S.foPct+'%'});
+  if(S.rfRisk!=='RENDAH')items.push({l:'Refeeding',v:S.rfRisk});
+  if(S.finalRoute)items.push({l:'Rute',v:S.finalRoute});
+  if(!items.length){el.style.display='none';return;}
+  el.style.display='block';
+  el.innerHTML=`<div class="fb-title">📡 Data dari langkah sebelumnya</div><div class="fb-items">${items.map(i=>`<div class="fb-item"><span class="fbi-l">${i.l}</span><span class="fbi-v">&nbsp;${i.v}</span></div>`).join('')}</div>`;
+}
+
+function syncAll(){
+  if(S.tee>0)markDone('p2');
+  if(S.phase)markDone('p3');
+  if(S.mukoGrade!==null)markDone('p4');
+  updateDots();
+}
+
+// ═══════════════════════════════════════
+// P0: RISK & LABS
+// ═══════════════════════════════════════
+function calcRisk(){
+  let s=0;for(let i=1;i<=14;i++)if(document.getElementById('rc'+i)?.checked)s++;
+  S.riskScore=s;
+  let lvl,cls,ico,act,diet,enPn,freq;
+  if(s===0){lvl='Rendah';cls='al-s';ico='✅';act='Monitoring rutin. Pertahankan intake oral.';diet='Tidak mendesak';enPn='Belum diperlukan';freq='Mingguan';}
+  else if(s<=3){lvl='Sedang';cls='al-w';ico='⚠️';act='Monitoring ketat + tambahkan ONS. Reevaluasi dalam 48 jam.';diet='Dalam 48–72 jam';enPn='Pertimbangkan EN bila intake &lt;75%';freq='2–3×/minggu';}
+  else if(s<=7){lvl='Tinggi';cls='al-e';ico='🚨';act='Intervensi nutrisi aktif. EN bila GI fungsional. Diskusikan dengan dietitian.';diet='Segera (24 jam)';enPn='Pertimbangkan EN segera, PN bila EN gagal';freq='Harian';}
+  else{lvl='Sangat Tinggi';cls='al-e';ico='🚨🚨';act='Intervensi segera. PN bila EN tidak memungkinkan. Monitoring intensif tiap shift.';diet='Segera';enPn='Pertimbangkan PN awal + trial EN';freq='Tiap shift';}
+  S.riskLevel=lvl;
+  const pct=RV(s/14*100);
+  document.getElementById('risk-out').innerHTML=`
+  ${al(cls,ico,`<strong>Skor: ${s}/14 — Risiko Malnutrisi: ${lvl}</strong><br>${act}`)}
+  <div class="prog" style="margin-top:5px"><div class="prog-fill" style="width:${pct}%;background:${s===0?'#3aab8c':s<=3?'#d99a3a':s<=7?'#c0667a':'#7a3040'}"></div></div>
+  <div class="metrics" style="margin-top:7px">
+    ${mt(diet,'Early Dietitian Review','')}
+    ${mt(enPn,'Pertimbangkan EN/PN','')}
+    ${mt(freq,'Frekuensi Monitoring','')}
+  </div>`;
+}
+
+function checkLabs(){
+  const L=S.lab;let h='';
+  if(L.alb&&L.alb<3.5)h+=al('al-w','⚠️',`Albumin rendah (${L.alb} g/dL). Pertimbangkan peningkatan asupan protein. CRP perlu dicek untuk membedakan malnutrisi vs inflamasi.`);
+  if(L.gd>250)h+=al('al-e','🚨',`Hiperglikemia berat (${L.gd} mg/dL). Pertimbangkan pengurangan GIR. Diskusikan dengan tim untuk manajemen insulin.`);
+  else if(L.gd>180)h+=al('al-w','⚠️',`Hiperglikemia (${L.gd} mg/dL). Pantau GIR PN, pertimbangkan pengurangan beban KH.`);
+  if(L.gd>0&&L.gd<60)h+=al('al-e','🚨',`Hipoglikemia (${L.gd} mg/dL). Koreksi segera sesuai protokol.`);
+  if(L.tg>400)h+=al('al-e','🚨',`Hipertrigliseridemia berat (${L.tg} mg/dL). Pertimbangkan penghentian lipid PN. Evaluasi penyebab.`);
+  else if(L.tg>250)h+=al('al-w','⚠️',`TG meningkat (${L.tg} mg/dL). Pertimbangkan pengurangan lipid PN 50%.`);
+  if(L.po4>0&&L.po4<1.5)h+=al('al-e','🚨',`Hipofosfatemia berat (${L.po4} mg/dL). Koreksi IV diprioritaskan sebelum eskalasi nutrisi.`);
+  else if(L.po4>0&&L.po4<2.5)h+=al('al-w','⚠️',`Hipofosfatemia (${L.po4} mg/dL). Pantau refeeding risk. Koreksi elektrolit.`);
+  if(L.k>0&&L.k<2.5)h+=al('al-e','🚨',`Hipokalemia berat (${L.k} mEq/L). Koreksi IV, monitor EKG.`);
+  else if(L.k>0&&L.k<3.0)h+=al('al-w','⚠️',`Hipokalemia (${L.k} mEq/L). Suplementasi KCl sesuai protokol.`);
+  if(L.mg>0&&L.mg<1.5)h+=al('al-w','⚠️',`Hipomagnesemia (${L.mg} mg/dL). Suplementasi MgSO4.`);
+  if(L.bili>5)h+=al('al-e','🚨',`Bilirubin tinggi (${L.bili} mg/dL). Evaluasi VOD/SOS. Pertimbangkan: stop Mn dari trace elements, cyclic PN, kurangi lipid.`);
+  else if(L.bili>2)h+=al('al-w','⚠️',`Bilirubin meningkat (${L.bili} mg/dL). Monitor kolestasis dan VOD.`);
+  if(L.cr>2)h+=al('al-w','⚠️',`Kreatinin tinggi (${L.cr} mg/dL). Pertimbangkan penyesuaian protein dan elektrolit PN. Koordinasi dengan nefrologi.`);
+  if(L.alt>200)h+=al('al-w','⚠️',`ALT meningkat (${L.alt} U/L). Evaluasi hepatotoksisitas, GVHD hati, VOD.`);
+  document.getElementById('lab-out').innerHTML=h||al('al-s','✅','Nilai lab dalam batas normal. Lanjutkan monitoring rutin.');
+}
+
+// ═══════════════════════════════════════
+// P1: ANTROPOMETRI
+// ═══════════════════════════════════════
+function calcAntro(){
+  const bb=S.bb,tb=S.tb,age=S.age,jk=S.jk,edema=S.edema;
+  if(!bb||!tb||!age)return;
+  const dw=parseFloat(document.getElementById('a-dw')?.value)||0;
+  const bbEff=dw>0?dw:Math.max(bb-edema,0);
+  S.bbEff=R(bbEff,1);
+  S.bsa=R(Math.sqrt(bb*tb/3600),2);
+  const bmi=R(bb/(tb/100)**2,1);
+  const lut={M:[0,17,16.5,16,15.5,15.5,15.5,16,16.5,17,17.5,18.5,19.5,20.5,21,21.5,22,23,24],
+              F:[0,16.5,16,15.5,15,15,15.5,16,16.5,17,18,19,20,21,22,22.5,22.5,22.5,22.5]};
+  const idx=Math.min(Math.floor(age),18);
+  S.bbIdeal=R(lut[jk][idx]*(tb/100)**2,1);
+  S.pctIBW=S.bbIdeal>0?R(bbEff/S.bbIdeal*100,1):0;
+  const bb1=parseFloat(document.getElementById('a-bb1')?.value)||0;
+  const bb3=parseFloat(document.getElementById('a-bb3')?.value)||0;
+  S.wl1=bb1?R((bb1-bb)/bb1*100,1):null;
+  S.wl3=bb3?R((bb3-bb)/bb3*100,1):null;
+  const muac=parseFloat(document.getElementById('a-muac')?.value)||0;
+  let sc='ok',sl='Gizi Baik (estimasi)';
+  if(S.pctIBW<70){sc='err';sl='Estimasi Malnutrisi Berat';}
+  else if(S.pctIBW<80){sc='warn';sl='Estimasi Malnutrisi Sedang';}
+  else if(S.pctIBW<90){sc='warn';sl='Estimasi Gizi Kurang';}
+  let muacHtml='';
+  if(muac&&age>=1&&age<5){
+    const ms=muac<11.5?'⚠️ SAM':muac<12.5?'⚠️ MAM':'Normal';
+    muacHtml=mt(muac+' cm — '+ms,'MUAC (1–5th)',age>=5?'Referensi terbatas':'');
+  }
+  document.getElementById('antro-out').innerHTML=`<div class="metrics">
+    ${mt(bmi+' kg/m²','BMI','')}
+    ${mt(S.bsa+' m²','BSA (Mosteller)','')}
+    ${mt(S.bbIdeal+' kg','BB Ideal (est)','per TB & usia')}
+    ${mt(S.pctIBW+'%','% IBW (estimasi)',`BB eff: ${S.bbEff} kg`,sc)}
+    ${mt(sl,'Status Gizi',edema>0?'(koreksi edema)':'' ,sc)}
+    ${muacHtml}
+  </div>
+  ${edema>0?al('al-w','⚠️',`Edema terdeteksi (~${edema} kg). BB kering estimasi: <strong>${S.bbEff} kg</strong>. Gunakan BB kering untuk kalkulasi nutrisi. BB aktual tidak akurat.`):''}
+  ${dw>0?al('al-i','ℹ️',`Target/Dry Weight dimasukkan: ${dw} kg. Digunakan sebagai basis kalkulasi.`):''}
+  ${S.wl1!==null?al(S.wl1>5?'al-e':'al-w',S.wl1>5?'🚨':'⚠️',`Penurunan BB dalam 1 bulan: ${S.wl1}%${S.wl1>5?' — Signifikan, pertimbangkan konsultasi dietitian segera':''}`):''}
+  ${S.wl3!==null?al(S.wl3>10?'al-e':S.wl3>5?'al-w':'al-i',S.wl3>10?'🚨':S.wl3>5?'⚠️':'ℹ️',`Penurunan BB dalam 3 bulan: ${S.wl3}%${S.wl3>10?' — BERAT':S.wl3>5?' — Sedang':''}`):''}
+  ${al('al-i','ℹ️','Pertimbangkan konsultasi dietitian bila weight loss &gt;5%, MUAC rendah, edema, atau intake rendah.')}`;
+  calcBMR();syncAll();
+}
+
+// ═══════════════════════════════════════
+// P2: BMR & ENERGI
+// ═══════════════════════════════════════
+function calcBMR(){
+  const bb=S.bbEff||S.bb,tb=S.tb,age=S.age,jk=S.jk;
+  if(!bb||!age)return;
+  const m=document.getElementById('bmr-m')?.value||'schofield';
+  const sf=S.sf,fc=S.fluidFactor,df=S.drugFluid,pro=S.proTarget;
+  let bmr=0;
+  if(m==='schofield'){
+    if(jk==='M'){if(age<3)bmr=0.167*bb*1000+1517.4*(tb||100)/100-617.6;else if(age<10)bmr=19.59*bb+130.3*(tb||100)/100+414.9;else bmr=16.25*bb+137.2*(tb||100)/100+515.5;}
+    else{if(age<3)bmr=16.252*bb+1023.2*(tb||100)/100-413.5;else if(age<10)bmr=16.969*bb+161.8*(tb||100)/100+371.2;else bmr=8.365*bb+465*(tb||100)/100+200;}
+  }else if(m==='who'){
+    if(jk==='M'){if(age<3)bmr=60.9*bb-54;else if(age<10)bmr=22.7*bb+495;else bmr=17.5*bb+651;}
+    else{if(age<3)bmr=61*bb-51;else if(age<10)bmr=22.5*bb+499;else bmr=12.2*bb+746;}
+  }else{bmr=jk==='M'?66.5+13.75*bb+5.003*(tb||100)-6.755*(age||5):655.1+9.563*bb+1.85*(tb||100)-4.676*(age||5);}
+  if(bmr<0)bmr=Math.abs(bmr);
+  const tee=bmr*sf;
+  let fl=0;if(bb<=10)fl=100*bb;else if(bb<=20)fl=1000+50*(bb-10);else fl=1500+20*(bb-20);
+  fl=RV(fl*fc);const sisa=Math.max(0,fl-(df||0));
+  S.bmr=RV(bmr);S.tee=RV(tee);S.cairan=fl;S.cairanSisa=sisa;
+  const proGday=R(pro*bb,1);
+  document.getElementById('bmr-out').innerHTML=`<div class="metrics">
+    ${mt(RV(bmr)+' kcal','BMR ('+m+')',R(bmr/bb,1)+' kcal/kg')}
+    ${mt('×'+sf,'Stress Factor','')}
+    ${mt(RV(tee)+' kcal','TEE — Target Kalori',R(tee/bb,1)+' kcal/kg','ok')}
+    ${mt(proGday+' g','Target Protein',pro+' g/kg/hari')}
+    ${mt(fl+' mL','Target Cairan (Holliday-Segar)',RV(fl/bb)+' mL/kg')}
+    ${mt(sisa+' mL','Sisa untuk Nutrisi','Setelah obat/flush')}
+    ${mt(R(tee/fl*1000,1)+' kcal/L','Densitas Kalori Target','')}
+  </div>
+  ${m==='hb'?al('al-w','⚠️','Harris-Benedict memiliki validasi terbatas pada anak. Pertimbangkan Schofield atau WHO untuk anak.'):''}`;
+  syncAll();
+}
+
+// ═══════════════════════════════════════
+// P3: FASE HSCT
+// ═══════════════════════════════════════
+const PHASE_DB={
+  pre:{n:'Pre-HSCT',ico:'📋',color:'blue',sf:1.0,pro:1.5,route:'Oral/Oral+ONS',
+    goals:['Optimalkan status gizi sebelum transplant','Koreksi defisiensi nutrisi','Target ≥90% IBW bila memungkinkan'],
+    barriers:['Mual akibat kemo pra-HSCT','Anoreksia','Kecemasan pasien/keluarga'],
+    redFlags:['BB turun &gt;5% dalam persiapan HSCT','Albumin &lt;3 g/dL','Intake &lt;75%'],
+    monitor:'2–3×/minggu'},
+  cond:{n:'Conditioning',ico:'💊',color:'yellow',sf:1.2,pro:2.0,route:'Oral+ONS / EN dini',
+    goals:['Antisipasi mual/mukositis','Pertahankan intake seoptimal mungkin','Rencana EN bila intake turun'],
+    barriers:['Mual/muntah high-dose kemo','Mukositis awal','Anoreksia'],
+    redFlags:['Intake &lt;50% &gt;2 hari','Mukositis grade ≥2','Tidak toleran antiemetik'],
+    monitor:'Harian'},
+  aplasia:{n:'Aplasia / Neutropenia',ico:'🦠',color:'rose',sf:1.3,pro:2.5,route:'EN (jika GI fungsional) / PN',
+    goals:['Pertahankan massa otot','Cegah malnutrisi berat','Dukung pemulihan sumsum tulang'],
+    barriers:['Mukositis berat','Infeksi/sepsis','Intake sering sangat rendah','Mual/muntah'],
+    redFlags:['Mukositis grade 3–4','Intake &lt;25%','Sepsis tidak terkontrol','Tanda refeeding syndrome'],
+    monitor:'Harian (tiap shift bila kritis)'},
+  engraft:{n:'Early Engraftment',ico:'🌱',color:'green',sf:1.2,pro:2.0,route:'EN → Oral bertahap',
+    goals:['Reintroduksi oral/EN secara bertahap','Monitor fluid overload','Weaning PN/EN saat oral membaik'],
+    barriers:['Engraftment syndrome (demam, edema)','GVHD awal','Hiperglikemia rebound post-steroid'],
+    redFlags:['Fluid overload &gt;5%','Edema progresif','Hiperglikemia tidak terkontrol'],
+    monitor:'Harian'},
+  agvhd:{n:'Acute GVHD',ico:'⚡',color:'rose',sf:1.4,pro:2.5,route:'EN elemental / PN (tergantung grade GI)',
+    goals:['Pertahankan status nutrisi','Kompensasi protein loss via GI','Sesuaikan rute dengan toleransi GI'],
+    barriers:['Diare berat','Nyeri abdomen','Malabsorpsi','Protein-losing enteropathy'],
+    redFlags:['Stool &gt;10 mL/kg/hari','Hematochezia','Ileus','Albumin &lt;2.5 g/dL'],
+    monitor:'Harian (stool tiap shift)'},
+  cgvhd:{n:'Chronic GVHD',ico:'🔄',color:'purple',sf:1.1,pro:2.0,route:'Oral diet modifikasi / EN nokturnal',
+    goals:['Rehabilitasi nutrisi jangka panjang','Koreksi defisiensi vitamin/mineral','Pertahankan massa tubuh lean'],
+    barriers:['Malabsorpsi kronik','Anoreksia','Efek samping steroid (hiperglikemia, osteoporosis)','cGVHD mulut'],
+    redFlags:['BB turun progresif','Defisiensi vit D/K','Hiperglikemia kronik'],
+    monitor:'Mingguan / sesuai kondisi'},
+  icu:{n:'ICU / Critical Illness',ico:'🏥',color:'rose',sf:1.5,pro:3.0,route:'EN dini (jika stabil) / PN',
+    goals:['Cegah starvation','Atenuasi katabolisme','Glycemic control ketat'],
+    barriers:['Hemodinamik tidak stabil','Intoleransi EN','Hiperglikemia','Fluid overload'],
+    redFlags:['GD &gt;180 persisten','TG &gt;400','Fluid overload &gt;10%','Organ failure progresif'],
+    monitor:'Tiap shift'},
+};
+
+function selPhase(id,el){
+  document.querySelectorAll('#p3 .pc').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  const d=PHASE_DB[id];
+  S.phase=d.n;S.phaseId=id;S.phaseSF=d.sf;S.phaseProtein=d.pro;S.phaseRoute=d.route;
+  const sfEl=document.getElementById('sf');
+  const sfMap={pre:'1.0',cond:'1.2',aplasia:'1.3',engraft:'1.2',agvhd:'1.4',cgvhd:'1.1',icu:'1.5'};
+  if(sfEl&&sfMap[id]){sfEl.value=sfMap[id];S.sf=+sfMap[id];}
+  const proEl=document.getElementById('pro-target');
+  const proMap={pre:'1.5',cond:'2.0',aplasia:'2.5',engraft:'2.0',agvhd:'2.5',cgvhd:'2.0',icu:'3.0'};
+  if(proEl&&proMap[id]){proEl.value=proMap[id];S.proTarget=+proMap[id];}
+  calcBMR();
+  const cmap={blue:'dbox-blue',yellow:'dbox-yellow',rose:'dbox-rose',green:'dbox-green',purple:'dbox-purple'};
+  document.getElementById('phase-out').innerHTML=`<div class="dbox ${cmap[d.color]}">
+    <div class="dbox-title">${d.ico} ${d.n}</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px">
+      <span class="tag t-blue">SF: ×${d.sf}</span>
+      <span class="tag t-green">Protein: ${d.pro} g/kg</span>
+      <span class="tag t-yellow">Rute awal: ${d.route}</span>
+      <span class="tag t-purple">Monitor: ${d.monitor}</span>
+    </div>
+    <div class="g3">
+      <div><div style="font-size:10px;font-weight:700;color:var(--bd);margin-bottom:3px">🎯 Nutrition Goals</div>
+        <ul>${d.goals.map(x=>`<li>• ${x}</li>`).join('')}</ul></div>
+      <div><div style="font-size:10px;font-weight:700;color:var(--bd);margin-bottom:3px">⚠️ Barriers</div>
+        <ul>${d.barriers.map(x=>`<li>• ${x}</li>`).join('')}</ul></div>
+      <div><div style="font-size:10px;font-weight:700;color:var(--rose);margin-bottom:3px">🚨 Red Flags</div>
+        <ul>${d.redFlags.map(x=>`<li>• ${x}</li>`).join('')}</ul></div>
+    </div>
+  </div>
+  ${al('al-i','📡','Stress factor diperbarui → ×'+d.sf+' | Target protein → '+d.pro+' g/kg | Rute awal → '+d.route)}`;
+  syncAll();
+}
+
+// ═══════════════════════════════════════
+// P4: MUKOSITIS
+// ═══════════════════════════════════════
+const MUKO_DB=[
+  {g:0,color:'green',route:'Oral',oral:'Diet oral biasa / diet neutropenia bila ANC &lt;500',
+    pain:'Tidak diperlukan analgesik khusus',risk:'Risiko intake inadekuat: Rendah',
+    details:['Pantau intake harian','Diet neutropenia bila diperlukan','Oral care rutin']},
+  {g:1,color:'green',route:'Oral + ONS',oral:'Diet lunak, dingin, tidak pedas/asam',
+    pain:'Analgesik ringan bila diperlukan (parasetamol/NSAID)',risk:'Risiko intake inadekuat: Rendah-Sedang',
+    details:['ONS 2–3×/hari untuk mencapai target kalori','Hindari makanan keras, panas, asam','Kumur NaCl/soda kue 4–6×/hari']},
+  {g:2,color:'yellow',route:'Oral modif + ONS / Pertimbangkan EN',oral:'Diet cair/pure penuh',
+    pain:'Analgesik adekuat sebelum makan (anestesi topikal, opioid ringan)',risk:'Risiko intake inadekuat: Sedang-Tinggi',
+    details:['ONS wajib','Bila intake &lt;60–75%: pertimbangkan NGT','Evaluasi ulang dalam 24–48 jam','Monitor dehidrasi']},
+  {g:3,color:'rose',route:'Pertimbangkan EN (NGT/NJT) / PN bila EN gagal',oral:'Puasa oral — tidak mampu menelan',
+    pain:'Analgesik sistemik (opioid IV/PCA)',risk:'Risiko intake inadekuat: Tinggi',
+    details:['EN via NGT/NDT bila GI fungsional','Formula semi-elemental / peptida','PN bila EN tidak toleran atau gagal','Weaning oral saat grade membaik ke ≤1']},
+  {g:4,color:'rose',route:'PN (kombinasi EN trophic bila memungkinkan)',oral:'Puasa oral total',
+    pain:'Analgesik opioid, pertimbangkan PCA/infus kontinu',risk:'Risiko intake inadekuat: Sangat Tinggi',
+    details:['PN total via CVC/PICC','EN trophic 5–10 mL/jam via NJT untuk menjaga integritas mukosa GI (opsional)','Oral care dengan kumur tanpa menelan','Weaning segera saat ada tanda perbaikan']},
+];
+
+function selMuko(g,el){
+  document.querySelectorAll('#p4 .pc').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  const d=MUKO_DB[g];
+  S.mukoGrade=g;S.mukoRoute=d.route;
+  const cmap={green:'dbox-green',yellow:'dbox-yellow',rose:'dbox-rose'};
+  document.getElementById('muko-out').innerHTML=`<div class="dbox ${cmap[d.color]}">
+    <div class="dbox-title">Grade ${g} — Implikasi Nutrisi</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px">
+      <span class="tag t-blue">Rute: ${d.route}</span>
+      <span class="tag ${g>=3?'t-rose':'t-yellow'}">${d.risk}</span>
+    </div>
+    <div class="g2">
+      <div><div style="font-size:10px;font-weight:700;color:var(--bd);margin-bottom:3px">🍽️ Diet / Feeding</div><p style="font-size:11px">${d.oral}</p></div>
+      <div><div style="font-size:10px;font-weight:700;color:var(--bd);margin-bottom:3px">💊 Pain Management</div><p style="font-size:11px">${d.pain}</p></div>
+    </div>
+    <ul style="margin-top:7px">${d.details.map(x=>`<li>• ${x}</li>`).join('')}</ul>
+  </div>
+  ${al('al-i','📡','Rute dari mukositis grade '+g+' → '+d.route+' — teruskan ke Route Decision.')}`;
+  syncAll();
+}
+
+// ═══════════════════════════════════════
+// P5: GVHD GI
+// ═══════════════════════════════════════
+function calcGVHD(){
+  const vol=parseFloat(document.getElementById('gv-vol').value)||0;
+  const bb=S.bbEff||S.bb||1;
+  let mlkg=parseFloat(document.getElementById('gv-mlkg').value)||0;
+  if(vol>0&&bb>0&&!mlkg){mlkg=R(vol/bb,1);document.getElementById('gv-mlkg').value=mlkg;}
+  const pain=parseInt(document.getElementById('gv-pain').value)||0;
+  const ileus=parseInt(document.getElementById('gv-ileus').value)||0;
+  const hema=parseInt(document.getElementById('gv-hema').value)||0;
+  const nausea=parseInt(document.getElementById('gv-nausea').value)||0;
+  const upper=parseInt(document.getElementById('gv-upper').value)||0;
+  const alb=parseFloat(document.getElementById('gv-alb').value)||0;
+  const mlm2=(vol>0&&S.bsa>0)?R(vol/S.bsa,0):0;
+  let grade=0;
+  if(ileus===2||hema===1||mlkg>20)grade=4;
+  else if(vol>1500||pain>=3||ileus===1||mlkg>15)grade=3;
+  else if(vol>500||pain>=2||nausea>=2||mlkg>10)grade=2;
+  else if(vol>0||pain>=1||nausea>=1||upper===1)grade=1;
+  S.gvhdGrade=grade;
+  const proExtra=vol>500?R((vol-500)/1000*0.5,2):0;
+  S.gvhdProExtra=proExtra;
+  S.gvhdRoute=grade<=1?'Oral/EN elemental':grade<=2?'EN elemental ± PN suplemen':'PN (pertimbangkan bowel rest)';
+  const routes=['Oral biasa / Diet modifikasi','EN elemental rendah serat','EN elemental ± PN suplemen','EN/PN parsial atau PN dominan','Bowel rest + PN total'];
+  const colors=['dbox-green','dbox-green','dbox-yellow','dbox-rose','dbox-rose'];
+  const recs=[
+    ['Diet oral / EN elemental bila toleran','Monitor stool output harian','Suplementasi elektrolit: K, Mg, Zn'],
+    ['EN elemental/semi-elemental rendah serat, rendah laktosa','Ukur stool output tiap shift','Koreksi kehilangan protein: +0.5 g/kg per 1L diare ekstra','Suplementasi elektrolit intensif'],
+    ['EN elemental via NGT/NDT','Pertimbangkan suplemen PN bila EN &lt;60% target','Protein '+R(S.phaseProtein+(proExtra||0),1)+' g/kg + ekstra '+proExtra+' g/kg','Restriksi Na bila edema/asites'],
+    ['EN elemental + PN parsial','Pertimbangkan bowel rest bila grade berat dan tidak toleran EN','Protein agresif 2.5 g/kg + ekstra '+proExtra+' g/kg','Monitor bilirubin (GVHD hati sering bersamaan)'],
+    ['Bowel rest — PN total','EN trophic 5 mL/jam via NJT bila ada indikasi dan aman (opsional)','Protein 2.5–3 g/kg via PN','Koreksi elektrolit agresif'],
+  ];
+  document.getElementById('gvhd-out').innerHTML=`
+  <div class="metrics">
+    ${mt((vol||'—')+' mL/hari','Volume Diare',mlkg?mlkg+' mL/kg/hari':'')}
+    ${mlm2>0?mt(mlm2+' mL/m²','Volume per BSA','BSA '+S.bsa+' m²'):''}
+    ${mt('Grade '+grade,'Estimasi Keterlibatan GI','Bukan staging resmi',(grade>=3?'err':grade>=2?'warn':'ok'))}
+    ${proExtra>0?mt('+'+proExtra+' g/kg','Protein Ekstra (estimasi)','Akibat protein loss'):''}
+  </div>
+  <div class="dbox ${colors[grade]}" style="margin-top:7px">
+    <div class="dbox-title">⚡ Estimasi Keterlibatan GI Grade ${grade} — Implikasi Nutrisi</div>
+    <div style="margin-bottom:7px"><span class="tag t-blue">Rute: ${routes[grade]}</span>${proExtra>0?` <span class="tag t-yellow">Protein ekstra: +${proExtra} g/kg</span>`:''}</div>
+    <ul>${recs[grade].map(x=>`<li>• ${x}</li>`).join('')}</ul>
+  </div>
+  ${alb>0&&alb<2.8?al('al-e','🚨','Albumin rendah ('+alb+' g/dL) dengan keterlibatan GI: risiko protein-losing enteropathy berat. Tingkatkan target protein secara signifikan.'):''}
+  ${grade>=3?al('al-e','🚨','Estimasi keterlibatan GI berat. Pertimbangkan: bowel rest, evaluasi steroid/imunosupresi, konsultasi gastro-hepatologi, dan biopsi bila belum dilakukan.'):''}
+  ${al('al-i','📡','Estimasi keterlibatan GI grade '+grade+' → Rute nutrisi: '+S.gvhdRoute)}`;
+  syncAll();
+}
+
+// ═══════════════════════════════════════
+// P6: FLUID OVERLOAD
+// ═══════════════════════════════════════
+function calcFO(){
+  const base=parseFloat(document.getElementById('fo-base').value)||0;
+  const now=parseFloat(document.getElementById('fo-now').value)||0;
+  const inp=parseFloat(document.getElementById('fo-in').value)||0;
+  const out=parseFloat(document.getElementById('fo-out').value)||0;
+  const uo=parseFloat(document.getElementById('fo-uo').value)||0;
+  const cond=document.getElementById('fo-cond').value;
+  S.foCond=cond;
+  if(!base||!now)return;
+  const foPct=R((now-base)/base*100,1);
+  S.foPct=foPct;S.foFlag=foPct>=5;
+  const bal=inp-out;
+  let cls,ico,msg,pnAdj='';
+  if(foPct>=15){cls='al-e';ico='🚨';msg='Fluid overload berat ('+foPct+'%). Koordinasi segera dengan ICU/nefrologi. Pertimbangkan ultrafiltrasi/diuretik.';pnAdj='PN konsentrat sangat diperlukan. Volume minimal.';}
+  else if(foPct>=10){cls='al-e';ico='🚨';msg='Fluid overload bermakna ('+foPct+'%). Risiko mortalitas meningkat. Restriksi cairan ketat.';pnAdj='Pertimbangkan PN konsentrat. Target volume minimal.';}
+  else if(foPct>=5){cls='al-w';ico='⚠️';msg='Fluid overload sedang ('+foPct+'%). Restriksi agresif. BB aktual tidak akurat.';pnAdj='Pertimbangkan formula PN lebih konsentrat.';}
+  else if(foPct>=2){cls='al-w';ico='⚠️';msg='Fluid overload ringan ('+foPct+'%). Monitor ketat.';pnAdj='';}
+  else{cls='al-s';ico='✅';msg='Fluid balance estimasi normal ('+foPct+'%).';pnAdj='';}
+  let condNote='';
+  if(cond==='vod')condNote=al('al-e','🚨','VOD/SOS: Restriksi cairan ketat, restriksi Na &lt;2 mEq/kg/hari, PN konsentrat volume minimal, hindari cairan bebas, monitor bilirubin dan BB harian.');
+  else if(cond==='aki')condNote=al('al-e','🚨','AKI: Restriksi cairan disesuaikan output urin + IWL. Pertimbangkan pembatasan K, P, Mg dalam PN. Koordinasi nefrologi.');
+  else if(cond==='icu')condNote=al('al-w','⚠️','ICU: Monitor fluid balance tiap shift. Batasi cairan bebas. Pertimbangkan PN konsentrat.');
+  document.getElementById('fo-out2').innerHTML=`<div class="metrics">
+    ${mt(foPct+'%','Estimasi Fluid Overload',base+'→'+now+' kg',foPct>=10?'err':foPct>=5?'warn':'ok')}
+    ${mt((bal>0?'+':'')+bal+' mL','Estimasi Balance 24 jam',bal>500?'⚠️ Positif berat':bal<-500?'Negatif berat':'')}
+    ${uo>0?mt(uo+' mL/kg/jam','Diuresis',uo<0.5?'⚠️ Oliguria':uo<1?'⚠️ Rendah':'OK',uo<0.5?'err':uo<1?'warn':'ok'):''}
+  </div>
+  ${al(cls,ico,msg)}
+  ${pnAdj?al('al-i','💉',pnAdj):''}
+  ${condNote}`;
+  syncAll();
+}
+
+// ═══════════════════════════════════════
+// P7: REFEEDING RISK
+// ═══════════════════════════════════════
+function calcRefeeding(){
+  const days=parseFloat(document.getElementById('rf-days').value)||0;
+  const wl=parseFloat(document.getElementById('rf-wl').value)||0;
+  const po4=parseFloat(document.getElementById('rf-po4').value)||0;
+  const status=parseInt(document.getElementById('rf-status').value)||0;
+  const k=parseFloat(document.getElementById('rf-k').value)||0;
+  const mg=parseFloat(document.getElementById('rf-mg').value)||0;
+  const sep=parseInt(document.getElementById('rf-sep').value)||0;
+  let score=0;
+  if(days>=7)score+=3;else if(days>=5)score+=2;else if(days>=3)score+=1;
+  if(wl>=15)score+=3;else if(wl>=10)score+=2;else if(wl>=5)score+=1;
+  if(po4>0&&po4<1.5)score+=4;else if(po4>0&&po4<2.5)score+=2;
+  score+=status;
+  if(k>0&&k<3.0)score+=2;
+  if(mg>0&&mg<1.5)score+=2;
+  if(sep>=2)score+=2;else if(sep>=1)score+=1;
+  let risk,cls,startPct,color,escNote;
+  if(score>=8){risk='SANGAT TINGGI';cls='al-e';startPct=10;color='rose';escNote='Mulai 10% TEE. Naikkan HANYA bila elektrolit stabil dan tidak ada shift. Eskalasi sangat lambat (&lt;25% tiap 3–5 hari).';}
+  else if(score>=5){risk='TINGGI';cls='al-e';startPct=25;color='rose';escNote='Mulai 25% TEE. Naikkan 25–50% tiap 2–3 hari bila elektrolit stabil.';}
+  else if(score>=3){risk='SEDANG';cls='al-w';startPct=50;color='yellow';escNote='Mulai 50% TEE. Naikkan tiap 2 hari bila elektrolit stabil.';}
+  else{risk='RENDAH';cls='al-s';startPct=100;color='green';escNote='Dapat mulai target penuh. Tetap monitoring elektrolit.';}
+  S.rfRisk=risk;S.rfStartPct=startPct;
+  S.rfThiamine=score>=5?'Pertimbangkan thiamine sebelum memulai nutrisi pada risiko tinggi — ikuti protokol lokal':'Thiamine rutin dalam MVI';
+  const startKcal=RV((S.tee||0)*startPct/100);
+  document.getElementById('rf-out').innerHTML=`
+  ${al(cls,score>=5?'🚨':'⚠️',`<strong>Risiko Refeeding: ${risk} (Skor ${score})</strong>`)}
+  <div class="dbox dbox-${color}" style="margin-top:7px">
+    <div class="dbox-title">Panduan Kalori Start (Estimasi Awal)</div>
+    <ul>
+      <li>• Start kalori: <strong>${startPct}% dari TEE = ~${startKcal} kcal/hari</strong></li>
+      <li>• Thiamine: <strong>${S.rfThiamine}</strong></li>
+      <li>• Eskalasi: ${escNote}</li>
+      <li>• Koreksi elektrolit berat (Po4, K, Mg) <strong>SEBELUM</strong> memulai nutrisi agresif</li>
+      <li>• Monitor Po4, K, Mg tiap ${score>=5?'6–8':'12'} jam dalam 48–72 jam pertama</li>
+      <li>• TAHAN eskalasi bila terjadi penurunan elektrolit bermakna</li>
+    </ul>
+  </div>
+  ${al('al-i','📡','Start kalori diset → '+startPct+'% TEE = ~'+startKcal+' kcal. Otomatis digunakan di PN Builder.')}
+  ${po4>0&&po4<1.5?al('al-e','🚨','Hipofosfatemia aktif berat ('+po4+' mg/dL). Wajib koreksi IV dulu — tunda nutrisi agresif!'):''}
+  ${po4>0&&po4<2.5&&po4>=1.5?al('al-w','⚠️','Hipofosfatemia ('+po4+' mg/dL). Koreksi dulu, lalu mulai nutrisi bertahap.'):''}
+  ${k>0&&k<3.0?al('al-e','🚨','Hipokalemia ('+k+' mEq/L). Koreksi IV dulu.'):''}
+  ${mg>0&&mg<1.5?al('al-w','⚠️','Hipomagnesemia ('+mg+' mg/dL). Suplementasi MgSO4.'):''}`;
+}
+
+// ═══════════════════════════════════════
+// P8: ROUTE DECISION
+// ═══════════════════════════════════════
+function calcRoute(){
+  const pct=S.oralPct||0,gi=S.giFx||'normal';
+  const contra=document.getElementById('rt-contra')?.value||'no';
+  const asp=document.getElementById('rt-asp')?.value||'low';
+  const hemo=document.getElementById('rt-hemo')?.value||'stable';
+  const dur=document.getElementById('rt-dur')?.value||'short';
+  const plt=document.getElementById('rt-plt')?.value||'ok';
+  const cvc=document.getElementById('rt-cvc')?.value||'yes';
+  let rfSel=document.getElementById('rt-rf')?.value||'auto';
+  const rfHigh=rfSel==='high'||(rfSel==='auto'&&(S.rfRisk==='TINGGI'||S.rfRisk==='SANGAT TINGGI'));
+  let route,color,detail,reasons=[],monitor,reassess,switchTrigger;
+  if(contra==='yes'||S.gvhdGrade>=4||(S.mukoGrade>=4&&pct<10)){
+    route='PN Total (Pertimbangkan EN trophic bila aman)';color='rose';
+    if(contra==='yes')reasons.push('Kontraindikasi EN absolut');
+    if(S.gvhdGrade>=4)reasons.push('Estimasi keterlibatan GI sangat berat');
+    if(S.mukoGrade>=4)reasons.push('Mukositis grade 4');
+    detail='PN via akses sentral. EN trophic 5 mL/jam via NJT dapat dipertimbangkan untuk menjaga mukosa GI bila kondisi mengizinkan.';
+    monitor='Tiap shift: GD, balance, stool';
+    reassess='24–48 jam';
+    switchTrigger='Switch ke EN saat GI kondisi memungkinkan';
+  }else if(hemo==='unstable'||(S.gvhdGrade>=3&&gi!=='normal')){
+    route='PN dominan + percobaan EN minimal bila stabil';color='rose';
+    reasons.push(hemo==='unstable'?'Hemodinamik tidak stabil':'Estimasi keterlibatan GI berat + fungsi GI terganggu');
+    detail='Stabilkan hemodinamik dulu. PN untuk memenuhi kebutuhan utama. Coba EN trophic saat kondisi memungkinkan.';
+    monitor='Tiap shift: GD, balance cairan, TG, toleransi EN';
+    reassess='24–48 jam';
+    switchTrigger='Naikkan EN dan turunkan PN saat hemodinamik stabil dan GI toleran';
+  }else if(S.mukoGrade>=3||S.gvhdGrade>=2||gi==='impaired'||(pct<50&&dur!=='short')){
+    route='Nutrisi Enteral (EN) ± Suplemen PN';color='yellow';
+    if(S.mukoGrade>=3)reasons.push('Mukositis grade '+S.mukoGrade);
+    if(S.gvhdGrade>=2)reasons.push('Estimasi keterlibatan GI grade '+S.gvhdGrade);
+    if(pct<50)reasons.push('Intake oral '+pct+'%');
+    detail='EN via NGT/NDT sebagai lini utama. Pilih formula semi-elemental/elemental bila ada keterlibatan GI. Tambahkan PN suplemen bila EN &lt;60% target dalam 3–5 hari.';
+    monitor='Harian: toleransi EN, residu lambung, stool output, GD';
+    reassess='48–72 jam';
+    switchTrigger='Tambah PN bila EN gagal mencapai 60% target dalam 3–5 hari; weaning EN saat oral membaik';
+  }else if(pct>=75&&gi==='normal'&&(S.mukoGrade===null||S.mukoGrade<=1)&&asp==='low'){
+    route='Oral (+ ONS bila perlu)';color='green';
+    reasons.push('Intake oral ≥75%','GI normal','Mukositis ringan/tidak ada');
+    detail='Pertahankan intake oral. Tambahkan ONS bila intake 75–90%. Monitoring ketat karena kondisi HSCT dapat berubah sewaktu-waktu.';
+    monitor='Harian: intake %, BB';
+    reassess='48–72 jam';
+    switchTrigger='Switch ke EN bila intake turun &lt;75% konsisten &gt;2–3 hari';
+  }else if(pct>=50){
+    route='Oral + ONS → Pertimbangkan EN dalam 48–72 jam';color='yellow';
+    reasons.push('Intake '+pct+'%','Perlu suplemen');
+    detail='Tambahkan ONS 2–3×/hari. Evaluasi dalam 48 jam. Jika intake tetap &lt;75%, pertimbangkan NGT.';
+    monitor='Harian: intake %, ONS konsumsi';
+    reassess='48 jam';
+    switchTrigger='Switch ke EN bila intake &lt;75% setelah optimasi ONS';
+  }else{
+    route='Nutrisi Enteral ± PN suplemen';color='rose';
+    reasons.push('Intake oral '+pct+'%');
+    detail='EN segera via NGT/NDT. PN suplemen bila EN tidak mencapai target dalam 3–5 hari.';
+    monitor='Harian: toleransi EN, GD, elektrolit';
+    reassess='48–72 jam';
+    switchTrigger='Tambah PN bila EN gagal; weaning saat oral/EN membaik';
+  }
+  S.finalRoute=route;
+  const cmap={green:'dbox-green',yellow:'dbox-yellow',rose:'dbox-rose'};
+  document.getElementById('route-out').innerHTML=`<div class="dbox ${cmap[color]}">
+    <div class="dbox-title">🎯 Rekomendasi Awal: ${route}</div>
+    <p style="font-size:11px;color:#2a4a5e;margin:5px 0">${detail}</p>
+    <div class="g3" style="margin-top:7px">
+      <div><div style="font-size:10px;font-weight:700;color:var(--bd)">Dasar Keputusan</div><p style="font-size:10px;color:#555">${reasons.filter(Boolean).join(', ')||'Data klinis'}</p></div>
+      <div><div style="font-size:10px;font-weight:700;color:var(--bd)">Monitor</div><p style="font-size:10px;color:#555">${monitor}</p></div>
+      <div><div style="font-size:10px;font-weight:700;color:var(--bd)">Reassess</div><p style="font-size:10px;color:#555">${reassess}</p></div>
+    </div>
+    <div style="margin-top:6px;font-size:10px;color:#666"><strong>Switch trigger:</strong> ${switchTrigger}</div>
+  </div>
+  ${al('al-i','📡','Mukositis grade '+(S.mukoGrade!==null?S.mukoGrade:'—')+' · GI GVHD grade '+S.gvhdGrade+' · Intake '+pct+'% · GI: '+gi+' · Hemodinamik: '+hemo)}
+  ${asp==='high'?al('al-w','⚠️','Risiko aspirasi tinggi. Pertimbangkan NDT/NJT daripada NGT. Posisi head-up 30–45°.'):''}
+  ${plt!=='ok'&&route.indexOf('PN')===-1?al('al-w','⚠️','Trombositopenia: pemasangan NGT/NDT berisiko perdarahan. Pertimbangkan koreksi trombosit sesuai protokol sebelum insersi, atau diskusikan rute alternatif dengan tim.'):''}
+  ${route.indexOf('PN')>-1&&cvc==='no'?al('al-e','🚨','PN dipertimbangkan namun akses vena sentral belum tersedia. PN konsentrat memerlukan CVC/PICC — diskusikan pemasangan akses sentral dengan tim. PN perifer hanya untuk formula osmolaritas rendah dan jangka pendek.'):''}
+  ${rfHigh?al('al-w','⚠️','Risiko refeeding tinggi: apa pun rutenya, mulai kalori rendah ('+(S.rfStartPct||25)+'% TEE) dan eskalasi bertahap. Koreksi elektrolit dulu. Lihat modul Refeeding Risk.'):''}`;
+  syncAll();
+}
+
+// ═══════════════════════════════════════
+// P9: PN BUILDER
+// ═══════════════════════════════════════
+function fillPNFromState(){
+  const bb=S.bbEff||S.bb;if(!bb)return;
+  const tee=S.tee||0,sp=S.rfStartPct||100;
+  const tkcal=S.pn.tkcal||RV(tee*sp/100/bb);
+  const tpro=S.pn.tpro||R(S.phaseProtein+(S.gvhdProExtra||0),1);
+  const vol=S.pn.vol||RV(Math.max((S.cairanSisa||S.cairan||1000)*0.8,400));
+  setAF('pn-bb',bb);setAF('pn-tkcal',tkcal);setAF('pn-tpro',tpro);setAF('pn-vol',vol);
+  if(S.access==='peripheral'){const el=document.getElementById('pn-acc');if(el)el.value='peripheral';}
+  const chol=S.lab.bili>5?'severe':S.lab.bili>2?'mild':'no';
+  const renEl=document.getElementById('pn-chol');if(renEl)renEl.value=chol;
+  Object.assign(S.pn,{bb,tkcal,tpro,vol,acc:S.access||'central',hrs:24,girMax:8,lipMax:3,chol,renal:'no'});
+  buildPN();
+}
+
+function setAF(id,val){
+  const el=document.getElementById(id);
+  if(el&&val&&!S.pn[id.replace('pn-','')]){el.value=val;el.classList.add('af');setTimeout(()=>el.classList.remove('af'),2000);}
+}
+
+function buildPN(){
+  const bb=parseFloat(document.getElementById('pn-bb')?.value)||0;
+  const tkcal=parseFloat(document.getElementById('pn-tkcal')?.value)||0;
+  const tpro=parseFloat(document.getElementById('pn-tpro')?.value)||0;
+  const vol=parseFloat(document.getElementById('pn-vol')?.value)||0;
+  const acc=document.getElementById('pn-acc')?.value||'central';
+  const hrs=parseFloat(document.getElementById('pn-hrs')?.value)||24;
+  const girMax=parseFloat(document.getElementById('pn-girmax')?.value)||8;
+  let lipMax=parseFloat(document.getElementById('pn-lipmax')?.value)||3;
+  const na=parseFloat(document.getElementById('pn-na')?.value)||2;
+  const k=parseFloat(document.getElementById('pn-k')?.value)||2;
+  const ca=parseFloat(document.getElementById('pn-ca')?.value)||1;
+  const p=parseFloat(document.getElementById('pn-p')?.value)||1;
+  const mg=parseFloat(document.getElementById('pn-mg')?.value)||0.3;
+  const chol=document.getElementById('pn-chol')?.value||'no';
+  const renal=document.getElementById('pn-renal')?.value||'no';
+  if(!bb||!tkcal||!vol){return;}
+  // Adjust lipid for cholestasis
+  if(chol==='severe'&&lipMax>1)lipMax=1;
+  else if(chol==='mild'&&lipMax>2)lipMax=2;
+  const totalKcal=tkcal*bb,proG=R(tpro*bb,1),proKcal=proG*4;
+  const nonPro=Math.max(totalKcal-proKcal,0);
+  const lipG=R(Math.min(lipMax*bb,nonPro*0.3/9),1);
+  const lipKcal=R(lipG*9,0);
+  const dexKcal=Math.max(nonPro-lipKcal,0);
+  const dexG=R(dexKcal/3.4,1);
+  const gir=R(dexG*1000/(bb*hrs*60),2);
+  const dexGAdj=gir>girMax?R(girMax*bb*hrs*60/1000,1):dexG;
+  const girAdj=Math.min(gir,girMax);
+  const dexPct=vol>0?R(dexGAdj/vol*100,1):0;
+  const aaPct=vol>0?R(proG/vol*100,1):0;
+  const lipVol=R(lipG/0.2,1);
+  const osm=RV(dexPct*50+aaPct*100+6);
+  const totalCalcKcal=RV(dexGAdj*3.4+proG*4+lipG*9);
+  const caP=R((ca*bb)*(p*bb),1);
+  const npcN=proG>0?R((totalCalcKcal-proKcal)/(proG/6.25),0):0;
+  Object.assign(S.pn,{bb,tkcal,tpro,vol,acc,hrs,girMax,lipMax,proG,dexG:dexGAdj,lipG,gir:girAdj,osm,totalKcal:totalCalcKcal,caP,dexPct,na:na*bb,k:k*bb,ca:ca*bb,p:p*bb,mg:mg*bb,chol,renal});
+  const carn=document.getElementById('pn-carn')?.value||'no';
+  const te=document.getElementById('pn-te')?.value||'std';
+  const ins=document.getElementById('pn-ins')?.value||'no';
+  const cholNote=chol==='severe'?al('al-e','🚨','Kolestasis berat: STOP Mangan dari trace elements. Kurangi Tembaga. Lipid maksimal 1 g/kg. Cyclic PN.'):chol==='mild'?al('al-w','⚠️','Kolestasis ringan: Batasi Mangan. Pertimbangkan cyclic PN. Lipid maks 2 g/kg.'):'';
+  const renalNote=renal==='rrt'?al('al-w','⚠️','RRT: Protein dapat ditingkatkan 2.5–3 g/kg (kehilangan via filter). Konsultasi nefrologi untuk manajemen elektrolit.'):'';
+  const carnNote=carn==='yes'?al('al-i','ℹ️','Carnitine dipertimbangkan: dapat berguna pada PN jangka panjang/defisiensi. Dosis dan indikasi mengikuti protokol lokal — diskusikan dengan dietitian/farmasi.'):'';
+  const teNote=te==='nomn'?al('al-w','⚠️','Trace element tanpa Mangan dipilih (kolestasis). Pantau kadar trace element lain.'):te==='renal'?al('al-w','⚠️','Trace element dikurangi (disfungsi ginjal). Sesuaikan selenium/krom sesuai fungsi ginjal dan protokol.'):'';
+  const insNote=ins==='yes'?al('al-i','💉','Catatan insulin: bila hiperglikemia, insulin diberikan via protokol terpisah (umumnya infus terpisah), BUKAN ditambahkan otomatis ke kantong PN tanpa keputusan tim/farmasi.'):'';
+  document.getElementById('pn-out').innerHTML=`
+  ${gir>girMax?al('al-e','🚨','GIR ('+gir+') melebihi batas ('+girMax+' mg/kg/mnt). Dextrose otomatis dibatasi. Kalori mungkin di bawah target.'):''}
+  <div class="recipe">
+    <div class="recipe-title">📋 DRAFT PN CALCULATION — ${bb} kg — ${new Date().toLocaleDateString('id-ID')}</div>
+    <div class="rl"><span class="rl-l">Amino Acid (AA)</span><span><span class="rl-v">${proG} g</span><span class="rl-u">${tpro} g/kg · ${RV(proG*4)} kcal · ${aaPct}%</span></span></div>
+    <div class="rl"><span class="rl-l">Dextrose</span><span><span class="rl-v">${dexGAdj} g</span><span class="rl-u">${dexPct}% · GIR ${girAdj} mg/kg/mnt · ${RV(dexGAdj*3.4)} kcal</span></span></div>
+    <div class="rl"><span class="rl-l">Lipid 20%</span><span><span class="rl-v">${lipG} g</span><span class="rl-u">${lipVol} mL · ${R(lipG/bb,2)} g/kg · ${lipKcal} kcal</span></span></div>
+    <div class="rl"><span class="rl-l">Volume PN</span><span><span class="rl-v">${vol} mL</span><span class="rl-u">+${lipVol} mL lipid terpisah</span></span></div>
+    <div class="rl"><span class="rl-l">Total Kalori (estimasi)</span><span><span class="rl-v">${totalCalcKcal} kcal</span><span class="rl-u">${R(totalCalcKcal/bb,1)} kcal/kg</span></span></div>
+    <div class="rl"><span class="rl-l">NPC:N Ratio</span><span><span class="rl-v">${npcN}:1</span><span class="rl-u">Target 100–150:1</span></span></div>
+    <div class="rl"><span class="rl-l">Osmolaritas (estimasi)</span><span><span class="rl-v">${osm} mOsm/L</span><span class="rl-u">${acc==='peripheral'&&osm>900?'⚠️ TERLALU TINGGI UNTUK PERIFER':'✅ Sesuai akses'}</span></span></div>
+    <div class="rl"><span class="rl-l">Rate infus</span><span><span class="rl-v">${RV(vol/hrs)} mL/jam</span><span class="rl-u">${hrs} jam</span></span></div>
+    <div style="border-top:1px solid rgba(255,255,255,.07);margin:6px 0;padding-top:6px">
+      <div class="rl"><span class="rl-l">Na · K · Ca · Fosfat · Mg</span><span class="rl-v" style="font-size:10px">${RV(na*bb)} · ${RV(k*bb)} · ${R(ca*bb,1)} · ${R(p*bb,1)} · ${R(mg*bb,1)} mEq/mmol/hari</span></div>
+      <div class="rl"><span class="rl-l">Ca × P compatibility</span><span><span class="rl-v">${caP}</span><span class="rl-u">${caP>=7?'⚠️ RISIKO PRESIPITASI — verifikasi farmasi':'✅ Estimasi aman (verifikasi farmasi)'}</span></span></div>
+    </div>
+    <div class="recipe-caveat">⚕️ DRAFT ONLY — Wajib verifikasi farmasi klinik, dietitian, dan dokter sebelum implementasi. Kompatibilitas Ca–P, osmolaritas, dan stabilitas harus dikonfirmasi dengan software farmasi dan formulasi lokal. Filter PN 0.22µm · Lipid 1.2µm · Lumen CVC dedikasi.</div>
+  </div>
+  ${cholNote}${renalNote}${teNote}${carnNote}${insNote}`;
+  runSafety();syncAll();
+}
+
+// ═══════════════════════════════════════
+// P10: SAFETY ENGINE
+// ═══════════════════════════════════════
+function runSafety(){
+  const p=S.pn,L=S.lab;
+  const checks=[];
+  if(p.bb>0){
+    checks.push({lvl:p.gir<=p.girMax?'ok':'err',
+      t:`GIR: ${p.gir} mg/kg/mnt (maks ${p.girMax})`,
+      d:p.gir>p.girMax?'GIR melebihi batas usia — kurangi dextrose atau perpanjang durasi infus':'GIR dalam batas aman',
+      act:p.gir>p.girMax?'Kurangi dextrose / perpanjang infus / turunkan target kalori':'—'});
+    checks.push({lvl:p.lipG/p.bb<=p.lipMax?'ok':'err',
+      t:`Lipid: ${R(p.lipG/p.bb,2)} g/kg/hari (maks ${p.lipMax})`,
+      d:p.lipG/p.bb>p.lipMax?'Lipid melebihi batas':'Lipid dalam batas aman',
+      act:p.lipG/p.bb>p.lipMax?'Kurangi dosis lipid — verifikasi dengan dietitian/farmasi':'—'});
+    checks.push({lvl:!(p.acc==='peripheral'&&p.osm>900)?'ok':'err',
+      t:`Osmolaritas: ${p.osm} mOsm/L${p.acc==='peripheral'?' (perifer ≤900)':''}`,
+      d:p.acc==='peripheral'&&p.osm>900?'Terlalu tinggi untuk akses perifer — risiko phlebitis berat':'Aman untuk akses yang dipilih',
+      act:p.acc==='peripheral'&&p.osm>900?'Pasang akses sentral (CVC/PICC) SEBELUM pemberian PN ini':'—'});
+    checks.push({lvl:!(p.acc==='peripheral'&&p.dexPct>12.5)?'ok':'err',
+      t:`Dextrose: ${p.dexPct}%${p.acc==='peripheral'?' (perifer maks 12.5%)':''}`,
+      d:p.acc==='peripheral'&&p.dexPct>12.5?'Konsentrasi dextrose terlalu tinggi untuk perifer':'Konsentrasi dextrose aman',
+      act:p.acc==='peripheral'&&p.dexPct>12.5?'Encerkan atau gunakan akses sentral':'—'});
+    checks.push({lvl:p.caP<7?'ok':'err',
+      t:`Ca × P: ${p.caP} mEq×mmol/L (risiko ≥7)`,
+      d:p.caP>=7?'RISIKO PRESIPITASI Ca–P — berbahaya (emboli)':'Estimasi kompatibel',
+      act:p.caP>=7?'Kurangi Ca atau P — WAJIB verifikasi farmasi dengan software kompatibilitas':'Tetap verifikasi farmasi'});
+    checks.push({lvl:p.totalKcal/p.bb>=40&&p.totalKcal/p.bb<=130?'ok':'warn',
+      t:`Total kalori: ${R(p.totalKcal/p.bb,1)} kcal/kg/hari`,
+      d:p.totalKcal/p.bb<40?'Kalori sangat rendah — risiko underfeeding':p.totalKcal/p.bb>130?'Kalori sangat tinggi — risiko overfeeding':'Kalori dalam rentang wajar',
+      act:p.totalKcal/p.bb<40||p.totalKcal/p.bb>130?'Tinjau kembali target kalori — diskusikan dengan dietitian':'—'});
+  }
+  if(L.tg>0)checks.push({lvl:L.tg<=250?'ok':L.tg<=400?'warn':'err',
+    t:`Trigliserida: ${L.tg} mg/dL`,
+    d:L.tg>400?'Hipertrigliseridemia berat':L.tg>250?'TG meningkat':'TG normal',
+    act:L.tg>400?'Pertimbangkan STOP lipid PN. Cari penyebab.':L.tg>250?'Kurangi lipid PN 50%. Monitor 2×/minggu.':'—'});
+  if(L.gd>0)checks.push({lvl:L.gd>=70&&L.gd<=180?'ok':L.gd<60||L.gd>250?'err':'warn',
+    t:`Glukosa: ${L.gd} mg/dL (target 80–180)`,
+    d:L.gd>250?'Hiperglikemia berat':L.gd>180?'Hiperglikemia':L.gd<60?'HIPOGLIKEMIA':'Terkontrol',
+    act:L.gd>250?'Kurangi GIR segera, pertimbangkan insulin infus, konsultasi tim':L.gd>180?'Monitor ketat, pertimbangkan kurangi dextrose':L.gd<60?'KOREKSI SEGERA sesuai protokol':'—'});
+  if(L.bili>0)checks.push({lvl:L.bili<2?'ok':L.bili<5?'warn':'err',
+    t:`Bilirubin: ${L.bili} mg/dL`,
+    d:L.bili>5?'Kolestasis/hiperbilirubinemia berat':L.bili>2?'Bilirubin meningkat':'Normal',
+    act:L.bili>5?'STOP Mangan dari TE, kurangi Cu, cyclic PN, kurangi lipid, evaluasi VOD. Konsultasi gastro-hepatologi.':L.bili>2?'Monitor kolestasis PN. Pertimbangkan cyclic PN.':'—'});
+  if(L.cr>0)checks.push({lvl:L.cr<1.5?'ok':L.cr<3?'warn':'err',
+    t:`Kreatinin: ${L.cr} mg/dL`,
+    d:L.cr>=3?'Disfungsi ginjal berat':L.cr>=1.5?'Kreatinin meningkat':'Normal',
+    act:L.cr>=1.5?'Pertimbangkan penyesuaian protein dan elektrolit PN. Koordinasi nefrologi.':'—'});
+  if(L.po4>0)checks.push({lvl:L.po4>=2.5?'ok':L.po4>=1.5?'warn':'err',
+    t:`Fosfat: ${L.po4} mg/dL`,
+    d:L.po4<1.5?'Hipofosfatemia berat — risiko refeeding syndrome':L.po4<2.5?'Hipofosfatemia':'Normal',
+    act:L.po4<1.5?'Koreksi IV fosfat SEGERA. Tunda eskalasi nutrisi. Konsultasi tim.':L.po4<2.5?'Koreksi fosfat. Tahan eskalasi nutrisi. Monitor tiap 6–12 jam.':'—'});
+  if(S.foFlag)checks.push({lvl:S.foPct>=10?'err':S.foPct>=5?'warn':'ok',
+    t:`Fluid Overload: ${S.foPct}%`,
+    d:S.foPct>=10?'Fluid overload bermakna':S.foPct>=5?'Fluid overload sedang':'Normal',
+    act:S.foPct>=10?'Volume PN harus dibatasi ketat. Pertimbangkan PN konsentrat. Koordinasi ICU/nefrologi.':S.foPct>=5?'Kurangi volume PN. Pertimbangkan formula konsentrat.':'—'});
+  if(S.rfRisk==='SANGAT TINGGI'||S.rfRisk==='TINGGI')checks.push({lvl:'warn',
+    t:`Refeeding Risk: ${S.rfRisk}`,
+    d:'Risiko refeeding syndrome — mulai nutrisi bertahap',
+    act:'Koreksi elektrolit berat dulu. Mulai '+S.rfStartPct+'% TEE. Eskalasi sangat bertahap.'});
+  const el=document.getElementById('safety-out');
+  if(!checks.length){el.innerHTML=al('al-i','ℹ️','Lengkapi PN Builder & data lab untuk safety check penuh.');return;}
+  const nErr=checks.filter(c=>c.lvl==='err').length;
+  const nWarn=checks.filter(c=>c.lvl==='warn').length;
+  const lvlIcon={ok:'✅',warn:'⚠️',err:'🚨'};
+  const lvlColor={ok:'var(--green)',warn:'var(--yellow)',err:'var(--rose)'};
+  el.innerHTML=(nErr>0?al('al-e','🚨',`Ditemukan <strong>${nErr} masalah keamanan</strong> dan ${nWarn} peringatan. Tinjau dan verifikasi sebelum implementasi.`):nWarn>0?al('al-w','⚠️',`${nWarn} peringatan ditemukan. Tinjau dan diskusikan dengan tim.`):al('al-s','✅','Tidak ada masalah keamanan terdeteksi. Tetap verifikasi dengan farmasi dan dietitian.'))+
+  checks.map(c=>`<div class="sc"><div class="sc-ico">${lvlIcon[c.lvl]}</div><div><div class="sc-title" style="color:${lvlColor[c.lvl]}">${c.t}</div><div class="sc-desc">${c.d}</div>${c.act!=='—'?`<div class="sc-action">→ ${c.act}</div>`:''}</div></div>`).join('');
+}
+
+// ═══════════════════════════════════════
+// P11: MONITORING PLAN
+// ═══════════════════════════════════════
+function renderMonitorPlan(){
+  const phase=S.phaseId||'aplasia';
+  const freq={pre:{bb:'2–3×/mgg',bal:'Harian',gd:'Harian',tg:'1×/mgg',po4:'2×/mgg',bili:'1×/mgg',cr:'2×/mgg',muko:'2–3×/mgg'},
+    cond:{bb:'Harian',bal:'Harian',gd:'Tiap 8 jam',tg:'2×/mgg',po4:'Harian',bili:'2×/mgg',cr:'Harian',muko:'Harian'},
+    aplasia:{bb:'Harian',bal:'Tiap shift',gd:'Tiap 4–6 jam (PN)',tg:'2×/mgg',po4:'Harian',bili:'2×/mgg',cr:'Harian',muko:'Harian'},
+    engraft:{bb:'Harian',bal:'Harian',gd:'Tiap 8–12 jam',tg:'2×/mgg',po4:'Harian',bili:'2×/mgg',cr:'2–3×/mgg',muko:'Harian'},
+    agvhd:{bb:'Harian',bal:'Tiap shift',gd:'Tiap 6–8 jam',tg:'2×/mgg',po4:'Harian',bili:'2×/mgg',cr:'Harian',muko:'Harian'},
+    cgvhd:{bb:'2×/mgg',bal:'Harian',gd:'Harian',tg:'1×/mgg',po4:'2×/mgg',bili:'1×/mgg',cr:'1×/mgg',muko:'Bila ada'},
+    icu:{bb:'Harian',bal:'Tiap shift',gd:'Tiap 1–4 jam',tg:'Harian',po4:'Harian',bili:'Harian',cr:'Harian',muko:'Harian'}};
+  const f=freq[phase]||freq.aplasia;
+  const alerts=[];
+  if(S.rfRisk==='TINGGI'||S.rfRisk==='SANGAT TINGGI')alerts.push(al('al-e','🚨',`Refeeding risk ${S.rfRisk}: Fosfat, K, Mg tiap 6–8 jam selama 48–72 jam pertama. TAHAN eskalasi bila terjadi penurunan elektrolit.`));
+  if(S.foFlag)alerts.push(al('al-w','⚠️',`Fluid overload ${S.foPct}%: Monitor balance tiap shift. BB harian. Waspada perburukan.`));
+  if(S.gvhdGrade>=3)alerts.push(al('al-e','🚨','GVHD GI berat: Ukur stool output tiap shift (mL/kg). Monitor albumin, K, Mg tiap hari.'));
+  document.getElementById('monitor-out').innerHTML=`
+  <div class="metrics">
+    ${mt(f.bb,'Berat badan','')}
+    ${mt(f.bal,'Balance cairan','')}
+    ${mt(f.gd,'Glukosa darah','')}
+    ${mt(f.po4,'Fosfat','')}
+    ${mt(f.tg,'Trigliserida','')}
+    ${mt(f.bili,'Bilirubin/LFT','')}
+    ${mt(f.cr,'Kreatinin','')}
+    ${mt(f.muko,'Mukositis grade','')}
+  </div>
+  ${alerts.join('')}
+  ${al('al-i','ℹ️','Frekuensi di atas berdasarkan fase '+S.phase+'. Sesuaikan dengan kondisi aktual pasien dan keputusan tim klinis.')}`;
+}
+
+// ═══════════════════════════════════════
+// P12: RISK STRATIFICATION
+// ═══════════════════════════════════════
+function fillRiskStratFromState(){
+  if(S.lab.alb){const el=document.getElementById('oc-alb');if(el)el.value=S.lab.alb;}
+  if(S.lab.crp){const el=document.getElementById('oc-crp');if(el)el.value=S.lab.crp;}
+  if(S.wl1){const el=document.getElementById('oc-wl');if(el)el.value=S.wl1;}
+  if(S.gvhdGrade){const el=document.getElementById('oc-gvhd');if(el)el.value=Math.min(S.gvhdGrade,4);}
+  if(S.mukoGrade!==null){const el=document.getElementById('oc-muko');if(el)el.value=Math.min(S.mukoGrade,3);}
+  if(S.oralPct){const el=document.getElementById('oc-intake');if(el)el.value=S.oralPct>=75?0:S.oralPct>=50?1:S.oralPct>0?2:3;}
+  calcRiskStrat();
+}
+function calcRiskStrat(){
+  const bmi=parseInt(document.getElementById('oc-bmi')?.value)||0;
+  const wl=parseFloat(document.getElementById('oc-wl')?.value)||0;
+  const alb=parseFloat(document.getElementById('oc-alb')?.value)||4;
+  const crp=parseFloat(document.getElementById('oc-crp')?.value)||5;
+  const gvhd=parseInt(document.getElementById('oc-gvhd')?.value)||0;
+  const muko=parseInt(document.getElementById('oc-muko')?.value)||0;
+  const inf=parseInt(document.getElementById('oc-inf')?.value)||0;
+  const renal=parseInt(document.getElementById('oc-renal')?.value)||0;
+  const intake=parseInt(document.getElementById('oc-intake')?.value)||0;
+  let score=0;
+  score+=bmi*2;
+  if(wl>=15)score+=3;else if(wl>=10)score+=2;else if(wl>=5)score+=1;
+  if(alb<2.5)score+=3;else if(alb<3.0)score+=2;else if(alb<3.5)score+=1;
+  if(crp>100)score+=3;else if(crp>50)score+=2;else if(crp>10)score+=1;
+  score+=gvhd+muko+inf*2+renal*2+intake;
+  let risk,ringCls,color,priority,intensity,drivers=[];
+  if(score>=15){risk='Sangat Tinggi';ringCls='or-vhi';color='rose';priority='Intervensi nutrisi SEGERA. PN bila EN tidak memungkinkan. Monitoring tiap shift.';intensity='Sangat intensif';}
+  else if(score>=10){risk='Tinggi';ringCls='or-hi';color='rose';priority='Intervensi aktif. EN/PN diperlukan. Dietitian dan farmasi segera.';intensity='Intensif';}
+  else if(score>=6){risk='Sedang';ringCls='or-mod';color='yellow';priority='Monitoring ketat + ONS. Pertimbangkan EN. Dietitian dalam 48–72 jam.';intensity='Sedang';}
+  else{risk='Rendah';ringCls='or-low';color='green';priority='Monitoring rutin. Optimasi oral. Dietitian elektif.';intensity='Standar';}
+  if(bmi>=2)drivers.push('Malnutrisi signifikan');
+  if(wl>=10)drivers.push('Weight loss berat');
+  if(alb<3.0)drivers.push('Hipoalbuminemia');
+  if(crp>50)drivers.push('Inflamasi signifikan');
+  if(gvhd>=2)drivers.push('Keterlibatan GI GVHD');
+  if(muko>=2)drivers.push('Mukositis berat');
+  if(inf>=2)drivers.push('Sepsis');
+  if(renal>=1)drivers.push('Disfungsi ginjal');
+  if(intake>=2)drivers.push('Intake sangat rendah');
+  S.riskStratLevel=risk;
+  document.getElementById('riskstrat-out').innerHTML=`
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+    <div class="o-ring ${ringCls}">${risk}</div>
+    <div><div style="font-size:15px;font-weight:700">Nutrition Risk: ${risk}</div><div style="font-size:11px;color:var(--muted)">Skor ${score}/25+ (estimasi)</div></div>
+  </div>
+  <div class="metrics">
+    ${mt(priority,'Prioritas Intervensi','','info')}
+    ${mt(intensity,'Intensitas Monitoring','',score>=10?'warn':'ok')}
+    ${mt(drivers.length>0?drivers.join(', '):'Tidak ada driver dominan','Driver Risiko Utama','')}
+  </div>
+  ${al('al-p','📊','Risk stratification ini bersifat rule-based edukatif dan BUKAN prediksi outcome individual tervalidasi. Gunakan sebagai panduan prioritas, bukan sebagai prognosis klinis.')}`;
+}
+
+// ═══════════════════════════════════════
+// P13: SUMMARY
+// ═══════════════════════════════════════
+function genSummary(){
+  const bb=S.bbEff||S.bb||0,tee=S.tee||0,cairan=S.cairan||0,pnKcal=S.pn.totalKcal||0;
+  const tpro=S.pn.tpro?R(S.pn.tpro*bb,1):R(S.phaseProtein*bb,1);
+  const kode=document.getElementById('pt-kode')?.value||'—';
+  const dx=document.getElementById('pt-dx')?.value||'—';
+  document.getElementById('summary-content').innerHTML=`
+  <div style="background:#1e3a4f;color:#fff;border-radius:10px;padding:.9rem;margin-bottom:.65rem">
+    <div style="font-size:10px;font-weight:700;color:#6b9ab8;letter-spacing:.07em;text-transform:uppercase;margin-bottom:.65rem">
+      📋 DRAFT NUTRITION PLAN — drAisyiEduCare HSCT Nutrition Navigator — ${new Date().toLocaleDateString('id-ID')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px;margin-bottom:.65rem">
+      ${[['Kode Pasien',kode],['Diagnosis',dx],['HSCT Type',S.hsct||'—'],['Fase',S.phase||'—'],['Hari HSCT',S.day||'—'],['Mukositis','Grade '+(S.mukoGrade!==null?S.mukoGrade:'—')],['GI GVHD (est)','Grade '+S.gvhdGrade],['Rute Awal',S.finalRoute||'—'],['Akses',S.access==='central'?'Sentral':'Perifer'],['Nutrition Risk',S.riskStratLevel||S.riskLevel||'—']].map(([l,v])=>`<div style="background:rgba(255,255,255,.07);border-radius:6px;padding:6px 8px"><div style="font-size:9px;color:#6b9ab8">${l}</div><div style="font-size:11px;font-weight:700">${v}</div></div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px">
+      ${[['BB Kalkulasi',R(bb,1)+' kg',S.edema>0?'BB kering':'BB aktual'],['Target Kalori',RV(tee)+' kcal',R(tee/(bb||1),1)+' kcal/kg'],['Start Kalori',RV(tee*S.rfStartPct/100)+' kcal',S.rfStartPct+'% TEE (RF)'],['Target Protein',tpro+' g',S.phaseProtein+' g/kg'],['Target Cairan',RV(cairan)+' mL',RV(cairan/(bb||1))+' mL/kg'],['Sisa u/ Nutrisi',RV(S.cairanSisa||0)+' mL','Setelah obat']].map(([l,v,s])=>`<div style="background:rgba(255,255,255,.07);border-radius:6px;padding:6px 8px"><div style="font-size:9px;color:#6b9ab8">${l}</div><div style="font-size:13px;font-weight:700">${v}</div>${s?`<div style="font-size:9px;color:#8bb8d4;margin-top:1px">${s}</div>`:''}</div>`).join('')}
+    </div>
+  </div>
+  ${pnKcal>0?`<div class="card"><div class="card-title">💉 Draft PN Calculation <span class="tag t-yellow">Perlu verifikasi farmasi & dietitian</span></div><div class="metrics">
+    ${mt(S.pn.proG+'g','Amino Acid',S.pn.tpro+' g/kg')}
+    ${mt(S.pn.dexG+'g','Dextrose',S.pn.dexPct+'%')}
+    ${mt(S.pn.lipG+'g','Lipid 20%',R(S.pn.lipG/(S.pn.bb||1),2)+' g/kg')}
+    ${mt(S.pn.vol+'mL','Volume PN',RV(S.pn.vol/S.pn.hrs)+' mL/jam')}
+    ${mt(pnKcal+' kcal','Total Kalori',R(pnKcal/(S.pn.bb||1),1)+' kcal/kg')}
+    ${mt(S.pn.gir+' mg/kg/mnt','GIR',S.pn.gir<=S.pn.girMax?'✅ Batas aman':'⚠️ Cek',S.pn.gir<=S.pn.girMax?'ok':'warn')}
+    ${mt(S.pn.osm+' mOsm/L','Osmolaritas',S.pn.acc==='peripheral'&&S.pn.osm>900?'⚠️ Perifer!':'✅',S.pn.acc==='peripheral'&&S.pn.osm>900?'err':'ok')}
+    ${mt(S.pn.caP+' mEq×mmol/L','Ca×P',S.pn.caP>=7?'⚠️ Risiko!':'✅ Est. aman',S.pn.caP>=7?'err':'ok')}
+  </div></div>`:''}
+  <div class="card"><div class="card-title">⚠️ Safety Alerts Aktif</div><div id="sum-safety-alerts"></div></div>
+  <div class="card"><div class="card-title">📋 Catatan Klinis Penting</div>
+    <div style="font-size:11px;line-height:1.85;color:#2a4a5e">
+      ${S.phase?`<div>• <strong>Fase HSCT:</strong> ${S.phase} — ${PHASE_DB[S.phaseId||'pre']?.barriers[0]||''}</div>`:''}
+      ${S.mukoGrade!==null?`<div>• <strong>Mukositis grade ${S.mukoGrade}:</strong> ${MUKO_DB[S.mukoGrade]?.route||''}</div>`:''}
+      ${S.gvhdGrade>0?`<div>• <strong>Estimasi GI GVHD grade ${S.gvhdGrade}:</strong> ${S.gvhdRoute}</div>`:''}
+      ${S.foPct>=5?`<div>• <strong>Fluid overload ${S.foPct}%:</strong> BB aktual tidak akurat. Gunakan BB kering. Restriksi cairan.</div>`:''}
+      ${S.rfRisk!=='RENDAH'?`<div>• <strong>Refeeding risk ${S.rfRisk}:</strong> Start ${S.rfStartPct}% TEE. ${S.rfThiamine}.</div>`:''}
+      ${S.riskStratLevel?`<div>• <strong>Nutrition risk stratification:</strong> ${S.riskStratLevel}</div>`:''}
+    </div>
+  </div>
+  <div class="card"><div class="card-title">📈 Rencana Monitoring 24–48 Jam</div>
+    <div style="font-size:11px;line-height:1.85;color:#2a4a5e">
+      <div>• Berat badan: ${S.phaseId==='pre'?'2–3×/minggu':'Harian'}</div>
+      <div>• Balance cairan: ${S.phaseId==='aplasia'||S.phaseId==='agvhd'?'Tiap shift':'Harian'}</div>
+      <div>• Glukosa darah: ${pnKcal>0?'Tiap 4–6 jam (PN aktif)':'Tiap 8–12 jam'}</div>
+      <div>• Fosfat, K, Mg: ${S.rfRisk==='TINGGI'||S.rfRisk==='SANGAT TINGGI'?'Tiap 6–8 jam (refeeding risk)':'Harian'}</div>
+      <div>• Trigliserida: 2×/minggu${pnKcal>0?' (lipid PN aktif)':''}</div>
+      <div>• Intake oral/EN (%): Harian</div>
+      ${S.gvhdGrade>=2?'<div>• Stool output: Tiap shift (ukur volume)</div>':''}
+      <div>• Reassess nutrisi: ${S.rfRisk!=='RENDAH'?'48 jam':'72 jam'}</div>
+    </div>
+  </div>
+  <div class="card"><div class="card-title">✅ Checklist Tim</div>
+    <table class="t"><thead><tr><th>Kondisi</th><th>Aksi</th></tr></thead><tbody>
+      <tr><td>Toleran, elektrolit normal, TG &lt;250, GD 80–180</td><td style="color:var(--green);font-weight:700">⬆ Pertimbangkan eskalasi 10–20%/hari</td></tr>
+      <tr><td>Residu tinggi, mual, TG 200–400, intoleransi minor</td><td style="color:var(--yellow);font-weight:700">⏸ Pertahankan rate saat ini</td></tr>
+      <tr><td>Po4 &lt;2, TG &gt;400, GD &gt;250 persisten, elektrolit drop</td><td style="color:var(--rose);font-weight:700">⬇ Kurangi 25–50% atau tunda eskalasi</td></tr>
+      <tr><td>Oral membaik &gt;75% selama &gt;2 hari konsisten</td><td style="color:var(--blue);font-weight:700">🔄 Weaning EN/PN bertahap</td></tr>
+      <tr><td>Sepsis berat / tidak stabil hemodinamik</td><td style="color:var(--rose);font-weight:700">🛑 Stabilkan dulu, tunda eskalasi nutrisi</td></tr>
+    </tbody></table>
+  </div>
+  <div class="disc">⚕️ <strong>Disclaimer:</strong> Dokumen ini merupakan draft rencana nutrisi untuk diskusi tim. Bukan prescription/order final. Wajib diverifikasi oleh dokter penanggung jawab, dietitian/nutritionist, farmasi klinik, dan tim HSCT sesuai kondisi pasien, protokol lokal, ketersediaan produk, serta hasil laboratorium terkini.</div>`;
+  // Safety alerts in summary
+  const sa=document.getElementById('sum-safety-alerts');
+  if(sa){
+    const p=S.pn,L=S.lab;let salerts='';
+    if(p.caP>=7)salerts+=al('al-e','🚨','Ca×P risiko presipitasi ('+p.caP+'). Verifikasi farmasi wajib.');
+    if(p.acc==='peripheral'&&p.osm>900)salerts+=al('al-e','🚨','Osmolaritas perifer terlalu tinggi ('+p.osm+'). Pasang akses sentral.');
+    if(p.gir>p.girMax)salerts+=al('al-e','🚨','GIR melebihi batas ('+p.gir+' vs maks '+p.girMax+').');
+    if(L.tg>400)salerts+=al('al-e','🚨','TG '+L.tg+' mg/dL. Stop lipid PN.');
+    if(L.po4>0&&L.po4<1.5)salerts+=al('al-e','🚨','Hipofosfatemia berat ('+L.po4+'). Koreksi IV dulu.');
+    if(L.gd>250)salerts+=al('al-e','🚨','GD '+L.gd+' mg/dL. Kurangi GIR.');
+    if(S.rfRisk==='SANGAT TINGGI'||S.rfRisk==='TINGGI')salerts+=al('al-w','⚠️','Refeeding risk '+S.rfRisk+'. Mulai '+S.rfStartPct+'% TEE.');
+    if(!salerts)salerts=al('al-s','✅','Tidak ada safety alert kritis terdeteksi saat ini. Tetap verifikasi dengan tim.');
+    sa.innerHTML=salerts;
+  }
+}
+
+function showCopyText(){
+  const panel=document.getElementById('copy-panel');
+  const area=document.getElementById('copy-area');
+  panel.style.display='block';
+  const bb=S.bbEff||S.bb||0,tee=S.tee||0,pnKcal=S.pn.totalKcal||0;
+  const tpro=S.pn.tpro?R(S.pn.tpro*bb,1):R(S.phaseProtein*bb,1);
+  const D='─'.repeat(58),DD='═'.repeat(58);
+  const dt=new Date().toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const tm=new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  let t=DD+'\n  drAisyiEduCare\n  Pediatric HSCT Nutrition Navigator — CDSS\n'+DD+'\n';
+  t+=`  [DRAFT NUTRITION PLAN — BUKAN ORDER FINAL]\n  Tanggal: ${dt} · Pukul ${tm}\n\n`;
+  t+='■ DATA KLINIS (DE-IDENTIFIED)\n'+D+'\n';
+  t+=`Kode Pasien  : ${document.getElementById('pt-kode')?.value||'—'}\n`;
+  t+=`Diagnosis    : ${document.getElementById('pt-dx')?.value||'—'}\n`;
+  t+=`HSCT Type    : ${S.hsct||'—'} | Conditioning: ${S.conditioning||'—'}\n`;
+  t+=`Fase HSCT    : ${S.phase||'—'} | Hari: ${S.day||'—'}\n`;
+  t+=`Akses Vena   : ${S.access==='central'?'Sentral (CVC/PICC)':'Perifer'}\n\n`;
+  t+='■ STATUS GIZI & KEBUTUHAN\n'+D+'\n';
+  t+=`BB Kalkulasi : ${R(bb,1)} kg ${S.edema>0?'(BB kering)':'(BB aktual)'}\n`;
+  t+=`BB Ideal     : ${S.bbIdeal} kg  |  % IBW: ${S.pctIBW}% (estimasi)\n`;
+  t+=`BSA          : ${S.bsa} m² | BMR: ${S.bmr} kcal | SF: ×${S.sf}\n`;
+  t+=`Target Kalori: ${tee} kcal/hari (${R(tee/(bb||1),1)} kcal/kg)\n`;
+  t+=`Start Kalori : ${RV(tee*S.rfStartPct/100)} kcal (${S.rfStartPct}% TEE — Refeeding: ${S.rfRisk})\n`;
+  t+=`Target Protein: ${tpro} g/hari (${S.phaseProtein} g/kg)\n`;
+  t+=`Target Cairan: ${RV(S.cairan)} mL/hari (${RV(S.cairan/(bb||1))} mL/kg)\n`;
+  t+=`Rute Nutrisi : ${S.finalRoute||'—'}\n\n`;
+  if(pnKcal>0){
+    t+='■ DRAFT PN CALCULATION (VERIFIKASI FARMASI WAJIB)\n'+D+'\n';
+    t+=`AA (Protein) : ${S.pn.proG} g | ${S.pn.tpro} g/kg | ${RV(S.pn.proG*4)} kcal\n`;
+    t+=`Dextrose     : ${S.pn.dexG} g | ${S.pn.dexPct}% | GIR ${S.pn.gir} mg/kg/mnt | ${RV(S.pn.dexG*3.4)} kcal\n`;
+    t+=`Lipid 20%    : ${S.pn.lipG} g | ${R(S.pn.lipG/(S.pn.bb||1),2)} g/kg | ${R(S.pn.lipG/0.2,1)} mL | ${RV(S.pn.lipG*9)} kcal\n`;
+    t+=`Volume PN    : ${S.pn.vol} mL + ${R(S.pn.lipG/0.2,1)} mL lipid\n`;
+    t+=`Total Kalori : ${pnKcal} kcal (${R(pnKcal/(S.pn.bb||1),1)} kcal/kg)\n`;
+    t+=`Osmolaritas  : ${S.pn.osm} mOsm/L | Akses: ${S.pn.acc}\n`;
+    t+=`Duration     : ${S.pn.hrs} jam | Rate: ${RV(S.pn.vol/S.pn.hrs)} mL/jam\n`;
+    t+=`Elektrolit   : Na ${RV(S.pn.na)} | K ${RV(S.pn.k)} | Ca ${R(S.pn.ca,1)} | PO4 ${R(S.pn.p,1)} | Mg ${R(S.pn.mg,1)}\n`;
+    t+=`Ca×P         : ${S.pn.caP} mEq×mmol/L ${S.pn.caP>=7?'⚠ RISIKO PRESIPITASI':'✓ Est. aman (verifikasi farmasi)'}\n\n`;
+  }
+  t+='■ CATATAN KLINIS\n'+D+'\n';
+  if(S.mukoGrade!==null)t+=`Mukositis    : Grade ${S.mukoGrade} → ${MUKO_DB[S.mukoGrade]?.route||'—'}\n`;
+  t+=`GI GVHD (est): Grade ${S.gvhdGrade} → ${S.gvhdRoute||'—'}\n`;
+  t+=`Fluid Overload: ${S.foPct}% ${S.foPct>=10?'⚠ RESTRIKSI KETAT':S.foPct>=5?'⚠ Restriksi':'✓ Normal'}\n`;
+  t+=`Refeeding Risk: ${S.rfRisk} | ${S.rfThiamine}\n`;
+  if(S.riskStratLevel)t+=`Nutrition Risk: ${S.riskStratLevel}\n`;
+  t+='\n■ MONITORING 24–48 JAM\n'+D+'\n';
+  t+=`• BB: ${S.phaseId==='pre'?'2–3×/mgg':'Harian'}\n`;
+  t+=`• Balance cairan: ${S.phaseId==='aplasia'?'Tiap shift':'Harian'}\n`;
+  t+=`• GD: ${pnKcal?'Tiap 4–6 jam (PN)':'Tiap 8–12 jam'}\n`;
+  t+=`• Po4, K, Mg: ${S.rfRisk==='TINGGI'||S.rfRisk==='SANGAT TINGGI'?'Tiap 6–8 jam':'Harian'}\n`;
+  t+=`• TG: 2×/minggu | Bilirubin/LFT: 2×/minggu\n`;
+  t+=`• Reassess nutrisi: ${S.rfRisk!=='RENDAH'?'48 jam':'72 jam'}\n\n`;
+  t+=DD+'\nDISCLAIMER: Draft rencana nutrisi untuk diskusi tim.\nBukan prescription/order final. Wajib diverifikasi dokter,\ndietitian, farmasi, dan tim HSCT sesuai protokol lokal.\n\ndrAisyiEduCare — Pediatric HSCT Nutrition Navigator\n'+DD+'\n';
+  area.value=t;
+  panel.scrollIntoView({behavior:'smooth'});
+}
+
+function copyText(){
+  const area=document.getElementById('copy-area');
+  area.select();
+  try{document.execCommand('copy');
+    const cc=document.getElementById('copy-confirm');if(cc){cc.style.display='flex';setTimeout(()=>cc.style.display='none',3000);}
+  }catch(e){area.focus();area.select();alert('Tekan Ctrl+C (Win) / Cmd+C (Mac) untuk menyalin.');}
+}
+
+// ═══════════════════════════════════════
+// P14: RESEARCH
+// ═══════════════════════════════════════
+function addMonitor(){
+  monitorData.push({
+    kode:document.getElementById('mn-kode')?.value||'—',
+    day:document.getElementById('mn-day')?.value||'—',
+    bb:document.getElementById('mn-bb')?.value||'—',
+    kcal:document.getElementById('mn-kcal')?.value||'—',
+    pro:document.getElementById('mn-pro')?.value||'—',
+    route:document.getElementById('mn-route')?.value||'—',
+    oral:document.getElementById('mn-oral')?.value||'—',
+    bal:document.getElementById('mn-bal')?.value||'—',
+    stool:document.getElementById('mn-stool')?.value||'—',
+    gd:document.getElementById('mn-gd')?.value||'—',
+    tg:document.getElementById('mn-tg')?.value||'—',
+    po4:document.getElementById('mn-po4')?.value||'—',
+    bili:document.getElementById('mn-bili')?.value||'—',
+    cr:document.getElementById('mn-cr')?.value||'—',
+    muko:document.getElementById('mn-muko')?.value||'0',
+    fase:document.getElementById('mn-fase')?.value||S.phase||'—',
+    ts:new Date().toISOString()
+  });
+  renderResearch();
+}
+function saveToResearch(){
+  const bb=S.bbEff||S.bb||0;
+  monitorData.push({
+    kode:document.getElementById('pt-kode')?.value||'—',
+    day:S.day||'—',bb:R(bb,1),kcal:S.pn.totalKcal||'—',
+    pro:S.pn.tpro?R(S.pn.tpro*bb,1):'—',route:S.finalRoute||'—',oral:S.oralPct||'—',
+    bal:'—',stool:'—',gd:S.lab.gd||'—',tg:S.lab.tg||'—',
+    po4:S.lab.po4||'—',bili:S.lab.bili||'—',cr:S.lab.cr||'—',
+    muko:S.mukoGrade!==null?S.mukoGrade:'—',fase:S.phase||'—',ts:new Date().toISOString()
+  });
+  renderResearch();
+  alert('Data tersimpan ke Research Dashboard (de-identified).');
+}
+function renderResearch(){
+  const n=monitorData.length;
+  document.getElementById('rd-n').textContent=n;
+  if(!n){document.getElementById('rd-table').innerHTML='<p style="color:var(--muted);font-size:11px;text-align:center;padding:1rem">Belum ada data.</p>';
+    document.getElementById('rd-kcal').textContent='—';document.getElementById('rd-pro').textContent='—';document.getElementById('rd-stool').textContent='—';return;}
+  const avg=key=>R(monitorData.reduce((a,d)=>a+(parseFloat(d[key])||0),0)/n,0);
+  document.getElementById('rd-kcal').textContent=avg('kcal');
+  document.getElementById('rd-pro').textContent=avg('pro');
+  document.getElementById('rd-stool').textContent=avg('stool');
+  let html=`<div class="dt-wrap"><table class="t"><thead><tr><th>Kode</th><th>Hari</th><th>Fase</th><th>BB</th><th>Kcal</th><th>Protein</th><th>Rute</th><th>Oral%</th><th>Balance</th><th>Stool</th><th>GD</th><th>TG</th><th>PO4</th><th>Bili</th><th>Muko</th><th></th></tr></thead><tbody>`;
+  monitorData.forEach((d,i)=>html+=`<tr><td>${d.kode}</td><td>${d.day}</td><td>${d.fase}</td><td>${d.bb}</td><td>${d.kcal}</td><td>${d.pro}</td><td>${d.route}</td><td>${d.oral}</td><td>${d.bal}</td><td>${d.stool}</td><td>${d.gd}</td><td>${d.tg}</td><td>${d.po4}</td><td>${d.bili}</td><td>${d.muko}</td><td><button class="btn btn-outline btn-sm" onclick="monitorData.splice(${i},1);renderResearch()">×</button></td></tr>`);
+  html+='</tbody></table></div>';
+  document.getElementById('rd-table').innerHTML=html;
+}
+function clearMonitor(){if(confirm('Hapus semua data monitoring?')){monitorData=[];renderResearch();}}
+
+function exportCSV(){
+  if(!monitorData.length){alert('Belum ada data untuk diekspor.');return;}
+  const h=['Kode_Pasien','Hari_HSCT','Fase','BB_kg','Kalori_kcal','Protein_g','Rute','Oral_pct','Balance_mL','Stool_mL','GD_mgdL','TG_mgdL','PO4_mgdL','Bili_mgdL','Muko_grade','Timestamp'];
+  const rows=monitorData.map(d=>[d.kode,d.day,d.fase,d.bb,d.kcal,d.pro,d.route,d.oral,d.bal,d.stool,d.gd,d.tg,d.po4,d.bili,d.muko,d.ts].join(','));
+  const csv=[h.join(','),...rows].join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent('\uFEFF'+csv);
+  a.download='drAisyiEduCare_HSCT_Nutrition_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+// ═══════════════════════════════════════
+// RESET
+// ═══════════════════════════════════════
+function doReset(){
+  if(!confirm('Reset semua data? Entri Research Dashboard akan dipertahankan.'))return;
+  Object.assign(S,{
+    hsct:'allo-mrd',conditioning:'MAC',day:'',access:'central',faseKlinis:'',
+    bb:0,tb:0,age:0,jk:'M',edema:0,bsa:0,bbEff:0,bbIdeal:0,pctIBW:0,
+    sf:1.2,fluidFactor:1.0,drugFluid:0,proTarget:2.0,bmr:0,tee:0,cairan:0,cairanSisa:0,
+    phase:null,phaseId:null,phaseSF:1.2,phaseProtein:2.0,phaseRoute:'EN',
+    mukoGrade:null,mukoRoute:'oral',gvhdGrade:0,gvhdRoute:'oral',gvhdProExtra:0,
+    foPct:0,foFlag:false,foCond:'none',rfRisk:'RENDAH',rfStartPct:100,rfThiamine:'Thiamine rutin dalam MVI',
+    oralPct:0,giFx:'normal',finalRoute:'oral',riskScore:0,riskLevel:'rendah',riskStratLevel:'rendah',
+    pn:{bb:0,tkcal:0,tpro:0,vol:0,acc:'central',hrs:24,girMax:8,lipMax:3,proG:0,dexG:0,lipG:0,gir:0,osm:0,totalKcal:0,caP:0,dexPct:0,na:0,k:0,ca:0,p:0,mg:0,chol:'no',renal:'no'},
+    lab:{alb:0,pre:0,crp:0,gd:0,tg:0,po4:0,k:0,mg:0,bili:0,alt:0,cr:0,ur:0},
+    done:{}
+  });
+  document.querySelectorAll('input[type=text],input[type=number],input[type=date]').forEach(el=>el.value='');
+  document.querySelectorAll('select').forEach(el=>el.selectedIndex=0);
+  document.querySelectorAll('input[type=checkbox]').forEach(el=>el.checked=false);
+  ['risk-out','lab-out','antro-out','bmr-out','phase-out','muko-out','gvhd-out','fo-out2','rf-out','route-out','pn-out','safety-out','riskstrat-out','summary-content','monitor-out'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});
+  document.querySelectorAll('.fb').forEach(el=>el.style.display='none');
+  document.querySelectorAll('.pc').forEach(el=>el.classList.remove('sel'));
+  document.getElementById('safety-out').innerHTML='<div class="al al-i"><div class="al-ico">ℹ️</div><div class="al-body">Lengkapi PN Builder dan data lab untuk safety check penuh.</div></div>';
+  // Restore defaults
+  const defs={'sf':'1.2','fluid-m':'1.0','pn-girmax':'8','pn-lipmax':'3','pn-hrs':'24','pn-na':'2','pn-k':'2','pn-ca':'1','pn-p':'1','pn-mg':'0.3','pro-target':'2.0','bmr-m':'schofield'};
+  Object.entries(defs).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v;});
+  updateDots();
+  ['p0','p1','p2','p3','p4','p5','p8','p9','p10','p13'].forEach(id=>{const el=document.getElementById('fc-'+id);if(el)el.className='fc pend';});
+  nav('p0',null);
+  calcRisk();
+}
+
+// INIT
+calcRisk();
+</script>
+</body>
+</html>

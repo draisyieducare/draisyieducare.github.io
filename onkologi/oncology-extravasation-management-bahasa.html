@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>drAisyiEduCare – Manajemen Ekstravasasi Onkologi Anak</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#1565C0;--blue-d:#0D47A1;--blue-l:#E3F2FD;--blue-m:#BBDEFB;
+  --sky:#0288D1;--sky-l:#E1F5FE;
+  --red:#C62828;--red-l:#FFEBEE;--red-m:#EF9A9A;
+  --orange:#E65100;--orange-l:#FFF3E0;--orange-m:#FFCC80;
+  --amber:#F57F17;--amber-l:#FFF8E1;
+  --green:#2E7D32;--green-l:#E8F5E9;--green-m:#A5D6A7;
+  --gray:#455A64;--gray-l:#ECEFF1;--gray-m:#B0BEC5;
+  --border:#CFD8DC;--text:#263238;--text2:#455A64;--text3:#78909C;
+  --r:10px;--rl:14px;--sh:0 2px 8px rgba(0,0,0,0.08);
+  --f:'Segoe UI',system-ui,sans-serif;
+}
+body{font-family:var(--f);background:#F0F4F8;color:var(--text);font-size:14px;min-height:100vh}
+.app{display:flex;flex-direction:column;min-height:100vh}
+.hdr{background:linear-gradient(135deg,#0D47A1,#1565C0 60%,#0288D1);color:#fff}
+.hdr-in{max-width:1100px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:14px}
+.logo{width:42px;height:42px;background:rgba(255,255,255,0.15);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#fff;flex-shrink:0;letter-spacing:-1px}
+.brand{font-size:19px;font-weight:700}
+.brand-sub{font-size:12px;color:rgba(255,255,255,0.88);margin-top:2px;font-weight:500}
+.tagline{font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+.nav{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.nav-in{max-width:1100px;margin:0 auto;display:flex;padding:0 20px;overflow-x:auto}
+.ntab{padding:12px 16px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:.15s;user-select:none}
+.ntab:hover{color:var(--blue)}.ntab.act{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.main{max-width:1100px;margin:0 auto;padding:18px 20px;flex:1;width:100%}
+.panel{display:none}.panel.act{display:block}
+.disc{background:#FFF8E1;border:1px solid var(--orange-m);border-radius:var(--r);padding:11px 15px;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start}
+.disc-text{font-size:12px;color:#4E342E;line-height:1.55}
+.scard{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);padding:22px;margin-bottom:18px}
+.slbl{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:7px}
+.swrap{position:relative}
+.dsearch{width:100%;padding:12px 14px 12px 40px;border:2px solid var(--border);border-radius:var(--r);font-size:14px;font-family:var(--f);color:var(--text);outline:none;transition:.2s}
+.dsearch:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(21,101,192,0.1)}
+.sico{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:16px}
+.shint{font-size:12px;color:var(--text3);margin-top:5px}
+.ddrop{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1.5px solid var(--blue);border-radius:var(--r);box-shadow:0 4px 20px rgba(0,0,0,0.13);z-index:200;max-height:280px;overflow-y:auto;display:none}
+.ddrop.open{display:block}
+.dopt{padding:10px 15px;cursor:pointer;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--gray-l)}
+.dopt:last-child{border-bottom:none}.dopt:hover{background:var(--blue-l)}
+.dopt-name{font-weight:500;font-size:13px}
+.dopt-cls{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700}
+.cV{background:#FFEBEE;color:#C62828}.cI{background:#FFF3E0;color:#E65100}.cN{background:#E8F5E9;color:#2E7D32}
+.orow{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:14px}
+.ocard{background:var(--gray-l);border-radius:var(--r);padding:13px}
+.otitle{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px}
+.sbrow{display:flex;gap:5px;flex-wrap:wrap}
+.sbtn{padding:5px 11px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;cursor:pointer;background:#fff;color:var(--text2);transition:.15s;font-weight:500;font-family:var(--f)}
+.sbtn:hover,.sbtn.on{border-color:var(--blue);background:var(--blue-l);color:var(--blue)}
+.symg{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.schk{display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer}
+.schk input{accent-color:var(--blue);width:14px;height:14px}
+.outsec{display:none}.outsec.vis{display:block}
+.ogrid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px}
+.ocard2{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);padding:17px}
+.clbl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:11px}
+.cbadge{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:22px;font-size:14px;font-weight:700;margin-bottom:6px}
+.cbadge.vest{background:#FFEBEE;color:#C62828;border:2px solid var(--red-m)}
+.cbadge.irr{background:#FFF3E0;color:#E65100;border:2px solid var(--orange-m)}
+.cbadge.neu{background:#E8F5E9;color:#2E7D32;border:2px solid var(--green-m)}
+.cdrug{font-size:19px;font-weight:700;color:#1A237E;margin-bottom:7px}
+.cdesc{font-size:12px;color:var(--text2);line-height:1.5;margin-top:5px}
+.dcls-sub{font-size:11px;color:var(--text3);margin-top:4px;font-style:italic}
+.cpcard{border-radius:var(--r);padding:14px;text-align:center}
+.cpcard.cold{background:#E3F2FD;border:2px solid #90CAF9}
+.cpcard.warm{background:#FFF3E0;border:2px solid var(--orange-m)}
+.cpcard.none{background:var(--gray-l);border:2px solid var(--border)}
+.cpico{font-size:32px;display:block;margin-bottom:6px}
+.cptyp{font-size:16px;font-weight:700;margin-bottom:3px}
+.cpcard.cold .cptyp{color:#1565C0}.cpcard.warm .cptyp{color:#E65100}
+.cpdet{font-size:12px;color:var(--text2);line-height:1.6}
+.cklist{list-style:none;display:flex;flex-direction:column;gap:7px}
+.cki{display:flex;align-items:flex-start;gap:9px;padding:8px 11px;border-radius:8px;background:var(--gray-l);cursor:pointer;font-size:12px;line-height:1.4;transition:.15s}
+.cki:hover{background:#DFE9F3}.cki.done{background:#E8F5E9}
+.cki.done .ckb{background:var(--green);border-color:var(--green);color:#fff}
+.ckb{width:19px;height:19px;border:2px solid var(--border);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;margin-top:1px;transition:.15s}
+.cks{font-size:9px;font-weight:700;color:var(--blue);background:var(--blue-l);padding:2px 5px;border-radius:4px;flex-shrink:0;margin-top:2px}
+.aitem{background:var(--blue-l);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:11px 13px;margin-bottom:9px}
+.aname{font-weight:700;color:var(--blue);font-size:14px;margin-bottom:3px}
+.atag{font-size:10px;padding:2px 7px;border-radius:11px;font-weight:600;background:#fff;color:var(--blue);border:1px solid var(--blue-m);display:inline-block;margin:2px 3px 4px 0}
+.anote{font-size:11px;color:var(--text2);line-height:1.5;margin-top:3px}
+.noa{background:var(--gray-l);border-radius:8px;padding:12px;text-align:center;color:var(--text3);font-size:12px}
+.awarn{background:#FFF8E1;border-left:3px solid var(--amber);border-radius:0 7px 7px 0;padding:8px 11px;font-size:11px;color:#4E342E;margin-top:8px;line-height:1.5}
+.rdis{display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px}
+.tlights{display:flex;flex-direction:column;gap:7px;align-items:center}
+.tldot{width:36px;height:36px;border-radius:50%;opacity:.18;font-size:14px;display:flex;align-items:center;justify-content:center}
+.tldot.on{opacity:1}
+.tlr{background:#E53935}.tla{background:#FF8F00}.tlg{background:#43A047}
+.rlbl{font-size:16px;font-weight:700}.rsub{font-size:11px;color:var(--text3);text-align:center}
+.mtl{display:flex;gap:7px;margin-top:7px;overflow-x:auto;padding-bottom:4px}
+.mday{background:var(--blue-l);border:1.5px solid var(--blue-m);border-radius:7px;padding:7px 10px;text-align:center;flex-shrink:0;min-width:48px}
+.mday.hl{background:var(--blue);border-color:var(--blue)}
+.mday.hl .mdn,.mday.hl .mdl{color:#fff}
+.mdn{font-size:14px;font-weight:700;color:var(--blue)}.mdl{font-size:9px;color:var(--text3)}
+.mnte{font-size:12px;color:var(--text2);margin-top:9px;line-height:1.5}
+.rfc{background:#FFEBEE;border:2px solid var(--red-m);border-radius:var(--rl);padding:16px;margin-bottom:15px}
+.rft{color:var(--red);font-size:14px;font-weight:700;margin-bottom:10px}
+.rfl{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.rfi{display:flex;align-items:flex-start;gap:7px;font-size:12px;color:#7B1818}
+.rfd{width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:3px}
+.psec{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);margin-bottom:15px;overflow:hidden}
+.ptog{width:100%;padding:14px 17px;background:none;border:none;text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:var(--f);font-size:13px;font-weight:600;color:#1A237E}
+.ptog:hover{background:var(--blue-l)}
+.pbody{padding:0 17px;max-height:0;overflow:hidden;transition:max-height .3s,padding .3s}
+.pbody.open{padding:0 17px 15px;max-height:600px}
+.pitem{padding:9px 13px;border-left:3px solid var(--sky);background:var(--sky-l);border-radius:0 7px 7px 0;margin-bottom:7px;font-size:12px;color:var(--text2);line-height:1.5}
+.arow{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:18px}
+.pbtn{background:var(--blue);color:#fff;border:none;padding:9px 20px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:var(--f);transition:.15s}
+.pbtn:hover{background:var(--blue-d)}.pbtn.sky{background:var(--sky)}.pbtn.sky:hover{background:#0277BD}
+.empty{text-align:center;padding:44px 20px;color:var(--text3)}
+.empty-ico{font-size:44px;margin-bottom:10px;opacity:.35}
+.empty-t{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:5px}
+.empty-s{font-size:12px;line-height:1.6}
+.qrc{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden;margin-bottom:15px}
+.qrh{background:linear-gradient(135deg,var(--blue-d),var(--sky));color:#fff;padding:15px 18px}
+.qrd{font-size:20px;font-weight:700}
+.qrt{width:100%;border-collapse:collapse}
+.qrt td{padding:12px 17px;border-bottom:1px solid var(--border);vertical-align:top;font-size:13px}
+.qrt tr:last-child td{border-bottom:none}
+.qrt td:first-child{width:32%;font-weight:600;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;background:var(--gray-l);vertical-align:top}
+.flow{display:flex;flex-direction:column;align-items:center}
+.fs{border-radius:var(--r);padding:10px 20px;font-size:12px;font-weight:600;min-width:190px;text-align:center;box-shadow:var(--sh);margin:0}
+.fs.def{background:#fff;border:2px solid var(--blue-m);color:var(--blue)}
+.fs.dec{background:var(--amber-l);border:2px solid #FFCC80;color:var(--amber)}
+.fs.act{background:var(--green-l);border:2px solid var(--green-m);color:var(--green)}
+.fs.end{background:var(--blue);color:#fff;border:none}
+.fs.esc{background:#FFEBEE;border:2px solid var(--red-m);color:var(--red)}
+.farr{height:22px;display:flex;align-items:flex-end;justify-content:center;color:var(--text3);font-size:9px}
+.fbranch{display:flex;gap:16px;padding:8px;align-items:flex-start;flex-wrap:wrap;justify-content:center}
+.fbc{display:flex;flex-direction:column;align-items:center}
+.fblbl{font-size:10px;font-weight:700;padding:2px 9px;border-radius:11px;margin-bottom:5px}
+.fblbl.v{background:#FFEBEE;color:#C62828}.fblbl.va{background:#E3F2FD;color:#1565C0}
+.fblbl.ir{background:#FFF3E0;color:#E65100}.fblbl.ne{background:#E8F5E9;color:#2E7D32}
+.ftrow{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.fchip{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:11px;font-weight:500;cursor:pointer;color:var(--text2);transition:.15s}
+.fchip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.dtbl{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden}
+.dr{display:grid;grid-template-columns:180px 1fr 100px 1fr 80px;padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;align-items:center;gap:7px}
+.dr.dh{background:var(--gray-l);font-weight:700;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px}
+.dr:not(.dh):hover{background:var(--blue-l);cursor:pointer}
+.cbadge2{padding:3px 8px;border-radius:11px;font-size:10px;font-weight:700}
+.cb2c{background:#E3F2FD;color:#1565C0}.cb2w{background:#FFF3E0;color:#E65100}.cb2n{background:var(--gray-l);color:var(--text3)}
+.fsec{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);padding:20px;margin-bottom:15px}
+.ftit{font-size:15px;font-weight:700;color:#1A237E;margin-bottom:3px}
+.fsub2{font-size:12px;color:var(--text3);margin-bottom:14px}
+.fcard{border-radius:var(--r);padding:13px 15px;margin-bottom:9px;border-left:4px solid var(--green);background:var(--green-l)}
+.fcard.w{background:#FFF8E1;border-left-color:var(--amber)}.fcard.a{background:#FFEBEE;border-left-color:var(--red)}
+.fq{font-weight:600;font-size:13px;color:var(--text);margin-bottom:5px}
+.fa{font-size:12px;color:var(--text2);line-height:1.6}
+.refsec{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);padding:20px;margin-bottom:15px}
+.refitem{border-left:3px solid var(--blue);background:var(--blue-l);border-radius:0 8px 8px 0;padding:12px 14px;margin-bottom:10px}
+.refname{font-weight:600;font-size:13px;color:var(--blue);margin-bottom:3px}
+.refdet{font-size:12px;color:var(--text2);line-height:1.5}
+.refnote{background:var(--amber-l);border:1px solid var(--orange-m);border-radius:var(--r);padding:12px 15px;font-size:12px;color:#4E342E;line-height:1.6}
+#po{display:none;position:fixed;inset:0;background:#fff;z-index:9999;overflow-y:auto;padding:30px}
+#po.show{display:block}
+.po-bar{position:fixed;top:0;left:0;right:0;background:#fff;border-bottom:1px solid var(--border);padding:10px 20px;display:flex;gap:10px;z-index:10000;align-items:center}
+.po-content{margin-top:52px}
+.pob{padding:8px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--f)}
+.pob.blue{background:var(--blue);color:#fff}.pob.red{background:var(--red);color:#fff}
+.ft{text-align:center;padding:14px;font-size:11px;color:var(--text3);border-top:1px solid var(--border);background:#fff}
+@media print{
+  .po-bar,.hdr,.nav,.arow,.disc,.scard,.ocard,.psec,.rfc,.empty,.ftrow{display:none!important}
+  #po{position:static;padding:0}body>.app{display:none}
+  #po.show{display:block!important}.po-content{margin-top:0}
+}
+@media(max-width:680px){
+  .ogrid{grid-template-columns:1fr}.rfl{grid-template-columns:1fr}
+  .dr{grid-template-columns:1fr 1fr;gap:4px}.dr .dc3,.dr .dc4{display:none}
+  .fbranch{gap:10px}.fs{min-width:130px;font-size:11px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="logo">dA</div>
+    <div>
+      <div class="brand">drAisyiEduCare</div>
+      <div class="brand-sub">Manajemen Ekstravasasi Onkologi Anak</div>
+      <div class="tagline">Pediatric Hematology Oncology Clinical Toolkit</div>
+    </div>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="nav-in">
+    <div class="ntab act" id="tab-tool">⚕ Alat Manajemen</div>
+    <div class="ntab" id="tab-qr">⚡ Referensi Cepat</div>
+    <div class="ntab" id="tab-algo">↕ Algoritma</div>
+    <div class="ntab" id="tab-srch">🔍 Cari Obat</div>
+    <div class="ntab" id="tab-fam">👨‍👩‍👧 Edukasi Keluarga</div>
+    <div class="ntab" id="tab-ref">📚 Referensi</div>
+  </div>
+</nav>
+
+<main class="main">
+<div class="disc">
+  <span style="font-size:17px;flex-shrink:0;margin-top:1px">⚠</span>
+  <span class="disc-text"><strong>Untuk tenaga kesehatan terlatih.</strong> Alat ini mendukung — namun tidak menggantikan — protokol lokal, tinjauan farmasi, konsultasi onkologi, atau konsultasi bedah/bedah plastik darurat apabila diperlukan. Verifikasi nama obat, konsentrasi, volume, jenis akses vena, dan waktu kejadian bersama tim onkologi senior dan apoteker.</span>
+</div>
+
+<!-- ===== ALAT MANAJEMEN ===== -->
+<div class="panel act" id="panel-tool">
+  <div class="scard">
+    <div class="slbl">Pilih Obat</div>
+    <div class="swrap">
+      <span class="sico">💊</span>
+      <input class="dsearch" id="dsearch" type="text" placeholder="Cari agen kemoterapi (contoh: Vincristine, Doxorubicin, Etoposide…)" autocomplete="off">
+      <div class="ddrop" id="ddrop"></div>
+    </div>
+    <div class="shint">Ketik untuk mencari · Pilih obat untuk menampilkan panduan tata laksana</div>
+    <div class="orow">
+      <div class="ocard">
+        <div class="otitle">Derajat Keparahan</div>
+        <div class="sbrow" id="sevBtns">
+          <button class="sbtn" data-sev="ringan">Ringan</button>
+          <button class="sbtn" data-sev="sedang">Sedang</button>
+          <button class="sbtn" data-sev="berat">Berat</button>
+        </div>
+      </div>
+      <div class="ocard">
+        <div class="otitle">Volume yang Diduga</div>
+        <div class="sbrow" id="volBtns">
+          <button class="sbtn" data-vol="<1mL">&lt;1 mL</button>
+          <button class="sbtn" data-vol="1–5mL">1–5 mL</button>
+          <button class="sbtn" data-vol=">5mL">&gt;5 mL</button>
+        </div>
+      </div>
+      <div class="ocard">
+        <div class="otitle">Gejala yang Ada</div>
+        <div class="symg">
+          <label class="schk"><input type="checkbox"> Nyeri</label>
+          <label class="schk"><input type="checkbox"> Bengkak</label>
+          <label class="schk"><input type="checkbox"> Eritema</label>
+          <label class="schk"><input type="checkbox"> Bula/Lepuhan</label>
+          <label class="schk"><input type="checkbox"> Perubahan warna kulit</label>
+          <label class="schk"><input type="checkbox"> Ulserasi</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="outsec" id="outsec">
+    <div class="arow">
+      <button class="pbtn" id="btnPrint">🖨 Cetak Rencana Tata Laksana</button>
+      <button class="pbtn sky" id="btnQR">⚡ Referensi Cepat</button>
+    </div>
+    <div class="ogrid">
+      <div class="ocard2">
+        <div class="clbl">🏷 Klasifikasi Obat</div>
+        <div class="cdrug" id="oDrug"></div>
+        <div id="oBadge"></div>
+        <div class="dcls-sub" id="oSubCls"></div>
+        <div class="cdesc" id="oDesc"></div>
+      </div>
+      <div class="ocard2">
+        <div class="clbl">🧊 Rekomendasi Kompres</div>
+        <div id="oCompress"></div>
+      </div>
+    </div>
+    <div class="ogrid">
+      <div class="ocard2">
+        <div class="clbl">⚡ Tindakan Segera</div>
+        <ul class="cklist" id="oCklist"></ul>
+      </div>
+      <div class="ocard2">
+        <div class="clbl">💉 Antidot / Tata Laksana Spesifik</div>
+        <div id="oAntidote"></div>
+      </div>
+    </div>
+    <div class="ogrid">
+      <div class="ocard2">
+        <div class="clbl">📅 Jadwal Pemantauan</div>
+        <div id="oMonitor"></div>
+      </div>
+      <div class="ocard2">
+        <div class="clbl">🚦 Risiko Cedera Jaringan</div>
+        <div class="rdis">
+          <div class="tlights">
+            <div class="tldot tlr" id="tlR">🔴</div>
+            <div class="tldot tla" id="tlA">🟡</div>
+            <div class="tldot tlg" id="tlG">🟢</div>
+          </div>
+          <div class="rlbl" id="rLbl"></div>
+          <div class="rsub" id="rSub"></div>
+        </div>
+      </div>
+    </div>
+    <div class="rfc">
+      <div class="rft">🚨 Eskalasi — Minta Tinjauan Tim Onkologi Senior + Bedah/Bedah Plastik Jika:</div>
+      <ul class="rfl">
+        <li class="rfi"><span class="rfd"></span>Nyeri progresif yang tidak respons terhadap tata laksana awal</li>
+        <li class="rfi"><span class="rfd"></span>Bula atau perluasan bula</li>
+        <li class="rfi"><span class="rfd"></span>Ulserasi di atau sekitar lokasi ekstravasasi</li>
+        <li class="rfi"><span class="rfd"></span>Nekrosis atau kematian jaringan</li>
+        <li class="rfi"><span class="rfd"></span>Gangguan neurovaskuler</li>
+        <li class="rfi"><span class="rfd"></span>Ekstravasasi volume besar (&gt;10 mL atau obat risiko tinggi)</li>
+        <li class="rfi"><span class="rfd"></span>Ekstravasasi pada jalur vena sentral atau port</li>
+        <li class="rfi"><span class="rfd"></span>Cedera jaringan CTCAE Derajat 2–4</li>
+      </ul>
+    </div>
+    <div class="psec">
+      <button class="ptog" id="ptog">
+        <span>💎 Catatan Klinis — <span id="pDrugName"></span></span>
+        <span id="pChev">▼</span>
+      </button>
+      <div class="pbody" id="pbody"><div id="pContent"></div></div>
+    </div>
+  </div>
+
+  <div class="empty" id="emptyState">
+    <div class="empty-ico">🔬</div>
+    <div class="empty-t">Pilih agen kemoterapi untuk memulai</div>
+    <div class="empty-s">Cari obat di atas untuk menampilkan panduan tata laksana ekstravasasi berbasis bukti, rekomendasi kompres, protokol antidot, dan jadwal pemantauan.</div>
+  </div>
+</div>
+
+<!-- ===== REFERENSI CEPAT ===== -->
+<div class="panel" id="panel-qr">
+  <div class="qrc" id="qrCard" style="display:none">
+    <div class="qrh">
+      <div style="font-size:12px;opacity:.75;margin-bottom:3px">Ringkasan Referensi Cepat</div>
+      <div class="qrd" id="qrDrug"></div>
+      <div style="font-size:11px;opacity:.7;margin-top:2px" id="qrSubCls"></div>
+    </div>
+    <table class="qrt" id="qrTable"></table>
+  </div>
+  <div style="text-align:center;padding:40px;color:var(--text3);font-size:13px" id="qrEmpty">Pilih obat di tab Alat Manajemen terlebih dahulu.</div>
+</div>
+
+<!-- ===== ALGORITMA ===== -->
+<div class="panel" id="panel-algo">
+  <div class="scard" style="margin-bottom:18px">
+    <div style="font-size:15px;font-weight:700;color:#1A237E;margin-bottom:3px">Algoritma Tata Laksana Ekstravasasi</div>
+    <div style="font-size:12px;color:var(--text3)">Jalur klinis berbasis bukti — selalu terapkan protokol institusi lokal</div>
+  </div>
+  <div class="ocard2" style="margin-bottom:15px;overflow-x:auto">
+    <div class="flow" style="min-width:320px">
+      <div class="fs dec">🔍 Dugaan Ekstravasasi — Minta Bantuan Segera</div>
+      <div class="farr">▼</div>
+      <div class="fs act">🛑 HENTIKAN infus segera · JANGAN flush selang</div>
+      <div class="farr">▼</div>
+      <div class="fs act">Biarkan VAD/kanula di tempat · Lepaskan selang infus</div>
+      <div class="farr">▼</div>
+      <div class="fs act">💉 Aspirasi sisa obat jika memungkinkan (3–5 mL)</div>
+      <div class="farr">▼</div>
+      <div class="fs act">📷 Tandai area · Foto dengan timestamp · Dokumentasikan nama obat, konsentrasi, volume, waktu, lokasi, gejala</div>
+      <div class="farr">▼</div>
+      <div class="fs dec">🏷 Identifikasi mekanisme/kelas obat</div>
+      <div class="fbranch">
+        <div class="fbc">
+          <div class="fblbl v">🔴 Vesikan DNA-binding</div>
+          <div class="farr">▼</div>
+          <div class="fs" style="min-width:140px;font-size:11px;background:#FFEBEE;border:2px solid var(--red-m);color:var(--red)">❄ Kompres DINGIN<br><small style="color:#9E3333">15–20 mnt · tiap 6 jam</small></div>
+          <div class="farr">▼</div>
+          <div class="fs" style="min-width:140px;font-size:11px">💉 Dexrazoxane ≤6 jam<br>atau DMSO 99% topikal</div>
+        </div>
+        <div class="fbc">
+          <div class="fblbl va">🔵 Vinka Alkaloid</div>
+          <div class="farr">▼</div>
+          <div class="fs" style="min-width:140px;font-size:11px;background:#FFF3E0;border:2px solid var(--orange-m);color:#E65100">🔥 Kompres HANGAT<br><small style="color:#8D3900">15–20 mnt · tiap 6 jam</small></div>
+          <div class="farr">▼</div>
+          <div class="fs" style="min-width:140px;font-size:11px">💉 Hialuronidase<br>sesuai protokol lokal</div>
+        </div>
+        <div class="fbc">
+          <div class="fblbl ir">🟠 Iritant</div>
+          <div class="farr">▼</div>
+          <div class="fs" style="min-width:140px;font-size:11px;background:#FFF8E1;border:2px solid #FFCC80;color:var(--amber)">❄/🔥 Sesuai obat<br><small style="color:#6D4C00">lihat entri obat</small></div>
+          <div class="farr">▼</div>
+          <div class="fs" style="min-width:140px;font-size:11px">👁 Observasi · Konsultasi senior jika ada tanda risiko tinggi</div>
+        </div>
+        <div class="fbc">
+          <div class="fblbl ne">🟢 Netral</div>
+          <div class="farr">▼</div>
+          <div class="fs" style="min-width:140px;font-size:11px;background:var(--green-l);border:2px solid var(--green-m);color:var(--green)">Tindakan kenyamanan<br><small>Tidak perlu kompres khusus</small></div>
+          <div class="farr">▼</div>
+          <div class="fs" style="min-width:140px;font-size:11px">📋 Observasi rutin<br>Hari 1–3</div>
+        </div>
+      </div>
+      <div class="farr">▼</div>
+      <div class="fs act">Laporkan ke tim onkologi senior + apoteker · Buat laporan insiden</div>
+      <div class="farr">▼</div>
+      <div class="fs dec">📅 Pemantauan terstruktur: Risiko tinggi Hari 1,2,3,7,14,21 · Sedang Hari 1,2,3,7 · Rendah Hari 1–3</div>
+      <div class="farr">▼</div>
+      <div class="fs esc">⚠ Eskalasi jika: Nyeri progresif · Bula · Ulserasi · Nekrosis · Gangguan neurovaskuler · Volume besar · Jalur sentral · CTCAE ≥2</div>
+      <div class="farr">▼</div>
+      <div class="fs end">🏥 Konsultasi Onkologi Senior + Bedah/Bedah Plastik</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CARI OBAT ===== -->
+<div class="panel" id="panel-srch">
+  <div class="scard" style="margin-bottom:14px">
+    <input class="dsearch" id="tsearch" type="text" placeholder="🔍  Cari nama obat, kelas, jenis kompres, atau antidot…" style="padding-left:14px">
+  </div>
+  <div class="ftrow" id="filterRow">
+    <button class="fchip on" data-f="all">Semua</button>
+    <button class="fchip" data-f="Vesicant">🔴 Vesikan</button>
+    <button class="fchip" data-f="Irritant">🟠 Iritant</button>
+    <button class="fchip" data-f="Neutral">🟢 Netral</button>
+    <button class="fchip" data-f="cold">❄ Kompres Dingin</button>
+    <button class="fchip" data-f="warm">🔥 Kompres Hangat</button>
+    <button class="fchip" data-f="antidote">💉 Ada Antidot</button>
+    <button class="fchip" data-f="High">Risiko Tinggi</button>
+  </div>
+  <div class="dtbl">
+    <div class="dr dh"><div>Nama Obat</div><div>Klasifikasi</div><div class="dc3">Kompres</div><div class="dc4">Antidot</div><div>Risiko</div></div>
+    <div id="tblBody"></div>
+  </div>
+</div>
+
+<!-- ===== EDUKASI KELUARGA ===== -->
+<div class="panel" id="panel-fam">
+  <div class="fsec">
+    <div class="ftit">👨‍👩‍👧 Edukasi Keluarga &amp; Pasien</div>
+    <div class="fsub2">Informasi dalam bahasa sederhana untuk orang tua dan pendamping pasien</div>
+    <div class="fcard"><div class="fq">❓ Apa itu ekstravasasi?</div><div class="fa">Ekstravasasi terjadi ketika obat kemoterapi bocor keluar dari pembuluh darah selama perawatan anak Anda. Alih-alih masuk ke dalam pembuluh darah vena, obat merembes ke jaringan di bawah kulit. Tergantung jenis obatnya, ini dapat menyebabkan nyeri, pembengkakan, atau perubahan kulit di sekitar lokasi infus.</div></div>
+    <div class="fcard"><div class="fq">⚠ Mengapa lokasi infus harus dipantau selama perawatan?</div><div class="fa">Beberapa obat kemoterapi dapat melukai kulit dan jaringan apabila bocor keluar dari pembuluh darah. Besarnya cedera bergantung pada jenis obat yang digunakan. Perawat dan dokter memantau lokasi infus dengan cermat selama perawatan. Segera beritahukan mereka jika anak Anda mengeluh nyeri, perih, atau panas terbakar di sekitar lokasi infus — jangan tunggu sampai infus selesai.</div></div>
+    <div class="fcard w"><div class="fq">🔍 Apa yang perlu orang tua pantau di rumah?</div><div class="fa">Setelah kemoterapi, periksa area lokasi infus setiap hari. Perhatikan: kemerahan yang menyebar atau semakin gelap · pembengkakan yang bertambah · perubahan warna kulit (memar, kehitaman, ungu) · kulit terasa sangat hangat atau nyeri bila disentuh · munculnya bula (gelembung berisi cairan) atau luka terbuka. Jika tidak yakin, ambil foto setiap hari dan tunjukkan kepada tim medis pada kunjungan berikutnya.</div></div>
+    <div class="fcard a"><div class="fq">🚨 Kapan harus segera ke rumah sakit?</div><div class="fa">Hubungi tim onkologi atau segera ke rumah sakit apabila Anda melihat: kulit berubah menjadi ungu tua atau hitam · area yang sangat nyeri dan tidak membaik · bula, kulit mengelupas, atau luka terbuka di lokasi infus · anak demam disertai pembengkakan atau kemerahan di lokasi infus · tanda-tanda yang tampak semakin memburuk. Jangan tunggu jadwal kontrol berikutnya.</div></div>
+    <div class="fcard"><div class="fq">💊 Apakah anak saya memerlukan pengobatan khusus?</div><div class="fa">Bergantung pada jenis obat kemoterapi yang diberikan. Untuk beberapa obat, tersedia antidot (obat penawar) spesifik. Pada kebanyakan kasus, kompres dingin atau hangat diberikan dan area tersebut dipantau secara ketat. Selalu ikuti petunjuk dari tim onkologi Anda — mereka akan memberitahu apa yang perlu dilakukan di rumah dan kapan harus kembali.</div></div>
+    <div class="fcard"><div class="fq">📞 Siapa yang harus dihubungi?</div><div class="fa">Hubungi tim onkologi atau layanan darurat onkologi rumah sakit segera saat Anda khawatir. Tidak ada yang namanya menelepon terlalu cepat demi keselamatan anak Anda. Jika tim tidak dapat dihubungi dan tanda-tanda semakin memburuk, pergi ke unit gawat darurat terdekat dan informasikan bahwa anak Anda sedang menjalani kemoterapi.</div></div>
+  </div>
+</div>
+
+<!-- ===== REFERENSI ===== -->
+<div class="panel" id="panel-ref">
+  <div class="refsec">
+    <div style="font-size:15px;font-weight:700;color:#1A237E;margin-bottom:4px">📚 Referensi &amp; Sumber Panduan</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:16px">Alat ini dikembangkan mengacu pada sumber klinis berikut. Selalu verifikasi versi terkini dan sesuaikan dengan protokol lokal.</div>
+    <div class="refitem">
+      <div class="refname">eviQ Cancer Treatments Online — Prosedur Klinis Ekstravasasi</div>
+      <div class="refdet">Pendekatan SLAP: Stop, Leave cannula, Aspirate, Photograph/document. Standar Australia untuk tata laksana ekstravasasi obat anti-kanker di lingkungan onkologi dan hematologi. Mencakup tabel tata laksana spesifik per agen.</div>
+    </div>
+    <div class="refitem">
+      <div class="refname">eviQ Quicklink — Tabel Ringkasan Ekstravasasi Terapi Anti-Kanker</div>
+      <div class="refdet">Tabel referensi cepat yang mengkategorikan obat berdasarkan klasifikasi iritant/vesikan, rekomendasi kompres, dan ketersediaan antidot. Digunakan sebagai sumber utama rekomendasi kompres spesifik per obat dalam alat ini.</div>
+    </div>
+    <div class="refitem">
+      <div class="refname">ONS/ASCO Chemotherapy Administration Safety Standards (edisi terkini)</div>
+      <div class="refdet">Mencakup standar pencegahan, pengenalan, tata laksana, dan dokumentasi ekstravasasi. Menetapkan kompetensi perawat, pertimbangan akses vaskular, dan kriteria eskalasi.</div>
+    </div>
+    <div class="refitem">
+      <div class="refname">Pérez Fidalgo JA et al. — Panduan Praktik Klinis ESMO untuk Ekstravasasi</div>
+      <div class="refdet">Panduan Eropa mengenai tata laksana ekstravasasi termasuk penggunaan dexrazoxane, DMSO, hialuronidase, dan sodium thiosulfate. Mencakup tata laksana antrasiklin, vinka alkaloid, dan senyawa platinum.</div>
+    </div>
+    <div class="refitem">
+      <div class="refname">Informasi Produk Dexrazoxane (Totect / Savene)</div>
+      <div class="refdet">Verifikasi dosis, waktu pemberian, kontraindikasi, dan ketersediaan lokal diperlukan bersama apoteker dan tim onkologi. Antidot lini pertama untuk ekstravasasi antrasiklin bila diberikan dalam 6 jam sejak kejadian.</div>
+    </div>
+    <div class="refitem">
+      <div class="refname">Protokol Ekstravasasi Institusi Lokal</div>
+      <div class="refdet">Keputusan tata laksana akhir harus mengikuti protokol yang disetujui institusi Anda, termasuk konsentrasi obat, jenis jalur vena, faktor spesifik pasien, ketersediaan antidot, dan jalur bedah.</div>
+    </div>
+    <div class="refnote">
+      <strong>Catatan implementasi:</strong> Klasifikasi obat, jenis kompres, dan rekomendasi antidot dalam alat ini mencerminkan panduan internasional yang dipublikasikan, namun dapat berbeda dari protokol lokal berdasarkan ketersediaan obat, konsentrasi, dan kebijakan institusi. Tindakan akhir selalu memerlukan verifikasi bersama tim onkologi senior, apoteker, dan bila diperlukan, spesialis bedah atau bedah plastik. Alat ini adalah alat bantu klinis, bukan protokol mandiri.
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer class="ft">
+  drAisyiEduCare · Pediatric Hematology Oncology Clinical Toolkit · Manajemen Ekstravasasi Onkologi Anak<br>
+  Alat bantu klinis. Tidak menggantikan protokol lokal, tinjauan farmasi, atau konsultasi spesialis.
+</footer>
+</div>
+
+<!-- PRINT OVERLAY -->
+<div id="po">
+  <div class="po-bar">
+    <button class="pob blue" id="poPrint">🖨 Cetak / Simpan sebagai PDF</button>
+    <button class="pob red" id="poClose">✕ Tutup</button>
+    <span style="font-size:12px;color:var(--text3);margin-left:8px">Gunakan Print → Save as PDF di browser Anda</span>
+  </div>
+  <div class="po-content" id="poContent"></div>
+</div>
+
+<script>
+const DRUGS = [
+  {name:"Doxorubicin",cls:"Vesicant",displayCls:"Vesikan — antrasiklin pengikat DNA",compress:"cold",
+   cd:{dur:"15–20 menit",freq:"Setiap 6 jam (3–4×/hari)",days:"48–72 jam atau sesuai protokol lokal"},
+   antidote:[
+     {name:"Dexrazoxane (Totect / Savene)",timing:"Pilihan utama: dalam 6 jam sejak kejadian",notes:"1000 mg/m² IV Hari 1, 1000 mg/m² Hari 2, 500 mg/m² Hari 3. Lepas kompres dingin ≥15 menit sebelum infus. Verifikasi dosis dengan apoteker."},
+     {name:"DMSO 99% topikal",timing:"Alternatif bila dexrazoxane tidak tersedia/kontraindikasi",notes:"Oleskan 1–2 mL pada area terdampak, biarkan kering, JANGAN ditutup. Ulangi setiap 8 jam × 7 hari. JANGAN dikombinasikan dengan dexrazoxane."}
+   ],
+   monitor:{days:[1,2,3,7,14,21],note:"Cedera antrasiklin dapat berkembang selama beberapa minggu. Ulserasi dapat muncul 1–4 minggu setelah kejadian. Pemantauan harian wajib untuk 3 hari pertama. Foto pada setiap kunjungan."},
+   risk:"High",
+   pearls:["Doxorubicin termasuk vesikan paling merusak jaringan. Interkalasi DNA menyebabkan cedera seluler berkelanjutan bahkan setelah pengenceran obat.","Dexrazoxane (Totect/Savene) adalah satu-satunya antidot berbasis bukti untuk ekstravasasi antrasiklin — berikan sesegera mungkin dan dalam 6 jam dari kejadian.","Lepas kompres dingin minimal 15 menit sebelum pemberian dexrazoxane untuk memastikan perfusi lokal yang adekuat.","JANGAN gunakan DMSO dan dexrazoxane bersamaan kecuali protokol lokal secara eksplisit mengizinkan.","Nekrosis jaringan dan ulserasi dapat muncul secara perlahan beberapa hari hingga minggu setelah kejadian. Konsultasi bedah dini direkomendasikan untuk kasus yang memburuk."]},
+
+  {name:"Daunorubicin",cls:"Vesicant",displayCls:"Vesikan — antrasiklin pengikat DNA",compress:"cold",
+   cd:{dur:"15–20 menit",freq:"Setiap 6 jam (3–4×/hari)",days:"48–72 jam"},
+   antidote:[
+     {name:"Dexrazoxane",timing:"Dalam 6 jam",notes:"Protokol antrasiklin sama seperti doxorubicin. Verifikasi dengan apoteker."},
+     {name:"DMSO 99% topikal",timing:"Bila dexrazoxane tidak tersedia",notes:"JANGAN dikombinasikan dengan dexrazoxane."}
+   ],
+   monitor:{days:[1,2,3,7,14,21],note:"Ulserasi tertunda mungkin terjadi 1–3 minggu setelah kejadian. Pantau dengan ketat."},
+   risk:"High",
+   pearls:["Daunorubicin memiliki mekanisme cedera jaringan yang sama dengan doxorubicin. Tata laksana identik.","Relevan terutama pada leukemia akut anak — risiko ekstravasasi tertinggi saat menggunakan akses vena perifer."]},
+
+  {name:"Epirubicin",cls:"Vesicant",displayCls:"Vesikan — antrasiklin pengikat DNA",compress:"cold",
+   cd:{dur:"15–20 menit",freq:"Setiap 6 jam",days:"48–72 jam"},
+   antidote:[{name:"Dexrazoxane",timing:"Dalam 6 jam",notes:"Protokol antidot antrasiklin standar. Verifikasi dengan apoteker."}],
+   monitor:{days:[1,2,3,7,14],note:"Pantau minimal 2 minggu. Cedera dapat berkembang meski presentasi awal tampak ringan."},
+   risk:"High",
+   pearls:["Epirubicin adalah vesikan antrasiklin — tata laksana mengikuti protokol doxorubicin.","Cedera jaringan mungkin tampak sedikit lebih ringan dari doxorubicin, namun pemantauan ketat tetap sangat penting."]},
+
+  {name:"Idarubicin",cls:"Vesicant",displayCls:"Vesikan — antrasiklin pengikat DNA",compress:"cold",
+   cd:{dur:"15–20 menit",freq:"Setiap 6 jam",days:"48–72 jam"},
+   antidote:[{name:"Dexrazoxane",timing:"Dalam 6 jam",notes:"Gunakan bila tersedia. Verifikasi dengan apoteker."}],
+   monitor:{days:[1,2,3,7,14],note:"Penilaian harian 3 hari pertama; lanjutkan pada Hari 7 dan 14."},
+   risk:"High",
+   pearls:["Idarubicin bersifat sangat lipofilik dan dapat menembus jaringan lebih dalam dibandingkan antrasiklin lain.","Tata laksana mengikuti protokol ekstravasasi antrasiklin standar."]},
+
+  {name:"Daktinomisin (Aktinomisin D)",cls:"Vesicant",displayCls:"Vesikan — pengikat DNA (bukan antrasiklin)",compress:"cold",
+   cd:{dur:"15–20 menit",freq:"Setiap 6 jam",days:"48–72 jam atau sesuai protokol lokal"},
+   antidote:[],
+   monitor:{days:[1,2,3,7,14],note:"Tidak ada antidot spesifik. Pantau tanda nekrosis. Foto pada setiap penilaian."},
+   risk:"High",
+   pearls:["Daktinomisin adalah vesikan poten — bahkan volume sangat kecil dapat menyebabkan cedera jaringan berat.","Umum digunakan pada tumor padat anak (tumor Wilms, rabdomiosarkoma).","Fenomena recall radiasi: lapangan radiasi sebelumnya dapat mengalami eritema/cedera setelah pemberian daktinomisin, bahkan tanpa ekstravasasi langsung.","Tidak ada antidot spesifik — kompres dingin, pemantauan ketat, dan tinjauan bedah dini untuk kasus yang memburuk."]},
+
+  {name:"Mitomisin C",cls:"Vesicant",displayCls:"Vesikan — pengikat DNA (alkilasi)",compress:"cold",
+   cd:{dur:"15–20 menit",freq:"Setiap 6 jam",days:"48–72 jam; perpanjang pemantauan hingga 14+ hari"},
+   antidote:[{name:"DMSO 99% topikal",timing:"Dalam 30 menit jika memungkinkan",notes:"Oleskan topikal setiap 8 jam × 7–14 hari. Verifikasi dengan apoteker."}],
+   monitor:{days:[1,2,3,7,14,21],note:"Ulserasi dapat sangat tertunda — cedera mungkin tidak tampak selama 1–6 minggu. Pantau ketat minimal 21 hari."},
+   risk:"High",
+   pearls:["Ekstravasasi Mitomisin C dapat menyebabkan ulserasi yang sangat tertunda — cedera mungkin baru tampak berminggu-minggu kemudian.","Debridement bedah sering diperlukan untuk ekstravasasi signifikan.","DMSO adalah antidot topikal yang umum digunakan bila tersedia."]},
+
+  {name:"Vincristine",cls:"Vesicant",displayCls:"Vesikan — vinka alkaloid non-pengikat DNA",compress:"warm",
+   cd:{dur:"15–20 menit",freq:"Setiap 6 jam (3–4×/hari)",days:"48–72 jam atau sesuai protokol lokal"},
+   antidote:[{name:"Hialuronidase",timing:"Idealnya dalam 1 jam sejak kejadian",notes:"150 unit/mL — suntikkan 1 mL SK/ID dibagi beberapa titik di sekitar area ekstravasasi. Ikuti protokol lokal untuk dosis dan persiapan yang tepat."}],
+   monitor:{days:[1,2,3,7,14],note:"Pantau tanda cedera jaringan progresif dan gejala neurologis. Foto pada setiap penilaian. Eskalasi jika memburuk."},
+   risk:"High",
+   pearls:["Vinka alkaloid memerlukan kompres HANGAT, bukan dingin. Kompres dingin dapat membatasi penyebaran obat dan memperburuk cedera lokal.","Hialuronidase bekerja dengan mendegradasi asam hialuronat secara enzimatik, mendorong dispersi dan pengenceran obat (strategi 'dispersi dan dilusi').","Hialuronidase paling efektif bila diberikan dalam 1 jam sejak kejadian.","Cedera jaringan progresif dapat berkembang jika ekstravasasi tidak dikenali dan ditangani sejak dini.","Dokumentasikan waktu ekstravasasi yang tepat — waktu pemberian antidot sangat penting secara klinis."]},
+
+  {name:"Vinblastine",cls:"Vesicant",displayCls:"Vesikan — vinka alkaloid non-pengikat DNA",compress:"warm",
+   cd:{dur:"15–20 menit",freq:"Setiap 6 jam",days:"48–72 jam"},
+   antidote:[{name:"Hialuronidase",timing:"Dalam 1 jam",notes:"Protokol sama seperti vincristine."}],
+   monitor:{days:[1,2,3,7,14],note:"Pantau selama 2 minggu. Nekrosis progresif dapat berkembang dalam beberapa hari."},
+   risk:"High",
+   pearls:["Vinblastine memiliki mekanisme ekstravasasi dan tata laksana yang sama seperti vincristine — kompres hangat dan hialuronidase.","Dokumentasi foto harian penting untuk memantau perkembangan."]},
+
+  {name:"Vindesine",cls:"Vesicant",displayCls:"Vesikan — vinka alkaloid non-pengikat DNA",compress:"warm",
+   cd:{dur:"15–20 menit",freq:"Setiap 6 jam",days:"48–72 jam"},
+   antidote:[{name:"Hialuronidase",timing:"Dalam 1 jam",notes:"Protokol antidot vinka alkaloid standar."}],
+   monitor:{days:[1,2,3,7,14],note:"Pantau harian selama minggu pertama."},
+   risk:"High",
+   pearls:["Vindesine adalah vinka alkaloid semisintetik dengan profil toksisitas ekstravasasi serupa vincristine dan vinblastine.","Kompres hangat + hialuronidase adalah tata laksana utama."]},
+
+  {name:"Vinorelbine",cls:"Vesicant",displayCls:"Vesikan — vinka alkaloid non-pengikat DNA",compress:"warm",
+   cd:{dur:"15–20 menit",freq:"Setiap 6 jam",days:"48–72 jam"},
+   antidote:[{name:"Hialuronidase",timing:"Dalam 1 jam",notes:"Berikan sesegera mungkin sesuai protokol lokal."}],
+   monitor:{days:[1,2,3,7],note:"Pantau 7 hari; eskalasi jika memburuk."},
+   risk:"High",
+   pearls:["Ekstravasasi vinorelbine dapat menyebabkan nyeri signifikan dan peradangan lokal.","Kompres hangat dan hialuronidase dini tetap menjadi tata laksana lini pertama."]},
+
+  {name:"Bendamustine",cls:"Irritant",displayCls:"Iritant dengan sifat vesikan",compress:"cold",
+   cd:{dur:"15–20 menit",freq:"3–4×/hari",days:"3–5 hari"},
+   antidote:[],
+   monitor:{days:[1,2,3,7],note:"Diperlukan tinjauan senior jika volume besar, nyeri memburuk, bula, ulserasi, atau gangguan neurovaskuler."},
+   risk:"Moderate",
+   pearls:["Bendamustine diklasifikasikan sebagai iritant dengan sifat vesikan — tangani sebagai risiko lebih tinggi.","Lebih disarankan kompres dingin kecuali protokol spesifik menyatakan sebaliknya.","Tinjauan senior diperlukan untuk ekstravasasi volume besar, nyeri memburuk, bula, ulserasi, atau gangguan neurovaskuler."]},
+
+  {name:"Melphalan",cls:"Irritant",displayCls:"Iritant dengan sifat vesikan",compress:"cold",
+   cd:{dur:"15–20 menit",freq:"3–4×/hari",days:"3–5 hari"},
+   antidote:[],
+   monitor:{days:[1,2,3,7],note:"Melphalan dosis tinggi (kondisioning HSCT) — akses vena sentral sangat dianjurkan. Pantau dengan ketat."},
+   risk:"Moderate",
+   pearls:["Melphalan dosis tinggi yang digunakan dalam kondisioning HSCT lebih iritatif dan harus dianggap sebagai risiko lebih tinggi.","Akses vena sentral sangat dianjurkan untuk melphalan dosis tinggi.","Kompres dingin untuk kenyamanan; tinjauan senior bila ada tanda perburukan."]},
+
+  {name:"Cisplatin (konsentrasi tinggi / volume besar)",cls:"Irritant",displayCls:"Iritant dengan sifat vesikan — konsentrasi tinggi",compress:"cold",
+   cd:{dur:"15–20 menit",freq:"3–4×/hari",days:"5–7 hari"},
+   antidote:[{name:"Sodium Thiosulfate (pertimbangkan)",timing:"Segera — diperlukan panduan spesialis dan apoteker",notes:"Sodium thiosulfate 1/6 molar disuntikkan intradermis dan subkutan di sekitar area. Volume: sekitar 2 mL per 100 mg cisplatin. Gunakan hanya atas saran spesialis dan apoteker."}],
+   monitor:{days:[1,2,3,7,14],note:"Cisplatin konsentrasi tinggi (>0,5 mg/mL) atau kejadian volume besar: tangani sebagai risiko tinggi. Pantau dengan ketat."},
+   risk:"High",
+   pearls:["Cisplatin >0,5 mg/mL atau ekstravasasi volume besar: tangani sebagai iritant dengan sifat vesikan — tata laksana risiko lebih tinggi berlaku.","Sodium thiosulfate secara langsung menginaktivasi cisplatin — berikan hanya atas saran spesialis dan apoteker.","Kompres dingin untuk kenyamanan.","Jalur vena sentral sangat dianjurkan untuk pemberian cisplatin."]},
+
+  {name:"Cisplatin (pengenceran standar ≤0,5 mg/mL)",cls:"Irritant",displayCls:"Iritant — pengenceran standar",compress:"cold",
+   cd:{dur:"15–20 menit untuk kenyamanan",freq:"3×/hari",days:"3 hari"},
+   antidote:[],
+   monitor:{days:[1,3,7],note:"Cisplatin pengenceran standar — risiko lebih rendah. Pantau reaksi lokal. Eskalasi jika memburuk."},
+   risk:"Moderate",
+   pearls:["Cisplatin pada pengenceran standar (≤0,5 mg/mL) diklasifikasikan sebagai iritant dengan risiko cedera jaringan berat yang umumnya lebih rendah.","Kompres dingin untuk kenyamanan. Pantau dan eskalasi jika nyeri atau tanda lokal memburuk."]},
+
+  {name:"Etoposide",cls:"Irritant",displayCls:"Iritant",compress:"warm",
+   cd:{dur:"15–20 menit",freq:"3–4×/hari",days:"3–5 hari"},
+   antidote:[],
+   monitor:{days:[1,3,7],note:"Pantau reaksi inflamasi lokal. Umumnya sembuh sendiri dengan tata laksana yang tepat."},
+   risk:"Moderate",
+   pearls:["Etoposide diklasifikasikan sebagai iritant dan ditangani dengan kompres HANGAT.","Ekstravasasi volume besar dapat menyebabkan iritasi lokal signifikan meski tanpa nekrosis setingkat vesikan.","Pantau dengan ketat; eskalasi jika muncul gambaran mirip vesikan."]},
+
+  {name:"Carboplatin",cls:"Irritant",displayCls:"Iritant",compress:"cold",
+   cd:{dur:"15–20 menit untuk kenyamanan",freq:"3×/hari",days:"2–3 hari"},
+   antidote:[],
+   monitor:{days:[1,3,7],note:"Carboplatin kurang reaktif dibanding cisplatin. Kompres dingin untuk kenyamanan. Pantau 7 hari."},
+   risk:"Moderate",
+   pearls:["Carboplatin kurang reaktif dibanding cisplatin namun tetap dapat menyebabkan iritasi lokal yang signifikan.","Kompres dingin untuk kenyamanan; tidak ada antidot rutin yang direkomendasikan."]},
+
+  {name:"Ifosfamide",cls:"Irritant",displayCls:"Iritant",compress:"cold",
+   cd:{dur:"15–20 menit untuk kenyamanan",freq:"3×/hari",days:"2–3 hari"},
+   antidote:[],
+   monitor:{days:[1,3],note:"Umumnya cedera jaringan lokal minimal. Tata laksana iritant standar."},
+   risk:"Low",
+   pearls:["Ekstravasasi ifosfamide umumnya dianggap risiko rendah untuk cedera jaringan berat.","Kompres dingin untuk kenyamanan; pantau dan eskalasi jika ada tanda perburukan."]},
+
+  {name:"Bleomycin",cls:"Irritant",displayCls:"Iritant",compress:"cold",
+   cd:{dur:"15–20 menit untuk kenyamanan",freq:"3×/hari",days:"2–3 hari"},
+   antidote:[],
+   monitor:{days:[1,3],note:"Kompres dingin untuk kenyamanan. Risiko nekrosis jaringan rendah."},
+   risk:"Low",
+   pearls:["Ekstravasasi bleomycin — kompres dingin untuk kenyamanan. Potensi nekrosis rendah."]},
+
+  {name:"Gemcitabine",cls:"Irritant",displayCls:"Iritant",compress:"cold",
+   cd:{dur:"15–20 menit untuk kenyamanan",freq:"3×/hari",days:"2–3 hari"},
+   antidote:[],
+   monitor:{days:[1,3],note:"Kompres dingin untuk kenyamanan. Risiko cedera jaringan berat rendah."},
+   risk:"Low",
+   pearls:["Ekstravasasi gemcitabine — kompres dingin untuk kenyamanan. Potensi nekrosis rendah."]},
+
+  {name:"Irinotecan",cls:"Irritant",displayCls:"Iritant",compress:"cold",
+   cd:{dur:"15–20 menit untuk kenyamanan",freq:"3×/hari",days:"2–3 hari"},
+   antidote:[],
+   monitor:{days:[1,3],note:"Kompres dingin untuk kenyamanan. Risiko nekrosis signifikan rendah."},
+   risk:"Low",
+   pearls:["Ekstravasasi irinotecan — kompres dingin untuk kenyamanan. Observasi rutin sesuai."]},
+
+  {name:"Topotecan",cls:"Irritant",displayCls:"Iritant",compress:"cold",
+   cd:{dur:"15–20 menit untuk kenyamanan",freq:"3×/hari",days:"2–3 hari"},
+   antidote:[],
+   monitor:{days:[1,3],note:"Kompres dingin untuk kenyamanan. Risiko rendah."},
+   risk:"Low",
+   pearls:["Ekstravasasi topotecan — kompres dingin untuk kenyamanan. Observasi rutin sesuai."]},
+
+  {name:"Cytarabine",cls:"Neutral",displayCls:"Non-iritant / netral",compress:"none",
+   cd:{dur:"Tidak diperlukan",freq:"Tindakan kenyamanan saja",days:""},
+   antidote:[],
+   monitor:{days:[1,3],note:"Risiko cedera jaringan signifikan sangat rendah. Pantau ketidaknyamanan lokal saja."},
+   risk:"Low",
+   pearls:["Cytarabine (Ara-C) diklasifikasikan sebagai agen netral, non-iritant dengan risiko cedera jaringan sangat rendah.","Tidak diperlukan kompres atau antidot spesifik. Observasi standar sesuai."]},
+
+  {name:"Methotrexate",cls:"Neutral",displayCls:"Non-iritant / netral",compress:"none",
+   cd:{dur:"Tidak diperlukan",freq:"Tindakan kenyamanan saja",days:""},
+   antidote:[],
+   monitor:{days:[1],note:"Toksisitas jaringan sangat rendah. Observasi rutin."},
+   risk:"Low",
+   pearls:["Ekstravasasi methotrexate membawa risiko toksisitas jaringan lokal yang sangat rendah.","Perawatan lokasi standar dan observasi sudah memadai."]},
+
+  {name:"Cyclophosphamide",cls:"Neutral",displayCls:"Non-iritant / netral",compress:"none",
+   cd:{dur:"Tidak diperlukan",freq:"Tindakan kenyamanan saja",days:""},
+   antidote:[],
+   monitor:{days:[1,3],note:"Risiko rendah. Pantau ketidaknyamanan lokal saja."},
+   risk:"Low",
+   pearls:["Ekstravasasi cyclophosphamide umumnya ditoleransi baik dengan toksisitas jaringan sangat rendah.","Tindakan kenyamanan dan observasi sudah sesuai."]},
+
+  {name:"Mesna",cls:"Neutral",displayCls:"Non-iritant / netral",compress:"none",
+   cd:{dur:"Tidak diperlukan",freq:"Tindakan kenyamanan saja",days:""},
+   antidote:[],
+   monitor:{days:[1],note:"Tidak ada toksisitas jaringan yang bermakna yang diharapkan."},
+   risk:"Low",
+   pearls:["Mesna adalah agen uroprotektif — ekstravasasi tidak bermakna secara klinis dari sudut pandang cedera jaringan."]},
+
+  {name:"Asparaginase / Pegaspargase",cls:"Neutral",displayCls:"Non-iritant / netral — risiko hipersensitivitas",compress:"none",
+   cd:{dur:"Tidak diperlukan",freq:"Tindakan kenyamanan saja",days:""},
+   antidote:[],
+   monitor:{days:[1],note:"Cedera jaringan akibat ekstravasasi bukan kekhawatiran utama. Risiko hipersensitivitas/anafilaksis saat infus adalah pertimbangan keselamatan utama."},
+   risk:"Low",
+   pearls:["Asparaginase/pegaspargase — kekhawatiran keselamatan utama saat infus adalah hipersensitivitas/anafilaksis, bukan cedera jaringan akibat ekstravasasi.","Jika terjadi ekstravasasi, tindakan kenyamanan dan observasi sudah sesuai."]},
+
+  {name:"Rituximab",cls:"Neutral",displayCls:"Non-iritant / netral",compress:"none",
+   cd:{dur:"Tidak diperlukan",freq:"Tindakan kenyamanan saja",days:""},
+   antidote:[],
+   monitor:{days:[1],note:"Toksisitas jaringan ekstravasasi sangat rendah. Reaksi terkait infus (IRR) adalah kekhawatiran keselamatan infus utama."},
+   risk:"Low",
+   pearls:["Ekstravasasi rituximab tidak terkait dengan cedera jaringan lokal yang signifikan.","Kekhawatiran keselamatan infus utama adalah reaksi terkait infus (IRR), bukan cedera ekstravasasi."]},
+
+  {name:"Merkaptopurin (6-MP)",cls:"Neutral",displayCls:"Obat oral / relevansi ekstravasasi IV rendah",compress:"none",
+   cd:{dur:"Tidak diperlukan",freq:"Tindakan kenyamanan saja",days:""},
+   antidote:[],
+   monitor:{days:[1],note:"Terutama obat oral. Ekstravasasi IV sangat jarang dan risiko rendah."},
+   risk:"Low",
+   pearls:["6-Merkaptopurin terutama diberikan secara oral. Ekstravasasi IV sangat jarang.","Disertakan untuk kelengkapan pencarian — ekstravasasi IV biasanya tidak bermakna secara klinis."]},
+
+  {name:"Tioguanin (6-TG)",cls:"Neutral",displayCls:"Obat oral / relevansi ekstravasasi IV rendah",compress:"none",
+   cd:{dur:"Tidak diperlukan",freq:"Tindakan kenyamanan saja",days:""},
+   antidote:[],
+   monitor:{days:[1],note:"Terutama obat oral. Relevansi ekstravasasi rendah."},
+   risk:"Low",
+   pearls:["Tioguanin terutama merupakan obat oral. Ekstravasasi IV biasanya tidak bermakna secara klinis.","Disertakan untuk kelengkapan pencarian."]}
+];
+
+let selDrug=null, pearlsOpen=false, tFilter='all';
+
+function buildDD(q){
+  const dd=document.getElementById('ddrop');
+  const matches=DRUGS.filter(d=>d.name.toLowerCase().includes(q.toLowerCase()));
+  if(!matches.length){dd.classList.remove('open');return;}
+  dd.innerHTML=matches.map(d=>`<div class="dopt" data-name="${d.name}"><span class="dopt-cls c${d.cls[0]}">${d.cls}</span><span class="dopt-name">${d.name}</span></div>`).join('');
+  dd.classList.add('open');
+  dd.querySelectorAll('.dopt').forEach(el=>{
+    el.addEventListener('mousedown',function(e){e.preventDefault();selectDrug(this.dataset.name);});
+  });
+}
+const dInput=document.getElementById('dsearch');
+dInput.addEventListener('input',()=>buildDD(dInput.value));
+dInput.addEventListener('focus',()=>buildDD(dInput.value));
+dInput.addEventListener('blur',()=>setTimeout(()=>document.getElementById('ddrop').classList.remove('open'),200));
+
+function selectDrug(name){
+  selDrug=DRUGS.find(d=>d.name===name);
+  dInput.value=name;
+  document.getElementById('ddrop').classList.remove('open');
+  renderOutput();
+}
+
+['sevBtns','volBtns'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){
+    const btn=e.target.closest('.sbtn');
+    if(!btn)return;
+    this.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+  });
+});
+
+function renderOutput(){
+  const d=selDrug;if(!d)return;
+  document.getElementById('emptyState').style.display='none';
+  document.getElementById('outsec').classList.add('vis');
+  document.getElementById('oDrug').textContent=d.name;
+  const bc=d.cls==='Vesicant'?'vest':d.cls==='Irritant'?'irr':'neu';
+  const bi=d.cls==='Vesicant'?'🔴':d.cls==='Irritant'?'🟠':'🟢';
+  document.getElementById('oBadge').innerHTML=`<span class="cbadge ${bc}">${bi} ${d.cls==='Vesicant'?'Vesikan':d.cls==='Irritant'?'Iritant':'Netral'}</span>`;
+  document.getElementById('oSubCls').textContent=d.displayCls;
+  const descs={
+    Vesicant:'Vesikan menyebabkan nekrosis jaringan progresif pada ekstravasasi. Diperlukan tindakan segera, kompres, dan antidot (bila tersedia). Pantau dengan ketat selama beberapa minggu.',
+    Irritant:'Iritant menyebabkan peradangan lokal, nyeri, dan eritema. Keparahan bervariasi berdasarkan agen, konsentrasi, dan volume. Tata laksana dini mengurangi risiko perburukan.',
+    Neutral:'Agen netral/non-iritant memiliki potensi minimal untuk cedera jaringan lokal yang signifikan. Tindakan kenyamanan dan observasi sudah sesuai.'
+  };
+  document.getElementById('oDesc').textContent=descs[d.cls];
+
+  let cHTML='';
+  if(d.compress==='cold') cHTML=`<div class="cpcard cold"><span class="cpico">❄</span><div class="cptyp">Kompres Dingin</div><div class="cpdet">Durasi: <strong>${d.cd.dur}</strong><br>Frekuensi: <strong>${d.cd.freq}</strong>${d.cd.days?'<br>Lama pemberian: <strong>'+d.cd.days+'</strong>':''}</div></div>`;
+  else if(d.compress==='warm') cHTML=`<div class="cpcard warm"><span class="cpico">🔥</span><div class="cptyp">Kompres Hangat</div><div class="cpdet">Durasi: <strong>${d.cd.dur}</strong><br>Frekuensi: <strong>${d.cd.freq}</strong>${d.cd.days?'<br>Lama pemberian: <strong>'+d.cd.days+'</strong>':''}</div></div>`;
+  else cHTML=`<div class="cpcard none"><span class="cpico">✔</span><div class="cptyp" style="color:var(--text2)">Tindakan Kenyamanan Saja</div><div class="cpdet">Tidak diperlukan kompres spesifik. Observasi lokasi dan berikan tindakan kenyamanan sesuai kebutuhan.</div></div>`;
+  document.getElementById('oCompress').innerHTML=cHTML;
+
+  const steps=[
+    'HENTIKAN infus segera — JANGAN flush selang',
+    'Biarkan VAD/kanula di tempat — jangan cabut dulu',
+    'Lepaskan selang infus dari perangkat akses',
+    'Aspirasi sisa obat jika memungkinkan (coba 3–5 mL)',
+    'Tandai dan gambar batas area terdampak dengan spidol kulit',
+    'Foto lokasi dengan timestamp',
+    'Dokumentasikan: nama obat, konsentrasi, estimasi volume, waktu, lokasi, gejala',
+    'Berikan kompres sesuai indikasi untuk obat ini (lihat di atas)',
+    'Laporkan ke tim onkologi senior dan apoteker',
+    'Lengkapi laporan insiden; minta antidot jika diindikasikan'
+  ];
+  document.getElementById('oCklist').innerHTML=steps.map((s,i)=>`<li class="cki"><span class="cks">${i+1}</span><span class="ckb">✓</span><span>${s}</span></li>`).join('');
+
+  let aHTML='';
+  if(d.antidote.length){
+    aHTML=d.antidote.map(a=>`<div class="aitem"><div class="aname">💉 ${a.name}</div><span class="atag">⏱ ${a.timing}</span><div class="anote">${a.notes}</div></div>`).join('');
+    aHTML+=`<div class="awarn">⚠ ${d.antidote.length>1?'JANGAN kombinasikan DMSO dan dexrazoxane kecuali protokol lokal secara eksplisit mengizinkan. ':''}Verifikasi ketersediaan antidot, dosis, dan prosedur lokal bersama apoteker dan tim onkologi senior sebelum pemberian.</div>`;
+  } else {
+    aHTML=`<div class="noa">Tidak ada antidot spesifik untuk ekstravasasi <strong>${d.name}</strong>.<br><span style="font-size:11px;margin-top:4px;display:block">Perawatan suportif, kompres yang sesuai, dan pemantauan ketat merupakan tata laksana utama.</span></div>`;
+  }
+  document.getElementById('oAntidote').innerHTML=aHTML;
+
+  const m=d.monitor;
+  const dayBadges=m.days.map((day,i)=>`<div class="mday${i===0?' hl':''}"><div class="mdn">${day}</div><div class="mdl">hari</div></div>`).join('');
+  document.getElementById('oMonitor').innerHTML=`<div class="mtl">${dayBadges}</div><div class="mnte">${m.note}</div>`;
+
+  const rm={
+    High:{r:true,a:false,g:false,lbl:'RISIKO TINGGI',sub:'Diperlukan tindakan segera, pertimbangan antidot, dan pemantauan ketat.',col:'#C62828'},
+    Moderate:{r:false,a:true,g:false,lbl:'RISIKO SEDANG',sub:'Pemantauan ketat dan tinjauan senior diperlukan untuk tanda perburukan.',col:'#F57F17'},
+    Low:{r:false,a:false,g:true,lbl:'RISIKO RENDAH',sub:'Toksisitas jaringan minimal yang diharapkan. Tindakan kenyamanan dan observasi.',col:'#2E7D32'}
+  }[d.risk];
+  document.getElementById('tlR').className='tldot tlr'+(rm.r?' on':'');
+  document.getElementById('tlA').className='tldot tla'+(rm.a?' on':'');
+  document.getElementById('tlG').className='tldot tlg'+(rm.g?' on':'');
+  document.getElementById('rLbl').textContent=rm.lbl;
+  document.getElementById('rLbl').style.color=rm.col;
+  document.getElementById('rSub').textContent=rm.sub;
+
+  document.getElementById('pDrugName').textContent=d.name;
+  document.getElementById('pContent').innerHTML=d.pearls.map(p=>`<div class="pitem">💎 ${p}</div>`).join('');
+  document.getElementById('outsec').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+document.getElementById('oCklist').addEventListener('click',function(e){
+  const li=e.target.closest('.cki');if(li)li.classList.toggle('done');
+});
+document.getElementById('ptog').addEventListener('click',function(){
+  pearlsOpen=!pearlsOpen;
+  document.getElementById('pbody').classList.toggle('open',pearlsOpen);
+  document.getElementById('pChev').textContent=pearlsOpen?'▲':'▼';
+});
+
+const TABS=['tool','qr','algo','srch','fam','ref'];
+function switchTab(id){
+  TABS.forEach(t=>{
+    document.getElementById('panel-'+t).classList.toggle('act',t===id);
+    document.getElementById('tab-'+t).classList.toggle('act',t===id);
+  });
+  if(id==='qr')renderQR();
+  if(id==='srch')buildTable();
+}
+TABS.forEach(t=>{document.getElementById('tab-'+t).addEventListener('click',()=>switchTab(t));});
+
+function renderQR(){
+  const d=selDrug;
+  if(!d){document.getElementById('qrCard').style.display='none';document.getElementById('qrEmpty').style.display='block';return;}
+  document.getElementById('qrCard').style.display='block';document.getElementById('qrEmpty').style.display='none';
+  document.getElementById('qrDrug').textContent=d.name;
+  document.getElementById('qrSubCls').textContent=d.displayCls;
+  const ci=d.compress==='cold'?'❄ Kompres Dingin':d.compress==='warm'?'🔥 Kompres Hangat':'Tindakan kenyamanan saja';
+  const ant=d.antidote.length?d.antidote.map(a=>a.name).join(' · '):'Tidak ada antidot spesifik';
+  const bc=d.cls==='Vesicant'?'vest':d.cls==='Irritant'?'irr':'neu';
+  const bi=d.cls==='Vesicant'?'🔴':d.cls==='Irritant'?'🟠':'🟢';
+  const clsID=d.cls==='Vesicant'?'Vesikan':d.cls==='Irritant'?'Iritant':'Netral';
+  document.getElementById('qrTable').innerHTML=`
+    <tr><td>Klasifikasi</td><td><span class="cbadge ${bc}" style="padding:5px 13px;font-size:12px">${bi} ${clsID}</span></td></tr>
+    <tr><td>Kompres</td><td><strong>${ci}</strong><br><span style="font-size:11px;color:var(--text3)">${d.cd.dur} · ${d.cd.freq}</span></td></tr>
+    <tr><td>Antidot</td><td>${ant}</td></tr>
+    <tr><td>Pemantauan — hari</td><td>${d.monitor.days.join(', ')}</td></tr>
+    <tr><td>Risiko jaringan</td><td><strong style="color:${d.risk==='High'?'#C62828':d.risk==='Moderate'?'#F57F17':'#2E7D32'}">${d.risk==='High'?'Tinggi':d.risk==='Moderate'?'Sedang':'Rendah'}</strong></td></tr>
+    <tr><td>Langkah utama</td><td style="font-size:12px;line-height:1.7">Stop · Biarkan kanula · Aspirasi · ${ci}${d.antidote.length?' · '+d.antidote[0].name:''} · Pantau · Eskalasi jika tanda bahaya</td></tr>
+    <tr><td>Eskalasi jika</td><td style="font-size:11px;color:var(--text2)">Nyeri progresif · Bula · Ulserasi · Nekrosis · Gangguan neurovaskuler · Volume besar · Jalur sentral · CTCAE ≥2</td></tr>`;
+}
+document.getElementById('btnQR').addEventListener('click',()=>switchTab('qr'));
+
+function buildTable(){
+  const q=(document.getElementById('tsearch').value||'').toLowerCase();
+  const rows=DRUGS.filter(d=>{
+    const s=`${d.name} ${d.cls} ${d.displayCls} ${d.compress} ${d.antidote.map(a=>a.name).join(' ')}`.toLowerCase();
+    if(q&&!s.includes(q))return false;
+    if(tFilter==='all')return true;
+    if(tFilter==='antidote')return d.antidote.length>0;
+    if(tFilter==='cold')return d.compress==='cold';
+    if(tFilter==='warm')return d.compress==='warm';
+    if(tFilter==='High')return d.risk==='High';
+    return d.cls===tFilter;
+  });
+  const rc={High:'#C62828',Moderate:'#F57F17',Low:'#2E7D32'};
+  const rl={High:'Tinggi',Moderate:'Sedang',Low:'Rendah'};
+  document.getElementById('tblBody').innerHTML=rows.map(d=>`
+    <div class="dr" data-name="${d.name}">
+      <div style="font-weight:600">${d.name}</div>
+      <div style="font-size:11px"><span class="dopt-cls c${d.cls[0]}">${d.cls==='Vesicant'?'Vesikan':d.cls==='Irritant'?'Iritant':'Netral'}</span><br><span style="color:var(--text3);font-size:10px">${d.displayCls}</span></div>
+      <div class="dc3">${d.compress==='cold'?'<span class="cbadge2 cb2c">❄ Dingin</span>':d.compress==='warm'?'<span class="cbadge2 cb2w">🔥 Hangat</span>':'<span class="cbadge2 cb2n">—</span>'}</div>
+      <div class="dc4" style="font-size:11px;color:var(--text2)">${d.antidote.length?d.antidote.map(a=>a.name).join(', '):'—'}</div>
+      <div style="font-weight:700;font-size:12px;color:${rc[d.risk]}">${rl[d.risk]}</div>
+    </div>`).join('');
+  document.getElementById('tblBody').querySelectorAll('.dr').forEach(row=>{
+    row.addEventListener('click',function(){selectDrug(this.dataset.name);switchTab('tool');});
+  });
+}
+document.getElementById('tsearch').addEventListener('input',buildTable);
+document.getElementById('filterRow').addEventListener('click',function(e){
+  const c=e.target.closest('[data-f]');if(!c)return;
+  tFilter=c.dataset.f;
+  this.querySelectorAll('.fchip').forEach(x=>x.classList.remove('on'));
+  c.classList.add('on');
+  buildTable();
+});
+
+function buildPrintHTML(d){
+  const steps=['HENTIKAN infus segera — JANGAN flush selang','Biarkan VAD/kanula di tempat','Lepaskan selang infus dari perangkat akses','Aspirasi sisa obat jika memungkinkan (3–5 mL)','Tandai dan gambar batas area terdampak','Foto lokasi dengan timestamp','Dokumentasikan: nama obat, konsentrasi, estimasi volume, waktu, lokasi, gejala','Berikan kompres sesuai indikasi (lihat di bawah)','Laporkan ke tim onkologi senior dan apoteker','Lengkapi laporan insiden; minta antidot jika diindikasikan'];
+  const bc=d.cls==='Vesicant'?'#C62828':d.cls==='Irritant'?'#E65100':'#2E7D32';
+  const bg=d.cls==='Vesicant'?'#FFEBEE':d.cls==='Irritant'?'#FFF3E0':'#E8F5E9';
+  const bi=d.cls==='Vesicant'?'🔴':d.cls==='Irritant'?'🟠':'🟢';
+  const clsID=d.cls==='Vesicant'?'Vesikan':d.cls==='Irritant'?'Iritant':'Netral';
+  const ci=d.compress==='cold'?`❄ Kompres Dingin — ${d.cd.dur}, ${d.cd.freq}${d.cd.days?' · '+d.cd.days:''}`:d.compress==='warm'?`🔥 Kompres Hangat — ${d.cd.dur}, ${d.cd.freq}${d.cd.days?' · '+d.cd.days:''}`:' Tindakan kenyamanan saja — tidak diperlukan kompres spesifik';
+  const ant=d.antidote.length?d.antidote.map(a=>`<div style="margin-bottom:9px"><strong>${a.name}</strong><br><span style="font-size:11px;color:#555">⏱ ${a.timing}</span><br><span style="font-size:11px;color:#555">${a.notes}</span></div>`).join(''):'Tidak ada antidot spesifik. Perawatan suportif, kompres, dan pemantauan ketat.';
+  const date=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+  const rl=d.risk==='High'?'Tinggi':d.risk==='Moderate'?'Sedang':'Rendah';
+  const s=(t,c='#1565C0')=>`<div style="font-weight:700;font-size:11px;color:${c};text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">${t}</div>`;
+  const box=(html,lc='#1565C0')=>`<div style="background:#F5F7FA;border-left:4px solid ${lc};padding:11px 14px;border-radius:0 7px 7px 0;margin-bottom:13px;font-size:12px;line-height:1.6">${html}</div>`;
+  return `<div style="font-family:'Segoe UI',sans-serif;max-width:700px;margin:0 auto;color:#263238">
+    <div style="border-bottom:3px solid #1565C0;padding-bottom:10px;margin-bottom:14px">
+      <div style="font-size:9px;color:#78909C;text-transform:uppercase;letter-spacing:1px">drAisyiEduCare · Manajemen Ekstravasasi Onkologi Anak</div>
+      <div style="font-size:20px;font-weight:700;color:#0D47A1;margin:3px 0">Rencana Tata Laksana: ${d.name}</div>
+      <div style="font-size:11px;color:#78909C">Dibuat: ${date} &nbsp;|&nbsp; Verifikasi protokol lokal diperlukan</div>
+    </div>
+    <span style="display:inline-block;padding:5px 14px;border-radius:18px;font-weight:700;font-size:13px;background:${bg};color:${bc};border:1.5px solid ${bc};margin-bottom:5px">${bi} ${clsID}</span>
+    <div style="font-size:11px;color:#78909C;font-style:italic;margin-bottom:13px">${d.displayCls}</div>
+    ${s('Tindakan Segera')}
+    ${box('<ol style="margin:0;padding-left:17px">'+steps.map(x=>`<li style="padding:2px 0">${x}</li>`).join('')+'</ol>')}
+    ${s('Rekomendasi Kompres')}
+    ${box(ci)}
+    ${s('Antidot / Tata Laksana Spesifik')}
+    ${box(ant)}
+    ${d.antidote.length>1?box('⚠ JANGAN kombinasikan DMSO dan dexrazoxane kecuali protokol lokal secara eksplisit mengizinkan. Verifikasi ketersediaan antidot dengan apoteker.','#F57F17'):''}
+    ${s('Jadwal Pemantauan')}
+    ${box('Hari pemantauan: <strong>'+d.monitor.days.join(', ')+'</strong><br>'+d.monitor.note)}
+    ${s('Catatan Klinis')}
+    ${box('<ul style="margin:0;padding-left:17px">'+d.pearls.map(p=>`<li style="padding:2px 0">${p}</li>`).join('')+'</ul>')}
+    ${s('Eskalasi — Minta Tinjauan Onkologi Senior + Bedah/Bedah Plastik Jika','#C62828')}
+    ${box('Nyeri progresif · Bula · Ulserasi · Nekrosis · Gangguan neurovaskuler · Volume besar · Ekstravasasi jalur sentral · CTCAE Derajat ≥2','#C62828')}
+    <div style="margin-top:18px;padding-top:10px;border-top:1px solid #CFD8DC;font-size:10px;color:#90A4AE;line-height:1.6">
+      <strong>drAisyiEduCare — Pediatric Hematology Oncology Clinical Toolkit</strong><br>
+      Alat bantu klinis. Tidak menggantikan protokol institusi lokal, tinjauan farmasi, konsultasi onkologi, atau tinjauan spesialis bedah/bedah plastik apabila diindikasikan. Verifikasi nama obat, konsentrasi, ketersediaan antidot, jenis jalur vena, dan waktu kejadian bersama tim onkologi senior dan apoteker.
+    </div>
+  </div>`;
+}
+
+document.getElementById('btnPrint').addEventListener('click',function(){
+  if(!selDrug){alert('Pilih obat terlebih dahulu.');return;}
+  document.getElementById('poContent').innerHTML=buildPrintHTML(selDrug);
+  document.getElementById('po').classList.add('show');
+});
+document.getElementById('poClose').addEventListener('click',()=>document.getElementById('po').classList.remove('show'));
+document.getElementById('poPrint').addEventListener('click',()=>window.print());
+
+buildTable();
+</script>
+</body>
+</html>

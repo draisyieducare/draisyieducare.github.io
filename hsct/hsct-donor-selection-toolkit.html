@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>drAisyiEduCare — Pediatric HSCT Donor Selection Toolkit</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#1d4ed8;--blue-l:#dbeafe;--blue-ll:#eff6ff;
+  --green:#15803d;--green-l:#dcfce7;
+  --orange:#c2410c;--orange-l:#ffedd5;
+  --red:#dc2626;--red-l:#fee2e2;
+  --yellow:#a16207;--yellow-l:#fef9c3;
+  --gray:#475569;--gray-l:#f1f5f9;
+  --border:#e2e8f0;--card:#fff;
+  --r:8px;--r-lg:12px
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f4f8;color:#1e293b;font-size:14px;line-height:1.6}
+.hdr{background:linear-gradient(135deg,#0f2460,#1e40af,#0369a1);color:#fff;padding:.9rem 1.25rem}
+.hdr-brand{font-size:10px;font-weight:700;letter-spacing:.1em;opacity:.7;text-transform:uppercase}
+.hdr-title{font-size:1.1rem;font-weight:800}
+.hdr-sub{font-size:11px;opacity:.75}
+.banner{padding:.5rem 1.25rem;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:.5rem}
+.b-safe{background:#fef3c7;color:#92400e;border-bottom:2px solid #f59e0b}
+.b-priv{background:#eff6ff;color:#1e40af;border-bottom:1px solid #bfdbfe}
+.roles{background:#fff;border-bottom:2px solid var(--border);padding:.4rem 1.25rem;display:flex;gap:.35rem;flex-wrap:wrap}
+.rc{display:inline-block;padding:.18rem .6rem;border-radius:20px;font-size:11px;font-weight:600;background:var(--gray-l);color:var(--gray);border:1px solid var(--border)}
+.nav{background:#fff;border-bottom:2px solid var(--border);display:flex;overflow-x:auto}
+.ntab{padding:.6rem 1rem;font-size:12.5px;font-weight:700;color:var(--gray);cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;white-space:nowrap}
+.ntab.on{color:var(--blue);border-bottom-color:var(--blue);background:#f8faff}
+.wrap{max-width:1100px;margin:0 auto;padding:1.1rem 1rem}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:1rem 1.1rem;margin-bottom:.85rem;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.ct{font-size:12px;font-weight:800;color:var(--gray);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.8rem}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.65rem}
+@media(max-width:700px){.g2,.g3,.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:460px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.fld{margin-bottom:.7rem}
+label{display:block;font-size:12px;font-weight:700;color:var(--gray);margin-bottom:.22rem}
+input,select{width:100%;padding:.4rem .6rem;border:1.5px solid var(--border);border-radius:var(--r);font-size:13px;color:#1e293b;background:#fff}
+input:focus,select:focus{outline:none;border-color:var(--blue)}
+.dtw{overflow-x:auto;margin-bottom:.65rem}
+.dt{width:100%;border-collapse:collapse;font-size:12px;min-width:1050px}
+.dt th{background:#f8faff;color:var(--gray);font-size:10.5px;font-weight:800;text-transform:uppercase;padding:.45rem .5rem;border:1px solid var(--border);white-space:nowrap}
+.dt td{padding:.28rem .4rem;border:1px solid var(--border);vertical-align:middle}
+.dt input,.dt select{padding:.22rem .4rem;font-size:11.5px}
+.dtsec{background:#f0ebff;color:#7c3aed;font-size:10px;font-weight:800;text-transform:uppercase;padding:.28rem .5rem;border:1px solid var(--border)}
+.btn{display:inline-flex;align-items:center;gap:.3rem;padding:.42rem .95rem;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;border:none}
+.bp{background:var(--blue);color:#fff}.bp:hover{background:#1e40af}
+.bo{background:#fff;color:var(--gray);border:1.5px solid var(--border)}.bo:hover{background:var(--gray-l)}
+.bd{background:#fee2e2;color:#dc2626;border:1px solid #fca5a5}.bd:hover{background:#fecaca}
+.bsm{padding:.28rem .65rem;font-size:12px}
+.abar{display:flex;gap:.55rem;flex-wrap:wrap;align-items:center;margin-top:.7rem}
+.tab{display:none}.tab.on{display:block}
+.flag{padding:.55rem .85rem;border-radius:var(--r);font-size:12.5px;font-weight:600;margin-bottom:.4rem;display:flex;align-items:flex-start;gap:.45rem;border-left:4px solid}
+.fc{background:#fee2e2;color:#991b1b;border-color:#dc2626}
+.fh{background:#ffedd5;color:#c2410c;border-color:#ea580c}
+.fm{background:#fef9c3;color:#92400e;border-color:#ca8a04}
+.mb{display:inline-block;background:#fef9c3;color:#a16207;border:1px solid #fcd34d;border-radius:20px;padding:.12rem .5rem;font-size:11px;font-weight:700;margin-right:.2rem}
+.rt{width:100%;border-collapse:collapse;font-size:13px}
+.rt th{background:#f8faff;padding:.5rem .8rem;font-size:11px;font-weight:800;color:var(--gray);text-transform:uppercase;border-bottom:2px solid var(--border);text-align:left}
+.rt td{padding:.6rem .8rem;border-bottom:1px solid var(--border);vertical-align:middle}
+.rt tr:hover td{background:#f8faff}
+.rb{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-weight:800;font-size:13px}
+.r1{background:#fef9c3;color:#a16207}.r2{background:#f1f5f9;color:#475569}.r3{background:#fff7ed;color:#c2410c}.rn{background:#f8faff;color:#64748b}
+.sbw{display:flex;align-items:center;gap:.45rem}
+.sb{height:9px;border-radius:5px;flex:1;background:var(--border);overflow:hidden}
+.sbf{height:9px;border-radius:5px}
+.cp{background:#dcfce7;color:#15803d;padding:.13rem .55rem;border-radius:20px;font-size:11px;font-weight:700}
+.cs{background:#dbeafe;color:#1d4ed8;padding:.13rem .55rem;border-radius:20px;font-size:11px;font-weight:700}
+.cc{background:#fef9c3;color:#a16207;padding:.13rem .55rem;border-radius:20px;font-size:11px;font-weight:700}
+.cb{background:#ffedd5;color:#c2410c;padding:.13rem .55rem;border-radius:20px;font-size:11px;font-weight:700}
+.ch{background:#fee2e2;color:#dc2626;padding:.13rem .55rem;border-radius:20px;font-size:11px;font-weight:700}
+.cfh{background:#dcfce7;color:#15803d;padding:.1rem .45rem;border-radius:20px;font-size:10px;font-weight:700}
+.cfm{background:#fef9c3;color:#a16207;padding:.1rem .45rem;border-radius:20px;font-size:10px;font-weight:700}
+.cfl{background:#fee2e2;color:#dc2626;padding:.1rem .45rem;border-radius:20px;font-size:10px;font-weight:700}
+.bc{background:linear-gradient(135deg,#0f2460,#1d4ed8);color:#fff;border-radius:var(--r-lg);padding:1.1rem 1.4rem;margin-bottom:.85rem}
+.bcn{font-size:1.35rem;font-weight:800;margin:.3rem 0 .15rem}
+.bcchips{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.6rem}
+.bcc{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:.16rem .65rem;font-size:11px;font-weight:600}
+.bcw{background:rgba(220,38,38,.25);border:1px solid rgba(220,38,38,.5);border-radius:var(--r);padding:.55rem .85rem;margin-top:.7rem;font-size:12px;font-weight:700}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}
+@media(max-width:540px){.pc{grid-template-columns:1fr}}
+.pros{background:#f0fdf4;border:1px solid #86efac;border-radius:var(--r);padding:.75rem}
+.cons{background:#fff7f0;border:1px solid #fed7aa;border-radius:var(--r);padding:.75rem}
+.pros h4{color:#15803d;font-size:12px;font-weight:800;margin-bottom:.35rem}
+.cons h4{color:#c2410c;font-size:12px;font-weight:800;margin-bottom:.35rem}
+.pros li,.cons li{font-size:12px;margin-bottom:.22rem;padding-left:1rem;position:relative;list-style:none}
+.pros li::before{content:"✓";position:absolute;left:0;color:#16a34a;font-weight:800}
+.cons li::before{content:"!";position:absolute;left:0;color:#ea580c;font-weight:800}
+.dr{display:flex;align-items:center;gap:.55rem;margin-bottom:.38rem}
+.dl{font-size:12px;color:var(--gray);width:165px;flex-shrink:0}
+.dbw{flex:1;background:var(--border);border-radius:4px;height:11px;overflow:hidden}
+.dbf{height:11px;border-radius:4px}
+.dp{font-size:12px;font-weight:700;width:33px;text-align:right;flex-shrink:0}
+.sp{background:#f8faff;border-left:4px solid var(--blue);padding:.85rem .95rem;border-radius:0 var(--r) var(--r) 0;font-size:13px;line-height:1.75;margin-bottom:.6rem}
+.pl{display:flex;gap:.6rem;padding:.6rem 0;border-bottom:1px solid var(--border);font-size:13px}
+.mv{background:var(--gray-l);border-radius:var(--r);padding:.7rem .9rem;text-align:center}
+.mvv{font-size:1.35rem;font-weight:800}
+.mvl{font-size:11px;color:var(--gray);margin-top:.08rem}
+.ar{display:flex;justify-content:space-between;padding:.32rem 0;border-bottom:1px solid var(--border);font-size:12.5px}
+.al{color:var(--gray)}.av{font-weight:700}
+.dis{background:#eff6ff;border:1px solid #93c5fd;border-radius:var(--r);padding:.85rem;font-size:12px;color:#1e40af;line-height:1.7}
+.xb{display:inline-flex;align-items:center;padding:.22rem .6rem;background:#eff6ff;color:var(--blue);border:1.5px solid #bfdbfe;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer}
+.xp{background:#f0f9ff;border:1px solid #7dd3fc;border-radius:var(--r);padding:.65rem;font-size:12px;line-height:1.7;margin-top:.35rem;display:none}
+.chip{display:inline-block;padding:.13rem .5rem;border-radius:20px;font-size:11px;font-weight:700}
+.cbl{background:var(--blue-l);color:var(--blue)}
+.cgr{background:var(--gray-l);color:var(--gray)}
+.cor{background:var(--orange-l);color:var(--orange)}
+.crd{background:var(--red-l);color:var(--red)}
+.cgn{background:var(--green-l);color:var(--green)}
+.nodata{color:var(--gray);font-size:13px;padding:1.5rem;text-align:center}
+.pvwarn{background:#fef9c3;border:1.5px solid #f59e0b;border-radius:var(--r);padding:.55rem .85rem;font-size:12.5px;font-weight:700;color:#92400e;margin-bottom:.7rem;display:none}
+.stn{background:#f0fdf4;border:1px solid #86efac;border-radius:var(--r);padding:.6rem .85rem;font-size:12.5px;color:#15803d;margin-bottom:.35rem}
+.scc{background:var(--blue-ll);border:1.5px solid #bfdbfe;border-radius:var(--r);padding:.85rem .95rem;margin-bottom:.6rem}
+.scc h4{color:var(--blue);font-size:13px;font-weight:800;margin-bottom:.35rem}
+.printhdr{display:none;text-align:center;margin-bottom:.9rem;padding-bottom:.65rem;border-bottom:2px solid #1d4ed8}
+.radarw{display:flex;justify-content:center;overflow-x:auto;padding:.4rem 0}
+@media print{
+  .hdr,.nav,.banner,.roles,.abar,.xb,.btn,.ntab{display:none!important}
+  .tab{display:block!important}
+  .card{break-inside:avoid;box-shadow:none;border:1px solid #ccc}
+  body{background:#fff}
+  .printhdr{display:block!important}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-brand">drAisyiEduCare</div>
+  <div class="hdr-title">Pediatric HSCT Donor Selection Toolkit</div>
+  <div class="hdr-sub">Clinical Decision Support · Educational Use Only · Provisional Ranking</div>
+</div>
+<div class="banner b-safe">Peringatan: Skor toolkit bersifat heuristik dan provisional. Keputusan final donor hanya melalui donor board / tim HSCT multidisiplin.</div>
+<div class="banner b-priv">Privasi: Gunakan kode terde-identifikasi. Jangan masukkan nama lengkap, nomor identitas, atau data pribadi sensitif.</div>
+<div class="roles">
+  <span style="font-size:11px;font-weight:800;color:var(--gray);align-self:center">Peran Tim:</span>
+  <button class="rc" data-role="hsct">Tim HSCT — Donor Board</button>
+  <button class="rc" data-role="koor">Koordinator — Donor Search</button>
+  <button class="rc" data-role="hla">Lab HLA — Allele, DSA, DPB1</button>
+  <button class="rc" data-role="infeksi">Infeksi — CMV/EBV Risk</button>
+  <button class="rc" data-role="transfusi">Transfusi — ABO Processing</button>
+  <button class="rc" data-role="cell">Cell Processing — Cell Dose</button>
+</div>
+<div id="role-popup" style="display:none;background:#1e3a8a;color:#fff;padding:.65rem 1.25rem;font-size:12.5px;line-height:1.6;position:relative">
+  <button id="role-close" style="position:absolute;top:.4rem;right:.75rem;background:none;border:none;color:#fff;font-size:16px;cursor:pointer;font-weight:700">✕</button>
+  <strong id="role-title" style="display:block;margin-bottom:.2rem;font-size:13px"></strong>
+  <span id="role-body"></span>
+</div>
+
+<div class="nav" id="navBar">
+  <button class="ntab on" data-tab="input">Input Data</button>
+  <button class="ntab" data-tab="results">Hasil Analisis</button>
+  <button class="ntab" data-tab="visual">Perbandingan Visual</button>
+  <button class="ntab" data-tab="scenario">Skenario</button>
+  <button class="ntab" data-tab="pearls">Clinical Pearls</button>
+  <button class="ntab" data-tab="safety">Safety & Limitasi</button>
+</div>
+
+<!-- INPUT TAB -->
+<div class="tab on" id="tab-input">
+<div class="wrap">
+  <div class="card">
+    <div class="ct">Data Resipien (Terde-identifikasi)</div>
+    <div class="g3">
+      <div class="fld"><label>Kode Pasien</label><input type="text" id="p-code" placeholder="Mis: Pasien-01"></div>
+      <div class="fld"><label>Diagnosis</label>
+        <select id="p-diag">
+          <option value="">-- Pilih --</option>
+          <optgroup label="Keganasan"><option>ALL</option><option>AML</option><option>MDS</option><option>CML</option><option>NHL/HL</option></optgroup>
+          <optgroup label="Non-Malignant"><option>Aplastic Anemia</option><option>Thalassemia Mayor</option><option>Sickle Cell Disease</option><option>Fanconi Anemia</option></optgroup>
+          <optgroup label="Imunodefisiensi"><option>SCID</option><option>CGD</option><option>WAS</option><option>HLH</option></optgroup>
+          <optgroup label="Lainnya"><option>Lainnya</option></optgroup>
+        </select>
+      </div>
+      <div class="fld"><label>Kategori Diagnosis</label>
+        <select id="p-diagcat">
+          <option value="">-- Pilih --</option>
+          <option value="malignant">Malignant</option>
+          <option value="nonmalignant">Non-malignant</option>
+          <option value="immunodeficiency">Imunodefisiensi</option>
+          <option value="hemoglobinopathy">Hemoglobinopati</option>
+        </select>
+      </div>
+      <div class="fld"><label>Umur Pasien (tahun)</label><input type="number" id="p-age" min="0" max="18" placeholder="0-18"></div>
+      <div class="fld"><label>Berat Badan (kg)</label><input type="number" id="p-bw" min="0" placeholder="kg"></div>
+      <div class="fld"><label>CMV Resipien</label>
+        <select id="p-cmv">
+          <option value="">-- Pilih --</option>
+          <option value="pos">Positif</option>
+          <option value="neg">Negatif</option>
+          <option value="uk">Tidak diketahui</option>
+        </select>
+      </div>
+      <div class="fld"><label>Urgensi Transplantasi</label>
+        <select id="p-urgency">
+          <option value="">-- Pilih --</option>
+          <option value="elective">Elective / Stabil</option>
+          <option value="urgent">Urgent - High-Risk Remission</option>
+          <option value="relapsed">Relapsed / Refractory</option>
+          <option value="marrow">Marrow Failure / Imunodefisiensi Urgent</option>
+        </select>
+      </div>
+      <div class="fld"><label>Jenis Transplantasi</label>
+        <select id="p-txtype">
+          <option value="">-- Pilih --</option>
+          <option>First Allogeneic HSCT</option>
+          <option>Second HSCT</option>
+          <option>Post-CAR-T Consolidation</option>
+          <option>Non-Malignant Curative HSCT</option>
+        </select>
+      </div>
+      <div class="fld"><label>Graft Source Pilihan</label>
+        <select id="p-graft">
+          <option value="">Belum ditentukan</option>
+          <option>Bone Marrow</option>
+          <option>PBSC</option>
+          <option>Cord Blood</option>
+          <option>Center-Specific</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Data Donor (maks. 5)</div>
+    <div class="dtw">
+      <table class="dt">
+        <thead>
+          <tr>
+            <th rowspan="2">D#</th>
+            <th colspan="3" class="dtsec">Identitas</th>
+            <th colspan="3" class="dtsec">Demografi</th>
+            <th colspan="5" class="dtsec">HLA & DSA</th>
+            <th colspan="5" class="dtsec">Infeksi / Serologi</th>
+            <th class="dtsec">ABO</th>
+            <th colspan="3" class="dtsec">Graft</th>
+            <th class="dtsec">Logistik</th>
+            <th></th>
+          </tr>
+          <tr>
+            <th>Kode</th><th>Hubungan</th><th>Jenis</th>
+            <th>Usia</th><th>JK</th><th>Hamil</th>
+            <th>HLA</th><th>Allele</th><th>Konfirm</th><th>DPB1</th><th>DSA</th>
+            <th>CMV</th><th>EBV</th><th>Hep</th><th>HIV</th><th>Cleared</th>
+            <th>ABO</th>
+            <th>Graft Src</th><th>CD34</th><th>TNC</th>
+            <th>Tersedia</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="dtbody"></tbody>
+      </table>
+    </div>
+    <div class="abar">
+      <button class="btn bo" id="btnAdd">+ Tambah Donor</button>
+      <span id="dcnt" style="font-size:12px;color:var(--gray)">0 donor</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Bobot Domain Scoring (%)</div>
+    <p style="font-size:12px;color:var(--gray);margin-bottom:.65rem">Default bersifat edukatif. Sesuaikan per protokol pusat. Total harus 100%.</p>
+    <div class="g4" id="wfields"></div>
+    <div class="abar">
+      <button class="btn bo bsm" id="btnResetW">Reset Default</button>
+      <span id="wsum" style="font-size:12px;font-weight:700"></span>
+    </div>
+  </div>
+
+  <div class="abar">
+    <button class="btn bp" id="btnRun">Analisis &amp; Ranking Donor</button>
+    <button class="btn bo" id="btnPrint">Cetak Ringkasan</button>
+    <button class="btn bo" id="btnReset">Reset Semua</button>
+  </div>
+  <div id="inp-err" style="color:#dc2626;font-size:12.5px;font-weight:700;margin-top:.45rem"></div>
+</div>
+</div>
+
+<!-- RESULTS TAB -->
+<div class="tab" id="tab-results">
+<div class="wrap">
+  <div class="printhdr">
+    <div style="font-size:11px;font-weight:800;color:#1d4ed8;letter-spacing:.1em">drAisyiEduCare</div>
+    <div style="font-size:1.05rem;font-weight:800">Pediatric HSCT Donor Selection Toolkit</div>
+    <div id="pdate" style="font-size:11px;color:#475569"></div>
+  </div>
+  <div id="pvwarn" class="pvwarn"></div>
+  <div class="g4" id="mrow" style="margin-bottom:.8rem"></div>
+  <div id="cflags"></div>
+  <div id="missec"></div>
+  <div class="card">
+    <div class="ct">Ranking Donor Provisional</div>
+    <div id="raudit" style="font-size:11px;color:var(--gray);margin-bottom:.6rem"></div>
+    <div style="overflow-x:auto"><table class="rt">
+      <thead><tr>
+        <th>Rank</th><th>Donor</th><th>Jenis</th><th>HLA</th><th>DSA</th>
+        <th>Skor</th><th>Confidence</th><th>Kategori</th><th>Info</th>
+      </tr></thead>
+      <tbody id="rtbody"></tbody>
+    </table></div>
+  </div>
+  <div id="bestcard"></div>
+  <div id="domsec"></div>
+  <div id="pdsec"></div>
+  <div class="card"><div class="ct">Ringkasan Donor Board</div><div id="boardcont"></div></div>
+  <div class="card"><div class="ct">Langkah Konfirmasi Berikutnya</div><div id="nextsteps"></div></div>
+  <div class="card"><div class="ct">Audit Trail</div><div id="auditcont"></div></div>
+  <div class="dis"><strong>Disclaimer:</strong> Toolkit ini adalah alat bantu edukasi dan clinical decision support awal. Pemilihan donor akhir harus ditetapkan melalui donor board/tim HSCT multidisiplin. <strong>Scoring bersifat heuristik dan tidak boleh digunakan sebagai satu-satunya dasar pemilihan donor.</strong></div>
+</div>
+</div>
+
+<!-- VISUAL TAB -->
+<div class="tab" id="tab-visual">
+<div class="wrap">
+  <div class="card"><div class="ct">Radar Chart — Domain Score</div><div class="radarw" id="radarw"><p class="nodata">Jalankan analisis terlebih dahulu.</p></div></div>
+  <div class="card"><div class="ct">Tabel Komparasi Detail</div><div id="comptbl" style="overflow-x:auto"><p class="nodata">Jalankan analisis terlebih dahulu.</p></div></div>
+  <div class="card"><div class="ct">Red Flag & Missing Data Summary</div><div id="flagsum"><p class="nodata">Jalankan analisis terlebih dahulu.</p></div></div>
+</div>
+</div>
+
+<!-- SCENARIO TAB -->
+<div class="tab" id="tab-scenario">
+<div class="wrap">
+  <div class="card">
+    <div class="ct">Analisis Skenario Alternatif</div>
+    <p style="font-size:12.5px;color:var(--gray);margin-bottom:.8rem">Ranking di bawah bersifat ilustratif berdasarkan data yang dimasukkan.</p>
+    <div id="scencont"><p class="nodata">Jalankan analisis terlebih dahulu.</p></div>
+  </div>
+</div>
+</div>
+
+<!-- PEARLS TAB -->
+<div class="tab" id="tab-pearls">
+<div class="wrap">
+  <div class="card"><div class="ct">Clinical Pearls — Pemilihan Donor HSCT Anak</div><div id="pearlscont"></div></div>
+</div>
+</div>
+
+<!-- SAFETY TAB -->
+<div class="tab" id="tab-safety">
+<div class="wrap">
+  <div class="card"><div class="ct">Safety & Limitasi Toolkit</div><div id="safetycont"></div></div>
+  <div class="card"><div class="ct">Panduan per Peran</div><div id="roleguide"></div></div>
+</div>
+</div>
+
+<script>
+(function() {
+  // ── STATE ──────────────────────────────────────────────────────────
+  var donors = [];
+  var donorCount = 0;
+  var lastRes = null;
+
+  var DLABELS = ['HLA / DSA','Kualitas Donor','Graft / Cell Dose','CMV / Infeksi','ABO / Transfusi','Logistik / Timing','Center / Protokol'];
+  var DKEYS   = ['hla','dq','graft','cmv','abo','log','center'];
+  var DCOLS   = ['#1d4ed8','#15803d','#7c3aed','#0f766e','#c2410c','#a16207','#0891b2'];
+  var DEFWT   = {hla:35,dq:15,graft:15,cmv:10,abo:5,log:10,center:10};
+  var wt      = {hla:35,dq:15,graft:15,cmv:10,abo:5,log:10,center:10};
+
+  // ── TAB SWITCH ────────────────────────────────────────────────────
+  function goTab(name) {
+    var tabs = document.querySelectorAll('.tab');
+    for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('on');
+    var btns = document.querySelectorAll('.ntab');
+    for (var j = 0; j < btns.length; j++) btns[j].classList.remove('on');
+    var t = document.getElementById('tab-' + name);
+    if (t) t.classList.add('on');
+    var btns2 = document.querySelectorAll('.ntab');
+    for (var k = 0; k < btns2.length; k++) {
+      if (btns2[k].getAttribute('data-tab') === name) btns2[k].classList.add('on');
+    }
+  }
+
+  // ── WEIGHT FIELDS ─────────────────────────────────────────────────
+  function initWFields() {
+    var html = '';
+    for (var i = 0; i < DKEYS.length; i++) {
+      html += '<div class="fld"><label>' + DLABELS[i] + ' (%)</label>' +
+        '<input type="number" id="w-' + DKEYS[i] + '" min="0" max="100" value="' + wt[DKEYS[i]] + '">' +
+        '</div>';
+    }
+    var el = document.getElementById('wfields');
+    if (el) el.innerHTML = html;
+    for (var j = 0; j < DKEYS.length; j++) {
+      (function(k) {
+        var inp = document.getElementById('w-' + k);
+        if (inp) inp.addEventListener('change', updateWSum);
+      })(DKEYS[j]);
+    }
+    updateWSum();
+  }
+
+  function updateWSum() {
+    var total = 0;
+    for (var i = 0; i < DKEYS.length; i++) {
+      var el = document.getElementById('w-' + DKEYS[i]);
+      var v = el ? (parseInt(el.value, 10) || 0) : 0;
+      wt[DKEYS[i]] = v;
+      total += v;
+    }
+    var el2 = document.getElementById('wsum');
+    if (el2) {
+      el2.textContent = 'Total: ' + total + '%';
+      el2.style.color = total === 100 ? '#15803d' : '#dc2626';
+    }
+  }
+
+  function resetWeights() {
+    for (var k in DEFWT) {
+      if (DEFWT.hasOwnProperty(k)) {
+        wt[k] = DEFWT[k];
+        var el = document.getElementById('w-' + k);
+        if (el) el.value = DEFWT[k];
+      }
+    }
+    updateWSum();
+  }
+
+  // ── DONOR ROWS ────────────────────────────────────────────────────
+  function sel(id, fid, opts) {
+    var html = '<select id="' + id + '-' + fid + '"><option value="">--</option>';
+    for (var i = 0; i < opts.length; i++) {
+      html += '<option value="' + opts[i][0] + '">' + opts[i][1] + '</option>';
+    }
+    return html + '</select>';
+  }
+  function inp(id, fid, type, ph, extra) {
+    return '<input type="' + (type || 'text') + '" id="' + id + '-' + fid + '" placeholder="' + (ph || '') + '" ' + (extra || '') + ' style="min-width:65px">';
+  }
+
+  function addDonor() {
+    if (donors.length >= 5) { alert('Maksimal 5 donor.'); return; }
+    donorCount++;
+    var id = 'd' + donorCount;
+    donors.push(id);
+    var tb = document.getElementById('dtbody');
+    var tr = document.createElement('tr');
+    tr.id = 'row-' + id;
+    tr.innerHTML =
+      '<td style="font-weight:800;color:var(--blue);font-size:12px;white-space:nowrap">D' + donorCount + '</td>' +
+      '<td>' + inp(id,'code','text','Kode') + '</td>' +
+      '<td>' + sel(id,'rel',[['mk','Saudara Kandung'],['op','Orang Tua'],['st','Saudara Tiri'],['kr','Kerabat Lain'],['uk','Tidak Berhubungan']]) + '</td>' +
+      '<td>' + sel(id,'type',[['msd','MSD'],['mrd','MRD'],['mud','MUD 10/10'],['mmud','MUD Mismatch'],['haplo','Haploidentical'],['cord','Cord Blood'],['back','Backup']]) + '</td>' +
+      '<td>' + inp(id,'age','number','th','min="0" max="80" style="width:50px"') + '</td>' +
+      '<td>' + sel(id,'sex',[['L','L'],['P','P']]) + '</td>' +
+      '<td>' + sel(id,'preg',[['na','N/A'],['no','Belum'],['yes','Pernah']]) + '</td>' +
+      '<td>' + sel(id,'hla',[['sib','Sibling'],['12','12/12'],['10','10/10'],['9','9/10'],['8','8/10'],['haplo','Haplo'],['c6','Cord 6/6'],['c5','Cord 5/6'],['c4','Cord 4/6'],['uk','Tdk Diket']]) + '</td>' +
+      '<td>' + sel(id,'allele',[['yes','Ya'],['no','Belum'],['uk','Tdk Diket']]) + '</td>' +
+      '<td>' + sel(id,'confirm',[['yes','Ya'],['no','Belum']]) + '</td>' +
+      '<td>' + sel(id,'dpb1',[['perm','Permissive'],['nperm','Non-Perm'],['uk','Tdk Diket'],['na','N/A']]) + '</td>' +
+      '<td>' + sel(id,'dsa',[['neg','Negatif'],['weak','Lemah+'],['strong','Kuat+'],['uk','Tdk Diket']]) + '</td>' +
+      '<td>' + sel(id,'cmv',[['pos','Pos'],['neg','Neg'],['uk','Tdk Diket']]) + '</td>' +
+      '<td>' + sel(id,'ebv',[['pos','Pos'],['neg','Neg'],['uk','Tdk Diket']]) + '</td>' +
+      '<td>' + sel(id,'hep',[['done','Lengkap'],['partial','Parsial'],['no','Belum']]) + '</td>' +
+      '<td>' + sel(id,'hiv',[['done','Lengkap'],['no','Belum']]) + '</td>' +
+      '<td>' + sel(id,'cleared',[['yes','Ya'],['no','Tidak'],['pending','Pending']]) + '</td>' +
+      '<td>' + sel(id,'abo',[['match','Cocok'],['minor','Minor'],['major','Major'],['bi','Bidirect'],['uk','Tdk Diket']]) + '</td>' +
+      '<td>' + sel(id,'gsrc',[['bm','Bone Marrow'],['pbsc','PBSC'],['cord','Cord Blood'],['uk','Belum']]) + '</td>' +
+      '<td>' + inp(id,'cd34','number','CD34','min="0" step="0.1" style="width:60px"') + '</td>' +
+      '<td>' + inp(id,'tnc','number','TNC','min="0" step="0.1" style="width:60px"') + '</td>' +
+      '<td>' + sel(id,'avail',[['now','Segera'],['1m','<1 Bln'],['3m','1-3 Bln'],['late','>3 Bln'],['unk','Tdk Pasti'],['barrier','Hambatan']]) + '</td>' +
+      '<td><button class="btn bd bsm" data-remove="' + id + '">X</button></td>';
+    tb.appendChild(tr);
+    // attach remove button
+    var rmBtn = tr.querySelector('[data-remove]');
+    rmBtn.addEventListener('click', function() { removeDonor(id, tr); });
+    updateDCnt();
+  }
+
+  function removeDonor(id, tr) {
+    var newArr = [];
+    for (var i = 0; i < donors.length; i++) { if (donors[i] !== id) newArr.push(donors[i]); }
+    donors = newArr;
+    if (tr && tr.parentNode) tr.parentNode.removeChild(tr);
+    updateDCnt();
+  }
+
+  function updateDCnt() {
+    var el = document.getElementById('dcnt');
+    if (el) el.textContent = donors.length + ' donor';
+  }
+
+  function getDonor(id) {
+    function v(f) { var el = document.getElementById(id + '-' + f); return el ? el.value.trim() : ''; }
+    return {
+      id: id,
+      code: v('code') || ('Donor-' + id),
+      rel: v('rel'), type: v('type'),
+      age: parseInt(v('age'), 10) || 0,
+      sex: v('sex'), preg: v('preg'),
+      hla: v('hla'), allele: v('allele'), confirm: v('confirm'), dpb1: v('dpb1'), dsa: v('dsa'),
+      cmv: v('cmv'), ebv: v('ebv'), hep: v('hep'), hiv: v('hiv'), cleared: v('cleared'),
+      abo: v('abo'),
+      gsrc: v('gsrc'), cd34: parseFloat(v('cd34')) || 0, tnc: parseFloat(v('tnc')) || 0,
+      avail: v('avail')
+    };
+  }
+
+  // ── SCORING ───────────────────────────────────────────────────────
+  function sHLA(d) {
+    var base = {sib:100,'12':95,'10':85,'9':65,'8':45,haplo:50,c6:80,c5:60,c4:40,uk:20};
+    var s = base[d.hla] || 20;
+    var dpen = {neg:0,weak:-15,strong:-45,uk:-10};
+    s += dpen[d.dsa] !== undefined ? dpen[d.dsa] : 0;
+    if (d.allele === 'yes') s += 5; else if (d.allele === 'no') s -= 5;
+    if (d.confirm === 'yes') s += 5; else if (d.confirm === 'no') s -= 8;
+    if (d.dpb1 === 'perm') s += 5; else if (d.dpb1 === 'nperm') s -= 8;
+    return Math.max(0, Math.min(100, Math.round(s)));
+  }
+  function sDQ(d) {
+    var a = d.age <= 20 ? 100 : d.age <= 30 ? 90 : d.age <= 40 ? 75 : d.age <= 50 ? 55 : 30;
+    var cm = {yes:100,no:20,pending:55};
+    var c = cm[d.cleared] !== undefined ? cm[d.cleared] : 50;
+    var pm = {na:100,no:95,yes:65};
+    var p = pm[d.preg] !== undefined ? pm[d.preg] : 80;
+    return Math.round(a * 0.5 + c * 0.3 + p * 0.2);
+  }
+  function sGraft(d) {
+    if (!d.gsrc || d.gsrc === 'uk') return 40;
+    var bm = {bm:80,pbsc:80,cord:65};
+    var s = bm[d.gsrc] || 60;
+    if (d.gsrc === 'cord') {
+      if (d.tnc >= 3.5) s += 20; else if (d.tnc >= 2.5) s += 10; else if (d.tnc > 0) s -= 20; else s -= 10;
+      if (d.cd34 >= 1.5) s += 5;
+    } else {
+      if (d.cd34 >= 3) s += 15; else if (d.cd34 >= 2) s += 8; else if (d.cd34 > 0 && d.cd34 < 2) s -= 5;
+    }
+    return Math.max(0, Math.min(100, Math.round(s)));
+  }
+  function sCMV(d, rc) {
+    if (!rc || !d.cmv || rc === 'uk' || d.cmv === 'uk') return 45;
+    if (rc === 'neg' && d.cmv === 'neg') return 100;
+    if (rc === 'neg' && d.cmv === 'pos') return 20;
+    if (rc === 'pos' && d.cmv === 'pos') return 85;
+    if (rc === 'pos' && d.cmv === 'neg') return 70;
+    return 50;
+  }
+  function sABO(d) { var m = {match:100,minor:75,major:45,bi:25,uk:55}; return m[d.abo] !== undefined ? m[d.abo] : 55; }
+  function sLog(d, urg) {
+    var m = {now:100,'1m':80,'3m':50,late:30,unk:25,barrier:15};
+    var s = m[d.avail] !== undefined ? m[d.avail] : 30;
+    if ((urg === 'relapsed' || urg === 'marrow') && d.avail !== 'now') s = Math.max(s - 20, 10);
+    return Math.min(100, Math.max(0, s));
+  }
+  function sCenter(d) {
+    if (d.type === 'haplo') return 65;
+    if (d.type === 'cord') return 70;
+    if (d.type === 'msd' || d.type === 'mrd') return 95;
+    if (d.type === 'mud') return 85;
+    if (d.type === 'mmud') return 65;
+    return 70;
+  }
+  function calcTotal(doms) {
+    var t = 0;
+    for (var i = 0; i < DKEYS.length; i++) t += doms[i] * (wt[DKEYS[i]] / 100);
+    return Math.round(t);
+  }
+
+  // ── RED FLAGS ─────────────────────────────────────────────────────
+  function getFlags(d, rc) {
+    var f = [];
+    if (d.dsa === 'strong') f.push({l:'c',m:'DSA kuat positif: risiko tinggi graft failure',a:'Diperlukan desensitisasi atau pertimbangan donor alternatif sebelum maju'});
+    if (d.hla === 'uk') f.push({l:'c',m:'HLA tidak diketahui: tidak dapat menilai kompatibilitas',a:'Lengkapi HLA typing allele-level sebelum pertimbangkan donor ini'});
+    if (d.confirm === 'no') f.push({l:'c',m:'Confirmatory typing belum dilakukan',a:'Confirmatory typing wajib sebelum finalisasi donor'});
+    if (d.cleared === 'no') f.push({l:'c',m:'Donor belum medically cleared',a:'Evaluasi medis donor lengkap diperlukan'});
+    if (d.hep === 'no' || d.hiv === 'no') f.push({l:'c',m:'Infectious screening belum lengkap',a:'Lengkapi skrining infeksi sebelum penggunaan donor'});
+    if (d.gsrc === 'cord' && d.tnc > 0 && d.tnc < 2.5) f.push({l:'c',m:'Cell dose cord blood di bawah ambang (TNC <2.5)',a:'Pertimbangkan double cord atau donor alternatif'});
+    if (d.cmv === 'pos' && rc === 'neg') f.push({l:'h',m:'CMV D+/R-: risiko transmisi CMV primer',a:'Diskusi dengan tim infeksi; rencana monitoring/profilaksis'});
+    if (d.dpb1 === 'nperm') f.push({l:'h',m:'DPB1 non-permissive mismatch',a:'Pertimbangkan dampak GvHD; diskusi donor board'});
+    if (d.abo === 'major') f.push({l:'h',m:'ABO major mismatch',a:'Rencana RBC depletion; konsul transfusion medicine'});
+    if (d.abo === 'bi') f.push({l:'h',m:'ABO bidirectional mismatch: risiko tertinggi',a:'Protocol plasma dan RBC depletion; konsul transfusion medicine'});
+    if (d.age > 50) f.push({l:'h',m:'Usia donor >50 tahun',a:'Pertimbangkan dampak pada kualitas graft'});
+    if (d.preg === 'yes') f.push({l:'h',m:'Riwayat kehamilan: potensi alloantibodi donor',a:'Pertimbangkan skrining HLA antibodi donor'});
+    if (d.type === 'haplo' && d.dsa === 'uk') f.push({l:'h',m:'Haploidentical dengan DSA tidak diketahui',a:'DSA harus diperiksa sebelum maju pada donor haploidentical'});
+    if (d.gsrc === 'cord' && d.tnc >= 2.5 && d.tnc < 3.5) f.push({l:'h',m:'Cell dose cord borderline (TNC 2.5-3.5)',a:'Pertimbangkan faktor risiko engraftment'});
+    if (d.hla === '8') f.push({l:'m',m:'HLA 8/10: mismatch moderat',a:'Pertimbangkan donor alternatif; diskusi donor board'});
+    if (d.dsa === 'weak') f.push({l:'m',m:'DSA lemah positif: perlu monitoring',a:'Repeat DSA; pertimbangkan dampak pada engraftment'});
+    if (d.abo === 'minor') f.push({l:'m',m:'ABO minor mismatch',a:'Rencana plasma depletion sesuai protokol'});
+    if (d.cmv === 'uk') f.push({l:'m',m:'CMV donor tidak diketahui',a:'Lengkapi serologis CMV donor'});
+    if (d.avail === '3m') f.push({l:'m',m:'Ketersediaan 1-3 bulan',a:'Seimbangkan timing dengan urgency klinis'});
+    if (d.allele === 'no') f.push({l:'m',m:'Allele-level typing belum dilakukan',a:'Lengkapi untuk akurasi HLA'});
+    return f;
+  }
+
+  function getMissing(d) {
+    var m = [];
+    if (!d.type)    m.push('Jenis Donor');
+    if (!d.hla)     m.push('HLA Level');
+    if (!d.avail)   m.push('Ketersediaan');
+    if (!d.cmv)     m.push('CMV Donor');
+    if (!d.age)     m.push('Usia Donor');
+    if (!d.dsa)     m.push('DSA Status');
+    if (!d.confirm) m.push('Confirmatory Typing');
+    if (!d.gsrc)    m.push('Graft Source');
+    if (!d.cleared) m.push('Medical Clearance');
+    return m;
+  }
+
+  function getConf(mc, flags) {
+    var crit = 0, high = 0;
+    for (var i = 0; i < flags.length; i++) {
+      if (flags[i].l === 'c') crit++;
+      if (flags[i].l === 'h') high++;
+    }
+    if (crit > 0 || mc >= 4) return 'low';
+    if (mc >= 2 || high >= 2) return 'mod';
+    return 'high';
+  }
+
+  function getCat(score, conf, crit) {
+    if (crit > 0) return {t:'Tunda — Selesaikan Issue Kritis',c:'ch'};
+    if (conf === 'low') return {t:'Kandidat Kondisional',c:'cc'};
+    if (score >= 80) return {t:'Kandidat Preferred',c:'cp'};
+    if (score >= 65) return {t:'Alternatif Kuat',c:'cs'};
+    if (score >= 50) return {t:'Kandidat Kondisional',c:'cc'};
+    return {t:'Hanya Backup',c:'cb'};
+  }
+
+  function getPros(d, rc) {
+    var p = [];
+    var hg = {sib:'Sibling matched — kompatibilitas optimal','12':'HLA 12/12','10':'HLA 10/10 — sangat baik','9':'HLA 9/10 — baik'};
+    if (hg[d.hla]) p.push(hg[d.hla]);
+    if (d.dsa === 'neg') p.push('DSA negatif — risiko graft failure rendah');
+    if (d.dpb1 === 'perm') p.push('DPB1 permissive — risiko GvHD lebih rendah');
+    if (d.age > 0 && d.age <= 25) p.push('Usia donor muda (' + d.age + ' tahun)');
+    else if (d.age > 25 && d.age <= 35) p.push('Usia donor ' + d.age + ' tahun — favorable');
+    if (d.cmv === 'neg' && rc === 'neg') p.push('CMV D-/R- — risiko transmisi minimal');
+    if (d.cmv === 'pos' && rc === 'pos') p.push('CMV sesuai serologis resipien (D+/R+)');
+    if (d.abo === 'match') p.push('ABO cocok — tanpa kompleksitas transfusi');
+    if (d.avail === 'now') p.push('Donor tersedia segera');
+    else if (d.avail === '1m') p.push('Donor tersedia dalam <1 bulan');
+    if (d.preg === 'no' || d.preg === 'na') p.push('Tanpa riwayat alloimunisasi kehamilan');
+    if (d.cleared === 'yes') p.push('Medical clearance sudah selesai');
+    if (d.confirm === 'yes') p.push('Confirmatory typing sudah dilakukan');
+    if (!p.length) p.push('Belum ada data cukup untuk identifikasi kelebihan spesifik');
+    return p;
+  }
+
+  function getCons(d, rc) {
+    var c = [];
+    if (d.hla === '8') c.push('HLA 8/10: mismatch moderat meningkatkan risiko GvHD');
+    if (d.dsa === 'strong') c.push('DSA kuat positif: risiko tinggi graft failure');
+    if (d.dsa === 'weak') c.push('DSA lemah positif: perlu monitoring dan reassessment');
+    if (d.dsa === 'uk') c.push('DSA belum diperiksa — penting pada haplo/mismatch');
+    if (d.dpb1 === 'nperm') c.push('DPB1 non-permissive: potensi peningkatan risiko GvHD');
+    if (d.age > 50) c.push('Usia donor ' + d.age + ' tahun: potensi dampak kualitas graft');
+    if (d.cmv === 'pos' && rc === 'neg') c.push('CMV D+/R-: risiko transmisi CMV primer');
+    if (d.abo === 'major') c.push('ABO major mismatch: memerlukan RBC depletion');
+    if (d.abo === 'bi') c.push('ABO bidirectional mismatch: kompleksitas transfusi tertinggi');
+    if (d.avail === '3m' || d.avail === 'late') c.push('Ketersediaan >1 bulan: pertimbangkan urgency pasien');
+    if (d.avail === 'unk') c.push('Ketersediaan tidak pasti: perlu klarifikasi segera');
+    if (d.preg === 'yes') c.push('Riwayat kehamilan: risiko alloantibodi donor');
+    if (d.cleared !== 'yes') c.push('Medical clearance belum/pending');
+    if (d.confirm !== 'yes') c.push('Confirmatory typing belum dilakukan');
+    if (d.type === 'haplo') c.push('Haploidentical: memerlukan platform spesifik pusat');
+    if (d.gsrc === 'cord' && d.tnc > 0 && d.tnc < 3.5) c.push('Cell dose cord borderline/inadekuat');
+    if (!c.length) c.push('Tidak ada kekurangan signifikan yang teridentifikasi');
+    return c;
+  }
+
+  // ── HELPERS ───────────────────────────────────────────────────────
+  function sc(s) { return s >= 80 ? '#15803d' : s >= 65 ? '#1d4ed8' : s >= 50 ? '#a16207' : '#dc2626'; }
+  function confBadge(c) { return c === 'high' ? '<span class="cfh">High</span>' : c === 'mod' ? '<span class="cfm">Moderate</span>' : '<span class="cfl">Low</span>'; }
+  function confLabel(c) { return c === 'high' ? 'Confidence Tinggi' : c === 'mod' ? 'Confidence Moderat' : 'Confidence Rendah'; }
+  function typeLabel(t) { var m = {msd:'MSD',mrd:'MRD',mud:'MUD 10/10',mmud:'MUD Mismatch',haplo:'Haploidentical',cord:'Cord Blood',back:'Backup'}; return m[t] || t || '—'; }
+  function availLabel(a) { var m = {now:'Siap Segera','1m':'<1 Bulan','3m':'1-3 Bulan',late:'>3 Bulan',unk:'Tidak Pasti',barrier:'Ada Hambatan'}; return m[a] || a || '—'; }
+  function metCard(val, lbl, ico) { return '<div class="mv"><div class="mvv">' + ico + ' ' + val + '</div><div class="mvl">' + lbl + '</div></div>'; }
+
+  function explainText(r, rank) {
+    var lines = ['Posisi ' + rank + ', skor ' + r.total + '/100. '];
+    lines.push('HLA/DSA (' + wt.hla + '%): ' + r.doms[0] + '. ');
+    lines.push('Kualitas Donor (' + wt.dq + '%): ' + r.doms[1] + ' (usia ' + r.d.age + ' th). ');
+    lines.push('Graft (' + wt.graft + '%): ' + r.doms[2] + '. ');
+    lines.push('CMV (' + wt.cmv + '%): ' + r.doms[3] + '. ');
+    lines.push('ABO (' + wt.abo + '%): ' + r.doms[4] + '. ');
+    lines.push('Logistik (' + wt.log + '%): ' + r.doms[5] + '. ');
+    if (r.miss.length) lines.push('Data missing: ' + r.miss.length + ' field mengurangi confidence. ');
+    if (r.crit > 0) lines.push(r.crit + ' critical flag — ranking provisional sampai diselesaikan.');
+    return lines.join('');
+  }
+
+  function toggleExplain(id) {
+    var el = document.getElementById('xp-' + id);
+    if (el) el.style.display = el.style.display === 'block' ? 'none' : 'block';
+  }
+
+  // ── MAIN RUN ──────────────────────────────────────────────────────
+  function runAnalysis() {
+    var errEl = document.getElementById('inp-err');
+    if (errEl) errEl.textContent = '';
+    updateWSum();
+    var total = 0;
+    for (var ki = 0; ki < DKEYS.length; ki++) total += wt[DKEYS[ki]] || 0;
+    if (total !== 100) { if (errEl) errEl.textContent = 'Total bobot harus 100%. Saat ini: ' + total + '%.'; return; }
+    if (donors.length < 1) { if (errEl) errEl.textContent = 'Masukkan minimal 1 donor.'; return; }
+
+    var rc = document.getElementById('p-cmv').value;
+    var urg = document.getElementById('p-urgency').value;
+    var results = [];
+
+    for (var di = 0; di < donors.length; di++) {
+      var d = getDonor(donors[di]);
+      var doms = [sHLA(d), sDQ(d), sGraft(d), sCMV(d, rc), sABO(d), sLog(d, urg), sCenter(d)];
+      var tot = calcTotal(doms);
+      var flags = getFlags(d, rc);
+      var miss = getMissing(d);
+      var crit = 0;
+      for (var fi = 0; fi < flags.length; fi++) { if (flags[fi].l === 'c') crit++; }
+      var conf = getConf(miss.length, flags);
+      var cat = getCat(tot, conf, crit);
+      results.push({d:d, doms:doms, total:tot, flags:flags, miss:miss, crit:crit, conf:conf, cat:cat, pros:getPros(d,rc), cons:getCons(d,rc)});
+    }
+
+    results.sort(function(a, b) {
+      if (a.crit !== b.crit) return a.crit - b.crit;
+      return b.total - a.total;
+    });
+
+    lastRes = {results:results, rc:rc, urg:urg, time:new Date()};
+    buildResults(results, rc, urg);
+    buildVisual(results);
+    buildScenario(results, rc, urg);
+    buildPearls(results);
+    buildSafety();
+    goTab('results');
+  }
+
+  // ── BUILD RESULTS ─────────────────────────────────────────────────
+  function buildResults(res, rc, urg) {
+    var allMiss = 0, allCrit = 0, allFlags = 0;
+    for (var i = 0; i < res.length; i++) { allMiss += res[i].miss.length; allCrit += res[i].crit; allFlags += res[i].flags.length; }
+    var provisional = allMiss > 3 || allCrit > 0;
+
+    var pw = document.getElementById('pvwarn');
+    if (pw) { pw.textContent = provisional ? 'Ranking bersifat PROVISIONAL — terdapat data penting yang belum lengkap. Lihat peringatan Missing Data di bawah.' : ''; pw.style.display = provisional ? 'block' : 'none'; }
+
+    var mr = document.getElementById('mrow');
+    if (mr) mr.innerHTML = metCard(res.length,'Donor Dibandingkan','🩸') + metCard(allFlags,'Total Red Flags','🚩') + metCard(allCrit,'Critical Flags','🔴') + metCard(allMiss,'Missing Fields','⚠️');
+
+    // Critical flags
+    var cfh = '';
+    for (var ci = 0; ci < res.length; ci++) {
+      for (var fi = 0; fi < res[ci].flags.length; fi++) {
+        var fl = res[ci].flags[fi];
+        if (fl.l === 'c') cfh += '<div class="flag fc">🔴 <div><strong>' + res[ci].d.code + ':</strong> ' + fl.m + '<br><span style="font-weight:400;font-size:12px">→ ' + fl.a + '</span></div></div>';
+      }
+    }
+    var cfEl = document.getElementById('cflags');
+    if (cfEl) cfEl.innerHTML = cfh ? '<div class="card"><div class="ct">Critical Flags — Harus Diselesaikan</div>' + cfh + '</div>' : '';
+
+    // Missing data
+    var mdh = '';
+    for (var mi = 0; mi < res.length; mi++) {
+      if (res[mi].miss.length) {
+        mdh += '<div style="margin-bottom:.55rem"><strong style="font-size:13px">' + res[mi].d.code + ':</strong> ';
+        for (var mj = 0; mj < res[mi].miss.length; mj++) mdh += '<span class="mb">' + res[mi].miss[mj] + '</span>';
+        mdh += '</div>';
+      }
+    }
+    var msEl = document.getElementById('missec');
+    if (msEl) msEl.innerHTML = mdh ? '<div class="card"><div class="ct">Data Belum Lengkap</div>' + mdh + '</div>' : '';
+
+    // Rank audit
+    var ra = document.getElementById('raudit');
+    if (ra) ra.textContent = 'Analisis: ' + lastRes.time.toLocaleString('id-ID') + ' | Bobot: HLA ' + wt.hla + '%, DQ ' + wt.dq + '%, Graft ' + wt.graft + '%, CMV ' + wt.cmv + '%, ABO ' + wt.abo + '%, Log ' + wt.log + '%, Center ' + wt.center + '%';
+
+    var hls = {sib:'Sib','12':'12/12','10':'10/10','9':'9/10','8':'8/10',haplo:'Haplo',c6:'Cord6/6',c5:'Cord5/6',c4:'Cord4/6',uk:'?'};
+    var dss = {neg:'Neg',weak:'Lemah+',strong:'KUAT+',uk:'?'};
+
+    var rows = '';
+    for (var ri = 0; ri < res.length; ri++) {
+      var r = res[ri];
+      var rcc = ri === 0 ? 'r1' : ri === 1 ? 'r2' : ri === 2 ? 'r3' : 'rn';
+      var col = sc(r.total);
+      rows += '<tr>' +
+        '<td><span class="rb ' + rcc + '">' + (ri+1) + '</span></td>' +
+        '<td><strong>' + r.d.code + '</strong><br><span style="font-size:11px;color:var(--gray)">' + typeLabel(r.d.type) + '</span></td>' +
+        '<td>' + typeLabel(r.d.type) + '</td>' +
+        '<td>' + (hls[r.d.hla] || '?') + '</td>' +
+        '<td>' + (dss[r.d.dsa] || '?') + '</td>' +
+        '<td><div class="sbw"><div class="sb"><div class="sbf" style="width:' + r.total + '%;background:' + col + '"></div></div><strong style="color:' + col + ';font-size:13px;min-width:30px">' + r.total + '</strong></div></td>' +
+        '<td>' + confBadge(r.conf) + '</td>' +
+        '<td><span class="' + r.cat.c + '">' + r.cat.t + '</span></td>' +
+        '<td><button class="xb" data-xid="' + r.d.id + '">Mengapa?</button>' +
+          '<div class="xp" id="xp-' + r.d.id + '">' + explainText(r, ri+1) + '</div></td>' +
+      '</tr>';
+    }
+    var rtb = document.getElementById('rtbody');
+    if (rtb) {
+      rtb.innerHTML = rows;
+      var xbtns = rtb.querySelectorAll('.xb');
+      for (var xi = 0; xi < xbtns.length; xi++) {
+        (function(xid) {
+          xbtns[xi].addEventListener('click', function() { toggleExplain(xid); });
+        })(xbtns[xi].getAttribute('data-xid'));
+      }
+    }
+
+    // Best card
+    var best = res[0];
+    var bh = '<div class="bc">' +
+      '<div style="font-size:11px;font-weight:800;opacity:.7">Kandidat Terkuat Saat Ini (Provisional)</div>' +
+      '<div class="bcn">' + best.d.code + '</div>' +
+      '<div style="font-size:13px;opacity:.85">Skor: <strong>' + best.total + '/100</strong> · ' + best.cat.t + ' · ' + confLabel(best.conf) + '</div>' +
+      '<div class="bcchips">' +
+        '<span class="bcc">' + typeLabel(best.d.type) + '</span>' +
+        '<span class="bcc">HLA: ' + (best.d.hla||'?') + '</span>' +
+        '<span class="bcc">DSA: ' + (best.d.dsa||'?') + '</span>' +
+        '<span class="bcc">' + availLabel(best.d.avail) + '</span>' +
+      '</div>';
+    if (best.crit > 0) bh += '<div class="bcw">Skor tertinggi bukan pilihan final. Terdapat critical flag yang harus diselesaikan. Diskusikan di donor board.</div>';
+    if (res.length >= 2) {
+      bh += '<div style="margin-top:.7rem;background:rgba(255,255,255,.1);border-radius:var(--r);padding:.55rem .85rem">' +
+        '<div style="font-size:11px;font-weight:800;opacity:.7">Backup Donor Provisional</div>' +
+        '<div style="font-weight:700;font-size:13px;margin-top:.15rem">' + res[1].d.code + ' — Skor ' + res[1].total + ' · ' + res[1].cat.t + '</div></div>';
+    }
+    bh += '</div>';
+    var bc = document.getElementById('bestcard');
+    if (bc) bc.innerHTML = bh;
+
+    // Domain breakdown
+    var dh = '<div class="card"><div class="ct">Breakdown Skor per Domain</div>';
+    for (var ddi = 0; ddi < res.length; ddi++) {
+      var dr = res[ddi];
+      dh += '<div style="margin-bottom:.9rem"><strong style="font-size:13px">' + dr.d.code + '</strong>';
+      for (var dj = 0; dj < DLABELS.length; dj++) {
+        dh += '<div class="dr"><span class="dl">' + DLABELS[dj] + '</span><div class="dbw"><div class="dbf" style="width:' + dr.doms[dj] + '%;background:' + DCOLS[dj] + '"></div></div><span class="dp">' + dr.doms[dj] + '</span></div>';
+      }
+      dh += '</div><hr style="border:none;border-top:1px solid var(--border);margin:.6rem 0">';
+    }
+    dh += '</div>';
+    var ds = document.getElementById('domsec');
+    if (ds) ds.innerHTML = dh;
+
+    // Per-donor
+    var pdh = '';
+    for (var pdi = 0; pdi < res.length; pdi++) {
+      var pr = res[pdi];
+      var prc = pdi === 0 ? 'r1' : pdi === 1 ? 'r2' : pdi === 2 ? 'r3' : 'rn';
+      pdh += '<div class="card">' +
+        '<div style="display:flex;align-items:center;gap:.45rem;margin-bottom:.7rem;flex-wrap:wrap">' +
+          '<span class="rb ' + prc + '">' + (pdi+1) + '</span>' +
+          '<strong style="font-size:14px">' + pr.d.code + '</strong>' +
+          '<span class="chip cbl">' + typeLabel(pr.d.type) + '</span>' +
+          '<span class="' + pr.cat.c + '">' + pr.cat.t + '</span>' +
+          confBadge(pr.conf) +
+        '</div>' +
+        '<div style="display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:.7rem">' +
+          '<span class="chip cgr">HLA: ' + (pr.d.hla||'?') + '</span>' +
+          '<span class="chip cgr">DSA: ' + (pr.d.dsa||'?') + '</span>' +
+          '<span class="chip cgr">CMV: ' + (pr.d.cmv||'?') + '</span>' +
+          '<span class="chip cgr">ABO: ' + (pr.d.abo||'?') + '</span>' +
+          '<span class="chip cgr">Usia: ' + pr.d.age + ' th</span>' +
+          '<span class="chip cgr">' + availLabel(pr.d.avail) + '</span>' +
+        '</div>' +
+        '<div class="pc">' +
+          '<div class="pros"><h4>Kelebihan</h4><ul>' + pr.pros.map(function(p){return'<li>'+p+'</li>';}).join('') + '</ul></div>' +
+          '<div class="cons"><h4>Pertimbangan</h4><ul>' + pr.cons.map(function(c){return'<li>'+c+'</li>';}).join('') + '</ul></div>' +
+        '</div>';
+      var nc = pr.flags.filter(function(f){return f.l !== 'c';});
+      if (nc.length) {
+        pdh += '<div style="margin-top:.65rem">';
+        for (var nci = 0; nci < nc.length; nci++) {
+          var cls = nc[nci].l === 'h' ? 'fh' : 'fm';
+          pdh += '<div class="flag ' + cls + '"><span>!</span><div>' + nc[nci].m + '<br><span style="font-weight:400;font-size:12px">→ ' + nc[nci].a + '</span></div></div>';
+        }
+        pdh += '</div>';
+      }
+      if (pr.miss.length) {
+        pdh += '<div style="margin-top:.5rem;font-size:12px;color:var(--gray)">Data belum lengkap: ';
+        for (var mmi = 0; mmi < pr.miss.length; mmi++) pdh += '<span class="mb">' + pr.miss[mmi] + '</span>';
+        pdh += '</div>';
+      }
+      pdh += '</div>';
+    }
+    var pd = document.getElementById('pdsec');
+    if (pd) pd.innerHTML = pdh;
+
+    buildBoard(res, rc, urg);
+    buildNextSteps(res);
+    buildAudit(res, urg);
+  }
+
+  function buildBoard(res, rc, urg) {
+    var best = res[0];
+    var pcode = document.getElementById('p-code').value || 'Pasien tidak berkode';
+    var diag  = document.getElementById('p-diag').value || '—';
+    var um = {elective:'Elective/Stabil',urgent:'Urgent-High-Risk',relapsed:'Relapsed/Refractory',marrow:'Marrow Failure Urgent'};
+    var cl = rc === 'pos' ? 'Positif' : rc === 'neg' ? 'Negatif' : 'Tidak Diketahui';
+    var critList = best.flags.filter(function(f){return f.l==='c';}).map(function(f){return f.m;});
+    var sum = [
+      '<p class="sp"><strong>1. Konteks Pasien:</strong> ' + pcode + ', Diagnosis: ' + diag + ', Urgensi: ' + (um[urg]||'—') + ', CMV Resipien: ' + cl + '.</p>',
+      '<p class="sp"><strong>2. Donor Dibandingkan:</strong> ' + res.length + ' kandidat (' + res.map(function(r){return r.d.code;}).join(', ') + ').</p>',
+      '<p class="sp"><strong>3. Kandidat Terkuat Provisional:</strong> ' + best.d.code + ' — skor ' + best.total + '/100 (' + best.cat.t + ', ' + confLabel(best.conf) + ').</p>',
+      '<p class="sp"><strong>4. Alasan Memimpin:</strong> ' + best.pros.slice(0,3).join('; ') + '.</p>',
+      '<p class="sp"><strong>5. Isu Kritis:</strong> ' + (critList.length ? critList.join('; ') : 'Tidak ada critical flag pada kandidat terkuat') + '.</p>',
+      '<p class="sp"><strong>6. Backup Donor:</strong> ' + (res.length >= 2 ? res[1].d.code + ' (Skor ' + res[1].total + ')' : 'Belum ada backup donor') + '.</p>',
+      '<p class="sp"><strong>7. Catatan Donor Board:</strong> Ranking ini provisional dan harus dikonfirmasi melalui diskusi donor board dengan mempertimbangkan HLA confirmatory, DSA, graft source, cell dose, medical clearance donor, dan protokol pusat.</p>'
+    ];
+    var bc = document.getElementById('boardcont');
+    if (bc) bc.innerHTML = sum.join('');
+  }
+
+  function buildNextSteps(res) {
+    var steps = [];
+    var msSet = {};
+    for (var i = 0; i < res.length; i++) for (var j = 0; j < res[i].miss.length; j++) msSet[res[i].miss[j]] = true;
+    for (var m in msSet) { if (msSet.hasOwnProperty(m)) steps.push('Lengkapi data ' + m); }
+    var needDSA = false, needConf = false, needClear = false;
+    for (var k = 0; k < res.length; k++) {
+      if (res[k].d.dsa === 'uk' && (res[k].d.type === 'haplo' || res[k].d.hla !== 'sib')) needDSA = true;
+      if (res[k].d.confirm === 'no') needConf = true;
+      if (res[k].d.cleared !== 'yes') needClear = true;
+    }
+    if (needDSA) steps.push('Periksa DSA terutama pada donor haploidentical atau mismatch');
+    if (needConf) steps.push('Lakukan confirmatory HLA typing pada donor kandidat utama');
+    if (needClear) steps.push('Lengkapi medical clearance donor');
+    steps.push('Diskusikan ranking provisional ini di donor board/tim HSCT');
+    steps.push('Dapatkan informed consent pasien dan keluarga');
+    var ns = document.getElementById('nextsteps');
+    if (ns) { var h = ''; for (var s = 0; s < steps.length; s++) h += '<div class="stn">✓ ' + steps[s] + '</div>'; ns.innerHTML = h; }
+  }
+
+  function buildAudit(res, urg) {
+    var best = res[0];
+    var ac = 0, am = 0;
+    for (var i = 0; i < res.length; i++) { ac += res[i].crit; am += res[i].miss.length; }
+    var rows = [
+      ['Waktu Analisis', lastRes.time.toLocaleString('id-ID')],
+      ['Kode Pasien', document.getElementById('p-code').value || '—'],
+      ['Diagnosis', document.getElementById('p-diag').value || '—'],
+      ['Urgensi', urg || '—'],
+      ['CMV Resipien', document.getElementById('p-cmv').value || '—'],
+      ['Jumlah Donor', res.length],
+      ['Bobot', 'HLA '+wt.hla+'%, DQ '+wt.dq+'%, Graft '+wt.graft+'%, CMV '+wt.cmv+'%, ABO '+wt.abo+'%, Log '+wt.log+'%, Center '+wt.center+'%'],
+      ['Kandidat Rank 1', best.d.code + ' (Skor ' + best.total + ', ' + best.cat.t + ')'],
+      ['Confidence Rank 1', confLabel(best.conf)],
+      ['Missing Fields Total', am],
+      ['Critical Flags Total', ac],
+      ['Status Ranking', ac > 0 || am > 3 ? 'PROVISIONAL — data belum lengkap' : 'Provisional — tetap perlu donor board'],
+      ['Versi', 'drAisyiEduCare HSCT Donor Toolkit v2.0']
+    ];
+    var h = '';
+    for (var i = 0; i < rows.length; i++) h += '<div class="ar"><span class="al">' + rows[i][0] + '</span><span class="av">' + rows[i][1] + '</span></div>';
+    var ae = document.getElementById('auditcont');
+    if (ae) ae.innerHTML = h;
+  }
+
+  // ── VISUAL ────────────────────────────────────────────────────────
+  function buildVisual(res) {
+    if (!res.length) return;
+    var cx=200,cy=190,r=130,n=7;
+    var cols=['#1d4ed8','#15803d','#dc2626','#ca8a04','#7c3aed','#0891b2','#c2410c'];
+    var angs=[];
+    for(var ai=0;ai<n;ai++) angs.push(Math.PI*2*ai/n - Math.PI/2);
+    var grids='';
+    var gf=[0.25,0.5,0.75,1];
+    for(var gi=0;gi<gf.length;gi++){
+      var pts=[];
+      for(var gj=0;gj<n;gj++) pts.push((cx+r*gf[gi]*Math.cos(angs[gj])).toFixed(1)+','+(cy+r*gf[gi]*Math.sin(angs[gj])).toFixed(1));
+      grids+='<polygon points="'+pts.join(' ')+'" fill="none" stroke="#e2e8f0" stroke-width="1"/>';
+    }
+    var axes='',lbls='';
+    var sl2=['HLA/DSA','Kualitas','Graft','CMV','ABO','Logistik','Center'];
+    for(var li=0;li<n;li++){
+      var ang=angs[li];
+      axes+='<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+r*Math.cos(ang)).toFixed(1)+'" y2="'+(cy+r*Math.sin(ang)).toFixed(1)+'" stroke="#cbd5e1" stroke-width="1"/>';
+      lbls+='<text x="'+(cx+(r+24)*Math.cos(ang)).toFixed(1)+'" y="'+(cy+(r+24)*Math.sin(ang)).toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#475569" font-family="Segoe UI,sans-serif">'+sl2[li]+'</text>';
+    }
+    var polys='';
+    for(var pi=0;pi<res.length;pi++){
+      var pts2=[];
+      for(var pj=0;pj<n;pj++){
+        var rad=r*res[pi].doms[pj]/100;
+        pts2.push((cx+rad*Math.cos(angs[pj])).toFixed(1)+','+(cy+rad*Math.sin(angs[pj])).toFixed(1));
+      }
+      polys+='<polygon points="'+pts2.join(' ')+'" fill="'+cols[pi%cols.length]+'" fill-opacity=".12" stroke="'+cols[pi%cols.length]+'" stroke-width="2"/>';
+    }
+    var leg='';
+    for(var lgi=0;lgi<res.length;lgi++) leg+='<rect x="420" y="'+(40+lgi*22)+'" width="12" height="12" rx="2" fill="'+cols[lgi%cols.length]+'" fill-opacity=".8"/><text x="436" y="'+(52+lgi*22)+'" font-size="11" fill="#1e293b" font-family="Segoe UI,sans-serif" dominant-baseline="middle">'+res[lgi].d.code+' ('+res[lgi].total+')</text>';
+    var rw=document.getElementById('radarw');
+    if(rw) rw.innerHTML='<svg width="100%" viewBox="0 0 560 400" xmlns="http://www.w3.org/2000/svg" style="max-width:560px">'+grids+axes+lbls+polys+leg+'</svg>';
+
+    // Comparison table
+    var fields=[
+      ['Jenis',function(r){return typeLabel(r.d.type);}],
+      ['HLA',function(r){return r.d.hla||'?';}],
+      ['DSA',function(r){return r.d.dsa||'?';}],
+      ['DPB1',function(r){return r.d.dpb1||'?';}],
+      ['CMV',function(r){return r.d.cmv||'?';}],
+      ['ABO',function(r){return r.d.abo||'?';}],
+      ['Usia',function(r){return r.d.age+' th';}],
+      ['Tersedia',function(r){return availLabel(r.d.avail);}],
+      ['Graft Src',function(r){return r.d.gsrc||'?';}],
+      ['Cleared',function(r){return r.d.cleared||'?';}],
+      ['Skor HLA/DSA',function(r){return r.doms[0];}],
+      ['Skor Kualitas',function(r){return r.doms[1];}],
+      ['Skor Graft',function(r){return r.doms[2];}],
+      ['Skor CMV',function(r){return r.doms[3];}],
+      ['Skor ABO',function(r){return r.doms[4];}],
+      ['Skor Logistik',function(r){return r.doms[5];}],
+      ['Skor Center',function(r){return r.doms[6];}],
+      ['TOTAL',function(r){return'<strong>'+r.total+'</strong>';}],
+      ['Missing',function(r){return r.miss.length;}],
+      ['Critical',function(r){return r.crit;}]
+    ];
+    var th='<th style="text-align:left;padding:.38rem .6rem;font-size:11px;color:var(--gray);font-weight:800;border:1px solid var(--border);background:#f8faff">Parameter</th>'+
+      res.map(function(rr){return'<th style="padding:.38rem .6rem;font-size:11px;font-weight:800;border:1px solid var(--border);background:#f8faff;text-align:center">'+rr.d.code+'</th>';}).join('');
+    var tr2='';
+    for(var fii=0;fii<fields.length;fii++){
+      tr2+='<tr><td style="padding:.38rem .6rem;font-size:12px;font-weight:600;color:var(--gray);border:1px solid var(--border)">'+fields[fii][0]+'</td>'+
+        res.map(function(rr){return'<td style="padding:.38rem .6rem;font-size:12px;border:1px solid var(--border);text-align:center">'+fields[fii][1](rr)+'</td>';}).join('')+'</tr>';
+    }
+    var ct2=document.getElementById('comptbl');
+    if(ct2) ct2.innerHTML='<table style="width:100%;border-collapse:collapse"><thead><tr>'+th+'</tr></thead><tbody>'+tr2+'</tbody></table>';
+
+    // Flag summary
+    var fsh='<div class="g3">';
+    for(var fsi=0;fsi<res.length;fsi++){
+      var fr=res[fsi];
+      var cr2=fr.flags.filter(function(f){return f.l==='c';}).length;
+      var hi2=fr.flags.filter(function(f){return f.l==='h';}).length;
+      var mo2=fr.flags.filter(function(f){return f.l==='m';}).length;
+      fsh+='<div class="card" style="margin-bottom:0"><strong style="font-size:13px">'+fr.d.code+'</strong>'+
+        '<div style="display:flex;gap:.35rem;margin-top:.35rem;flex-wrap:wrap">'+
+        (cr2?'<span class="chip crd">🔴 '+cr2+' Critical</span>':'')+
+        (hi2?'<span class="chip cor">🟠 '+hi2+' High</span>':'')+
+        (mo2?'<span class="chip cgr">🟡 '+mo2+' Mod</span>':'')+
+        (!cr2&&!hi2&&!mo2?'<span class="chip cgn">OK</span>':'')+
+        '</div>'+
+        (fr.miss.length?'<div style="margin-top:.25rem;font-size:11px;color:var(--gray)">Missing: '+fr.miss.length+' field</div>':'')+
+      '</div>';
+    }
+    fsh+='</div>';
+    var fs2=document.getElementById('flagsum');
+    if(fs2) fs2.innerHTML=fsh;
+  }
+
+  // ── SCENARIO ──────────────────────────────────────────────────────
+  function buildScenario(res) {
+    if (!res.length) return;
+    var scenarios = [
+      {title:'Transplantasi Urgent (2-4 Minggu)',desc:'Urgensi tinggi meningkatkan prioritas ketersediaan segera.',fn:function(r){return Math.round(r.total*0.7+r.doms[5]*0.3);},note:'Apakah donor yang tersedia segera memiliki safety minimal yang memadai?'},
+      {title:'Non-Malignant Stabil (Non-Urgent)',desc:'Dapat mengutamakan HLA terbaik, usia donor muda, dan kualitas jangka panjang.',fn:function(r){return Math.round(r.doms[0]*0.45+r.doms[1]*0.2+r.doms[2]*0.15+r.doms[3]*0.1+r.doms[4]*0.05+r.doms[5]*0.05);},note:'Prioritas: HLA kompatibilitas optimal dan kualitas donor jangka panjang.'},
+      {title:'CMV-Negatif Resipien',desc:'D+/R- merupakan risiko transmisi CMV primer.',fn:function(r){var p=r.d.cmv==='pos'?-20:r.d.cmv==='neg'?10:0;return Math.min(100,Math.max(0,r.total+p));},note:'Diskusi wajib dengan tim infeksi bila D+/R- tidak dapat dihindari.'},
+      {title:'Tidak Tersedia MSD — Bandingkan MUD/Haplo/Cord',desc:'DSA, platform pusat, dan cell dose menjadi kritis.',fn:function(r){var a=r.d.type==='msd'?-50:0;return Math.max(0,r.total+a);},note:'Apakah pusat memiliki platform haplo atau pengalaman cord blood?'}
+    ];
+    var html = '';
+    for (var si = 0; si < scenarios.length; si++) {
+      var sc2 = scenarios[si];
+      var ranked = [];
+      for (var ri = 0; ri < res.length; ri++) ranked.push({r:res[ri], adj:sc2.fn(res[ri])});
+      ranked.sort(function(a,b){return b.adj-a.adj;});
+      html += '<div class="scc"><h4>Skenario ' + (si+1) + ': ' + sc2.title + '</h4>' +
+        '<p style="font-size:12px;color:var(--gray);margin-bottom:.5rem">' + sc2.desc + '</p>' +
+        '<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.45rem">';
+      for (var ri2 = 0; ri2 < ranked.length; ri2++) html += '<span class="chip ' + (ri2===0?'cbl':'cgr') + '">' + (ri2+1) + '. ' + ranked[ri2].r.d.code + ' (' + ranked[ri2].adj + ')</span>';
+      html += '</div><p style="font-size:12px;color:#1e40af">Pertanyaan Donor Board: ' + sc2.note + '</p></div>';
+    }
+    var sc3 = document.getElementById('scencont');
+    if (sc3) sc3.innerHTML = html;
+  }
+
+  // ── PEARLS ────────────────────────────────────────────────────────
+  function buildPearls(res) {
+    var items = [
+      {i:'🧬',t:'HLA sebagai Faktor Sentral, Bukan Absolut',b:'Kompatibilitas HLA tetap sentral, namun pemilihan donor harus mengintegrasikan urgency, ketersediaan, DSA, graft source, dan platform pusat. Tidak ada satu faktor tunggal.'},
+      {i:'🔬',t:'DSA Wajib Diperiksa pada Haplo dan Mismatch',b:'DSA harus diperiksa terutama saat mempertimbangkan donor haploidentical atau mismatch. DSA kuat positif meningkatkan risiko graft failure dan perlu diselesaikan sebelum maju.'},
+      {i:'🍼',t:'Cell Dose Cord Blood adalah Faktor Kritis',b:'Pemilihan cord blood memerlukan cell dose yang adekuat — HLA match saja tidak cukup. TNC lebih dari 3.5x10e7/kg umumnya diinginkan. Dose suboptimal dapat menyebabkan engraftment delay.'},
+      {i:'🩸',t:'ABO Mismatch Biasanya Dapat Dikelola',b:'ABO mismatch umumnya dapat diatasi dengan processing yang tepat, namun memerlukan koordinasi transfusion medicine sejak awal. Bukan kontraindikasi absolut.'},
+      {i:'🦠',t:'CMV D+/R- Memerlukan Strategi Mitigasi',b:'CMV D+/R- meningkatkan risiko infeksi CMV primer dan memerlukan monitoring atau profilaksis proaktif. Diskusi dengan tim infeksi penting.'},
+      {i:'👶',t:'Donor Muda Lebih Diutamakan Bila Faktor Lain Setara',b:'Usia donor yang lebih muda sering dikaitkan dengan kualitas stem cell lebih baik dan outcome yang lebih baik — terutama bila faktor mayor lain sebanding.'},
+      {i:'🏅',t:'MSD Sering Pertama Dipertimbangkan, Namun Bukan Absolut',b:'MSD umumnya menjadi pembanding utama bila tersedia dan donor sehat. Namun kondisi donor, CMV, ABO, urgency, dan konteks pasien tetap harus dievaluasi.'},
+      {i:'🚫',t:'Skor Tertinggi Tidak Menghapus Critical Red Flags',b:'Donor dengan skor numerik tertinggi bukan berarti pilihan final bila terdapat critical flag yang belum diselesaikan.'},
+      {i:'🤝',t:'Donor Selection adalah Keputusan Donor Board Multidisiplin',b:'Tidak ada algoritma yang dapat menggantikan diskusi donor board multidisiplin. Gunakan toolkit ini sebagai kerangka diskusi awal, bukan keputusan final.'},
+      {i:'⚡',t:'Urgency Pasien Mempengaruhi Prioritas Donor',b:'Pada relapsed/refractory atau marrow failure berat, ketersediaan donor segera dapat menjadi faktor penentu kritis.'}
+    ];
+    var html = '';
+    for (var i = 0; i < items.length; i++) {
+      html += '<div class="pl"><span style="font-size:19px;margin-top:2px;flex-shrink:0">' + items[i].i + '</span>' +
+        '<div><strong style="font-size:13px;display:block;margin-bottom:.18rem">' + items[i].t + '</strong>' +
+        '<span style="font-size:12.5px;color:var(--gray)">' + items[i].b + '</span></div></div>';
+    }
+    var pc = document.getElementById('pearlscont');
+    if (pc) pc.innerHTML = html;
+  }
+
+  // ── SAFETY ────────────────────────────────────────────────────────
+  function buildSafety() {
+    var items = [
+      {t:'Scoring Bersifat Heuristik',b:'Bobot dan algoritma scoring bersifat edukatif, tidak berasal dari model yang tervalidasi klinis. Skor tidak boleh digunakan sebagai satu-satunya dasar pemilihan donor.'},
+      {t:'HLA Typing Lengkap Wajib Diverifikasi',b:'Toolkit tidak menggantikan allele-level HLA typing, confirmatory typing, atau pemeriksaan laboratorium HLA sesungguhnya.'},
+      {t:'DSA Harus Diperiksa di Laboratorium',b:'Status DSA harus dikonfirmasi oleh laboratorium HLA yang kompeten. Input DSA hanya berdasarkan data yang dimasukkan pengguna.'},
+      {t:'Medical Clearance Tidak Dinilai Toolkit',b:'Medical clearance harus dilakukan oleh dokter dengan evaluasi klinis langsung.'},
+      {t:'Infectious Screening Harus Dilakukan Laboratorium',b:'Skrining infeksi donor harus dilakukan oleh laboratorium terakreditasi. Toolkit tidak memverifikasi hasil laboratorium.'},
+      {t:'Graft Source dan Cell Dose Perlu Konfirmasi',b:'Estimasi CD34 dan TNC harus dikonfirmasi tim cell processing berdasarkan metode koleksi aktual.'},
+      {t:'Protokol Pusat Sangat Mempengaruhi Keputusan',b:'Setiap pusat HSCT memiliki protokol dan kapabilitas yang berbeda. Ranking tidak mempertimbangkan kapabilitas spesifik pusat secara akurat.'},
+      {t:'Tidak Menggantikan Donor Board',b:'Pemilihan donor akhir harus melalui donor board/tim HSCT multidisiplin.'},
+      {t:'Data Privasi',b:'Jangan memasukkan nama lengkap, nomor rekam medis, atau identitas pribadi. Gunakan kode terde-identifikasi.'},
+      {t:'Bukan Dokumen Medis Legal',b:'Output toolkit bukan dokumen medis legal dan tidak dapat digunakan sebagai dasar keputusan klinis tunggal.'}
+    ];
+    var html = '';
+    for (var i = 0; i < items.length; i++) {
+      html += '<div class="pl"><span style="font-size:17px;margin-top:2px;flex-shrink:0">🛡️</span>' +
+        '<div><strong style="font-size:13px;display:block;margin-bottom:.15rem">' + items[i].t + '</strong>' +
+        '<span style="font-size:12.5px;color:var(--gray)">' + items[i].b + '</span></div></div>';
+    }
+    var sc3 = document.getElementById('safetycont');
+    if (sc3) sc3.innerHTML = html;
+
+    var roles = [
+      {r:'Tim HSCT / Donor Board',g:'Gunakan ranking sebagai bahan diskusi awal. Final donor decision harus ditetapkan di donor board.'},
+      {r:'Koordinator Donor',g:'Tracking ketersediaan dan backup donor bila kandidat utama tidak tersedia.'},
+      {r:'Laboratorium HLA',g:'Verifikasi HLA allele-level, DSA, DPB1. Jangan terima input klinis sebagai hasil laboratorium.'},
+      {r:'Tim Infeksi',g:'Tinjau CMV D/R serology. Identifikasi D+/R- dan rencanakan strategi profilaksis.'},
+      {r:'Transfusion Medicine',g:'Tinjau ABO mismatch dan rencanakan protokol depletion pre-transplant.'},
+      {r:'Cell Processing',g:'Konfirmasi estimasi CD34/TNC dengan koleksi aktual. Evaluasi feasibility cord blood.'}
+    ];
+    var rh = '';
+    for (var j = 0; j < roles.length; j++) {
+      rh += '<div class="pl"><span style="font-size:16px;margin-top:2px;flex-shrink:0">👥</span>' +
+        '<div><strong style="font-size:13px;display:block;margin-bottom:.12rem">' + roles[j].r + '</strong>' +
+        '<span style="font-size:12.5px;color:var(--gray)">' + roles[j].g + '</span></div></div>';
+    }
+    var rg = document.getElementById('roleguide');
+    if (rg) rg.innerHTML = rh;
+  }
+
+  function resetAll() {
+    donors = []; donorCount = 0;
+    var tb = document.getElementById('dtbody');
+    if (tb) tb.innerHTML = '';
+    var ids = ['p-code','p-diag','p-diagcat','p-age','p-bw','p-cmv','p-urgency','p-txtype','p-graft'];
+    for (var i = 0; i < ids.length; i++) { var el = document.getElementById(ids[i]); if (el) el.value = ''; }
+    resetWeights();
+    updateDCnt();
+    var ie = document.getElementById('inp-err');
+    if (ie) ie.textContent = '';
+    lastRes = null;
+    goTab('input');
+  }
+
+  function doPrint() {
+    var pd = document.getElementById('pdate');
+    if (pd) pd.textContent = 'Tanggal: ' + (lastRes ? lastRes.time.toLocaleString('id-ID') : new Date().toLocaleString('id-ID')) + ' | drAisyiEduCare HSCT Donor Toolkit v2.0';
+    window.print();
+  }
+
+  // ── INIT ──────────────────────────────────────────────────────────
+  function init() {
+    // Role chips
+    var ROLE_INFO = {
+      hsct:     {title:'Tim HSCT — Donor Board', body:'Gunakan ranking sebagai bahan diskusi awal. Keputusan final donor hanya di donor board multidisiplin. Perhatikan confidence level dan critical flags sebelum finalisasi.'},
+      koor:     {title:'Koordinator — Donor Search & Backup', body:'Pantau ketersediaan donor dan status logistik. Identifikasi backup donor bila kandidat utama tidak tersedia atau ada hambatan. Koordinasi timeline dengan urgency pasien.'},
+      hla:      {title:'Lab HLA — Allele, DSA, DPB1', body:'Verifikasi input HLA match level, allele-level typing, confirmatory typing, DSA, dan DPB1. Data toolkit hanya berdasarkan input klinis — hasil laboratorium tetap menjadi acuan utama.'},
+      infeksi:  {title:'Infeksi — CMV/EBV Risk', body:'Tinjau status CMV dan EBV donor vs resipien. Identifikasi kombinasi D+/R− dan rencanakan strategi monitoring/profilaksis. Konsultasikan sebelum finalisasi donor.'},
+      transfusi:{title:'Transfusi — ABO Processing', body:'Tinjau ABO mismatch pada setiap donor. Major/bidirectional mismatch memerlukan rencana RBC dan/atau plasma depletion. Koordinasi protokol pre-transplant sedini mungkin.'},
+      cell:     {title:'Cell Processing — Cell Dose', body:'Konfirmasi estimasi CD34 dan TNC dengan protokol koleksi aktual. Untuk cord blood, nilai TNC ≥3.5×10⁷/kg umumnya diinginkan. Evaluasi feasibility koleksi dan jadwal processing.'}
+    };
+    var roleChips = document.querySelectorAll('[data-role]');
+    var rolePopup = document.getElementById('role-popup');
+    var roleTitle = document.getElementById('role-title');
+    var roleBody  = document.getElementById('role-body');
+    var roleClose = document.getElementById('role-close');
+    for (var ri = 0; ri < roleChips.length; ri++) {
+      (function(chip) {
+        chip.addEventListener('click', function() {
+          var key = chip.getAttribute('data-role');
+          var info = ROLE_INFO[key];
+          if (!info) return;
+          roleTitle.textContent = info.title;
+          roleBody.textContent  = info.body;
+          rolePopup.style.display = 'block';
+          // highlight active chip
+          for (var ci = 0; ci < roleChips.length; ci++) roleChips[ci].style.background = '';
+          chip.style.background = '#bfdbfe';
+          chip.style.color = '#1e3a8a';
+        });
+      })(roleChips[ri]);
+    }
+    if (roleClose) roleClose.addEventListener('click', function() {
+      rolePopup.style.display = 'none';
+      for (var ci = 0; ci < roleChips.length; ci++) { roleChips[ci].style.background = ''; roleChips[ci].style.color = ''; }
+    });
+
+    // Nav tabs
+    var navBtns = document.querySelectorAll('.ntab');
+    for (var i = 0; i < navBtns.length; i++) {
+      (function(btn) {
+        btn.addEventListener('click', function() { goTab(btn.getAttribute('data-tab')); });
+      })(navBtns[i]);
+    }
+    // Action buttons
+    var btnAdd = document.getElementById('btnAdd');
+    if (btnAdd) btnAdd.addEventListener('click', addDonor);
+    var btnRun = document.getElementById('btnRun');
+    if (btnRun) btnRun.addEventListener('click', runAnalysis);
+    var btnReset = document.getElementById('btnReset');
+    if (btnReset) btnReset.addEventListener('click', resetAll);
+    var btnPrint = document.getElementById('btnPrint');
+    if (btnPrint) btnPrint.addEventListener('click', doPrint);
+    var btnResetW = document.getElementById('btnResetW');
+    if (btnResetW) btnResetW.addEventListener('click', resetWeights);
+
+    initWFields();
+    buildPearls([]);
+    buildSafety();
+    addDonor();
+    addDonor();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+</script>
+</body>
+</html>

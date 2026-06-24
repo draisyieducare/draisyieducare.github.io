@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>drAisyi EduCare | Cytopenia & Toxicity Monitor v2</title>
+<style>
+:root{--primary:#1a3a5c;--teal:#2a9d8f;--gold:#e9c46a;--bg:#f0f4f8;--card:#fff;--border:#dce3eb;--text:#1e293b;--muted:#64748b;--red:#dc2626;--orange:#ea580c;--yellow:#ca8a04;--green:#16a34a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.hdr{background:linear-gradient(135deg,var(--primary),#0f2744);color:#fff;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.hdr-in{max-width:1100px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:12px}
+.logo{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--gold));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;flex-shrink:0;box-shadow:0 0 0 3px rgba(255,255,255,.2)}
+.bn{font-size:18px;font-weight:800}.bn span{color:var(--gold)}
+.bs{font-size:10px;color:rgba(255,255,255,.6);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.vb{font-size:10px;background:var(--gold);color:var(--primary);padding:2px 7px;border-radius:10px;font-weight:800;margin-left:5px}
+.tt{font-size:12px;color:rgba(255,255,255,.85);background:rgba(255,255,255,.1);padding:4px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.2);white-space:nowrap;margin-left:auto}
+.tabs{background:var(--primary);display:flex;max-width:1100px;margin:0 auto;padding:0 22px;gap:4px;overflow-x:auto}
+.tab{padding:10px 16px;font-size:13px;font-weight:600;color:rgba(255,255,255,.6);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab:hover{color:#fff}
+.main{max-width:1100px;margin:0 auto;padding:18px 22px}
+.sec{display:none}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+@media(max-width:700px){.g2,.g3{grid-template-columns:1fr}}
+.card{background:var(--card);border-radius:11px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border:1px solid var(--border)}
+.ct{font-size:12px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.ci{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.ig{display:flex;flex-direction:column;gap:8px}
+.ir{display:flex;align-items:center;gap:7px}
+.ir label{flex:1;font-size:12px;color:var(--text);font-weight:500;line-height:1.3}
+.rh{font-size:10px;color:var(--muted);font-weight:400;display:block}
+.ir .un{font-size:10px;color:var(--muted);width:66px;text-align:right;flex-shrink:0}
+.ir input,.ir select{width:98px;padding:5px 7px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;background:#f8fafc;text-align:right;transition:border-color .2s;color:var(--text);flex-shrink:0}
+.ir select{text-align:left;width:118px}
+.ir input:focus,.ir select:focus{outline:none;border-color:var(--teal);background:#fff}
+.dv{height:1px;background:var(--border);margin:3px 0}
+.cg{display:flex;flex-direction:column;gap:6px}
+.cr{display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer}
+.cr input[type=checkbox]{width:14px;height:14px;accent-color:var(--teal);cursor:pointer;flex-shrink:0}
+.cr span{cursor:pointer;color:var(--text)}
+.sl{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.gate{border-radius:9px;padding:11px 13px;margin-bottom:8px;display:flex;align-items:flex-start;gap:9px;border-left:5px solid}
+.g-crit{background:#fef2f2;border-color:var(--red)}
+.g-high{background:#fff7ed;border-color:var(--orange)}
+.g-mod{background:#fefce8;border-color:var(--yellow)}
+.g-ok{background:#f0fdf4;border-color:var(--green)}
+.g-info{background:#eff6ff;border-color:#3b82f6}
+.gi{font-size:17px;flex-shrink:0;margin-top:1px}
+.gc{flex:1}
+.gt{font-weight:700;font-size:12px;margin-bottom:2px}
+.gb{font-size:11px;line-height:1.55}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.b0{background:#f0fdf4;color:var(--green);border:1px solid #86efac}
+.b1{background:#fefce8;color:var(--yellow);border:1px solid #fde047}
+.b2{background:#fff7ed;color:var(--orange);border:1px solid #fdba74}
+.b3{background:#fef2f2;color:var(--red);border:1px solid #fca5a5}
+.b4{background:#4c1d95;color:#fff;border:1px solid #7c3aed}
+.bna{background:#f1f5f9;color:var(--muted);border:1px solid #cbd5e1}
+.btls{background:#dc2626;color:#fff;border:1px solid #dc2626}
+.brisk{background:#ea580c;color:#fff;border:1px solid #ea580c}
+.bneg{background:#f0fdf4;color:var(--green);border:1px solid #86efac}
+.rc{background:var(--card);border-radius:11px;padding:15px;border:1px solid var(--border);margin-bottom:11px}
+.rch{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;flex-wrap:wrap;gap:7px}
+.rct{font-size:13px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:5px}
+.rl{list-style:none;display:flex;flex-direction:column;gap:5px;margin-top:7px}
+.rl li{font-size:12px;padding:6px 9px;background:#f8fafc;border-radius:6px;border-left:3px solid var(--border);display:flex;align-items:flex-start;gap:5px;line-height:1.45}
+.rl li.wl{border-color:var(--orange);background:#fff7ed}
+.rl li.cl{border-color:var(--red);background:#fef2f2}
+.rl li.ol{border-color:var(--green);background:#f0fdf4}
+.rl li.il{border-color:#3b82f6;background:#eff6ff}
+.rl li .li{flex-shrink:0;font-size:12px;margin-top:1px}
+.sg{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-bottom:13px}
+@media(max-width:700px){.sg{grid-template-columns:repeat(3,1fr)}}
+.sb{border-radius:9px;padding:11px 9px;text-align:center;border:1px solid var(--border)}
+.sb .sl2{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:3px}
+.sb .sv{font-size:19px;font-weight:800}
+.sb .sn{font-size:9px;color:var(--muted);margin-top:2px}
+.sok{background:#f0fdf4}.sok .sv{color:var(--green)}
+.swn{background:#fff7ed}.swn .sv{color:var(--orange)}
+.scr{background:#fef2f2}.scr .sv{color:var(--red)}
+.sna{background:#f1f5f9}.sna .sv{color:var(--muted);font-size:13px}
+.mb{background:#fffbeb;border:1.5px solid #f59e0b;border-radius:9px;padding:11px 13px;margin-bottom:13px;font-size:12px;color:#92400e}
+.mb strong{font-size:13px;display:block;margin-bottom:3px}
+.bta{width:100%;padding:12px;background:linear-gradient(135deg,var(--teal),#1a6b62);color:#fff;font-size:14px;font-weight:700;border:none;border-radius:11px;cursor:pointer;margin-top:7px;box-shadow:0 4px 12px rgba(42,157,143,.3);transition:all .2s}
+.bta:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(42,157,143,.4)}
+.btr{width:100%;padding:8px;background:transparent;color:var(--muted);font-size:12px;font-weight:600;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;margin-top:5px;transition:all .2s}
+.btr:hover{background:var(--bg);color:var(--text)}
+.bpr{padding:7px 14px;background:var(--primary);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer}
+.oh{background:linear-gradient(135deg,var(--primary),#0f2744);color:#fff;border-radius:11px;padding:13px 17px;margin-bottom:13px;display:flex;align-items:center;gap:11px}
+.os{font-size:11px;color:rgba(255,255,255,.6);margin-top:2px}
+.disc{font-size:11px;color:var(--muted);text-align:center;margin-top:16px;padding:11px;background:var(--card);border-radius:7px;border:1px solid var(--border)}
+.ip{display:inline-block;font-size:10px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:5px;padding:2px 6px;margin-left:4px;font-weight:600}
+@media print{.tabs,.bta,.btr,.bpr,.sec:not(.pactive){display:none!important}body{background:#fff}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-in">
+    <div class="logo">dA</div>
+    <div>
+      <div class="bn">drAisyi <span>EduCare</span><span class="vb">v2.1</span></div>
+      <div class="bs">Pediatric Oncology Clinical Decision Support</div>
+    </div>
+    <div class="tt">🧪 Cytopenia, TLS &amp; Organ Toxicity Monitor</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-tab="input">📋 Input Data</div>
+  <div class="tab" data-tab="output">📊 Hasil Analisis</div>
+  <div class="tab" data-tab="panduan">📖 Panduan Klinis</div>
+</div>
+
+<div class="main">
+
+<!-- INPUT -->
+<div class="sec" id="s-input">
+
+  <div class="card" style="margin-bottom:13px;border:2px solid var(--teal)">
+    <div class="ct"><div class="ci" style="background:#d1fae5">👤</div>Data Pasien <span class="ip">Wajib untuk dosis berbasis BB</span></div>
+    <div class="g3">
+      <div class="ig">
+        <div class="ir"><label>Berat Badan<span class="rh">Untuk kalkulasi dosis</span></label><input type="number" id="bb" step="0.1" placeholder="—"><div class="un">kg</div></div>
+        <div class="ir"><label>Tinggi Badan<span class="rh">Opsional / BSA</span></label><input type="number" id="tb" step="0.1" placeholder="—"><div class="un">cm</div></div>
+      </div>
+      <div class="ig">
+        <div class="ir"><label>Usia<span class="rh">Untuk ULN kreatinin otomatis</span></label><input type="number" id="usia" step="0.1" placeholder="—"><div class="un">tahun</div></div>
+        <div class="ir"><label>Kreatinin Baseline<span class="rh">Sebelum terapi</span></label><input type="number" id="creat_base" step="0.01" placeholder="—"><div class="un">mg/dL</div></div>
+      </div>
+      <div>
+        <div class="sl" style="margin-bottom:6px">Status G6PD &amp; Protokol</div>
+        <div class="cg">
+          <label class="cr"><input type="checkbox" id="g6pd_def"><span>Defisiensi G6PD (kontraindikasi rasburicase)</span></label>
+          <label class="cr"><input type="checkbox" id="pr_all"><span>ALL Induksi</span></label>
+          <label class="cr"><input type="checkbox" id="pr_aml"><span>AML</span></label>
+          <label class="cr"><input type="checkbox" id="pr_lymphoma"><span>Limfoma (bulky)</span></label>
+          <label class="cr"><input type="checkbox" id="pr_hsct"><span>Pasca HSCT</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2" style="margin-bottom:13px">
+
+    <div class="card">
+      <div class="ct"><div class="ci" style="background:#fee2e2">🩸</div>Hematologi (Cytopenia)</div>
+      <div class="ig">
+        <div class="ir"><label>Hemoglobin<span class="rh">Normal: ≥11 g/dL</span></label><input type="number" id="hb" step="0.1" placeholder="belum diisi"><div class="un">g/dL</div></div>
+        <div class="dv"></div>
+        <div class="ir"><label>Leukosit<span class="rh">Normal: 4–10 ×10³/µL</span></label><input type="number" id="wbc" step="0.1" placeholder="belum diisi"><div class="un">×10³/µL</div></div>
+        <div class="dv"></div>
+        <div class="ir"><label>ANC<span class="rh">Grade 4: &lt;500/µL</span></label><input type="number" id="anc" step="1" placeholder="belum diisi"><div class="un">/µL</div></div>
+        <div class="ir"><label>LLN ANC Lokal<span class="rh">Default CTCAE: 1500</span></label><input type="number" id="anc_lln" value="1500" step="1" placeholder="1500"><div class="un">/µL</div></div>
+        <div class="dv"></div>
+        <div class="ir"><label>Trombosit<span class="rh">Grade 4: &lt;25×10³</span></label><input type="number" id="plt" step="1" placeholder="belum diisi"><div class="un">×10³/µL</div></div>
+        <div class="dv"></div>
+        <div class="ir"><label>Durasi Neutropenia<span class="rh">Prolonged: ≥14 hari</span></label><input type="number" id="neut_days" step="1" placeholder="—"><div class="un">hari</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ct"><div class="ci" style="background:#fde68a">⚗️</div>Koagulasi — Estimasi ISTH DIC</div>
+      <div class="ig">
+        <div class="ir"><label>PT Pasien<span class="rh">Wajib untuk skor DIC</span></label><input type="number" id="pt" step="0.1" placeholder="belum diisi"><div class="un">detik</div></div>
+        <div class="ir"><label>PT Kontrol Lab<span class="rh">Selisih vs kontrol</span></label><input type="number" id="pt_ctrl" value="13" step="0.1" placeholder="13"><div class="un">detik</div></div>
+        <div class="dv"></div>
+        <div class="ir"><label>aPTT<span class="rh">Normal: 25–40 detik</span></label><input type="number" id="aptt" step="0.1" placeholder="belum diisi"><div class="un">detik</div></div>
+        <div class="dv"></div>
+        <div class="ir"><label>Fibrinogen<span class="rh">Kritis: &lt;100 mg/dL</span></label><input type="number" id="fibrinogen" step="1" placeholder="belum diisi"><div class="un">mg/dL</div></div>
+        <div class="dv"></div>
+        <div class="ir"><label>D-dimer (kategori lab)</label>
+          <select id="ddimer_cat">
+            <option value="0">Normal</option>
+            <option value="2">Meningkat sedang</option>
+            <option value="3">Meningkat kuat</option>
+          </select>
+        </div>
+        <div class="dv"></div>
+        <div class="ir"><label>INR<span class="rh">Normal: &lt;1.5</span></label><input type="number" id="inr" step="0.01" placeholder="—"><div class="un">rasio</div></div>
+        <div class="dv"></div>
+        <div class="sl" style="margin-top:4px">Kondisi Klinis</div>
+        <div class="cg" style="margin-top:4px">
+          <label class="cr"><input type="checkbox" id="cx_bleeding"><span>Perdarahan aktif</span></label>
+          <label class="cr"><input type="checkbox" id="cx_dic"><span>Klinis mendukung DIC</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ct"><div class="ci" style="background:#d1fae5">🧬</div>TLS (Kriteria Cairo-Bishop Pediatrik)</div>
+      <div class="ig">
+        <div class="ir"><label>Asam Urat<span class="rh">Kriteria: ≥8 mg/dL</span></label><input type="number" id="uric" step="0.1" placeholder="belum diisi"><div class="un">mg/dL</div></div>
+        <div class="ir"><label>Uric Acid Baseline<span class="rh">Untuk perubahan ≥25%</span></label><input type="number" id="uric_base" step="0.1" placeholder="—"><div class="un">mg/dL</div></div>
+        <div class="dv"></div>
+        <div class="ir"><label>LDH<span class="rh">&gt;500 U/L = tinggi</span></label><input type="number" id="ldh" step="1" placeholder="belum diisi"><div class="un">U/L</div></div>
+        <div class="dv"></div>
+        <div class="ir"><label>Kalium (K⁺)<span class="rh">Kriteria: ≥6.0 mEq/L</span></label><input type="number" id="kalium" step="0.1" placeholder="belum diisi"><div class="un">mEq/L</div></div>
+        <div class="dv"></div>
+        <div class="ir"><label>Fosfor<span class="rh">Kriteria anak: ≥6.5 mg/dL</span></label><input type="number" id="phos" step="0.1" placeholder="belum diisi"><div class="un">mg/dL</div></div>
+        <div class="ir"><label>Fosfor Baseline<span class="rh">Untuk perubahan ≥25%</span></label><input type="number" id="phos_base" step="0.1" placeholder="—"><div class="un">mg/dL</div></div>
+        <div class="dv"></div>
+        <div class="ir"><label>Kalsium (Ca²⁺)<span class="rh">Kriteria: ≤7.0 mg/dL</span></label><input type="number" id="calcium" step="0.1" placeholder="belum diisi"><div class="un">mg/dL</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ct"><div class="ci" style="background:#e0e7ff">🫀</div>Toksisitas Organ</div>
+      <div class="ig">
+        <div class="ir"><label>Kreatinin Saat Ini<span class="rh">Dibanding baseline/ULN usia</span></label><input type="number" id="creat" step="0.01" placeholder="belum diisi"><div class="un">mg/dL</div></div>
+        <div class="ir"><label>ULN Kreatinin<span class="rh">Otomatis dari usia atau isi manual</span></label><input type="number" id="creat_uln" step="0.01" placeholder="(auto)"><div class="un">mg/dL</div></div>
+        <div class="dv"></div>
+        <div class="ir"><label>AST (SGOT)</label><input type="number" id="ast" step="1" placeholder="belum diisi"><div class="un">U/L</div></div>
+        <div class="ir"><label>ALT (SGPT)</label><input type="number" id="alt" step="1" placeholder="belum diisi"><div class="un">U/L</div></div>
+        <div class="ir"><label>ULN AST/ALT Lab<span class="rh">Sesuai lab pasien</span></label><input type="number" id="uln" value="40" step="1" placeholder="40"><div class="un">U/L</div></div>
+        <div class="dv"></div>
+        <div class="ir"><label>Bilirubin Total<span class="rh">ULN: 1.5 mg/dL</span></label><input type="number" id="bili" step="0.1" placeholder="belum diisi"><div class="un">mg/dL</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card" style="margin-bottom:13px">
+    <div class="ct"><div class="ci" style="background:#fce7f3">💉</div>Status Klinis &amp; Transfusi</div>
+    <div class="g3">
+      <div>
+        <div class="sl" style="margin-bottom:6px">Kondisi Klinis Aktif</div>
+        <div class="cg">
+          <label class="cr"><input type="checkbox" id="cx_febrile"><span>Demam Neutropenia (&gt;38°C)</span></label>
+          <label class="cr"><input type="checkbox" id="cx_sepsis"><span>Suspek Sepsis / Syok Septik</span></label>
+          <label class="cr"><input type="checkbox" id="cx_cns"><span>Risiko/riwayat perdarahan SSP</span></label>
+          <label class="cr"><input type="checkbox" id="cx_mucositis"><span>Mukositis berat (G3–4)</span></label>
+          <label class="cr"><input type="checkbox" id="cx_procedure"><span>Prosedur invasif direncanakan</span></label>
+        </div>
+      </div>
+      <div>
+        <div class="sl" style="margin-bottom:6px">Produk Darah (sudah / direncanakan)</div>
+        <div class="cg">
+          <label class="cr"><input type="checkbox" id="trx_prc"><span>PRC</span></label>
+          <label class="cr"><input type="checkbox" id="trx_plt"><span>Trombosit Concentrate</span></label>
+          <label class="cr"><input type="checkbox" id="trx_ffp"><span>Fresh Frozen Plasma (FFP)</span></label>
+          <label class="cr"><input type="checkbox" id="trx_cryo"><span>Cryoprecipitate</span></label>
+        </div>
+      </div>
+      <div>
+        <div class="sl" style="margin-bottom:6px">Faktor Risiko Tambahan</div>
+        <div class="cg">
+          <label class="cr"><input type="checkbox" id="rf_refract"><span>Refrakter trombosit sebelumnya</span></label>
+          <label class="cr"><input type="checkbox" id="rf_anticoag"><span>Sedang antikoagulan</span></label>
+          <label class="cr"><input type="checkbox" id="rf_cvc"><span>Ada CVC/akses sentral</span></label>
+          <label class="cr"><input type="checkbox" id="rf_hematuria"><span>Hematuria aktif</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="bta" id="btnAnalyze">🔍 Analisis &amp; Generate Rekomendasi</button>
+  <button class="btr" id="btnReset">↺ Reset Semua Input</button>
+
+</div><!-- /s-input -->
+
+<!-- OUTPUT -->
+<div class="sec" id="s-output">
+  <div id="out-wrap" style="display:none">
+    <div class="oh">
+      <div style="font-size:22px">📊</div>
+      <div style="flex:1">
+        <div style="font-weight:800;font-size:14px">Hasil Analisis Toksisitas Pediatrik Onkologi</div>
+        <div class="os" id="out-time"></div>
+      </div>
+      <button class="bpr" onclick="window.print()">🖨️ Cetak</button>
+    </div>
+    <div id="miss-banner" class="mb" style="display:none">
+      <strong>⚠️ Data Tidak Lengkap — Beberapa domain tidak dapat dinilai</strong>
+      <span id="miss-list"></span><br>
+      <em>Kolom kosong dilaporkan sebagai "TCD (Tidak Dapat Dinilai)" — bukan berarti normal.</em>
+    </div>
+    <div class="sg" id="sum-grid"></div>
+    <div id="panels"></div>
+    <div class="disc">⚠️ <strong>Disclaimer:</strong> Tool ini adalah alat bantu edukasi klinis, bukan pengganti penilaian klinisi. Keputusan terapi tetap berdasarkan penilaian klinis komprehensif dan protokol institusi yang berlaku. Estimasi ISTH DIC Score perlu konfirmasi lab dan klinis penuh.<br><strong>drAisyi EduCare v2.1</strong> — Pediatric Oncology Clinical Decision Support</div>
+  </div>
+  <div id="no-out" style="text-align:center;padding:50px 20px;color:var(--muted)">
+    <div style="font-size:40px;margin-bottom:11px">📋</div>
+    <div style="font-size:15px;font-weight:600">Belum ada data untuk dianalisis</div>
+    <div style="font-size:12px;margin-top:5px">Isi data pada tab "Input Data" lalu klik Analisis</div>
+  </div>
+</div>
+
+<!-- PANDUAN -->
+<div class="sec" id="s-panduan">
+  <div class="g2">
+    <div class="card">
+      <div class="ct">🩸 Grading Cytopenia — CTCAE v5.0</div>
+      <ul class="rl">
+        <li><span class="li">🔵</span><span><strong>ANC:</strong> G1: &lt;LLN–1500 | G2: 1000–1500 | G3: 500–1000 | G4: &lt;500/µL</span></li>
+        <li><span class="li">🔴</span><span><strong>Hb:</strong> G1: 10–LLN | G2: 8–10 | G3: &lt;8 g/dL (transfusi) | G4: Mengancam jiwa</span></li>
+        <li><span class="li">🟠</span><span><strong>Plt:</strong> G1: 75–LLN | G2: 50–75 | G3: 25–50 | G4: &lt;25×10³/µL</span></li>
+        <li><span class="li">⚠️</span><span><strong>Prolonged neutropenia:</strong> ANC &lt;500 selama ≥14 hari — evaluasi G-CSF per protokol</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="ct">🧬 Kriteria TLS — Cairo-Bishop 2004 (Pediatrik)</div>
+      <ul class="rl">
+        <li><span class="li">✅</span><span><strong>Lab TLS:</strong> ≥2 dari 4 kriteria (3 hari sebelum / 7 hari setelah kemoterapi)</span></li>
+        <li><span class="li">🧪</span><span><strong>Uric acid:</strong> ≥8 mg/dL ATAU ↑ ≥25% baseline</span></li>
+        <li><span class="li">🧪</span><span><strong>K⁺:</strong> ≥6.0 mEq/L ATAU ↑ ≥25% baseline</span></li>
+        <li><span class="li">🧪</span><span><strong>Fosfor (anak):</strong> ≥6.5 mg/dL ATAU ↑ ≥25% baseline</span></li>
+        <li><span class="li">🧪</span><span><strong>Kalsium:</strong> ≤7.0 mg/dL ATAU ↓ ≥25% baseline</span></li>
+        <li><span class="li">⚠️</span><span><strong>Warning (bukan kriteria):</strong> K 5.5–5.9 | P 5.0–6.4 | Ca 7.1–8.0 | UA 7.0–7.9 mg/dL</span></li>
+        <li><span class="li">🏥</span><span><strong>Ca pada TLS:</strong> Koreksi HANYA bila simtomatik (tetani, aritmia, QT prolongation). Jangan koreksi rutin — risiko presipitasi Ca-P.</span></li>
+        <li><span class="li">💧</span><span><strong>Hidrasi:</strong> 2–3× maintenance, tanpa kalium. Alkalinisasi urin TIDAK rutin.</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="ct">💉 Threshold Transfusi Pediatrik Onkologi</div>
+      <ul class="rl">
+        <li><span class="li">🩸</span><span><strong>PRC:</strong> Hb &lt;7 g/dL (stabil) | &lt;8 g/dL (demam/simtom) | Target 8–9 g/dL</span></li>
+        <li><span class="li">💛</span><span><strong>Plt profilaksis:</strong> &lt;10×10³ (stabil) | &lt;20×10³ (demam/mukositis/DIC/prosedur)</span></li>
+        <li><span class="li">💛</span><span><strong>Plt terapeutik:</strong> &lt;50×10³ (perdarahan aktif) | &lt;100×10³ (prosedur invasif/SSP)</span></li>
+        <li><span class="li">🟡</span><span><strong>FFP:</strong> PT/INR &gt;1.5× kontrol + koagulopati klinis. Dosis: 10–15 mL/kgBB</span></li>
+        <li><span class="li">⚪</span><span><strong>Cryoprecipitate:</strong> Fibrinogen &lt;100 mg/dL / DIC aktif. Dosis: 1 unit/5–10 kgBB</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="ct">💊 G-CSF — Panduan Pediatrik Onkologi</div>
+      <ul class="rl">
+        <li><span class="li">✅</span><span><strong>Indikasi kuat:</strong> AML, pasca HSCT, infeksi berat/sepsis, regimen risiko tinggi</span></li>
+        <li><span class="li">📋</span><span><strong>ALL Induksi:</strong> Tidak rutin. Pertimbangkan hanya bila prolonged severe neutropenia + infeksi refrakter, setelah diskusi konsultan.</span></li>
+        <li><span class="li">💉</span><span><strong>Dosis:</strong> Filgrastim 5 µg/kgBB/hari SC. Mulai 24–72 jam pasca kemo. Stop bila ANC ≥2000–10.000/µL.</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="ct">🫀 Toksisitas Organ — CTCAE v5.0</div>
+      <ul class="rl">
+        <li><span class="li">🩺</span><span><strong>AST/ALT:</strong> G1: 1–3× | G2: 3–5× | G3: 5–20× | G4: &gt;20× ULN</span></li>
+        <li><span class="li">🫁</span><span><strong>Bilirubin:</strong> G1: &lt;1.5× | G2: 1.5–3× | G3: 3–10× | G4: &gt;10× ULN (1.5 mg/dL)</span></li>
+        <li><span class="li">💧</span><span><strong>Kreatinin:</strong> G1: 1–1.5× | G2: 1.5–3× | G3: 3–6× | G4: &gt;6× baseline/ULN usia atau dialisis</span></li>
+        <li><span class="li">⏸️</span><span><strong>Tindakan G3–4:</strong> Tunda/modifikasi kemoterapi. Konsultasi sub-spesialis terkait.</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="ct">🧪 Estimasi ISTH DIC Score 2001</div>
+      <ul class="rl">
+        <li><span class="li">🔢</span><span><strong>Plt:</strong> &gt;100 = 0 | 50–100 = 1 | &lt;50 = 2</span></li>
+        <li><span class="li">🔢</span><span><strong>D-dimer (kategori):</strong> Normal = 0 | Sedang = 2 | Sangat tinggi = 3</span></li>
+        <li><span class="li">🔢</span><span><strong>PT vs kontrol:</strong> &lt;3 dtk = 0 | 3–6 dtk = 1 | &gt;6 dtk = 2</span></li>
+        <li><span class="li">🔢</span><span><strong>Fibrinogen:</strong> ≥100 = 0 | &lt;100 = 1</span></li>
+        <li><span class="li">⚠️</span><span><strong>Interpretasi:</strong> ≥5 = Overt DIC | 3–4 = Monitor | &lt;3 = Non-overt. Konfirmasi lab + klinis wajib.</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+var currentTab = 'input';
+
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(function(t) {
+    t.classList.toggle('active', t.dataset.tab === name);
+  });
+  ['input','output','panduan'].forEach(function(n) {
+    var el = document.getElementById('s-' + n);
+    if (el) el.style.display = (n === name) ? 'block' : 'none';
+  });
+  currentTab = name;
+}
+
+function getVal(id) {
+  var el = document.getElementById(id);
+  if (!el || el.value === '') return NaN;
+  return parseFloat(el.value);
+}
+function isNum(x) { return !isNaN(x); }
+function getChk(id) { var el = document.getElementById(id); return el ? el.checked : false; }
+function getSel(id) { var el = document.getElementById(id); return el ? parseInt(el.value) : 0; }
+
+function creatULNAge(age) {
+  if (!isNum(age) || age <= 0) return 0.9;
+  if (age < 1) return 0.4;
+  if (age < 5) return 0.5;
+  if (age < 10) return 0.6;
+  if (age < 13) return 0.7;
+  if (age < 16) return 0.9;
+  return 1.0;
+}
+
+function gate(level, icon, title, body) {
+  var cls = {critical:'g-crit', high:'g-high', moderate:'g-mod', ok:'g-ok', info:'g-info'}[level] || 'g-info';
+  return '<div class="gate ' + cls + '"><div class="gi">' + icon + '</div><div class="gc"><div class="gt">' + title + '</div><div class="gb">' + body + '</div></div></div>';
+}
+
+function li(cls, icon, text) {
+  return '<li class="' + cls + '"><span class="li">' + icon + '</span><span>' + text + '</span></li>';
+}
+
+function badge(cls, text) {
+  return '<span class="badge ' + cls + '">' + text + '</span>';
+}
+
+function pct25up(val, base) {
+  return isNum(val) && isNum(base) && base > 0 && ((val - base) / base) >= 0.25;
+}
+function pct25dn(val, base) {
+  return isNum(val) && isNum(base) && base > 0 && ((base - val) / base) >= 0.25;
+}
+
+// ---- CYTOPENIA ----
+function doCytopenia() {
+  var hb = getVal('hb'), anc = getVal('anc'), plt = getVal('plt');
+  var neutDays = getVal('neut_days'), ancLLN = getVal('anc_lln') || 1500, bb = getVal('bb');
+  var alerts = '', recs = [], gcsfAlert = '';
+  var ancG = 0, hbG = 0, pltG = 0;
+
+  if (isNum(anc)) {
+    if (anc < 500) { ancG = 4; alerts += gate('critical','🚨','Neutropenia Berat Grade 4','ANC ' + anc + '/µL — risiko infeksi mengancam jiwa. Bila demam, mulai antibiotik spektrum luas dalam 60 menit. Evaluasi tanda sepsis.'); }
+    else if (anc < 1000) { ancG = 3; alerts += gate('high','⚠️','Neutropenia Grade 3','ANC ' + anc + '/µL. Risiko infeksi tinggi. Profilaksis sesuai protokol, hindari prosedur invasif.'); }
+    else if (anc < 1500) { ancG = 2; alerts += gate('moderate','🟡','Neutropenia Grade 2','ANC ' + anc + '/µL. Monitor ketat, pertimbangkan profilaksis antimikroba.'); }
+    else if (anc < ancLLN) { ancG = 1; }
+  } else {
+    alerts += gate('info','ℹ️','ANC: Tidak Dapat Dinilai (TCD)','ANC belum diisi — status neutropenia tidak dapat ditentukan, bukan berarti normal.');
+  }
+
+  if (isNum(hb)) {
+    if (hb < 8) {
+      hbG = 3;
+      var prcNote = isNum(bb) ? 'Estimasi PRC: ' + (bb * 3 * (8 - hb)).toFixed(0) + ' mL (target Hb 8 g/dL, rumus BB×3×ΔHb)' : 'BB tidak diisi — dosis PRC tidak dikalkulasi (rumus: BB×3×ΔHb mL)';
+      alerts += gate('high','🩸','Anemia Berat Grade 3','Hb ' + hb + ' g/dL — Indikasi transfusi PRC. ' + prcNote + '.');
+    } else if (hb < 10) { hbG = 2; alerts += gate('moderate','🟡','Anemia Grade 2','Hb ' + hb + ' g/dL. Transfusi bila simtomatik, febrile neutropenia, atau Hb &lt;7.'); }
+    else if (hb < 11) { hbG = 1; }
+  } else {
+    alerts += gate('info','ℹ️','Hb: TCD','Hemoglobin belum diisi — status anemia tidak dapat dinilai.');
+  }
+
+  if (isNum(plt)) {
+    if (plt < 25) {
+      pltG = 4;
+      var tcNote = isNum(bb) ? 'Dosis TC: ' + (bb * 0.1).toFixed(1) + ' unit/kgBB' : 'BB tidak diisi';
+      alerts += gate('critical','🚨','Trombositopenia Berat Grade 4','Plt ' + plt + '×10³/µL — risiko perdarahan spontan. ' + tcNote + '. Hindari prosedur invasif.');
+    } else if (plt < 50) { pltG = 3; alerts += gate('high','⚠️','Trombositopenia Grade 3','Plt ' + plt + '×10³/µL. Transfusi TC bila perdarahan aktif, demam, atau prosedur direncanakan.'); }
+    else if (plt < 75) { pltG = 2; alerts += gate('moderate','🟡','Trombositopenia Grade 2','Plt ' + plt + '×10³/µL. Monitor, transfusi bila ada faktor risiko tambahan.'); }
+    else if (plt < 150) { pltG = 1; }
+  } else {
+    alerts += gate('info','ℹ️','Trombosit: TCD','Trombosit belum diisi — status trombositopenia tidak dapat dinilai.');
+  }
+
+  if (!alerts) alerts = gate('ok','✅','Cytopenia: Tidak Bermakna','Hb, ANC, Trombosit tidak menunjukkan cytopenia bermakna berdasarkan data tersedia.');
+
+  if (isNum(plt) && plt < 10) recs.push(li('cl','💛','Transfusi TC SEGERA — Plt &lt;10×10³. Risiko perdarahan spontan.'));
+  else if (isNum(plt) && plt < 20 && (getChk('cx_febrile') || getChk('cx_mucositis') || getChk('cx_procedure') || getChk('cx_dic'))) recs.push(li('wl','💛','Transfusi TC — Plt &lt;20×10³ dengan kondisi risiko tinggi.'));
+  else if (isNum(plt) && plt < 50 && getChk('cx_procedure')) recs.push(li('wl','💛','Transfusi TC — Plt &lt;50×10³, prosedur invasif direncanakan.'));
+  else if (isNum(plt) && plt < 100 && getChk('cx_cns')) recs.push(li('wl','💛','Transfusi TC — Plt &lt;100×10³ pada risiko perdarahan SSP.'));
+  if (getChk('rf_refract')) recs.push(li('il','🔬','Refrakter trombosit — Pertimbangkan HLA-matched platelet. Evaluasi aloimunisasi.'));
+  if (ancG >= 3 && getChk('cx_febrile')) recs.push(li('cl','🌡️','Febrile Neutropenia — Antibiotik empiris dalam 60 menit. Ambil kultur sebelum antibiotik. Cek CVC, mukositis, pola resistensi lokal.'));
+  if (ancG >= 3) recs.push(li('wl','🛡️','Profilaksis infeksi — TMP-SMX (PCP), antijamur sesuai protokol institusi.'));
+
+  if (isNum(anc) && anc < 500) {
+    if (isNum(neutDays) && neutDays >= 14) {
+      var dosis = isNum(bb) ? (bb * 5).toFixed(0) + ' µg/hari SC' : '5 µg/kgBB/hari SC (BB belum diisi)';
+      if (getChk('pr_all')) {
+        gcsfAlert = gate('high','💉','G-CSF — ALL Induksi (Tidak Rutin)','ANC &lt;500/µL selama ' + neutDays + ' hari. G-CSF tidak rutin pada ALL induksi. Pertimbangkan hanya bila indikasi kuat (infeksi refrakter, sepsis) setelah diskusi konsultan. Dosis bila diputuskan: Filgrastim ' + dosis + '.');
+      } else {
+        gcsfAlert = gate('high','💉','Pertimbangkan G-CSF — Prolonged Neutropenia','ANC &lt;500 selama ' + neutDays + ' hari. Evaluasi per protokol. Filgrastim ' + dosis + '. Stop bila ANC ≥2000/µL.');
+      }
+    } else if (isNum(neutDays) && neutDays >= 7) {
+      gcsfAlert = gate('moderate','💊','Neutropenia ≥7 Hari','Monitor ketat. Bila tidak membaik dalam 7 hari, evaluasi ulang indikasi G-CSF bersama konsultan.');
+    }
+  }
+
+  return { alerts: alerts, gcsfAlert: gcsfAlert, recs: recs, ancG: ancG, hbG: hbG, pltG: pltG };
+}
+
+// ---- KOAGULASI ----
+function doCoag() {
+  var pt = getVal('pt'), ptCtrl = getVal('pt_ctrl') || 13;
+  var aptt = getVal('aptt'), fib = getVal('fibrinogen'), inr = getVal('inr');
+  var ddCat = getSel('ddimer_cat'), plt = getVal('plt');
+  var alerts = '', recs = [], score = 0, overt = false, bb = getVal('bb');
+
+  if (isNum(pt)) {
+    var diff = pt - ptCtrl;
+    if (diff > 6) score += 2;
+    else if (diff >= 3) score += 1;
+  }
+  if (isNum(fib) && fib < 100) score += 1;
+  score += ddCat;
+  if (isNum(plt)) {
+    if (plt < 50) score += 2;
+    else if (plt < 100) score += 1;
+  }
+  if (getChk('cx_dic')) score = Math.max(score, 5);
+
+  if (score >= 5 || getChk('cx_dic')) {
+    overt = true;
+    var cryoD = isNum(bb) ? (bb / 7.5).toFixed(1) + ' unit IV' : 'BB tidak diisi (1 unit/5–10 kgBB)';
+    alerts += gate('critical','🚨','Estimasi Overt DIC — Skor ISTH ≥5','Skor: ' + score + '/8. ⚠️ Ini estimasi — konfirmasi lab dan klinis penuh wajib. Tatalaksana: FFP, Cryoprecipitate (' + cryoD + '), TC. Atasi penyebab dasar.');
+  } else if (score >= 3) {
+    alerts += gate('high','⚠️','Non-Overt DIC — Monitor Ketat','Skor ISTH estimasi: ' + score + '/8. Monitor koagulasi tiap 6–12 jam. Evaluasi klinis perdarahan dan trombosis.');
+  }
+
+  if (isNum(fib)) {
+    if (fib < 100) {
+      var cD = isNum(bb) ? (bb / 7.5).toFixed(1) + ' unit' : 'BB tidak diisi';
+      alerts += gate('high','⚗️','Hipofibrinogenemia Berat','Fibrinogen ' + fib + ' mg/dL. Indikasi Cryoprecipitate: ' + cD + ' (1 unit/5–10 kgBB). Target fibrinogen ≥150 mg/dL.');
+      recs.push(li('cl','⚗️','Cryoprecipitate — Fibrinogen &lt;100 mg/dL. Dosis: ' + cD));
+    } else if (fib < 150) {
+      alerts += gate('moderate','🟡','Fibrinogen Rendah','Fibrinogen ' + fib + ' mg/dL. Monitor, pertimbangkan cryoprecipitate bila &lt;100 atau perdarahan aktif.');
+    }
+  } else {
+    alerts += gate('info','ℹ️','Fibrinogen: TCD','Fibrinogen belum diisi — komponen DIC tidak dapat dinilai penuh.');
+  }
+
+  if (isNum(aptt) && aptt > 50) {
+    alerts += gate('moderate','🟡','aPTT Memanjang','aPTT ' + aptt + ' detik. Evaluasi faktor koagulasi, inhibitor, atau efek heparin. Pertimbangkan FFP bila perdarahan aktif.');
+  }
+  if (isNum(inr) && inr >= 1.5) {
+    var ffpD = isNum(bb) ? (bb * 12).toFixed(0) + ' mL (12 mL/kgBB)' : 'BB tidak diisi (10–15 mL/kgBB)';
+    recs.push(li('wl','🟡','FFP — INR ' + inr + ' ≥1.5 dengan koagulopati klinis. Estimasi dosis: ' + ffpD));
+  }
+  if (getChk('cx_bleeding') && overt) {
+    recs.push(li('cl','🚨','Perdarahan aktif + Overt DIC — Koreksi koagulopati agresif. Hindari TXA pada DIC aktif (risiko trombosis paradoksal). Konsultasi hematologi segera.'));
+  } else if (getChk('cx_bleeding') && getChk('rf_hematuria')) {
+    recs.push(li('wl','⚠️','TXA: Hati-hati pada hematuria aktif — risiko obstruksi traktus urinarius. Diskusi hematologi sebelum pemberian.'));
+  } else if (getChk('cx_bleeding')) {
+    recs.push(li('wl','🩸','TXA dapat dipertimbangkan pada perdarahan non-DIC — evaluasi risiko trombosis. Diskusi hematologi.'));
+  }
+
+  if (!alerts) alerts = gate('ok','✅','Koagulasi: Tidak Ada Abnormalitas Bermakna','Profil koagulasi tidak menunjukkan tanda DIC atau koagulopati signifikan berdasarkan data tersedia.');
+
+  return { alerts: alerts, recs: recs, score: score, overt: overt };
+}
+
+// ---- TLS ----
+function doTLS() {
+  var ua = getVal('uric'), uaBase = getVal('uric_base');
+  var ldh = getVal('ldh'), k = getVal('kalium');
+  var phos = getVal('phos'), phosBase = getVal('phos_base'), ca = getVal('calcium');
+  var bb = getVal('bb'), g6pd = getChk('g6pd_def');
+  var highRisk = getChk('pr_all') || getChk('pr_lymphoma') || getChk('pr_aml');
+  var alerts = '', recs = [], criteria = 0, labTLS = false;
+
+  if (isNum(ua)) {
+    if (ua >= 8 || pct25up(ua, uaBase)) {
+      criteria++;
+      alerts += gate('high','🧬','Hiperurisemia — Kriteria TLS','Asam urat ' + ua + ' mg/dL' + (pct25up(ua, uaBase) ? ', ↑ ≥25% dari baseline' : '') + '. Terapi: Rasburicase (bila tidak G6PD def) atau Allopurinol. Hidrasi agresif.');
+    } else if (ua >= 7) {
+      alerts += gate('moderate','🟡','Hiperurisemia — Warning TLS (bukan kriteria)','Asam urat ' + ua + ' mg/dL. Monitor tiap 6–8 jam, hidrasi adekuat.');
+    }
+  } else { alerts += gate('info','ℹ️','Asam Urat: TCD',''); }
+
+  if (isNum(k)) {
+    if (k >= 6.0) {
+      criteria++;
+      alerts += gate('critical','🚨','Hiperkalemia — Kriteria TLS / DARURAT JANTUNG','K⁺ ' + k + ' mEq/L ≥6.0. EKG SEGERA. Kalsium glukonat 10% 0.5–1 mL/kgBB IV (5–10 mnt). Salbutamol nebul. Kayexalate/patiromer. Stop kalium IV. Dialisis bila refrakter.');
+    } else if (k >= 5.5) {
+      alerts += gate('high','⚠️','Hiperkalemia — Warning TLS (bukan kriteria)','K⁺ ' + k + ' mEq/L 5.5–5.9. Monitor EKG, restriksi kalium diet. Ulangi cek 4–6 jam.');
+    }
+  } else { alerts += gate('info','ℹ️','Kalium: TCD',''); }
+
+  if (isNum(phos)) {
+    if (phos >= 6.5 || pct25up(phos, phosBase)) {
+      criteria++;
+      alerts += gate('high','⚠️','Hiperfosfatemia — Kriteria TLS (Pediatrik)','Fosfor ' + phos + ' mg/dL' + (pct25up(phos, phosBase) ? ', ↑ ≥25% dari baseline' : '') + '. Batasi fosfat diet. Fosfat binder. Monitor Ca (risiko presipitasi Ca-P).');
+    } else if (phos >= 5.0) {
+      alerts += gate('moderate','🟡','Hiperfosfatemia — Warning TLS (bukan kriteria)','Fosfor ' + phos + ' mg/dL. Warning threshold anak. Monitor, batasi fosfat diet.');
+    }
+  } else { alerts += gate('info','ℹ️','Fosfor: TCD',''); }
+
+  if (isNum(ca)) {
+    if (ca <= 7.0) {
+      criteria++;
+      alerts += gate('high','⚠️','Hipokalsemia — Kriteria TLS','Ca²⁺ ' + ca + ' mg/dL ≤7.0. PENTING: Koreksi Ca HANYA bila simtomatik (tetani, kejang, aritmia, QT prolongation). Jangan koreksi rutin pada TLS asimtomatik — risiko presipitasi Ca-fosfat dan nefrokalsinosis.');
+    } else if (ca <= 8.0) {
+      alerts += gate('moderate','🟡','Hipokalsemia — Warning TLS (bukan kriteria)','Ca²⁺ ' + ca + ' mg/dL 7.1–8.0. Monitor gejala: Chvostek, Trousseau. Koreksi hanya bila simtomatik atau aritmia.');
+    }
+  } else { alerts += gate('info','ℹ️','Kalsium: TCD',''); }
+
+  if (isNum(ldh)) {
+    if (ldh > 1000) alerts += gate('high','📊','LDH Sangat Tinggi — Tumor Burden Besar','LDH ' + ldh + ' U/L. Risiko TLS meningkat signifikan. Monitor intensif 72 jam pertama kemoterapi.');
+    else if (ldh > 500) alerts += gate('moderate','🟡','LDH Meningkat','LDH ' + ldh + ' U/L. Monitor TLS saat awal kemoterapi.');
+  }
+
+  labTLS = criteria >= 2;
+  var hdr = '';
+  if (labTLS) {
+    hdr = gate('critical','🚨','LABORATORY TLS — ≥2 Kriteria Cairo-Bishop Terpenuhi (' + criteria + '/4)','Tatalaksana TLS aktif segera. Hidrasi agresif 2–3× maintenance tanpa kalium. Alkalinisasi urin TIDAK rutin. Elektrolit tiap 4–6 jam. Konsultasi nefrologi bila AKI berat.');
+  } else if (highRisk && criteria >= 1) {
+    hdr = gate('high','⚠️','Risiko TLS Tinggi — Protokol High-Risk',criteria + ' kriteria TLS pada pasien protokol risiko tinggi. Profilaksis agresif. Monitor elektrolit tiap 6–8 jam, 72 jam pertama kemoterapi.');
+  }
+
+  recs.push(li('wl','💧','Hidrasi: 2–3× maintenance IV tanpa kalium (bila hiperkalemia). Target UO ≥3 mL/kgBB/jam. Alkalinisasi TIDAK rutin.'));
+
+  if (isNum(ua) && ua >= 8) {
+    if (g6pd) {
+      recs.push(li('cl','🚫','Rasburicase KONTRAINDIKASI — Defisiensi G6PD. Gunakan Allopurinol + hidrasi intensif. Konsultasi hematologi.'));
+      var alopD = isNum(bb) ? (bb * 10).toFixed(0) + ' mg/hari' : '10 mg/kgBB/hari';
+      recs.push(li('wl','💊','Allopurinol: ' + alopD + ' PO dibagi 3 dosis (maks 300 mg/hari).'));
+    } else {
+      var rasbuD = isNum(bb) ? (bb * 0.15).toFixed(2) + '–' + (bb * 0.2).toFixed(2) + ' mg/dosis IV' : '0.15–0.2 mg/kgBB/dosis IV (BB belum diisi)';
+      recs.push(li('cl','💊','Rasburicase: ' + rasbuD + '. Kontraindikasi: G6PD defisiensi, kehamilan.'));
+    }
+  } else {
+    var aD = isNum(bb) ? (bb * 10).toFixed(0) + ' mg/hari (10 mg/kgBB)' : '10 mg/kgBB/hari';
+    recs.push(li('wl','💊','Allopurinol: ' + aD + ' PO dibagi 3 dosis. Mulai 24–48 jam sebelum kemoterapi.'));
+  }
+  recs.push(li('il','📊','Monitor: Elektrolit, asam urat, kreatinin tiap 4–6 jam (72 jam pertama kemoterapi risiko tinggi).'));
+  if (labTLS) recs.push(li('cl','🏥','Konsultasi Nefrologi — Evaluasi dialisis bila hiperkalemia/hiperfosfatemia/AKI refrakter.'));
+
+  var allEmpty = !isNum(ua) && !isNum(k) && !isNum(phos) && !isNum(ca);
+  if (allEmpty) {
+    alerts = gate('info','ℹ️','TLS: Data Tidak Diisi','Semua parameter TLS belum diisi. Status TLS tidak dapat dinilai.');
+  } else {
+    alerts = hdr + alerts;
+  }
+
+  return { alerts: alerts, recs: recs, labTLS: labTLS, criteria: criteria };
+}
+
+// ---- ORGAN ----
+function doOrgan() {
+  var creat = getVal('creat'), creatBase = getVal('creat_base');
+  var ast = getVal('ast'), alt = getVal('alt'), bili = getVal('bili');
+  var uln = getVal('uln') || 40, age = getVal('usia');
+  var creatULN = getVal('creat_uln') > 0 ? getVal('creat_uln') : creatULNAge(age);
+  var biliULN = 1.5;
+  var alerts = '', recs = [], astG = 0, altG = 0, biliG = 0, creatG = 0;
+
+  if (isNum(creat)) {
+    var refVal = (isNum(creatBase) && creatBase > 0) ? creatBase : creatULN;
+    var refLbl = (isNum(creatBase) && creatBase > 0) ? 'baseline ' + creatBase : 'ULN usia ' + creatULN.toFixed(2);
+    var cr = creat / refVal;
+    if (cr > 6) { creatG = 4; alerts += gate('critical','🚨','AKI Grade 4','Kreatinin ' + creat + ' (' + cr.toFixed(1) + '× ' + refLbl + '). Evaluasi dialisis SEGERA. Stop semua nefrotoksik. Konsultasi nefrologi.'); }
+    else if (cr > 3) { creatG = 3; alerts += gate('high','⚠️','AKI Grade 3','Kreatinin ' + cr.toFixed(1) + '× ' + refLbl + '. Tunda kemoterapi nefrotoksik. Adjust dosis per GFR.'); }
+    else if (cr > 1.5) { creatG = 2; alerts += gate('moderate','🟡','AKI Grade 2','Kreatinin ' + cr.toFixed(1) + '× ' + refLbl + '. Monitor I/O, stop NSAID/aminoglikosida.'); }
+    else if (cr > 1) { creatG = 1; }
+  } else { alerts += gate('info','ℹ️','Kreatinin: TCD','Kreatinin belum diisi — fungsi ginjal tidak dapat dinilai.'); }
+
+  if (isNum(ast)) {
+    var ar = ast / uln;
+    if (ar > 20) { astG = 4; alerts += gate('critical','🚨','Hepatotoksisitas AST Grade 4','AST ' + ast + ' U/L (' + ar.toFixed(1) + '× ULN). Tunda kemoterapi. Konsultasi hepatologi.'); }
+    else if (ar > 5) { astG = 3; alerts += gate('high','⚠️','Hepatotoksisitas AST Grade 3','AST ' + ar.toFixed(1) + '× ULN. Pertimbangkan tunda/modifikasi dosis. Monitor LFT tiap 2–3 hari.'); }
+    else if (ar > 3) { astG = 2; alerts += gate('moderate','🟡','AST Grade 2','AST ' + ar.toFixed(1) + '× ULN. Evaluasi hepatotoksin (MTX, L-Asp, 6-MP, azol).'); }
+    else if (ar > 1) { astG = 1; }
+  } else { alerts += gate('info','ℹ️','AST: TCD',''); }
+
+  if (isNum(alt)) {
+    var alr = alt / uln;
+    if (alr > 20) { altG = 4; alerts += gate('critical','🚨','Hepatotoksisitas ALT Grade 4','ALT ' + alr.toFixed(1) + '× ULN. Tunda kemoterapi. Evaluasi DILI.'); }
+    else if (alr > 5) { altG = 3; alerts += gate('high','⚠️','Hepatotoksisitas ALT Grade 3','ALT ' + alr.toFixed(1) + '× ULN. Modifikasi/tunda kemoterapi.'); }
+    else if (alr > 3) { altG = 2; alerts += gate('moderate','🟡','ALT Grade 2','ALT ' + alr.toFixed(1) + '× ULN. Monitor. Pertimbangkan UDCA/NAC.'); }
+    else if (alr > 1) { altG = 1; }
+  } else { alerts += gate('info','ℹ️','ALT: TCD',''); }
+
+  if (isNum(bili)) {
+    var br = bili / biliULN;
+    if (br > 10) { biliG = 4; alerts += gate('critical','🚨','Hiperbilirubinemia Grade 4','Bilirubin ' + bili + ' mg/dL. Evaluasi VOD/SOS, hemolisis, kolestasis berat.'); }
+    else if (br > 3) { biliG = 3; alerts += gate('high','⚠️','Hiperbilirubinemia Grade 3','Bilirubin ' + br.toFixed(1) + '× ULN. Evaluasi VOD — pertimbangkan defibrotide bila pasca HSCT.'); }
+    else if (br > 1.5) { biliG = 2; alerts += gate('moderate','🟡','Hiperbilirubinemia Grade 2','Bilirubin ' + br.toFixed(1) + '× ULN. Monitor LFT komprehensif.'); }
+    else if (br > 1) { biliG = 1; }
+  } else { alerts += gate('info','ℹ️','Bilirubin: TCD',''); }
+
+  var maxG = Math.max(astG, altG, biliG, creatG);
+  if (maxG >= 3) recs.push(li('cl','⏸️','TUNDA kemoterapi — Toksisitas organ G3–4. Diskusi multidisiplin.'));
+  if (maxG >= 2) recs.push(li('wl','📋','Monitor LFT dan kreatinin tiap 2–3 hari sampai Grade ≤1.'));
+  if (Math.max(astG, altG) >= 2) recs.push(li('wl','💊','Evaluasi hepatotoksin: MTX, 6-MP, L-Asp, azol. Pertimbangkan UDCA 10–15 mg/kgBB/hari.'));
+  if (creatG >= 2) recs.push(li('wl','💧','Stop NSAID, aminoglikosida, amfoterisin B deoksikolat. Target UO ≥1 mL/kgBB/jam. Hitung eGFR Schwartz.'));
+
+  if (!alerts) alerts = gate('ok','✅','Toksisitas Organ: Tidak Bermakna','Fungsi hati, bilirubin, kreatinin tidak menunjukkan toksisitas bermakna berdasarkan data tersedia.');
+
+  return { alerts: alerts, recs: recs, astG: astG, altG: altG, biliG: biliG, creatG: creatG, maxG: maxG };
+}
+
+// ---- MAIN ----
+function analyze() {
+  var cyto = doCytopenia();
+  var coag = doCoag();
+  var tls = doTLS();
+  var org = doOrgan();
+
+  var missingFields = [];
+  var chk = [['hb','Hb'],['anc','ANC'],['plt','Trombosit'],['creat','Kreatinin'],['ast','AST'],['alt','ALT'],['fibrinogen','Fibrinogen'],['uric','Asam Urat'],['kalium','Kalium']];
+  chk.forEach(function(c) { if (!isNum(getVal(c[0]))) missingFields.push(c[1]); });
+
+  var mb = document.getElementById('miss-banner');
+  var ml = document.getElementById('miss-list');
+  if (missingFields.length > 0) {
+    mb.style.display = 'block';
+    ml.textContent = ' Data belum diisi: ' + missingFields.join(', ') + '.';
+  } else { mb.style.display = 'none'; }
+
+  function sc(g) { return g >= 3 ? 'scr' : g >= 2 ? 'swn' : g >= 1 ? 'swn' : 'sok'; }
+  function gv(g) { return 'G' + g; }
+  var ancG = cyto.ancG, hbG = cyto.hbG, pltG = cyto.pltG;
+  var sg = '';
+  sg += '<div class="sb ' + sc(ancG) + '"><div class="sl2">ANC</div><div class="sv">' + gv(ancG) + '</div><div class="sn">' + (isNum(getVal('anc')) ? getVal('anc') + '/µL' : 'TCD') + '</div></div>';
+  sg += '<div class="sb ' + sc(hbG) + '"><div class="sl2">Hemoglobin</div><div class="sv">' + gv(hbG) + '</div><div class="sn">' + (isNum(getVal('hb')) ? getVal('hb') + ' g/dL' : 'TCD') + '</div></div>';
+  sg += '<div class="sb ' + sc(pltG) + '"><div class="sl2">Trombosit</div><div class="sv">' + gv(pltG) + '</div><div class="sn">' + (isNum(getVal('plt')) ? getVal('plt') + '×10³' : 'TCD') + '</div></div>';
+  sg += '<div class="sb ' + (tls.labTLS ? 'scr' : tls.criteria >= 1 ? 'swn' : 'sok') + '"><div class="sl2">TLS Status</div><div class="sv">' + (tls.labTLS ? 'Lab' : tls.criteria >= 1 ? 'Risk' : 'Neg') + '</div><div class="sn">' + tls.criteria + '/4 kriteria</div></div>';
+  sg += '<div class="sb ' + (coag.score >= 5 ? 'scr' : coag.score >= 3 ? 'swn' : 'sok') + '"><div class="sl2">DIC Est.</div><div class="sv">' + coag.score + '</div><div class="sn">' + (coag.overt ? 'Overt DIC' : coag.score >= 3 ? 'Monitor' : 'Non-overt') + '</div></div>';
+  document.getElementById('sum-grid').innerHTML = sg;
+
+  var panels = '';
+
+  panels += '<div class="rc"><div class="rch"><div class="rct">🩸 Cytopenia &amp; Transfusi</div>' + badge('b' + Math.max(ancG, hbG, pltG), 'Grade ' + Math.max(ancG, hbG, pltG)) + '</div>' + cyto.alerts;
+  if (cyto.gcsfAlert) panels += cyto.gcsfAlert;
+  if (cyto.recs.length) panels += '<ul class="rl">' + cyto.recs.join('') + '</ul>';
+  panels += '</div>';
+
+  panels += '<div class="rc"><div class="rch"><div class="rct">⚗️ Koagulasi &amp; DIC</div>' + badge(coag.overt ? 'b4' : coag.score >= 3 ? 'b2' : 'b0', 'ISTH Est. ' + coag.score) + '</div>' + coag.alerts;
+  if (coag.recs.length) panels += '<ul class="rl">' + coag.recs.join('') + '</ul>';
+  panels += '</div>';
+
+  panels += '<div class="rc"><div class="rch"><div class="rct">🧬 Tumor Lysis Syndrome</div>' + badge(tls.labTLS ? 'btls' : tls.criteria >= 1 ? 'brisk' : 'bneg', tls.labTLS ? 'Lab TLS' : tls.criteria >= 1 ? 'Risiko' : 'Negatif') + '</div>' + tls.alerts;
+  if (tls.recs.length) panels += '<ul class="rl">' + tls.recs.join('') + '</ul>';
+  panels += '</div>';
+
+  panels += '<div class="rc"><div class="rch"><div class="rct">🫀 Toksisitas Organ</div>' + badge('b' + org.maxG, 'Maks Grade ' + org.maxG) + '</div>' + org.alerts;
+  if (org.recs.length) panels += '<ul class="rl">' + org.recs.join('') + '</ul>';
+  panels += '</div>';
+
+  document.getElementById('panels').innerHTML = panels;
+  document.getElementById('out-time').textContent = 'Analisis: ' + new Date().toLocaleString('id-ID');
+  document.getElementById('out-wrap').style.display = 'block';
+  document.getElementById('no-out').style.display = 'none';
+  showTab('output');
+  window.scrollTo(0, 0);
+}
+
+function resetAll() {
+  document.querySelectorAll('input[type=number]').forEach(function(el) {
+    if (el.id === 'uln') el.value = '40';
+    else if (el.id === 'anc_lln') el.value = '1500';
+    else if (el.id === 'pt_ctrl') el.value = '13';
+    else el.value = '';
+  });
+  document.querySelectorAll('input[type=checkbox]').forEach(function(el) { el.checked = false; });
+  document.getElementById('ddimer_cat').value = '0';
+  document.getElementById('out-wrap').style.display = 'none';
+  document.getElementById('no-out').style.display = 'block';
+}
+
+document.getElementById('usia').addEventListener('input', function() {
+  var age = parseFloat(this.value);
+  var ulnEl = document.getElementById('creat_uln');
+  if (!isNaN(age) && age > 0 && ulnEl.value === '') {
+    ulnEl.placeholder = creatULNAge(age).toFixed(2) + ' (auto)';
+  }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.tab').forEach(function(t) {
+    t.addEventListener('click', function() { showTab(t.dataset.tab); });
+  });
+  document.getElementById('btnAnalyze').addEventListener('click', analyze);
+  document.getElementById('btnReset').addEventListener('click', resetAll);
+  showTab('input');
+});
+</script>
+</body>
+</html>

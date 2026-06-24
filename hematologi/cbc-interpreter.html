@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pediatric CBC Interpreter – drAisyi EduCare</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:linear-gradient(135deg,#f0faf6,#e8f4fd);min-height:100vh;color:#1a2332;font-size:14px;line-height:1.6}
+.page{max-width:800px;margin:0 auto;padding:1.5rem 1rem 3rem}
+.brand{background:linear-gradient(135deg,#0e9f6e,#0284c7);border-radius:16px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;gap:16px;box-shadow:0 4px 20px rgba(14,159,110,.25)}
+.brand-icon{width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-icon i{font-size:24px;color:#fff}
+.brand-name{font-size:17px;font-weight:600;color:#fff}
+.brand-sub{font-size:12px;color:rgba(255,255,255,.75);margin-top:2px}
+.brand-badge{margin-left:auto;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 12px;font-size:11px;color:#fff;font-weight:500;white-space:nowrap}
+.card{background:#fff;border-radius:14px;border:1px solid #e8f0fe;padding:18px 20px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.card-hd{display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #f0f4ff}
+.card-hd i{font-size:17px;color:#0e9f6e}
+.card-hd h2{font-size:13px;font-weight:600;color:#374151;text-transform:uppercase;letter-spacing:.07em}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.f{display:flex;flex-direction:column;gap:4px}
+.f label{font-size:12px;font-weight:600;color:#4b5563}
+.opt{font-size:10px;font-weight:400;color:#9ca3af;background:#f3f4f6;border-radius:8px;padding:1px 6px;margin-left:4px}
+.f input,.f select{font-size:14px;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:10px;background:#fafbff;color:#111827;width:100%;font-family:inherit;transition:border .15s}
+.f input:focus,.f select:focus{outline:none;border-color:#0e9f6e;background:#fff;box-shadow:0 0 0 3px rgba(14,159,110,.1)}
+.f input::placeholder{color:#c4cad4}
+.unit{font-size:11px;color:#9ca3af;margin-top:1px}
+.usia-row{display:flex;gap:8px}
+.usia-row input{flex:1;min-width:0}
+.usia-row select{width:90px;flex-shrink:0}
+.smear-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.sm{display:flex;align-items:center;gap:6px;background:#f8faff;border:1.5px solid #e5e7eb;border-radius:8px;padding:6px 12px;cursor:pointer;user-select:none;transition:all .15s}
+.sm.on{background:#ecfdf5;border-color:#0e9f6e}
+.sm span{font-size:12px;font-weight:500;color:#4b5563}
+.sm.on span{color:#065f46}
+.smdot{width:8px;height:8px;border-radius:50%;background:#d1d5db;flex-shrink:0;transition:background .15s}
+.sm.on .smdot{background:#0e9f6e}
+.btn-row{display:flex;gap:10px;margin-top:6px}
+#btn-go{flex:1;padding:13px;background:linear-gradient(135deg,#0e9f6e,#0284c7);color:#fff;font-size:15px;font-weight:600;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;box-shadow:0 4px 14px rgba(14,159,110,.3);transition:all .18s}
+#btn-go:hover{opacity:.9;transform:translateY(-1px)}
+#btn-reset{padding:13px 20px;background:#fff;color:#6b7280;font-size:14px;border:1.5px solid #e5e7eb;border-radius:12px;cursor:pointer;font-family:inherit}
+#btn-reset:hover{background:#f9fafb}
+.au{background:linear-gradient(135deg,#fff5f5,#fff0f0);border:1.5px solid #fca5a5;border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;gap:12px}
+.au-ic{width:36px;height:36px;border-radius:10px;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.au-ic i{font-size:18px;color:#dc2626}
+.au h4{font-size:13px;font-weight:600;color:#991b1b;margin-bottom:6px}
+.au ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:4px}
+.au ul li{font-size:12px;color:#7f1d1d;padding-left:16px;position:relative}
+.au ul li::before{content:"⚠";position:absolute;left:0;font-size:10px;top:2px}
+.aw{background:linear-gradient(135deg,#fffdf0,#fffbeb);border:1.5px solid #fcd34d;border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;gap:12px}
+.aw-ic{width:36px;height:36px;border-radius:10px;background:#fef3c7;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.aw-ic i{font-size:18px;color:#d97706}
+.aw h4{font-size:13px;font-weight:600;color:#92400e;margin-bottom:6px}
+.aw ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:4px}
+.aw ul li{font-size:12px;color:#78350f;padding-left:14px;position:relative}
+.aw ul li::before{content:"→";position:absolute;left:0;color:#d97706}
+.sw{background:linear-gradient(135deg,#f0fdf9,#eff6ff);border-radius:12px;padding:14px;margin-bottom:14px;border:1px solid #d1fae5}
+.sw-lbl{font-size:11px;font-weight:600;color:#059669;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:8px}
+.sc{background:#fff;border-radius:10px;padding:10px 8px;text-align:center;border:1px solid #e5e7eb}
+.sv{font-size:17px;font-weight:600;line-height:1.2}
+.sl{font-size:10px;color:#9ca3af;margin-top:3px;line-height:1.4}
+.sn{color:#059669}.sh{color:#dc2626}
+.trow{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.tg{font-size:11px;padding:4px 11px;border-radius:20px;font-weight:600}
+.tok{background:#d1fae5;color:#065f46}
+.tmi{background:#fef3c7;color:#92400e}
+.tmo{background:#ffedd5;color:#9a3412}
+.tse{background:#fee2e2;color:#991b1b}
+.rc{background:#fff;border-radius:12px;border:1px solid #e8f0fe;padding:16px 18px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+.rh{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ri{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ri.g{background:#d1fae5}.ri.g i{color:#059669}
+.ri.b{background:#dbeafe}.ri.b i{color:#2563eb}
+.ri.a{background:#fef3c7}.ri.a i{color:#d97706}
+.ri i{font-size:17px}
+.rh h3{font-size:14px;font-weight:600;color:#111827}
+.rh p{font-size:11px;color:#9ca3af;margin-top:1px}
+.cl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin:10px 0 6px;display:flex;align-items:center;gap:5px}
+.cl::before{content:'';width:3px;height:12px;border-radius:2px;display:inline-block}
+.cly{color:#1d4ed8}.cly::before{background:#1d4ed8}
+.cpo{color:#d97706}.cpo::before{background:#d97706}
+.cex{color:#dc2626}.cex::before{background:#dc2626}
+.cmo{color:#6b7280}.cmo::before{background:#9ca3af}
+.il{list-style:none;padding:0;display:flex;flex-direction:column;gap:5px}
+.il li{font-size:12.5px;color:#374151;padding-left:16px;position:relative;line-height:1.55}
+.il li::before{content:"•";position:absolute;left:0;color:#0e9f6e;font-weight:700}
+.il li.w::before{color:#d97706}
+.il li.d::before{content:"!";color:#dc2626;font-weight:700}
+.mb{background:linear-gradient(135deg,#eff6ff,#f0fdf9);border:1px solid #bfdbfe;border-radius:10px;padding:10px 14px;margin-top:10px;display:flex;align-items:center;gap:10px}
+.mb i{font-size:18px;color:#2563eb;flex-shrink:0}
+.mb p{font-size:12px;color:#1e3a8a;line-height:1.5}
+.mb span{font-weight:600}
+.tb{background:#f8faff;border-left:3px solid #0e9f6e;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:12px}
+.tb p{font-size:12px;color:#4b5563;line-height:1.6;font-style:italic}
+.dv{height:1px;background:#f3f4f6;margin:12px 0}
+.dc{font-size:11px;color:#9ca3af;text-align:center;margin-top:20px;line-height:1.8}
+.dc strong{color:#6b7280}
+@media(max-width:480px){.g3{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}.brand-badge{display:none}}
+</style>
+</head>
+<body>
+<div class="page">
+<div class="brand">
+  <div class="brand-icon"><i class="ti ti-microscope"></i></div>
+  <div>
+    <div class="brand-name">drAisyi EduCare</div>
+    <div class="brand-sub">Pediatric CBC Quick Interpreter &amp; Red Flag Screener</div>
+  </div>
+  <div class="brand-badge">v2.1</div>
+</div>
+
+<div class="card">
+  <div class="card-hd"><i class="ti ti-user-circle"></i><h2>Data Pasien</h2></div>
+  <div class="g2">
+    <div class="f">
+      <label>Usia<span class="opt">wajib</span></label>
+      <div class="usia-row">
+        <input type="number" id="usia-val" min="0" max="999" step="1" placeholder="mis. 6">
+        <select id="usia-sat"><option value="bulan">Bulan</option><option value="tahun">Tahun</option></select>
+      </div>
+      <span class="unit">0 bulan = neonatus</span>
+    </div>
+    <div class="f">
+      <label>Jenis kelamin<span class="opt">wajib</span></label>
+      <select id="gender"><option value="">Pilih...</option><option value="L">Laki-laki</option><option value="P">Perempuan</option></select>
+    </div>
+  </div>
+  <div class="g2" style="margin-top:12px">
+    <div class="f"><label>Suhu tubuh<span class="opt">opsional</span></label><input type="number" id="suhu" step="0.1" placeholder="mis. 38.5"><span class="unit">°C</span></div>
+    <div class="f">
+      <label>Gejala klinis<span class="opt">opsional</span></label>
+      <select id="gejala">
+        <option value="">Tidak ada / tidak diketahui</option>
+        <option value="perdarahan">Perdarahan / petekie</option>
+        <option value="hsplenomegali">Hepatosplenomegali</option>
+        <option value="lnn">Limfadenopati</option>
+        <option value="bone_pain">Nyeri tulang</option>
+        <option value="bb_turun">BB turun / keringat malam</option>
+        <option value="gagal_jantung">Tanda gagal jantung</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-hd"><i class="ti ti-droplet"></i><h2>Eritrosit &amp; Anemia</h2></div>
+  <div class="g3">
+    <div class="f"><label>Hemoglobin</label><input type="number" id="hb" step="0.1" placeholder="mis. 11.5"><span class="unit">g/dL</span></div>
+    <div class="f"><label>MCV</label><input type="number" id="mcv" step="0.1" placeholder="mis. 78"><span class="unit">fL</span></div>
+    <div class="f"><label>MCH</label><input type="number" id="mch" step="0.1" placeholder="mis. 26"><span class="unit">pg</span></div>
+    <div class="f"><label>RDW-CV</label><input type="number" id="rdw" step="0.1" placeholder="mis. 14.5"><span class="unit">%</span></div>
+    <div class="f"><label>RBC<span class="opt">opsional</span></label><input type="number" id="rbc" step="0.01" placeholder="mis. 4.5"><span class="unit">x10&sup6;/µL</span></div>
+    <div class="f"><label>Retikulosit<span class="opt">opsional</span></label><input type="number" id="retic" step="0.1" placeholder="mis. 1.5"><span class="unit">%</span></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-hd"><i class="ti ti-shield-half"></i><h2>Leukosit &amp; Hitung Jenis</h2></div>
+  <div class="g3">
+    <div class="f"><label>Leukosit total</label><input type="number" id="wbc" step="0.1" placeholder="mis. 8.5"><span class="unit">x10&sup3;/µL</span></div>
+    <div class="f"><label>ANC absolut<span class="opt">opsional</span></label><input type="number" id="anc" step="0.01" placeholder="mis. 2.1"><span class="unit">x10&sup3;/µL</span></div>
+    <div class="f"><label>Neutrofil %<span class="opt">opsional</span></label><input type="number" id="neu" step="0.1" placeholder="mis. 48"><span class="unit">% (jika ANC kosong)</span></div>
+    <div class="f"><label>Limfosit %<span class="opt">opsional</span></label><input type="number" id="lym" step="0.1" placeholder="mis. 42"><span class="unit">%</span></div>
+    <div class="f"><label>Band / stab %<span class="opt">opsional</span></label><input type="number" id="band" step="0.1" placeholder="mis. 5"><span class="unit">%</span></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-hd"><i class="ti ti-chart-dots"></i><h2>Trombosit &amp; Penanda Lain</h2></div>
+  <div class="g3">
+    <div class="f"><label>Trombosit</label><input type="number" id="plt" step="1" placeholder="mis. 250"><span class="unit">x10&sup3;/µL</span></div>
+    <div class="f"><label>Ferritin<span class="opt">opsional</span></label><input type="number" id="ferritin" step="0.1" placeholder="mis. 12"><span class="unit">µg/L</span></div>
+    <div class="f"><label>CRP<span class="opt">opsional</span></label><input type="number" id="crp" step="0.1" placeholder="mis. 8"><span class="unit">mg/L</span></div>
+  </div>
+  <div style="margin-top:14px">
+    <div class="f">
+      <label>Temuan apusan darah tepi<span class="opt">opsional</span></label>
+      <div class="smear-grid" id="smear-area">
+        <div class="sm" data-val="blast"><div class="smdot"></div><span>Blast</span></div>
+        <div class="sm" data-val="nrbc"><div class="smdot"></div><span>NRBC</span></div>
+        <div class="sm" data-val="schistocyte"><div class="smdot"></div><span>Skistosit</span></div>
+        <div class="sm" data-val="spherocyte"><div class="smdot"></div><span>Sferosit</span></div>
+        <div class="sm" data-val="target"><div class="smdot"></div><span>Target cell</span></div>
+        <div class="sm" data-val="atypical_lym"><div class="smdot"></div><span>Atypical lymphocyte</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="btn-row">
+  <button id="btn-go"><i class="ti ti-stethoscope"></i> Interpretasi CBC</button>
+  <button id="btn-reset"><i class="ti ti-refresh"></i> Reset</button>
+</div>
+
+<div id="results" style="display:none;margin-top:20px"></div>
+</div>
+
+<script>
+(function() {
+  // smear toggles
+  document.getElementById('smear-area').addEventListener('click', function(e) {
+    var el = e.target.closest('.sm');
+    if (el) el.classList.toggle('on');
+  });
+
+  document.getElementById('btn-reset').addEventListener('click', function() {
+    ['hb','mcv','mch','rdw','wbc','plt','rbc','retic','anc','neu','lym','band','ferritin','crp','suhu'].forEach(function(id) {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('usia-val').value = '';
+    document.getElementById('usia-sat').value = 'bulan';
+    document.getElementById('gender').value = '';
+    document.getElementById('gejala').value = '';
+    document.querySelectorAll('#smear-area .sm').forEach(function(el) { el.classList.remove('on'); });
+    var r = document.getElementById('results');
+    r.innerHTML = '';
+    r.style.display = 'none';
+  });
+
+  document.getElementById('btn-go').addEventListener('click', function() {
+    run();
+  });
+
+  function nn(id) {
+    var v = document.getElementById(id).value.trim();
+    return v === '' ? null : parseFloat(v);
+  }
+  function getSmear() {
+    var v = [];
+    document.querySelectorAll('#smear-area .sm.on').forEach(function(el) { v.push(el.getAttribute('data-val')); });
+    return v;
+  }
+  function getNorms(m, g) {
+    if (m <= 1)   return {hbL:14.5,hbH:21.5,mcvL:98,mcvH:118,mchL:33,mchH:41,rdwH:18,wbcL:9,wbcH:30,pltL:150,pltH:400};
+    if (m <= 3)   return {hbL:9.5,hbH:13.5,mcvL:84,mcvH:100,mchL:28,mchH:36,rdwH:17,wbcL:6,wbcH:19,pltL:150,pltH:400};
+    if (m <= 12)  return {hbL:10.5,hbH:13.5,mcvL:72,mcvH:86,mchL:24,mchH:30,rdwH:16,wbcL:6,wbcH:17.5,pltL:150,pltH:400};
+    if (m <= 72)  return {hbL:11.5,hbH:13.5,mcvL:72,mcvH:86,mchL:24,mchH:30,rdwH:15,wbcL:5.5,wbcH:15.5,pltL:150,pltH:400};
+    if (m <= 144) return {hbL:11.5,hbH:13.5,mcvL:76,mcvH:90,mchL:25,mchH:31,rdwH:15,wbcL:4.5,wbcH:13.5,pltL:150,pltH:400};
+    if (g === 'L') return {hbL:13.0,hbH:16.0,mcvL:78,mcvH:94,mchL:26,mchH:33,rdwH:15,wbcL:4.5,wbcH:13,pltL:150,pltH:400};
+    return {hbL:12.0,hbH:16.0,mcvL:78,mcvH:94,mchL:26,mchH:33,rdwH:15,wbcL:4.5,wbcH:13,pltL:150,pltH:400};
+  }
+  function uLabel(m) {
+    if (m<=1) return 'Neonatus'; if (m<=3) return '2-3 bulan';
+    if (m<=12) return '4-12 bulan'; if (m<=72) return '1-6 tahun';
+    if (m<=144) return '7-12 tahun'; return '>12 tahun';
+  }
+  function st(v,lo,hi) { return v<lo?'L':v>hi?'H':'N'; }
+  function li(t,c) { return '<li class="'+(c||'')+'">'+t+'</li>'; }
+  function tg(t,c) { return '<span class="tg '+c+'">'+t+'</span>'; }
+
+  function run() {
+    var usiaVal = nn('usia-val');
+    var sat = document.getElementById('usia-sat').value;
+    var usia = usiaVal === null ? null : (sat === 'tahun' ? Math.round(usiaVal * 12) : Math.round(usiaVal));
+    var gender = document.getElementById('gender').value;
+    var hb=nn('hb'), mcv=nn('mcv'), mch=nn('mch'), rdw=nn('rdw'), wbc=nn('wbc'), plt=nn('plt');
+    var rbc=nn('rbc'), retic=nn('retic'), ancIn=nn('anc'), neuP=nn('neu'), lymP=nn('lym'), bandP=nn('band');
+    var ferr=nn('ferritin'), crp=nn('crp'), suhu=nn('suhu');
+    var gejala = document.getElementById('gejala').value;
+    var smear = getSmear();
+
+    if (usia===null||!gender||hb===null||mcv===null||mch===null||rdw===null||wbc===null||plt===null) {
+      alert('Lengkapi semua field wajib: usia, jenis kelamin, Hb, MCV, MCH, RDW, leukosit, trombosit.');
+      return;
+    }
+
+    var N = getNorms(usia, gender);
+    var hbS=st(hb,N.hbL,N.hbH), mcvS=st(mcv,N.mcvL,N.mcvH), mchS=st(mch,N.mchL,N.mchH);
+    var rdwH=rdw>N.rdwH, wbcS=st(wbc,N.wbcL,N.wbcH), pltS=st(plt,N.pltL,N.pltH);
+    var anc = ancIn!==null ? ancIn : (neuP!==null ? Math.round(wbc*(neuP/100)*100)/100 : null);
+    var neutropSev=anc!==null&&anc<0.5, neutropMod=anc!==null&&anc>=0.5&&anc<1.0;
+    var neutropMild=anc!==null&&anc>=1.0&&anc<1.5, neutropenia=anc!==null&&anc<1.5;
+    var alc = lymP!==null ? Math.round(wbc*(lymP/100)*100)/100 : null;
+    var lymLow = alc!==null&&((usia<=72&&alc<3.0)||(usia>72&&alc<1.0));
+    var lymHigh= alc!==null&&((usia<=72&&alc>8.5)||(usia>72&&alc>4.5));
+    var mentzer = (rbc!==null&&rbc>0) ? Math.round(mcv/rbc*10)/10 : null;
+    var demam = suhu!==null&&suhu>=38.0;
+    var fnp = neutropSev&&demam;
+    var lines=0; if(hbS==='L')lines++; if(wbcS==='L'||neutropenia)lines++; if(pltS==='L')lines++;
+    var pancyto=lines>=3, bicyto=lines===2;
+    var blast=smear.indexOf('blast')>=0, nrbc=smear.indexOf('nrbc')>=0;
+    var schisto=smear.indexOf('schistocyte')>=0, sphro=smear.indexOf('spherocyte')>=0;
+    var atylym=smear.indexOf('atypical_lym')>=0;
+    var alarmG=['hsplenomegali','lnn','bone_pain','bb_turun','gagal_jantung'].indexOf(gejala)>=0;
+    var isoThrombo=pltS==='L'&&hbS==='N'&&wbcS==='N'&&!neutropenia&&!blast&&!pancyto;
+
+    var urg=[], ruj=[], dxL=[], dxP=[], dxE=[], dxM=[], fu=[], tags=[];
+
+    if(blast) urg.push('Blast ditemukan pada apusan - singkirkan leukemia SEGERA');
+    if(pancyto) urg.push('Pansitopenia ('+lines+' cell line abnormal) - kemungkinan kegagalan sumsum tulang atau keganasan');
+    if(fnp) urg.push('Febrile neutropenia berat (ANC '+anc.toFixed(2)+', suhu >=38C) - risiko sepsis tinggi, mulai antibiotik empirik segera');
+    else if(neutropSev) urg.push('Neutropenia berat (ANC '+anc.toFixed(2)+') - rujuk segera, risiko infeksi berat');
+    if(plt<20) urg.push('Trombosit <20 - risiko perdarahan spontan, evaluasi segera');
+    if(hb<6) urg.push('Hb <6 g/dL - anemia sangat berat, evaluasi kebutuhan transfusi segera');
+    if(wbc>100) urg.push('WBC >100 - hyperleukositosis sejati, risiko leukostasis, RUJUK HEMATOLOGI ANAK SEGERA');
+    if(nrbc) urg.push('NRBC ditemukan - korelasi hemolisis berat, hipoksia berat, atau keganasan');
+    if(alarmG&&(hbS==='L'||pltS==='L'||wbcS!=='N')) urg.push('Gejala sistemik + kelainan CBC - pertimbangkan keganasan hematologi');
+
+    if(hbS==='L') {
+      var def=N.hbL-hb;
+      var grade=def<2?'ringan':def<4?'sedang':'berat';
+      if(grade==='berat'&&hb>=6) ruj.push('Anemia berat (Hb '+hb.toFixed(1)+' g/dL) - pertimbangkan transfusi, konsultasi SpA');
+      if(grade==='sedang') ruj.push('Anemia sedang tanpa respons terapi 4 minggu - rujuk SpA');
+      if(mcvS==='L'||mchS==='L') {
+        tags.push(tg('Anemia mikrositik hipokrom - '+grade,'tmo'));
+        if(rdwH&&(ferr===null||ferr<12)) dxL.push('Defisiensi besi: MCV rendah + RDW meningkat'+(ferr!==null?' + ferritin rendah ('+ferr+' ug/L)':''));
+        else if(!rdwH) {
+          if(mentzer!==null) dxL.push(mentzer<13?'Talasemia trait (Mentzer index '+mentzer+' - <13)':'Defisiensi besi (Mentzer index '+mentzer+' >=13)');
+          else dxL.push('Talasemia trait: MCV rendah + RDW normal (perlu Hb elektroforesis/HPLC)');
+        }
+        if(rdwH) dxP.push('Talasemia trait + defisiensi besi bersamaan (perlu Hb elektroforesis)');
+        dxP.push('Anemia penyakit kronik/inflamasi'+(crp!==null&&crp>10?' (CRP '+crp+' mg/L)':''));
+        dxE.push('Talasemia mayor (riwayat keluarga, Hb elektroforesis, HbA2/HbF)');
+        fu.push('Serum iron, TIBC, ferritin, saturasi transferin');
+        fu.push('Elektroforesis Hb / HPLC (HbA2, HbF, varian Hb)');
+        fu.push('Morfologi eritrosit (target cell, ovalosit, sferosit?)');
+        if(rbc===null) fu.push('RBC count - untuk Mentzer index (MCV/RBC; <13 sugestif talasemia)');
+        if(usia<36) fu.push('Evaluasi asupan besi dan pola makan');
+      } else if(mcvS==='H') {
+        tags.push(tg('Anemia makrositik - '+grade,'tmo'));
+        if(retic!==null&&retic>2.5) dxL.push('Anemia hemolitik (makrositik + retikulositosis)');
+        else dxL.push('Defisiensi B12 atau folat');
+        dxP.push('Hipotiroid');
+        dxP.push('Kegagalan sumsum tulang (bila retikulosit rendah)');
+        fu.push('Vitamin B12 dan folat serum');
+        fu.push('Hitung retikulosit'); fu.push('Coombs test (DAT)'); fu.push('TSH, fT4');
+      } else {
+        tags.push(tg('Anemia normositik - '+grade,'tmi'));
+        if(retic!==null) {
+          if(retic>2.5) {
+            dxL.push('Anemia hemolitik (normositik + retikulositosis'+(sphro?' + sferosit':schisto?' + skistosit':'')+')');
+            if(sphro) dxL.push('Sferositosis herediter atau AIHA');
+            if(schisto) dxL.push('Microangiopathic hemolytic anemia (TMA/HUS/DIC)');
+          } else {
+            dxL.push('Anemia hipoproliferatif (retikulosit rendah) - inflamasi kronik, CKD, atau marrow failure');
+          }
+        } else {
+          dxM.push('Hitung retikulosit - kunci membedakan hemolisis vs hipoproliferasi');
+          dxP.push('Anemia hemolitik atau perdarahan akut (bila retikulosit tinggi)');
+          dxP.push('Anemia penyakit kronik, CKD, atau marrow suppression (bila retikulosit rendah)');
+        }
+        dxE.push('Anemia aplastik (bila ada pansitopenia atau retikulositopenia)');
+        fu.push('Hitung retikulosit dan ARC'); fu.push('Apus darah tepi lengkap');
+        fu.push('LED, CRP, ferritin, LFT, kreatinin');
+        if(!schisto&&!sphro) fu.push('Coombs test (DAT) bila curiga hemolisis autoimun');
+        if(schisto) { fu.push('PT, APTT, fibrinogen, D-dimer, haptoglobin, LDH - evaluasi TMA/DIC'); ruj.push('Skistosit + anemia: pertimbangkan TMA/HUS, rujuk segera'); }
+      }
+    } else { tags.push(tg('Hb normal','tok')); }
+
+    if(wbcS==='H') {
+      if(wbc>100) { tags.push(tg('Hyperleukositosis (>100)','tse')); }
+      else if(wbc>50) { tags.push(tg('Leukositosis berat (>50)','tse')); dxL.push('Leukositosis sangat berat - evaluasi segera: infeksi berat, leukemia, reaksi leukemoid'); dxE.push('Leukemia akut (bila ada blast, anemia, atau trombositopenia)'); ruj.push('WBC >50 - urgent smear, pertimbangkan rujukan hematologi anak'); }
+      else if(wbc>30) { tags.push(tg('Leukositosis bermakna (>30)','tmo')); dxL.push('Marked leukocytosis - infeksi berat, reaksi leukemoid, atau keganasan'); dxE.push('Leukemia akut / CML anak (periksa apusan)'); ruj.push('WBC >30 - apusan darah tepi wajib, konsultasi SpA'); }
+      else if(wbc>20) { tags.push(tg('Leukositosis sedang (>20)','tmi')); dxL.push('Leukositosis sedang - paling sering infeksi bakteri/viral akut'); }
+      else { tags.push(tg('Leukositosis ringan','tmi')); dxL.push('Leukositosis ringan - infeksi, stres, atau variasi fisiologis'); }
+      if(wbc<=50) fu.push('Apus darah tepi - cek blast, atypical lymphocyte, shift to left');
+      if(demam) fu.push('CRP, prokalsitonin, kultur darah');
+      if(atylym) dxL.push('Atypical lymphocyte - infeksi EBV/CMV, atau keganasan limfoid');
+    }
+    if(wbcS==='L') { tags.push(tg('Leukopenia','tmo')); dxL.push('Leukopenia - infeksi viral, imunosupresi, autoimun'); dxE.push('Leukemia (ALL dengan WBC rendah), mielodisplasia'); fu.push('Apus darah tepi, hitung jenis lengkap'); fu.push('Evaluasi ulang CBC dalam 1-2 minggu'); }
+    if(wbcS==='N'&&!neutropenia) tags.push(tg('Leukosit normal','tok'));
+
+    if(anc!==null) {
+      if(neutropSev) { tags.push(tg('Neutropenia berat (ANC '+anc.toFixed(2)+')','tse')); dxL.push('Neutropenia berat - viral, keganasan, obat, kongenital'); fu.push('Apusan darah tepi, kultur darah bila demam'); }
+      else if(neutropMod) { tags.push(tg('Neutropenia sedang (ANC '+anc.toFixed(2)+')','tmo')); dxP.push('Neutropenia sedang - infeksi viral, autoimun, atau efek obat'); }
+      else if(neutropMild) { tags.push(tg('Neutropenia ringan (ANC '+anc.toFixed(2)+')','tmi')); }
+      if(neutropenia) { fu.push('Evaluasi penyebab: infeksi viral, obat-obatan, kelainan kongenital'); fu.push('Apus darah tepi - cek blast, dysplastic changes'); }
+      if(bandP!==null&&bandP>10) { dxL.push('Left shift bermakna (band '+bandP+'%) - curiga infeksi bakteri berat atau sepsis'); fu.push('Kultur darah, CRP, prokalsitonin'); }
+    }
+    if(alc!==null) {
+      if(lymHigh) { tags.push(tg('Limfositosis (ALC '+alc.toFixed(2)+')','tmi')); dxL.push('Limfositosis - tersering infeksi viral (EBV, CMV, RSV, pertusis pada bayi)'); if(atylym) dxL.push('Atypical lymphocyte + limfositosis - infeksi EBV/CMV sangat mungkin'); if(wbc>50&&alc>30) dxE.push('ALL dengan limfositosis dominan (bila ada blast)'); }
+      if(lymLow) { tags.push(tg('Limfopenia (ALC '+alc.toFixed(2)+')','tmo')); dxP.push('Limfopenia - infeksi HIV, imunodefisiensi primer, steroid, malnutrisi berat'); fu.push('Evaluasi status imunisasi, riwayat infeksi rekuren'); if(usia<12) ruj.push('Limfopenia pada bayi <1 tahun - singkirkan SCID/imunodefisiensi primer, rujuk imunologi'); }
+    }
+
+    if(pltS==='L') {
+      var tg2=plt<20?'sangat berat (<20)':plt<50?'berat (<50)':plt<100?'sedang (<100)':'ringan';
+      tags.push(tg('Trombositopenia '+tg2,'tse'));
+      if(isoThrombo) {
+        dxL.push('Isolated thrombocytopenia (Hb & WBC normal, tidak ada blast) - ITP paling mungkin');
+        dxL.push('ITP pada anak: paling sering pasca infeksi viral 1-4 minggu sebelumnya');
+        dxP.push('Drug-induced thrombocytopenia');
+        fu.push('Riwayat infeksi viral 2-4 minggu terakhir'); fu.push('Apus darah tepi - konfirmasi isolated thrombocytopenia');
+        fu.push('Coombs test, ANA (bila >8 tahun - singkirkan Evans syndrome, SLE)');
+        if(plt<20) ruj.push('ITP dengan trombosit <20 - konsultasi hematologi anak');
+        else if(plt<50) ruj.push('Trombosit <50 - monitor ketat, konsultasi SpA bila ada gejala perdarahan');
+      } else {
+        dxL.push('Trombositopenia non-isolated (ada kelainan cell line lain) - bukan ITP murni');
+        dxE.push('Leukemia / limfoma (bila ada anemia atau leukositosis)');
+        dxE.push('Anemia aplastik (bila pansitopenia + retikulositopenia)');
+        dxE.push('HUS/TMA (bila ada skistosit + AKI)');
+        dxP.push('Trombositopenia sekunder: infeksi berat, DIC, hipersplenisme');
+        fu.push('Apus darah tepi - skistosit? blast? dysplasia?'); fu.push('PT, APTT, fibrinogen, D-dimer, LDH');
+        ruj.push('Non-isolated thrombocytopenia - rujuk hematologi anak untuk evaluasi sumsum tulang');
+      }
+    }
+    if(pltS==='H') { tags.push(tg('Trombositosis','tmi')); dxL.push('Trombositosis reaktif - infeksi, defisiensi besi, pascaoperasi'); if(plt>1000) { dxE.push('Essential thrombocythemia (jarang pada anak, plt >1000)'); ruj.push('Trombosit >1000 - rujuk hematologi anak'); } }
+    if(pltS==='N'&&!pancyto&&!bicyto) tags.push(tg('Trombosit normal','tok'));
+
+    var allN = hbS==='N'&&wbcS==='N'&&pltS==='N'&&!neutropenia&&!lymLow&&!lymHigh&&smear.length===0;
+
+    var out='';
+    if(urg.length) out+='<div class="au"><div class="au-ic"><i class="ti ti-alert-triangle"></i></div><div><h4>Perlu Tindakan Segera</h4><ul>'+urg.map(function(u){return li(u);}).join('')+'</ul></div></div>';
+    if(ruj.length) out+='<div class="aw"><div class="aw-ic"><i class="ti ti-send"></i></div><div><h4>'+(urg.length?'Indikasi Rujukan Lanjutan':'Indikasi Rujukan')+'</h4><ul>'+ruj.map(function(r){return li(r);}).join('')+'</ul></div></div>';
+
+    function sc(val, label, status, range) {
+      return '<div class="sc"><div class="sv '+(status==='N'?'sn':'sh')+'">'+val+'</div><div class="sl">'+label+'<br>'+(status==='N'?'Normal':status)+(range?' ('+range+')':'')+'</div></div>';
+    }
+    var cells='';
+    cells+=sc(hb.toFixed(1),'Hb g/dL',hbS,N.hbL+'-'+N.hbH);
+    cells+=sc(mcv.toFixed(0),'MCV fL',mcvS,'');
+    cells+=sc(mch.toFixed(1),'MCH pg',mchS,'');
+    cells+=sc(rdw.toFixed(1),'RDW %',rdwH?'H':'N','');
+    cells+=sc(wbc.toFixed(1),'WBC x10^3',wbcS,N.wbcL+'-'+N.wbcH);
+    cells+=sc(plt,'PLT x10^3',pltS,'');
+    if(anc!==null) cells+=sc(anc.toFixed(2),'ANC x10^3',neutropenia?'H':'N','');
+    if(alc!==null) cells+=sc(alc.toFixed(2),'ALC x10^3',(lymLow||lymHigh)?'H':'N','');
+    if(retic!==null) cells+=sc(retic.toFixed(1),'Retic %',retic>2.5?'H':'N','');
+
+    out+='<div class="sw"><div class="sw-lbl">Nilai & Status - '+uLabel(usia)+'</div><div class="sg">'+cells+'</div></div>';
+
+    out+='<div class="rc"><div class="rh"><div class="ri g"><i class="ti ti-tag"></i></div><div><h3>Interpretasi & Pattern</h3>'+(smear.length?'<p>Apusan: '+smear.join(', ')+'</p>':'')+'</div></div><div class="trow">'+tags.join('')+'</div>';
+    if(allN) out+='<p style="font-size:13px;color:#059669;font-weight:500">CBC dalam batas normal sesuai usia dan jenis kelamin.</p>';
+    if(mentzer!==null) out+='<div class="mb"><i class="ti ti-calculator"></i><p>Mentzer index (MCV/RBC) = <span>'+mentzer+'</span> - '+(mentzer<13?'<13: sugestif talasemia trait':'>=13: lebih mendukung defisiensi besi')+'</p></div>';
+    out+='</div>';
+
+    if(dxL.length||dxP.length||dxE.length) {
+      out+='<div class="rc"><div class="rh"><div class="ri b"><i class="ti ti-list-search"></i></div><h3>Kemungkinan Diagnosis</h3></div>';
+      if(dxL.length) out+='<div class="cl cly">Paling mungkin</div><ul class="il">'+dxL.map(function(d){return li(d);}).join('')+'</ul>';
+      if(dxP.length) out+='<div class="cl cpo">Pertimbangkan juga</div><ul class="il">'+dxP.map(function(d){return li(d,'w');}).join('')+'</ul>';
+      if(dxE.length) out+='<div class="cl cex">Jangan terlewat / singkirkan</div><ul class="il">'+dxE.map(function(d){return li(d,'d');}).join('')+'</ul>';
+      out+='</div>';
+    }
+    if(fu.length||dxM.length) {
+      out+='<div class="rc"><div class="rh"><div class="ri a"><i class="ti ti-test-pipe"></i></div><h3>Pemeriksaan Lanjutan</h3></div>';
+      if(dxM.length) out+='<div class="cl cmo">Data tambahan diperlukan</div><ul class="il">'+dxM.map(function(d){return li(d);}).join('')+'</ul><div class="dv"></div>';
+      if(fu.length) out+='<ul class="il">'+fu.map(function(f){return li(f);}).join('')+'</ul>';
+      out+='<div class="tb"><p>Interpretasi ini merupakan skrining awal berbasis CBC. Korelasi dengan klinis, retikulosit, apusan darah tepi, ferritin, dan CRP sangat dianjurkan sebelum menetapkan diagnosis akhir.</p></div></div>';
+    }
+    out+='<p class="dc">Alat bantu edukasi klinis - Bukan pengganti penilaian klinis dokter<br>Referensi: WHO - AAP - ASH - RCH Clinical Guidelines - Nelson Textbook of Pediatrics<br><strong>drAisyi EduCare</strong> - Pediatric CBC Quick Interpreter v2.1</p>';
+
+    var el=document.getElementById('results');
+    el.innerHTML=out;
+    el.style.display='block';
+    el.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+})();
+</script>
+</body>
+</html>

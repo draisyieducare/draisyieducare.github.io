@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:var(--color-background-tertiary,#f5f5f0);color:var(--color-text-primary,#1a1a1a);font-size:15px;line-height:1.5}
+h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.wrap{max-width:740px;margin:0 auto;padding:1.25rem 1rem 3rem}
+
+/* Brand */
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;padding-bottom:.9rem;border-bottom:.5px solid var(--color-border-tertiary,rgba(0,0,0,.12))}
+.brand-dot{width:28px;height:28px;border-radius:50%;background:#185FA5;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-dot i{color:#fff;font-size:15px}
+.brand-name{font-size:13px;font-weight:500;color:var(--color-text-secondary)}
+.brand-sub{font-size:11px;color:var(--color-text-tertiary)}
+
+/* Alert banner */
+.alert-banner{background:#FAEEDA;border:.5px solid #EF9F27;border-radius:8px;padding:.75rem 1rem;margin-bottom:1.25rem;display:flex;gap:10px;align-items:flex-start}
+.alert-banner i{color:#854F0B;font-size:18px;flex-shrink:0;margin-top:1px}
+.alert-banner-text{font-size:12px;color:#633806;line-height:1.6}
+.alert-banner-text strong{font-weight:500}
+
+/* Tabs */
+.module-tabs{display:flex;gap:0;border:.5px solid var(--color-border-tertiary,rgba(0,0,0,.15));border-radius:8px;overflow:hidden;margin-bottom:1.25rem}
+.mod-tab{flex:1;padding:7px 4px;font-size:11px;font-weight:500;cursor:pointer;background:transparent;border:none;border-right:.5px solid var(--color-border-tertiary,rgba(0,0,0,.12));color:var(--color-text-secondary);transition:all .15s;text-align:center;line-height:1.3}
+.mod-tab:last-child{border-right:none}
+.mod-tab.active{background:#185FA5;color:#fff}
+.mod-tab .tab-dot{width:7px;height:7px;border-radius:50%;margin:0 auto 3px;background:currentColor;opacity:.4}
+.mod-tab.active .tab-dot{opacity:1;background:#fff}
+.mod-tab.tab-ok .tab-dot{background:#27500A;opacity:1}
+.mod-tab.tab-warn .tab-dot{background:#854F0B;opacity:1}
+.mod-tab.tab-err .tab-dot{background:#791F1F;opacity:1}
+
+/* Module panes */
+.mod-pane{display:none}.mod-pane.active{display:block}
+
+/* Cards & Sections */
+.card{background:var(--color-background-primary,#fff);border:.5px solid var(--color-border-tertiary,rgba(0,0,0,.12));border-radius:12px;padding:1.1rem 1.25rem;margin-bottom:.85rem}
+.card-hd{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;margin-bottom:.85rem;color:var(--color-text-primary)}
+.card-hd i{font-size:17px;color:#185FA5}
+.card-hd .badge-sm{font-size:10px;padding:2px 7px;border-radius:20px;margin-left:auto}
+
+/* Status grid */
+.status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:1rem}
+.stat-card{border-radius:8px;padding:.7rem .9rem;display:flex;align-items:flex-start;gap:8px;border:.5px solid transparent}
+.stat-card i{font-size:18px;flex-shrink:0;margin-top:1px}
+.stat-card.ok{background:#EAF3DE;border-color:#97C459}.stat-card.ok i,.stat-card.ok .sl{color:#27500A}.stat-card.ok .ss{color:#3B6D11}
+.stat-card.no{background:#FCEBEB;border-color:#F09595}.stat-card.no i,.stat-card.no .sl{color:#791F1F}.stat-card.no .ss{color:#A32D2D}
+.stat-card.warn{background:#FAEEDA;border-color:#EF9F27}.stat-card.warn i,.stat-card.warn .sl{color:#633806}.stat-card.warn .ss{color:#854F0B}
+.stat-card.none{background:var(--color-background-secondary,#f0f0ec);border-color:var(--color-border-tertiary)}.stat-card.none i,.stat-card.none .sl{color:var(--color-text-secondary)}.stat-card.none .ss{color:var(--color-text-tertiary)}
+.sl{font-size:12px;font-weight:500}.ss{font-size:10px;margin-top:2px}
+
+/* Drug rows */
+.drug-row{display:flex;align-items:flex-start;gap:8px;padding:.55rem 0;border-bottom:.5px solid var(--color-border-tertiary,rgba(0,0,0,.07))}
+.drug-row:last-child{border-bottom:none}
+.drug-info{flex:1;min-width:0}
+.drug-name{font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.drug-dose{font-size:11px;color:var(--color-text-secondary);margin-top:2px;line-height:1.5}
+.drug-meta{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap}
+.pill{font-size:10px;padding:2px 7px;border-radius:20px}
+.pill-opt{background:#E6F1FB;color:#0C447C}
+.pill-req{background:#EAF3DE;color:#27500A}
+.pill-or{background:#FAEEDA;color:#633806}
+.drug-right{display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0}
+.toggle-group{display:flex;border:.5px solid var(--color-border-tertiary,rgba(0,0,0,.15));border-radius:6px;overflow:hidden}
+.tg-btn{padding:4px 9px;font-size:11px;cursor:pointer;background:transparent;border:none;color:var(--color-text-secondary);transition:all .15s;white-space:nowrap}
+.tg-btn.ok{background:#EAF3DE;color:#27500A}
+.tg-btn.no{background:#FCEBEB;color:#791F1F}
+.tg-btn:hover:not(.ok):not(.no){background:var(--color-background-secondary)}
+.stk-input{width:70px;padding:3px 6px;font-size:11px;border:.5px solid var(--color-border-tertiary);border-radius:5px;background:var(--color-background-primary);color:var(--color-text-primary);text-align:center}
+.stk-input:focus{outline:2px solid #185FA5;outline-offset:1px}
+
+/* Input fields */
+.input-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:.85rem}
+.field label{display:block;font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
+.field input,.field select{width:100%;padding:5px 8px;font-size:12px;border:.5px solid var(--color-border-tertiary);border-radius:6px;background:var(--color-background-primary);color:var(--color-text-primary)}
+.field input:focus,.field select:focus{outline:2px solid #185FA5;outline-offset:1px}
+
+/* Calc box */
+.calc-box{background:var(--color-background-secondary,#f5f5f0);border-radius:8px;padding:.75rem 1rem;margin-top:.75rem;font-size:12px}
+.calc-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:.5px solid var(--color-border-tertiary,rgba(0,0,0,.07))}
+.calc-row:last-child{border-bottom:none;padding-top:6px;font-weight:500}
+.calc-val{color:#185FA5;font-weight:500}
+.calc-note{font-size:10px;color:var(--color-text-tertiary);margin-top:4px}
+
+/* ICANS grading table */
+.grade-table{width:100%;font-size:11px;border-collapse:collapse;margin-top:.5rem}
+.grade-table th{background:var(--color-background-secondary);padding:5px 8px;text-align:left;font-weight:500;border-bottom:.5px solid var(--color-border-tertiary)}
+.grade-table td{padding:5px 8px;border-bottom:.5px solid var(--color-border-tertiary,rgba(0,0,0,.07));vertical-align:top}
+.gb{display:inline-block;font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500}
+.g1{background:#EAF3DE;color:#27500A}.g2{background:#FAEEDA;color:#633806}.g3{background:#FCEBEB;color:#791F1F}.g4{background:#F7C1C1;color:#501313}
+
+/* Order template */
+.grade-tabs{display:flex;gap:5px;margin-bottom:.85rem;flex-wrap:wrap}
+.gr-tab{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:.5px solid var(--color-border-tertiary);background:transparent;color:var(--color-text-secondary);transition:all .15s}
+.gr-tab.active{border-color:#185FA5;background:#E6F1FB;color:#0C447C}
+.order-item{display:flex;align-items:flex-start;gap:8px;padding:.45rem 0;border-bottom:.5px solid var(--color-border-tertiary,rgba(0,0,0,.07))}
+.order-item:last-child{border-bottom:none}
+.order-num{width:18px;height:18px;border-radius:50%;background:#185FA5;color:#fff;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.order-text{font-size:12px;line-height:1.5}
+.order-note{font-size:11px;color:#185FA5;margin-top:1px}
+.order-warn{font-size:11px;color:#A32D2D;margin-top:1px}
+
+/* Checklist */
+.chk-row{display:flex;align-items:center;gap:8px;padding:.45rem 0;border-bottom:.5px solid var(--color-border-tertiary,rgba(0,0,0,.07))}
+.chk-row:last-child{border-bottom:none}
+.chk-row input[type=checkbox]{width:15px;height:15px;cursor:pointer;flex-shrink:0;accent-color:#185FA5}
+.chk-label{font-size:12px;flex:1}
+.chk-sub{font-size:11px;color:var(--color-text-secondary);margin-top:1px}
+
+/* Missing */
+.miss-item{display:flex;align-items:flex-start;gap:7px;padding:.4rem 0;border-bottom:.5px solid var(--color-border-tertiary,rgba(0,0,0,.07))}
+.miss-item:last-child{border-bottom:none}
+.miss-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.miss-dot.red{background:#E24B4A}.miss-dot.amber{background:#BA7517}
+.miss-text{font-size:12px}
+.miss-sub{font-size:11px;color:var(--color-text-tertiary)}
+
+/* Diff dx */
+.diff-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:6px;margin-top:.5rem}
+.diff-item{font-size:11px;color:var(--color-text-primary);display:flex;align-items:center;gap:5px;padding:.3rem .5rem;background:var(--color-background-secondary,#f5f5f0);border-radius:5px}
+.diff-item i{font-size:13px;color:#185FA5}
+
+/* Red flags */
+.flag-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:6px;margin-top:.5rem}
+.flag-item{font-size:11px;color:#791F1F;display:flex;align-items:center;gap:5px;padding:.3rem .5rem;background:#FCEBEB;border-radius:5px;border:.5px solid #F09595}
+.flag-item i{font-size:13px;color:#A32D2D}
+
+/* Buttons */
+.btn-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:.85rem}
+.btn{display:flex;align-items:center;gap:5px;font-size:12px;padding:5px 12px;border-radius:6px;border:.5px solid var(--color-border-tertiary);background:transparent;cursor:pointer;color:var(--color-text-secondary);transition:all .15s}
+.btn:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.btn i{font-size:14px}
+.btn-primary{border-color:#185FA5;background:#E6F1FB;color:#0C447C}
+.btn-primary:hover{background:#B5D4F4}
+.btn-danger{border-color:#F09595;background:#FCEBEB;color:#791F1F}
+.btn-danger:hover{background:#F7C1C1}
+
+/* Print summary */
+.print-box{background:var(--color-background-secondary,#f5f5f0);border:.5px solid var(--color-border-tertiary);border-radius:8px;padding:.85rem 1rem;font-size:11px;font-family:monospace;white-space:pre-wrap;line-height:1.7;max-height:200px;overflow-y:auto;color:var(--color-text-primary);display:none;margin-top:.75rem}
+
+/* Separator */
+.sep{height:.5px;background:var(--color-border-tertiary,rgba(0,0,0,.1));margin:.85rem 0}
+
+/* Location tag */
+.loc-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;border-radius:20px;cursor:pointer;border:.5px solid var(--color-border-tertiary);margin-right:4px;margin-bottom:4px;transition:all .15s;background:transparent;color:var(--color-text-secondary)}
+.loc-badge.active{background:#185FA5;color:#fff;border-color:#185FA5}
+
+.section-label{font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;margin-top:.75rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h2 class="sr-only">CAR-T ICANS Neurotoxicity Medication Kit dan Neurocritical Readiness Checker oleh drAisyi EduCare</h2>
+
+<!-- BRAND -->
+<div class="brand">
+  <div class="brand-dot"><i class="ti ti-brain" aria-hidden="true"></i></div>
+  <div>
+    <div class="brand-name">drAisyi EduCare</div>
+    <div class="brand-sub">CAR-T Cell Therapy · ICANS Neurotoxicity Readiness</div>
+  </div>
+</div>
+
+<!-- ALERT BANNER -->
+<div class="alert-banner">
+  <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+  <div class="alert-banner-text">
+    <strong>Penting — ICANS vs CRS:</strong> Tocilizumab <em>bukan</em> terapi utama isolated ICANS karena penetrasi blood-brain barrier terbatas. <strong>Kortikosteroid adalah mainstay terapi ICANS.</strong> Gunakan tocilizumab hanya bila ada CRS bersamaan sesuai protokol. Pada ICANS Grade 1, prioritas adalah monitoring neurologis dan supportive care; steroid dipertimbangkan bila progresif atau sesuai protokol institusi.
+  </div>
+</div>
+
+<!-- MODULE TABS -->
+<div class="module-tabs" role="tablist">
+  <button class="mod-tab active" role="tab" aria-selected="true" onclick="switchMod(0,this)"><div class="tab-dot"></div>Identitas & Grade</button>
+  <button class="mod-tab" role="tab" aria-selected="false" onclick="switchMod(1,this)"><div class="tab-dot"></div>Ward Kit</button>
+  <button class="mod-tab" role="tab" aria-selected="false" onclick="switchMod(2,this)"><div class="tab-dot"></div>ICU Kit</button>
+  <button class="mod-tab" role="tab" aria-selected="false" onclick="switchMod(3,this)"><div class="tab-dot"></div>Neuro Check</button>
+  <button class="mod-tab" role="tab" aria-selected="false" onclick="switchMod(4,this)"><div class="tab-dot"></div>Order Template</button>
+</div>
+
+<!-- STATUS BAR (global) -->
+<div class="status-grid" id="globalStatus">
+  <div class="stat-card none" id="sc-overall"><i class="ti ti-medicine-syrup" aria-hidden="true"></i><div><div class="sl">Status Keseluruhan</div><div class="ss" id="sc-overall-t">Belum diisi</div></div></div>
+  <div class="stat-card none" id="sc-ward"><i class="ti ti-stethoscope" aria-hidden="true"></i><div><div class="sl">Ward Kit</div><div class="ss" id="sc-ward-t">–</div></div></div>
+  <div class="stat-card none" id="sc-icu"><i class="ti ti-building-hospital" aria-hidden="true"></i><div><div class="sl">ICU Kit</div><div class="ss" id="sc-icu-t">–</div></div></div>
+  <div class="stat-card none" id="sc-neuro"><i class="ti ti-brain" aria-hidden="true"></i><div><div class="sl">Neuro Readiness</div><div class="ss" id="sc-neuro-t">–</div></div></div>
+</div>
+
+<!-- ===== MOD 0: IDENTITAS & GRADE ===== -->
+<div class="mod-pane active" id="mod-0">
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-user" aria-hidden="true"></i>Data Pasien & Konteks Klinis</div>
+    <div class="input-grid">
+      <div class="field"><label>Berat badan (kg)</label><input type="number" id="f-bb" placeholder="mis. 30" min="1" max="200" oninput="calcDoses()"></div>
+      <div class="field"><label>BSA (m²) — opsional</label><input type="number" id="f-bsa" placeholder="mis. 1.1" step="0.01" min="0.1" max="3" oninput="calcDoses()"></div>
+      <div class="field"><label>Usia (tahun)</label><input type="number" id="f-usia" placeholder="mis. 8" min="0" max="18" oninput="calcDoses()"></div>
+      <div class="field"><label>Produk CAR-T</label>
+        <select id="f-produk" oninput="calcDoses()">
+          <option value="">-- pilih --</option>
+          <option>Tisagenlecleucel (Kymriah)</option>
+          <option>Axicabtagene ciloleucel (Yescarta)</option>
+          <option>Lisocabtagene maraleucel (Breyanzi)</option>
+          <option>Brexucabtagene autoleucel (Tecartus)</option>
+          <option>Custom / investigasi</option>
+        </select>
+      </div>
+      <div class="field"><label>Hari post infusi</label><input type="number" id="f-hari" placeholder="mis. D+5" min="0" max="60" oninput="calcDoses()"></div>
+      <div class="field"><label>CRS bersamaan?</label>
+        <select id="f-crs" oninput="calcDoses()">
+          <option value="">-- pilih --</option>
+          <option value="ya">Ya</option>
+          <option value="tidak">Tidak</option>
+        </select>
+      </div>
+    </div>
+    <div class="section-label">Lokasi Pasien</div>
+    <div style="margin-bottom:.85rem">
+      <button class="loc-badge active" id="loc-ward" onclick="setLoc('ward',this)"><i class="ti ti-bed" aria-hidden="true"></i> Ward / Ruang Rawat</button>
+      <button class="loc-badge" id="loc-inter" onclick="setLoc('inter',this)"><i class="ti ti-heart-rate-monitor" aria-hidden="true"></i> Intermediate Care</button>
+      <button class="loc-badge" id="loc-icu" onclick="setLoc('icu',this)"><i class="ti ti-building-hospital" aria-hidden="true"></i> PICU / ICU</button>
+    </div>
+    <div class="section-label">Grade ICANS (ASTCT)</div>
+    <div class="grade-tabs" style="margin-bottom:.75rem">
+      <button class="gr-tab active" data-g="0" onclick="setGrade(this)">Belum ditentukan</button>
+      <button class="gr-tab" data-g="1" onclick="setGrade(this)">Grade 1</button>
+      <button class="gr-tab" data-g="2" onclick="setGrade(this)">Grade 2</button>
+      <button class="gr-tab" data-g="3" onclick="setGrade(this)">Grade 3</button>
+      <button class="gr-tab" data-g="4" onclick="setGrade(this)">Grade 4</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.85rem">
+      <div style="background:#E6F1FB;border-radius:8px;padding:.65rem .85rem;border:.5px solid #B5D4F4">
+        <div style="font-size:11px;font-weight:500;color:#0C447C;margin-bottom:3px">ICE Score — usia ≥12 tahun</div>
+        <div style="font-size:11px;color:#185FA5;line-height:1.6">Orientasi (4 pt) · Penamaan (3 pt) · Ikuti perintah (1 pt) · Tulis kalimat (1 pt) · Hitung mundur (1 pt)<br><strong>Total 10 poin.</strong> Makin rendah = makin berat.</div>
+      </div>
+      <div style="background:#EEEDFE;border-radius:8px;padding:.65rem .85rem;border:.5px solid #AFA9EC">
+        <div style="font-size:11px;font-weight:500;color:#3C3489;margin-bottom:3px">CAPD — usia &lt;12 tahun / tidak kooperatif</div>
+        <div style="font-size:11px;color:#534AB7;line-height:1.6">Cornell Assessment of Pediatric Delirium. Dinilai oleh perawat. Skor ≥9 = delirium (abnormal). <strong>Bukan ekivalen ICE</strong> — sistem poin berbeda.</div>
+      </div>
+    </div>
+    <table class="grade-table">
+      <thead><tr><th>Grade</th><th>ICE score (≥12 th)</th><th>CAPD (≤12 th)</th><th>Kesadaran</th><th>Kejang</th><th>Motor / ICP</th></tr></thead>
+      <tbody>
+        <tr><td><span class="gb g1">1</span></td><td>7–9</td><td>&lt;9 (normal)</td><td>Bangun spontan</td><td>Tidak ada</td><td>Normal</td></tr>
+        <tr><td><span class="gb g2">2</span></td><td>3–6</td><td>≥9 (abnormal)</td><td>Bangun dengan suara</td><td>Tidak ada</td><td>Normal</td></tr>
+        <tr><td><span class="gb g3">3</span></td><td>0–2</td><td>≥9 + agitasi/berat</td><td>Bangun dengan rangsang</td><td>Fokal / generalized terkontrol</td><td>Papilledema Gr 1–2</td></tr>
+        <tr><td><span class="gb g4">4</span></td><td>0 / tidak dapat dinilai</td><td>Tidak dapat dinilai</td><td>Tidak bangun</td><td>Status epileptikus / refrakter</td><td>Edema serebral / herniasi</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:.6rem;font-size:11px;color:var(--color-text-tertiary)">⚠ ICE dan CAPD adalah instrumen berbeda dengan sistem penilaian berbeda — tidak saling menggantikan, dipilih berdasarkan usia dan kemampuan kooperasi pasien.</div>
+  </div>
+
+  <!-- DOSIS KALKULASI -->
+  <div class="card" id="calc-card">
+    <div class="card-hd"><i class="ti ti-calculator" aria-hidden="true"></i>Kalkulasi Dosis (isi BB/BSA)</div>
+    <div class="calc-box" id="calc-out">
+      <div style="font-size:12px;color:var(--color-text-tertiary)">Isi berat badan dan BSA untuk menampilkan kalkulasi dosis.</div>
+    </div>
+    <div class="calc-note">⚠ Dosis final harus diverifikasi oleh DPJP dan apoteker. Dosis sesuai protokol produk dan institusi.</div>
+  </div>
+
+  <!-- CRS ALERT -->
+  <div class="card" id="crs-alert" style="display:none;border-color:#EF9F27">
+    <div class="card-hd"><i class="ti ti-alert-triangle" style="color:#854F0B" aria-hidden="true"></i>CRS Bersamaan Terdeteksi</div>
+    <div style="font-size:12px;color:#633806;line-height:1.6">Bila ada CRS bersamaan, tatalaksana CRS (termasuk tocilizumab) mengikuti protokol CRS tersendiri. Pemberian tocilizumab untuk komponen CRS adalah valid, <strong>namun tidak memperbaiki ICANS secara independen.</strong> Pantau respons kedua sindrom secara terpisah.</div>
+  </div>
+</div>
+
+<!-- ===== MOD 1: WARD KIT ===== -->
+<div class="mod-pane" id="mod-1">
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-activity" aria-hidden="true"></i>Antikonvulsan &amp; Rescue Kejang</div>
+    <div id="rows-w-anticonv"></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-pill" aria-hidden="true"></i>Kortikosteroid IV</div>
+    <div id="rows-w-steroid"></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-clipboard-check" aria-hidden="true"></i>Neuro Assessment &amp; Eskalasi Ward</div>
+    <div id="rows-w-misc"></div>
+  </div>
+  <div class="card" id="ward-missing-card" style="display:none">
+    <div class="card-hd"><i class="ti ti-alert-triangle" style="color:#E24B4A" aria-hidden="true"></i>Item Belum Siap / Belum Dikonfirmasi</div>
+    <div id="ward-missing-list"></div>
+  </div>
+</div>
+
+<!-- ===== MOD 2: ICU KIT ===== -->
+<div class="mod-pane" id="mod-2">
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-bed" aria-hidden="true"></i>Sedasi &amp; Airway ICU</div>
+    <div id="rows-icu-sed"></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-droplet" aria-hidden="true"></i>Agen Osmotik &amp; ICP Management</div>
+    <div id="rows-icu-osm"></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-building-hospital" aria-hidden="true"></i>Infrastruktur ICU</div>
+    <div id="rows-icu-infra"></div>
+  </div>
+  <div class="card" id="icu-missing-card" style="display:none">
+    <div class="card-hd"><i class="ti ti-alert-triangle" style="color:#E24B4A" aria-hidden="true"></i>Item Belum Siap / Belum Dikonfirmasi</div>
+    <div id="icu-missing-list"></div>
+  </div>
+</div>
+
+<!-- ===== MOD 3: NEURO CHECK ===== -->
+<div class="mod-pane" id="mod-3">
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-brain" aria-hidden="true"></i>Monitoring &amp; Assessment Neurologis</div>
+    <div id="chk-neuro-assess"></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-test-pipe" aria-hidden="true"></i>Pemeriksaan Penunjang Urgensial</div>
+    <div id="chk-neuro-lab"></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-list-check" aria-hidden="true"></i>Diagnosis Banding — Singkirkan Sebelum ICANS Dikonfirmasi</div>
+    <div id="diff-dx" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:4px;margin-top:.5rem"></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-urgent" style="color:#E24B4A" aria-hidden="true"></i>Red Flags — Eskalasi Segera ke ICU</div>
+    <div id="red-flags" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:4px;margin-top:.5rem"></div>
+  </div>
+</div>
+
+<!-- ===== MOD 4: ORDER TEMPLATE ===== -->
+<div class="mod-pane" id="mod-4">
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-clipboard-list" aria-hidden="true"></i>Template Order ICANS per Grade</div>
+    <div class="grade-tabs">
+      <button class="gr-tab active" data-og="1" onclick="switchOrder(this)">Grade 1</button>
+      <button class="gr-tab" data-og="2" onclick="switchOrder(this)">Grade 2</button>
+      <button class="gr-tab" data-og="3" onclick="switchOrder(this)">Grade 3</button>
+      <button class="gr-tab" data-og="4" onclick="switchOrder(this)">Grade 4</button>
+    </div>
+    <div id="order-out"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="copyOrder()"><i class="ti ti-copy" aria-hidden="true"></i>Salin order</button>
+      <button class="btn" onclick="togglePrint()"><i class="ti ti-eye" aria-hidden="true"></i>Tampilkan teks</button>
+      <button class="btn" onclick="resetAll()"><i class="ti ti-refresh" aria-hidden="true"></i>Reset semua</button>
+    </div>
+    <div class="print-box" id="print-box"></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><i class="ti ti-signature" aria-hidden="true"></i>Sign-off &amp; Summary</div>
+    <div class="input-grid">
+      <div class="field"><label>Nama DPJP / Dokter jaga</label><input type="text" id="so-dpjp" placeholder="Inisial/nama"></div>
+      <div class="field"><label>Waktu asesmen</label><input type="datetime-local" id="so-time"></div>
+      <div class="field"><label>Lokasi konfirmasi</label><input type="text" id="so-loc" placeholder="mis. Ruang Lily / PICU"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="copyFullSummary()"><i class="ti ti-clipboard-text" aria-hidden="true"></i>Salin ringkasan lengkap</button>
+    </div>
+    <div class="print-box" id="summary-box"></div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+var S={bb:0,bsa:0,usia:0,grade:0,loc:"ward",crs:"",wardDrugs:{},icuDrugs:{},neuroChecks:{}};
+var activeOrder=1;
+
+/* ---- DRUG DATA ---- */
+var wardAnticonv=[
+  {id:"lev",name:"Levetiracetam",dose:"20–30 mg/kg IV (maks 1500 mg/dosis) infus 15–30 menit — profilaksis / terapi sesuai protokol",req:true,tag:"antikonvulsan"},
+  {id:"diaz",name:"Diazepam rescue",dose:"0.2–0.5 mg/kg IV / rektal (maks 10 mg) — ulangi 1× setelah 5 mnt",req:"or",orgroup:"benzo",tag:"rescue kejang"},
+  {id:"midaz",name:"Midazolam rescue",dose:"0.05–0.1 mg/kg IV/IM/bukal/intranasal (maks 5 mg/dosis)",req:"or",orgroup:"benzo",tag:"rescue kejang"},
+  {id:"lorz",name:"Lorazepam rescue",dose:"0.05–0.1 mg/kg IV (maks 4 mg/dosis) — bila tersedia",req:"or",orgroup:"benzo",tag:"rescue kejang"}
+];
+var wardSteroid=[
+  {id:"dexa",name:"Dexamethasone IV",dose:"10 mg/m² tiap 6 jam (maks 10 mg/dosis) — ICANS Grade 2–3",req:true,tag:"steroid"},
+  {id:"mp",name:"Methylprednisolone IV",dose:"1–2 mg/kg/hari, pulse 1000 mg/hari untuk Grade 3–4",req:true,tag:"steroid"}
+];
+var wardMisc=[
+  {id:"neuroform",name:"ICE Score / CAPD form tersedia di samping pasien",dose:"ICE untuk ≥12 th; CAPD untuk <12 th atau tidak kooperatif",req:true,tag:"monitoring"},
+  {id:"gcschart",name:"GCS / Pupil chart & seizure log",dose:"Dokumentasi tiap 2–4 jam sesuai grade",req:true,tag:"monitoring"},
+  {id:"escalcont",name:"Kontak eskalasi ICU / DPJP tersedia 24 jam",dose:"Nomor PICU/ICU dan tim CAR-T terpampang di ruangan",req:true,tag:"eskalasi"}
+];
+var icuSed=[
+  {id:"prop",name:"Propofol 1% / 2% (infus ICU)",dose:"1–4 mg/kg/jam IV, titrasi ke RASS target",req:true,tag:"sedasi"},
+  {id:"midicu",name:"Midazolam (infus kontinu ICU)",dose:"0.05–0.2 mg/kg/jam IV — alternatif / kombinasi propofol",req:true,tag:"sedasi"},
+  {id:"airway",name:"Set intubasi & ventilator siap",dose:"ETT sesuai usia, bag-valve-mask, suction, oksigen",req:true,tag:"airway"}
+];
+var icuOsm=[
+  {id:"mann",name:"Mannitol 20%",dose:"0.25–0.5 g/kg IV over 20 mnt — tanda peningkatan TIK",req:false,tag:"osmotik"},
+  {id:"nacl3",name:"NaCl 3% (Hypertonic Saline)",dose:"1–3 ml/kg IV bolus — hiponatremia simtomatik / edema serebral",req:false,tag:"osmotik"},
+  {id:"vasop",name:"Vasopressor (norepinefrin / dopamin)",dose:"Siap di ICU untuk manajemen hemodinamik",req:true,tag:"icu"}
+];
+var icuInfra=[
+  {id:"icubed",name:"Bed PICU / ICU tersedia / terreservasi",dose:"Konfirmasi kapasitas dan akses transfer emergensi",req:true,tag:"infrastruktur"},
+  {id:"eeg",name:"Akses EEG (emergensi/kontinyu)",dose:"Prioritas Grade 3–4 atau kecurigaan nonconvulsive status epilepticus",req:true,tag:"monitoring"},
+  {id:"ctmri",name:"Akses CT / MRI kepala emergensi",dose:"Singkirkan perdarahan, edema, herniasi bila gejala fokal atau penurunan kesadaran mendadak",req:true,tag:"imaging"}
+];
+var neuroAssess=[
+  {id:"ice","t":"ICE score baseline tersedia & sudah diisi","s":"International Encephalitis Assessment — 10 poin"},
+  {id:"capd","t":"CAPD tersedia untuk pasien <12 tahun / tidak kooperatif","s":"Cornell Assessment of Pediatric Delirium"},
+  {id:"hwsample","t":"Sampel handwriting baseline tersimpan","s":"Untuk perbandingan serial monitoring ICANS Grade 1–2"},
+  {id:"neurobase","t":"Neuro exam baseline terdokumentasi","s":"GCS, pupil, kekuatan motorik, refleks, bicara"},
+  {id:"neuroq2","t":"Jadwal neuro check q2–4h diaktifkan","s":"Sesuai grade ICANS; catat perburukan segera"}
+];
+var neuroLab=[
+  {id:"gula","t":"Glukosa darah (singkirkan hipoglikemia)","s":"Target >70 mg/dL"},
+  {id:"elek","t":"Elektrolit (Na, K, Ca, Mg)","s":"Hiponatremia, hipokalsemia dapat menyerupai ICANS"},
+  {id:"renal","t":"Fungsi ginjal & hati (ureum, kreatinin, LFT)","s":"Uremia, hepatik ensefalopati sebagai DD"},
+  {id:"darah","t":"Darah rutin, kultur bila demam","s":"Singkirkan sepsis / meningitis"},
+  {id:"coag","t":"Koagulasi (PT, APTT, fibrinogen)","s":"Bila kecurigaan perdarahan intrakranial"},
+  {id:"ctmri2","t":"CT/MRI kepala bila gejala fokal / penurunan kesadaran","s":"Singkirkan stroke, perdarahan, leukostasis CNS"}
+];
+var diffDx=["Sepsis / infeksi SSP","Hipoglikemia","Hiponatremia / hipo-Ca","Uremia / ensefalopati hepatik","Efek sedatif / opioid","Stroke / perdarahan","Meningitis / ensefalitis","Leukostasis / penyakit CNS","CRS overlap","Kejang pasca-kemo"];
+var redFlags=["Penurunan kesadaran mendadak","Kejang / status epileptikus","Afasia progresif","Kelemahan motorik fokal","Papilledema / pupil anisokor","Sakit kepala berat + muntah proyektil","Hipertensi + bradikardia (Cushing)","ICE/CAPD memburuk cepat","Kebutuhan intubasi / ICU","GCS turun ≥2 poin"];
+
+/* ---- BUILD ROWS ---- */
+function buildDrug(list, containerId, group){
+  var c=document.getElementById(containerId);
+  if(!c)return;
+  c.innerHTML="";
+  list.forEach(function(d){
+    var row=document.createElement("div");row.className="drug-row";
+    var tagHtml="";
+    if(d.req===true) tagHtml="<span class='pill pill-req'>wajib</span>";
+    else if(d.req==="or") tagHtml="<span class='pill pill-or'>minimal 1 dari grup</span>";
+    else tagHtml="<span class='pill pill-opt'>protokol lokal</span>";
+    row.innerHTML="<div class='drug-info'><div class='drug-name'>"+d.name+"</div><div class='drug-dose'>"+d.dose+"</div><div class='drug-meta'>"+tagHtml+"</div></div><div class='drug-right'><div class='toggle-group'><button class='tg-btn' onclick=\"toggleD('"+group+"','"+d.id+"','ok',this)\">✓ Ada</button><button class='tg-btn' onclick=\"toggleD('"+group+"','"+d.id+"','no',this)\">✗ Tidak</button></div><input class='stk-input' type='text' placeholder='stok/lok' title='Jumlah/lokasi/expiry' oninput=\"S[group_map['"+group+"']]['\"+d.id+\"_note']=this.value\"></div>";
+    c.appendChild(row);
+    var grpKey=group+"Drugs";
+    if(!S[grpKey])S[grpKey]={};
+  });
+}
+var group_map={ward:"wardDrugs",icu:"icuDrugs"};
+
+function buildChecklist(list, containerId){
+  var c=document.getElementById(containerId);if(!c)return;c.innerHTML="";
+  list.forEach(function(it){
+    var row=document.createElement("div");row.className="chk-row";
+    row.innerHTML="<input type='checkbox' id='chk-"+it.id+"' onchange=\"S.neuroChecks['"+it.id+"']=this.checked;updateStatus()\"><div><div class='chk-label' style='font-size:12px'>"+it.t+"</div><div class='chk-sub'>"+it.s+"</div></div>";
+    c.appendChild(row);
+  });
+}
+function buildDiffDx(){
+  var c=document.getElementById("diff-dx");if(!c)return;c.innerHTML="";
+  diffDx.forEach(function(d,i){
+    var id="diff-"+i;
+    var div=document.createElement("div");div.className="chk-row";
+    div.innerHTML="<input type='checkbox' id='"+id+"'><label for='"+id+"' class='chk-label' style='font-size:12px'>"+d+"</label>";
+    c.appendChild(div);
+  });
+}
+function buildRedFlags(){
+  var c=document.getElementById("red-flags");if(!c)return;c.innerHTML="";
+  redFlags.forEach(function(f,i){
+    var id="flag-"+i;
+    var div=document.createElement("div");div.className="chk-row";
+    div.style.cssText="background:#FCEBEB;border-radius:6px;padding:.4rem .6rem;border:.5px solid #F09595;margin-bottom:4px";
+    div.innerHTML="<input type='checkbox' id='"+id+"' style='accent-color:#E24B4A'><label for='"+id+"' class='chk-label' style='font-size:12px;color:#791F1F'>"+f+"</label>";
+    c.appendChild(div);
+  });
+}
+
+/* ---- TOGGLE DRUG ---- */
+function toggleD(group,id,val,btn){
+  var grpKey=group+"Drugs";
+  S[grpKey][id]=val;
+  var tg=btn.parentElement;
+  tg.querySelectorAll(".tg-btn").forEach(function(b){b.className="tg-btn"});
+  btn.classList.add(val);
+  updateStatus();
+  updateMissing();
+}
+
+/* ---- GRADE & LOCATION ---- */
+function setGrade(btn){
+  document.querySelectorAll("[data-g]").forEach(function(b){b.classList.remove("active")});
+  btn.classList.add("active");
+  S.grade=parseInt(btn.dataset.g);
+  calcDoses();updateStatus();
+}
+var activeLoc="ward";
+function setLoc(loc,btn){
+  document.querySelectorAll(".loc-badge").forEach(function(b){b.classList.remove("active")});
+  btn.classList.add("active");
+  S.loc=loc;
+}
+
+/* ---- CRS ALERT ---- */
+document.getElementById("f-crs").addEventListener("change",function(){
+  S.crs=this.value;
+  document.getElementById("crs-alert").style.display=(this.value==="ya")?"block":"none";
+  updateStatus();
+});
+
+/* ---- CALC DOSES ---- */
+function calcDoses(){
+  var bb=parseFloat(document.getElementById("f-bb").value)||0;
+  var bsa=parseFloat(document.getElementById("f-bsa").value)||0;
+  var usia=parseFloat(document.getElementById("f-usia").value)||0;
+  S.bb=bb;S.bsa=bsa;S.usia=usia;
+  var box=document.getElementById("calc-out");
+  if(!bb&&!bsa){box.innerHTML="<div style='font-size:12px;color:var(--color-text-tertiary)'>Isi berat badan dan BSA untuk menampilkan kalkulasi dosis.</div>";return}
+  var levDose=bb?Math.round(bb*25):0;var levMax=3000;
+  var dexaDose=bsa?+(bsa*10).toFixed(1):0;var dexaMax=10;
+  var mpDose=bb?Math.round(bb*1.5):0;var mpPulse=1000;
+  var mannDose=bb?+(bb*0.35).toFixed(1):0;
+  var nacl3=bb?+(bb*2).toFixed(1):0;
+  var diaResc=bb?+(bb*0.3).toFixed(1):0;var diaMax=10;
+  var midResc=bb?+(bb*0.075).toFixed(2):0;var midMax=5;
+  var html="";
+  function r(label,val,unit,note){return "<div class='calc-row'><span>"+label+"</span><span class='calc-val'>"+val+" "+unit+" <span style='font-weight:400;font-size:10px;color:var(--color-text-tertiary)'>"+note+"</span></span></div>";}
+  html+=r("Levetiracetam (25 mg/kg)",levDose,"mg","maks "+levMax+" mg/dosis");
+  if(bsa) html+=r("Dexamethasone (10 mg/m²)",Math.min(dexaDose,dexaMax).toFixed(1),"mg","maks "+dexaMax+" mg/dosis, tiap 6 jam");
+  html+=r("Methylprednisolone (1.5 mg/kg)",mpDose,"mg/hari","pulse maks "+mpPulse+" mg/hari");
+  html+=r("Diazepam rescue (0.3 mg/kg)",Math.min(diaResc,diaMax).toFixed(1),"mg","maks "+diaMax+" mg");
+  html+=r("Midazolam rescue (0.075 mg/kg)",Math.min(midResc,midMax).toFixed(2),"mg","maks "+midMax+" mg");
+  html+=r("Mannitol 20% (0.35 g/kg)",mannDose,"g (~"+(mannDose*5).toFixed(0)+" ml)","bolus IV 20 mnt");
+  html+=r("NaCl 3% (2 ml/kg)",nacl3,"ml","bolus IV lambat");
+  box.innerHTML=html;
+}
+
+/* ---- STATUS UPDATE ---- */
+function wardReady(){
+  var wd=S.wardDrugs;
+  var req=[...wardAnticonv.filter(function(d){return d.req===true}),...wardSteroid.filter(function(d){return d.req===true}),...wardMisc.filter(function(d){return d.req===true})];
+  var benzos=wardAnticonv.filter(function(d){return d.orgroup==="benzo"});
+  var benzoOk=benzos.some(function(d){return wd[d.id]==="ok"});
+  var reqOk=req.every(function(d){return wd[d.id]==="ok"});
+  var reqNo=req.some(function(d){return wd[d.id]==="no"});
+  var benzoFilled=benzos.some(function(d){return wd[d.id]!==undefined});
+  if(reqOk&&benzoOk) return "ok";
+  if(reqNo||benzoFilled&&!benzoOk&&benzos.every(function(d){return wd[d.id]==="no"})) return "no";
+  return "partial";
+}
+function icuReady(){
+  var id=S.icuDrugs;
+  var req=[...icuSed,...icuOsm.filter(function(d){return d.req===true}),...icuInfra];
+  var ro=req.every(function(d){return id[d.id]==="ok"});
+  var rn=req.some(function(d){return id[d.id]==="no"});
+  if(ro) return "ok";if(rn) return "no";return "partial";
+}
+function neuroReady(){
+  var filled=neuroAssess.filter(function(c){return S.neuroChecks[c.id]}).length;
+  if(filled===neuroAssess.length) return "ok";
+  if(filled>0) return "partial";return "none";
+}
+function setStatCard(id,status,labels){
+  var el=document.getElementById(id),sub=document.getElementById(id+"-t");
+  el.className="stat-card";
+  if(status==="ok"){el.classList.add("ok");sub.textContent=labels[0]}
+  else if(status==="no"){el.classList.add("no");sub.textContent=labels[1]}
+  else if(status==="partial"||status==="warn"){el.classList.add("warn");sub.textContent=labels[2]}
+  else{el.classList.add("none");sub.textContent=labels[3]||"–"}
+}
+function updateStatus(){
+  var ws=wardReady(),is=icuReady(),ns=neuroReady();
+  setStatCard("sc-ward",ws,["Siap","Tidak lengkap","Sebagian","–"]);
+  setStatCard("sc-icu",is,["Siap","Tidak lengkap","Sebagian","–"]);
+  setStatCard("sc-neuro",ns,["Siap","–","Sebagian","Belum diisi"]);
+  var all=[ws,is];
+  var ov=all.every(function(x){return x==="ok"})?"ok":all.some(function(x){return x==="no"})?"no":all.some(function(x){return x==="partial"})?"partial":"none";
+  setStatCard("sc-overall",ov,["Kit Siap ✓","Tidak Lengkap","Sebagian Siap","Belum Diisi"]);
+  updateTabDots(ws,is,ns);
+}
+function updateTabDots(ws,is,ns){
+  var tabs=document.querySelectorAll(".mod-tab");
+  function setDot(tab,s){tab.className="mod-tab"+(tab.classList.contains("active")?" active":"");if(s==="ok")tab.classList.add("tab-ok");else if(s==="no")tab.classList.add("tab-err");else if(s==="partial")tab.classList.add("tab-warn")}
+  setDot(tabs[1],ws);setDot(tabs[2],is);setDot(tabs[3],ns);
+}
+
+/* ---- MISSING ---- */
+function updateMissing(){
+  var wd=S.wardDrugs,id=S.icuDrugs;
+  function mis(list,group){
+    var res=[];
+    list.forEach(function(d){
+      var v=group[d.id];
+      if(d.req===true){
+        if(!v)res.push({name:d.name,st:"unconfirmed"});
+        else if(v==="no")res.push({name:d.name,st:"no"});
+      }
+    });
+    return res;
+  }
+  var benzos=wardAnticonv.filter(function(d){return d.orgroup==="benzo"});
+  var benzoOk=benzos.some(function(d){return wd[d.id]==="ok"});
+  var benzoClosed=benzos.every(function(d){return wd[d.id]==="no"});
+  var wm=mis([...wardAnticonv.filter(function(d){return d.req===true}),...wardSteroid,...wardMisc],wd);
+  if(!benzoOk){if(benzoClosed)wm.push({name:"Benzodiazepine rescue (tidak ada satu pun tersedia)",st:"no"});else wm.push({name:"Benzodiazepine rescue (belum dikonfirmasi — minimal 1 diperlukan)",st:"unconfirmed"})}
+  var im=mis([...icuSed,...icuOsm.filter(function(d){return d.req===true}),...icuInfra],id);
+  renderMissing("ward-missing-card","ward-missing-list",wm);
+  renderMissing("icu-missing-card","icu-missing-list",im);
+}
+function renderMissing(cardId,listId,items){
+  var card=document.getElementById(cardId),list=document.getElementById(listId);
+  if(!items.length){card.style.display="none";return}
+  card.style.display="block";list.innerHTML="";
+  items.forEach(function(it){
+    var div=document.createElement("div");div.className="miss-item";
+    div.innerHTML="<div class='miss-dot "+(it.st==="no"?"red":"amber")+"'></div><div><div class='miss-text'>"+it.name+"</div><div class='miss-sub'>"+(it.st==="no"?"Tidak tersedia — proses pengadaan / hubungi farmasi":"Belum dikonfirmasi — harap centang ketersediaan")+"</div></div>";
+    list.appendChild(div);
+  });
+}
+
+/* ---- ORDER TEMPLATE ---- */
+var orders={
+  1:{label:"Grade 1",badge:"g1",items:[
+    {t:"Monitoring neurologis ketat tiap 4 jam: ICE/CAPD, GCS, pupil",n:"Catat baseline dan perubahan; eskalasi bila memburuk"},
+    {t:"Pertahankan akses IV paten",n:"Siapkan benzodiazepine rescue di samping pasien"},
+    {t:"Hindari sedatif / analgetik opioid yang mengaburkan penilaian neurologis",n:"Kecuali ada indikasi klinis lain yang mendesak"},
+    {t:"Koreksi faktor metabolik: hipoglikemia, hiponatremia, hipokalsemia",n:"Periksa dan koreksi sebelum atribusi ke ICANS"},
+    {t:"Levetiracetam profilaksis — sesuai protokol institusi dan risiko pasien",n:"Bukan wajib universal; pertimbangkan bila protokol atau risiko tinggi"},
+    {t:"Steroid (dexamethasone) — pertimbangkan bila gejala persisten >24 jam atau Grade memburuk",n:"Diskusikan dengan tim CAR-T sebelum inisiasi"},
+    {t:"Notifikasi tim CAR-T — dokumentasikan dalam rekam medis",n:"Jangan tunda bila ada perubahan status mental"}
+  ]},
+  2:{label:"Grade 2",badge:"g2",items:[
+    {t:"Inisiasi Dexamethasone IV: 10 mg/m² tiap 6 jam (maks 10 mg/dosis)",n:"Pantau respons dalam 24 jam; lanjutkan bila membaik"},
+    {t:"Lanjutkan / mulai Levetiracetam sesuai protokol",n:"Dosis 20–30 mg/kg/hari dibagi 2× (maks 3000 mg/hari)"},
+    {t:"Siapkan benzodiazepine rescue di samping pasien dan siap pakai",n:"Diazepam 0.3 mg/kg (maks 10 mg) atau midazolam 0.075 mg/kg"},
+    {t:"Konsultasi neurologi — pertimbangkan EEG bila curiga kejang subklinis",n:"Prioritas bila ICE memburuk cepat atau ada tanda fokal"},
+    {t:"MRI kepala (tanpa gadolinium) bila ada gejala fokal atau kemunduran cepat",n:"Singkirkan PRES, perdarahan, penyakit CNS aktif"},
+    {t:"Pertimbangkan transfer ke intermediate care / unit monitoring lebih ketat",n:"Tergantung laju perburukan dan kapasitas ward"},
+    {t:"Pantau CRS bersamaan — bila ada, tata laksana CRS sesuai protokol tersendiri",w:"Tocilizumab tidak diberikan untuk isolated ICANS"}
+  ]},
+  3:{label:"Grade 3",badge:"g3",items:[
+    {t:"Transfer ke PICU / ICU — monitoring intensif dan airway management",n:"Siapkan intubasi; ventilasi mekanik harus standby"},
+    {t:"Eskalasi steroid: Methylprednisolone 1–2 mg/kg/hari IV atau Dexamethasone Grade 3",n:"Pulse 1000 mg/hari untuk kasus refrakter — sesuai protokol"},
+    {t:"Benzodiazepine rescue siap dan disiapkan protokol status epileptikus",n:"Diazepam / Midazolam IV; eskalasi ke Phenobarbital bila perlu"},
+    {t:"EEG kontinyu 24–48 jam — singkirkan nonconvulsive status epilepticus",n:"cEEG prioritas bila level kesadaran rendah tanpa kejang nyata"},
+    {t:"Sedasi ICU: Propofol 1–4 mg/kg/jam atau Midazolam 0.05–0.2 mg/kg/jam IV",n:"Titrasi ke RASS target; hindari propofol infusion syndrome pada anak"},
+    {t:"Pertimbangkan Mannitol / NaCl 3% bila ada tanda edema serebral / peningkatan TIK",n:"Sesuai protokol ICU lokal; pantau osmolalitas"},
+    {t:"CT kepala emergensi bila ada tanda herniasi, perdarahan, atau kemunduran tiba-tiba",n:"Neurosurgery on call bila ada indikasi"},
+    {t:"Hentikan / tunda imunoterapi aktif — dokumentasikan dan diskusikan dengan tim",w:"Konfirmasi overlap CRS vs isolated ICANS sebelum tocilizumab"}
+  ]},
+  4:{label:"Grade 4",badge:"g4",items:[
+    {t:"EMERGENSI ICU — intubasi dan ventilasi mekanik segera",n:"Amankan jalan napas; dokumentasikan GCS sebelum intubasi"},
+    {t:"Methylprednisolone pulse 1000 mg/hari IV × 3 hari",n:"Dexamethasone ekivalen bila ketersediaan terbatas; verifikasi oleh DPJP"},
+    {t:"Sedasi dalam: Propofol + Midazolam kombinasi, target RASS −3 hingga −5",n:"Pantau tanda PRIS pada anak; batasi propofol <4 mg/kg/jam"},
+    {t:"EEG kontinyu — protokol status epileptikus refrakter aktif",n:"Levetiracetam infus kontinu atau Phenobarbital bila diazepam tidak cukup"},
+    {t:"Manajemen TIK aktif: Mannitol 0.25–0.5 g/kg IV / NaCl 3% 1–3 ml/kg",n:"Monitor ICP bila tersedia; konsultasi bedah saraf bila herniasi"},
+    {t:"CT/MRI kepala emergensi — neurosurgery on call",n:"Singkirkan hidrosefalus, perdarahan, herniasi, penyakit CNS"},
+    {t:"Hentikan semua imunoterapi aktif — eskalasi / de-eskalasi dengan tim multidisiplin",w:"Dokumentasikan keputusan di rekam medis; libatkan etik bila diperlukan"},
+    {t:"Informed consent / family meeting — prognosis dan rencana tatalaksana eskalatif",n:"Libatkan perawatan paliatif bila diperlukan sesuai kondisi"}
+  ]}
+};
+
+function switchOrder(btn){
+  document.querySelectorAll("[data-og]").forEach(function(b){b.classList.remove("active")});
+  btn.classList.add("active");
+  activeOrder=parseInt(btn.dataset.og);
+  renderOrder();
+}
+function renderOrder(){
+  var c=document.getElementById("order-out");if(!c)return;
+  var o=orders[activeOrder];
+  var html="<span class='gb "+o.badge+"' style='margin-bottom:.75rem;display:inline-block'>"+o.label+"</span>";
+  o.items.forEach(function(it,i){
+    html+="<div class='order-item'><div class='order-num'>"+(i+1)+"</div><div class='order-text'>"+it.t+(it.n?"<div class='order-note'>"+it.n+"</div>":"")+(it.w?"<div class='order-warn'><i class='ti ti-alert-triangle' aria-hidden='true' style='font-size:11px;vertical-align:-1px'></i> "+it.w+"</div>":"")+"</div></div>";
+  });
+  c.innerHTML=html;
+}
+
+function buildOrderText(){
+  var o=orders[activeOrder];
+  var bb=document.getElementById("f-bb").value;
+  var bsa=document.getElementById("f-bsa").value;
+  var produk=document.getElementById("f-produk").value;
+  var dpjp=document.getElementById("so-dpjp").value;
+  var waktu=document.getElementById("so-time").value;
+  var lok=document.getElementById("so-loc").value;
+  var t="TEMPLATE ORDER ICANS "+o.label.toUpperCase()+"\n";
+  t+="drAisyi EduCare — CAR-T Neurotoxicity Management\n";
+  t+="Tanggal: "+(waktu||new Date().toLocaleString("id-ID"))+"\n";
+  if(dpjp) t+="DPJP: "+dpjp+"\n";
+  if(lok) t+="Lokasi: "+lok+"\n";
+  if(produk) t+="Produk CAR-T: "+produk+"\n";
+  if(bb) t+="BB: "+bb+" kg"+(bsa?" | BSA: "+bsa+" m²":"")+"\n";
+  t+="\n";
+  o.items.forEach(function(it,i){t+=(i+1)+". "+it.t+"\n";if(it.n)t+="   → "+it.n+"\n";if(it.w)t+="   ⚠ "+it.w+"\n"});
+  t+="\n[Dosis final diverifikasi oleh DPJP dan apoteker]\n";
+  return t;
+}
+function copyOrder(){
+  var txt=buildOrderText();
+  navigator.clipboard.writeText(txt).catch(function(){fallbackCopy(txt,"print-box")});
+  var btn=event.target.closest(".btn");var orig=btn.innerHTML;
+  btn.innerHTML="<i class='ti ti-check' aria-hidden='true'></i>Tersalin!";
+  setTimeout(function(){btn.innerHTML=orig},2000);
+}
+function togglePrint(){
+  var box=document.getElementById("print-box");
+  if(box.style.display==="block"){box.style.display="none";return}
+  box.textContent=buildOrderText();box.style.display="block";
+}
+function copyFullSummary(){
+  var ws=wardReady(),is=icuReady(),ns=neuroReady();
+  var dpjp=document.getElementById("so-dpjp").value||"–";
+  var waktu=document.getElementById("so-time").value||new Date().toLocaleString("id-ID");
+  var lok=document.getElementById("so-loc").value||"–";
+  var t="ICANS READINESS SUMMARY — drAisyi EduCare\n";
+  t+="=====================================\n";
+  t+="Waktu asesmen: "+waktu+"\nDPJP: "+dpjp+"\nLokasi: "+lok+"\n\n";
+  t+="STATUS KIT:\n";
+  t+="• Ward Kit: "+{ok:"SIAP",no:"TIDAK LENGKAP",partial:"SEBAGIAN",none:"BELUM DIISI"}[ws]+"\n";
+  t+="• ICU Kit: "+{ok:"SIAP",no:"TIDAK LENGKAP",partial:"SEBAGIAN",none:"BELUM DIISI"}[is]+"\n";
+  t+="• Neuro Assessment: "+{ok:"SIAP",partial:"SEBAGIAN",none:"BELUM DIISI"}[ns]+"\n\n";
+  t+="[Dokumen ini dihasilkan oleh drAisyi EduCare ICANS Toolkit]\n";
+  navigator.clipboard.writeText(t).catch(function(){fallbackCopy(t,"summary-box")});
+  var box=document.getElementById("summary-box");box.textContent=t;box.style.display="block";
+}
+function fallbackCopy(txt,boxId){
+  var box=document.getElementById(boxId);box.textContent=txt;box.style.display="block";
+}
+
+/* ---- SWITCH MODULE ---- */
+function switchMod(idx,btn){
+  document.querySelectorAll(".mod-tab").forEach(function(b){b.classList.remove("active")});
+  btn.classList.add("active");
+  document.querySelectorAll(".mod-pane").forEach(function(p,i){p.classList.toggle("active",i===idx)});
+}
+
+/* ---- RESET ---- */
+function resetAll(){
+  if(!confirm("Reset semua input?"))return;
+  S.wardDrugs={};S.icuDrugs={};S.neuroChecks={};
+  document.querySelectorAll(".tg-btn").forEach(function(b){b.className="tg-btn"});
+  document.querySelectorAll("input[type=checkbox]").forEach(function(c){c.checked=false});
+  document.querySelectorAll(".stk-input").forEach(function(i){i.value=""});
+  document.querySelectorAll("input[type=number],input[type=text],input[type=datetime-local],select").forEach(function(i){i.value=""});
+  document.getElementById("crs-alert").style.display="none";
+  document.getElementById("calc-out").innerHTML="<div style='font-size:12px;color:var(--color-text-tertiary)'>Isi berat badan dan BSA untuk menampilkan kalkulasi dosis.</div>";
+  ["ward-missing-card","icu-missing-card"].forEach(function(id){document.getElementById(id).style.display="none"});
+  document.getElementById("print-box").style.display="none";
+  document.getElementById("summary-box").style.display="none";
+  updateStatus();
+}
+
+/* ---- INIT ---- */
+buildDrug(wardAnticonv,"rows-w-anticonv","ward");
+buildDrug(wardSteroid,"rows-w-steroid","ward");
+buildDrug(wardMisc,"rows-w-misc","ward");
+buildDrug(icuSed,"rows-icu-sed","icu");
+buildDrug(icuOsm,"rows-icu-osm","icu");
+buildDrug(icuInfra,"rows-icu-infra","icu");
+buildChecklist(neuroAssess,"chk-neuro-assess");
+buildChecklist(neuroLab,"chk-neuro-lab");
+buildDiffDx();buildRedFlags();
+renderOrder();
+document.getElementById("so-time").value=new Date().toISOString().slice(0,16);
+</script>
+</body>
+</html>

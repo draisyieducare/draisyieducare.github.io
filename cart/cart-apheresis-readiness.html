@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAR-T Apheresis Readiness Tool v2.0 | drAisyi EduCare</title>
+<style>
+:root{--primary:#6C3FC5;--pdark:#4E2D9A;--plight:#9B59B6;--sec:#F0EAFB;--acc:#FF6B8A;--ok:#27AE60;--warn:#E67E22;--danger:#E74C3C;--info:#2980B9;--bg:#F7F5FC;--card:#fff;--text:#2C2C54;--muted:#7F8C8D;--border:#DDD6F3;--r:12px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+/* HEADER */
+.hdr{background:linear-gradient(135deg,var(--pdark),var(--primary) 60%,var(--plight));color:#fff;padding:18px 22px 14px;box-shadow:0 4px 16px rgba(108,63,197,.25)}
+.hdr-top{display:flex;align-items:center;gap:14px}
+.logo{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.4);border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.brand{font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:.8}
+.ttl{font-size:19px;font-weight:800;margin-top:2px}
+.sub{font-size:12px;opacity:.75;margin-top:2px}
+.htag{margin-top:10px;display:inline-flex;gap:8px;flex-wrap:wrap}
+.hbadge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:3px 12px;font-size:11px;letter-spacing:.5px}
+/* TAB NAV */
+.tabs{display:flex;background:#fff;border-bottom:2px solid var(--border);overflow-x:auto;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.tab{padding:12px 16px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;color:var(--muted);transition:all .2s;display:flex;align-items:center;gap:6px}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary);background:var(--sec)}
+.tab-badge{background:var(--danger);color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;display:none}
+.tab-badge.show{display:inline-block}
+/* PAGES */
+.page{display:none}.page.active{display:block}
+.container{max-width:880px;margin:0 auto;padding:18px 14px 40px}
+/* SECTION */
+.sec{background:var(--card);border-radius:var(--r);border:1px solid var(--border);margin-bottom:14px;overflow:hidden}
+.sec-hdr{background:var(--sec);padding:11px 16px;font-weight:700;font-size:12px;color:var(--pdark);display:flex;align-items:center;gap:8px;letter-spacing:.5px;text-transform:uppercase;border-bottom:1px solid var(--border)}
+.sec-body{padding:16px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+/* FIELD */
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld label{font-size:12px;font-weight:600;color:var(--text)}
+.fld .u{font-size:11px;color:var(--muted);font-weight:400}
+.fld .req{color:var(--danger);margin-left:2px}
+input[type=number],input[type=text],input[type=date],select{padding:8px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);background:#fafafa;width:100%;transition:border .2s}
+input:focus,select:focus{outline:none;border-color:var(--primary);background:#fff}
+input[readonly]{background:#f0f0f0;color:var(--muted)}
+input.invalid{border-color:var(--danger)!important;background:#fff5f5}
+/* TOGGLE */
+.trow{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--border)}
+.trow:last-child{border-bottom:none}
+.tlbl{font-size:13px;flex:1;line-height:1.4}
+.tlbl small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
+.toggle{position:relative;display:inline-block;width:42px;height:22px;flex-shrink:0;margin-left:12px}
+.toggle input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;inset:0;background:#ccc;border-radius:22px;transition:.3s}
+.slider:before{position:absolute;content:"";height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+input:checked+.slider{background:var(--primary)}
+input:checked+.slider:before{transform:translateX(20px)}
+/* RADIO */
+.rgrp{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.rbtn{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:6px 12px;border:1.5px solid var(--border);border-radius:8px;transition:all .2s}
+.rbtn:hover{border-color:var(--primary);background:var(--sec)}
+.rbtn input{width:auto}
+.rbtn.selected{border-color:var(--primary);background:var(--sec);color:var(--primary);font-weight:600}
+/* INFO BOX */
+.infobox{background:#EBF5FB;border:1px solid #AED6F1;border-radius:8px;padding:10px 14px;font-size:12px;color:#1A5276;margin-top:10px;line-height:1.7}
+.infobox.yellow{background:#FEF9E7;border-color:#F9CA7B;color:#7D6608}
+.infobox.green{background:#D5F5E3;border-color:#A9DFBF;color:#1A6B3C}
+.calc-box{background:linear-gradient(135deg,#EBF5FB,#D6EAF8);border:1px solid #AED6F1;border-radius:10px;padding:14px;margin-top:12px}
+.calc-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px dashed #AED6F1;font-size:13px}
+.calc-row:last-child{border-bottom:none}
+.calc-val{font-weight:800;color:var(--pdark)}
+.calc-warn{color:var(--danger);font-weight:700}
+/* BUTTONS */
+.btn-p{background:linear-gradient(135deg,var(--primary),var(--pdark));color:#fff;border:none;border-radius:10px;padding:13px 28px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(108,63,197,.3);transition:opacity .2s,transform .1s}
+.btn-p:hover{opacity:.92;transform:translateY(-1px)}
+.btn-s{background:#fff;color:var(--primary);border:2px solid var(--primary);border-radius:10px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-s:hover{background:var(--sec)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+/* RESULT */
+#result{display:none}
+.verdict{border-radius:var(--r);padding:16px 18px;display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.v-icon{font-size:40px;flex-shrink:0}
+.v-title{font-size:21px;font-weight:800}
+.v-sub{font-size:13px;margin-top:4px;opacity:.88}
+.v-ready{background:linear-gradient(135deg,#D5F5E3,#A9DFBF);border:2px solid var(--ok);color:#1A6B3C}
+.v-delay{background:linear-gradient(135deg,#FDEDEC,#FADBD8);border:2px solid var(--danger);color:#922B21}
+.v-caution{background:linear-gradient(135deg,#FEF9E7,#FDEBD0);border:2px solid var(--warn);color:#784212}
+/* RESULT CARDS */
+.rc{background:var(--card);border-radius:var(--r);border:1px solid var(--border);margin-bottom:12px;overflow:hidden}
+.rch{padding:9px 14px;font-weight:700;font-size:11px;letter-spacing:.8px;text-transform:uppercase}
+.rch-r{background:#FDEDEC;color:var(--danger);border-bottom:2px solid var(--danger)}
+.rch-w{background:#FEF9E7;color:#B7770D;border-bottom:2px solid var(--warn)}
+.rch-g{background:#D5F5E3;color:#1E8449;border-bottom:2px solid var(--ok)}
+.rch-b{background:#EBF5FB;color:#1A5276;border-bottom:2px solid var(--info)}
+.rch-p{background:var(--sec);color:var(--pdark);border-bottom:2px solid var(--primary)}
+.rcb{padding:12px 14px}
+/* LAB ROWS */
+.lrow{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px dashed var(--border);font-size:13px}
+.lrow:last-child{border-bottom:none}
+.lval{font-weight:700}
+.lst{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px}
+.lok{background:#D5F5E3;color:#1A6B3C}
+.lwarn{background:#FDEBD0;color:#CA6F1E}
+.lbad{background:#FADBD8;color:#922B21}
+/* LISTS */
+.rlist,.klist,.wlist{list-style:none;padding:0}
+.rlist li,.klist li,.wlist li{display:flex;gap:10px;padding:7px 0;border-bottom:1px dashed #f0ece8;font-size:13px;align-items:flex-start;line-height:1.5}
+.rlist li:last-child,.klist li:last-child,.wlist li:last-child{border-bottom:none}
+.tag{border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;white-space:nowrap;flex-shrink:0}
+.tr{background:#FADBD8;color:var(--danger)}
+.tw{background:#FDEBD0;color:#CA6F1E}
+.tg{background:#D5F5E3;color:#1A6B3C}
+.tb{background:#D6EAF8;color:#1A5276}
+/* SCORE BARS */
+.sbar-wrap{margin-bottom:10px}
+.sbar-bg{background:#eee;border-radius:8px;height:9px;overflow:hidden}
+.sbar-fill{height:9px;border-radius:8px;transition:width .6s}
+.bar-g{background:linear-gradient(90deg,#27AE60,#2ECC71)}
+.bar-y{background:linear-gradient(90deg,#E67E22,#F39C12)}
+.bar-r{background:linear-gradient(90deg,#E74C3C,#C0392B)}
+.slbl{font-size:12px;color:var(--muted);margin-bottom:3px;display:flex;justify-content:space-between}
+/* GRID SCORE */
+.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* CHECKLIST GROUPS */
+.ck-group{margin-bottom:12px}
+.ck-group-ttl{font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--sec)}
+/* DISCLAIMER */
+.disc{background:#FEF9E7;border:1px solid #F39C12;border-radius:8px;padding:11px 14px;font-size:11px;color:#7D6608;margin-top:4px;line-height:1.6}
+/* PRINT */
+@media print{
+  .tabs,.btn-p,.btn-s,.btn-row{display:none!important}
+  .page{display:block!important}
+  .sec,.rc{break-inside:avoid}
+  .hdr{background:var(--primary)!important;-webkit-print-color-adjust:exact}
+}
+@media(max-width:600px){
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .score-grid{grid-template-columns:1fr}
+  .ttl{font-size:16px}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="logo">🧬</div>
+    <div>
+      <div class="brand">drAisyi EduCare <span style="background:rgba(255,255,255,.2);border-radius:5px;padding:1px 7px;font-size:10px;margin-left:6px">v2.0</span></div>
+      <div class="ttl">CAR-T Apheresis Readiness Tool</div>
+      <div class="sub">Penilaian kesiapan leukapheresis CAR-T Cell Therapy — Pediatrik &amp; Dewasa Muda</div>
+    </div>
+  </div>
+  <div class="htag">
+    <span class="hbadge">🔬 Pediatric Hematology-Oncology</span>
+    <span class="hbadge">⚕️ Clinical Decision Support</span>
+    <span class="hbadge">🏥 Cell Therapy Program</span>
+  </div>
+</div>
+
+<!-- TAB NAV -->
+<div class="tabs" id="tabBar">
+  <div class="tab active" data-tab="t1">① Pasien &amp; Produk</div>
+  <div class="tab" data-tab="t2">② Antropometri &amp; Volume</div>
+  <div class="tab" data-tab="t3">③ Laboratorium</div>
+  <div class="tab" data-tab="t4">④ Akses Vena</div>
+  <div class="tab" data-tab="t5">⑤ Washout Obat</div>
+  <div class="tab" data-tab="t6">⑥ Infeksi &amp; Klinis</div>
+  <div class="tab" data-tab="t7">⑦ Transfusi</div>
+  <div class="tab" data-tab="t8">⑧ Logistik</div>
+</div>
+
+<!-- ===== TAB 1: PASIEN & PRODUK ===== -->
+<div class="page active" id="t1">
+<div class="container">
+  <div class="sec">
+    <div class="sec-hdr">🎯 Identifikasi Pasien &amp; Produk CAR-T</div>
+    <div class="sec-body">
+      <div class="g2">
+        <div class="fld">
+          <label>Diagnosis<span class="req">*</span></label>
+          <select id="diagnosis">
+            <option value="">-- Pilih --</option>
+            <option value="B-ALL">B-ALL (Acute Lymphoblastic Leukemia – B cell)</option>
+            <option value="T-ALL">T-ALL (Acute Lymphoblastic Leukemia – T cell)</option>
+            <option value="DLBCL">DLBCL (Diffuse Large B-Cell Lymphoma)</option>
+            <option value="FL">Follicular Lymphoma</option>
+            <option value="MCL">Mantle Cell Lymphoma</option>
+            <option value="MM">Multiple Myeloma</option>
+            <option value="NHL-other">NHL Lainnya</option>
+            <option value="other">Lainnya</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label>Target Antigen<span class="req">*</span></label>
+          <select id="antigen">
+            <option value="">-- Pilih --</option>
+            <option value="CD19">CD19</option>
+            <option value="CD22">CD22</option>
+            <option value="CD19+CD22">CD19 + CD22 (dual target)</option>
+            <option value="BCMA">BCMA</option>
+            <option value="CD20">CD20</option>
+            <option value="GD2">GD2</option>
+            <option value="other">Lainnya</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label>Tipe Produk CAR-T</label>
+          <select id="tipeCART">
+            <option value="autologous">Autologous</option>
+            <option value="allogeneic">Allogeneic / Off-the-shelf</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label>Produk / Manufaktur</label>
+          <select id="manufaktur">
+            <option value="">-- Pilih / Tulis --</option>
+            <option value="tisagenlecleucel">Tisagenlecleucel (Kymriah®)</option>
+            <option value="axicabtagene">Axicabtagene ciloleucel (Yescarta®)</option>
+            <option value="lisocabtagene">Lisocabtagene maraleucel (Breyanzi®)</option>
+            <option value="idecabtagene">Idecabtagene vicleucel (Abecma®)</option>
+            <option value="ciltacabtagene">Ciltacabtagene autoleucel (Carvykti®)</option>
+            <option value="investigational">Investigational / Protokol Klinis</option>
+            <option value="other">Lainnya</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label>Status Koleksi</label>
+          <select id="statusKoleksi">
+            <option value="fresh">Fresh leukapheresis</option>
+            <option value="cryo">Cryopreserved leukapheresis</option>
+            <option value="repeat">Repeat collection (koleksi ulang)</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label>Slot Manufaktur (Manufacturing Slot)</label>
+          <select id="slotManufaktur">
+            <option value="confirmed">Confirmed / Disetujui</option>
+            <option value="pending">Pending / Belum konfirmasi</option>
+            <option value="notyet">Belum diajukan</option>
+          </select>
+        </div>
+      </div>
+      <div class="g2" style="margin-top:12px">
+        <div class="fld">
+          <label>Rencana Tanggal Apheresis</label>
+          <input type="date" id="tglApheresis">
+        </div>
+        <div class="fld">
+          <label>Minimum CD3 Manufaktur <span class="u">(×10⁶/kg – bila diketahui)</span></label>
+          <input type="number" id="minCD3manuf" min="0" placeholder="cth: 50">
+        </div>
+      </div>
+      <div id="warnSlot" class="infobox yellow" style="display:none;margin-top:10px">
+        ⚠️ <strong>Slot manufaktur belum dikonfirmasi.</strong> Apheresis tidak boleh dilakukan sebelum manufacturing order diterima dan disetujui oleh pihak manufaktur. Konfirmasi ulang sebelum melanjutkan.
+      </div>
+      <div id="warnAllogeneic" class="infobox yellow" style="display:none;margin-top:10px">
+        ℹ️ <strong>Produk Allogeneic / Off-the-shelf:</strong> Apheresis untuk donasi sel T mungkin tidak diperlukan. Verifikasi apakah koleksi pasien tetap dibutuhkan sesuai protokol.
+      </div>
+    </div>
+  </div>
+  <div class="btn-row"><button class="btn-p" onclick="goTab('t2')">Lanjut →</button></div>
+</div>
+</div>
+
+<!-- ===== TAB 2: ANTROPOMETRI & VOLUME ===== -->
+<div class="page" id="t2">
+<div class="container">
+  <div class="sec">
+    <div class="sec-hdr">⚖️ Antropometri &amp; Kalkulasi Volume</div>
+    <div class="sec-body">
+      <div class="g3">
+        <div class="fld">
+          <label>Berat Badan <span class="u">(kg)</span><span class="req">*</span></label>
+          <input type="number" id="bb" min="1" max="200" placeholder="cth: 25" step="0.1">
+        </div>
+        <div class="fld">
+          <label>Tinggi Badan <span class="u">(cm)</span><span class="req">*</span></label>
+          <input type="number" id="tb" min="30" max="250" placeholder="cth: 130">
+        </div>
+        <div class="fld">
+          <label>Usia <span class="u">(tahun)</span><span class="req">*</span></label>
+          <input type="number" id="usia" min="0" max="40" step="0.5" placeholder="cth: 8">
+        </div>
+        <div class="fld">
+          <label>BSA <span class="u">(m² – Mosteller, otomatis)</span></label>
+          <input type="number" id="bsa" readonly placeholder="–">
+        </div>
+        <div class="fld">
+          <label>IBW <span class="u">(kg – Traub-Johnson, otomatis)</span></label>
+          <input type="number" id="ibw" readonly placeholder="–">
+        </div>
+        <div class="fld">
+          <label>Estimated Blood Volume <span class="u">(mL – otomatis)</span></label>
+          <input type="number" id="ebv" readonly placeholder="–">
+        </div>
+      </div>
+      <div class="g2" style="margin-top:12px">
+        <div class="fld">
+          <label>Target Processed Blood Volume</label>
+          <select id="pbvTarget">
+            <option value="1.5">1.5× Total Blood Volume</option>
+            <option value="2" selected>2.0× Total Blood Volume (standar)</option>
+            <option value="2.5">2.5× Total Blood Volume</option>
+            <option value="3">3.0× Total Blood Volume (extended)</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label>Jenis Kelamin</label>
+          <select id="sex">
+            <option value="L">Laki-laki</option>
+            <option value="P">Perempuan</option>
+          </select>
+        </div>
+      </div>
+      <!-- CALC OUTPUT -->
+      <div class="calc-box" id="calcOutput" style="display:none">
+        <div style="font-weight:700;font-size:13px;color:var(--pdark);margin-bottom:8px">📊 Hasil Kalkulasi Volume</div>
+        <div class="calc-row"><span>Estimated Blood Volume (EBV)</span><span class="calc-val" id="co-ebv">–</span></div>
+        <div class="calc-row"><span>Target Processed Blood Volume</span><span class="calc-val" id="co-pbv">–</span></div>
+        <div class="calc-row"><span>Extracorporeal Circuit Volume (estimasi)</span><span class="calc-val" id="co-ecv">–</span></div>
+        <div class="calc-row"><span>%ECV dari Total Blood Volume</span><span class="calc-val" id="co-pct">–</span></div>
+        <div class="calc-row" id="co-priming-row" style="display:none"><span>⚠️ Rekomendasi Priming</span><span class="calc-warn" id="co-priming">–</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-s" onclick="goTab('t1')">← Kembali</button>
+    <button class="btn-p" onclick="goTab('t3')">Lanjut →</button>
+  </div>
+</div>
+</div>
+
+<!-- ===== TAB 3: LABORATORIUM ===== -->
+<div class="page" id="t3">
+<div class="container">
+  <div class="sec">
+    <div class="sec-hdr">🧪 Parameter Laboratorium</div>
+    <div class="sec-body">
+      <div class="g3">
+        <div class="fld">
+          <label>Hemoglobin <span class="u">(g/dL)</span><span class="req">*</span></label>
+          <input type="number" id="hb" min="1" max="20" step="0.1" placeholder="cth: 9.5">
+        </div>
+        <div class="fld">
+          <label>Trombosit <span class="u">(×10³/µL)</span><span class="req">*</span></label>
+          <input type="number" id="plt" min="1" max="1000" placeholder="cth: 80">
+        </div>
+        <div class="fld">
+          <label>WBC <span class="u">(×10³/µL)</span></label>
+          <input type="number" id="wbc" min="0.1" max="500" step="0.1" placeholder="cth: 3.5">
+        </div>
+        <div class="fld">
+          <label>ALC Absolut <span class="u">(×10³/µL)</span><span class="req">*</span></label>
+          <input type="number" id="alc" min="0" max="100" step="0.01" placeholder="cth: 0.8">
+        </div>
+        <div class="fld">
+          <label>CD3+ Absolut <span class="u">(sel/µL)</span></label>
+          <input type="number" id="cd3" min="0" max="10000" placeholder="opsional">
+        </div>
+        <div class="fld">
+          <label>CD4+ Absolut <span class="u">(sel/µL)</span></label>
+          <input type="number" id="cd4" min="0" max="5000" placeholder="opsional">
+        </div>
+        <div class="fld">
+          <label>CD8+ Absolut <span class="u">(sel/µL)</span></label>
+          <input type="number" id="cd8" min="0" max="5000" placeholder="opsional">
+        </div>
+        <div class="fld">
+          <label>Blast Perifer <span class="u">(%)</span></label>
+          <input type="number" id="blast" min="0" max="100" step="0.1" placeholder="cth: 5">
+        </div>
+        <div class="fld">
+          <label>CRP <span class="u">(mg/L)</span></label>
+          <input type="number" id="crp" min="0" max="500" placeholder="opsional">
+        </div>
+        <div class="fld">
+          <label>Ferritin <span class="u">(µg/L)</span></label>
+          <input type="number" id="ferritin" min="0" placeholder="opsional">
+        </div>
+        <div class="fld">
+          <label>Fibrinogen <span class="u">(mg/dL)</span></label>
+          <input type="number" id="fibrinogen" min="0" placeholder="opsional">
+        </div>
+        <div class="fld">
+          <label>Kreatinin Serum <span class="u">(mg/dL)</span></label>
+          <input type="number" id="creat" min="0" step="0.01" placeholder="opsional">
+        </div>
+      </div>
+      <!-- Disease burden -->
+      <div style="margin-top:14px">
+        <div class="fld">
+          <label>Status Disease Burden</label>
+          <select id="diseaseBurden">
+            <option value="cr">Complete remission (CR)</option>
+            <option value="cri">CRi / MRD+</option>
+            <option value="pr">Partial remission (PR)</option>
+            <option value="sd">Stable disease / refrakter</option>
+            <option value="pd">Progressive disease / relaps aktif</option>
+            <option value="unknown">Tidak diketahui / belum dievaluasi</option>
+          </select>
+        </div>
+      </div>
+      <div id="blastWarnBox" class="infobox yellow" style="display:none;margin-top:10px"></div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-s" onclick="goTab('t2')">← Kembali</button>
+    <button class="btn-p" onclick="goTab('t4')">Lanjut →</button>
+  </div>
+</div>
+</div>
+
+<!-- ===== TAB 4: AKSES VENA ===== -->
+<div class="page" id="t4">
+<div class="container">
+  <div class="sec">
+    <div class="sec-hdr">💉 Status Akses Vena<span style="color:var(--danger);margin-left:4px">*</span></div>
+    <div class="sec-body">
+      <div class="fld">
+        <label>Status Akses Vena<span class="req">*</span> <span class="u">(wajib dipilih)</span></label>
+        <div class="rgrp" id="venaGrp">
+          <label class="rbtn"><input type="radio" name="vena" value="baik"> 🟢 Vena perifer baik</label>
+          <label class="rbtn"><input type="radio" name="vena" value="marginal"> 🟡 Vena perifer marginal</label>
+          <label class="rbtn"><input type="radio" name="vena" value="cvc"> 🔴 Membutuhkan CVC / lumen ganda</label>
+        </div>
+      </div>
+      <div style="margin-top:14px">
+        <div class="trow">
+          <div class="tlbl">CVC / Apheresis catheter sudah terpasang <small>double lumen apheresis catheter</small></div>
+          <label class="toggle"><input type="checkbox" id="cvcPasang"><span class="slider"></span></label>
+        </div>
+        <div class="trow">
+          <div class="tlbl">Posisi CVC sudah dikonfirmasi radiologi <small>foto thoraks / fluoroskopi pra-prosedur</small></div>
+          <label class="toggle"><input type="checkbox" id="cvcKonfirmasi"><span class="slider"></span></label>
+        </div>
+        <div class="trow">
+          <div class="tlbl">Flow test akses vena sudah dilakukan <small>verifikasi laju aliran adekuat untuk apheresis</small></div>
+          <label class="toggle"><input type="checkbox" id="flowTest"><span class="slider"></span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-s" onclick="goTab('t3')">← Kembali</button>
+    <button class="btn-p" onclick="goTab('t5')">Lanjut →</button>
+  </div>
+</div>
+</div>
+
+<!-- ===== TAB 5: WASHOUT OBAT ===== -->
+<div class="page" id="t5">
+<div class="container">
+  <div class="sec">
+    <div class="sec-hdr">💊 Riwayat Obat &amp; Washout</div>
+    <div class="sec-body">
+      <div class="infobox" style="margin-bottom:12px">
+        ℹ️ Washout yang diperlukan <strong>bervariasi antar produk/manufaktur</strong>. Hasil tool ini merupakan panduan umum; verifikasi wajib dilakukan sesuai kriteria spesifik manufaktur yang digunakan.
+      </div>
+      <!-- Steroid -->
+      <div class="trow">
+        <div class="tlbl">Steroid sistemik aktif dalam <strong>7 hari terakhir</strong>
+          <small>deksametason / prednison / metilprednisolon – dosis imunosupresif</small></div>
+        <label class="toggle"><input type="checkbox" id="steroid"><span class="slider"></span></label>
+      </div>
+      <div id="steroidDate" style="display:none;padding:8px 0 4px">
+        <div class="fld"><label>Tanggal dosis terakhir steroid</label><input type="date" id="tglSteroid"></div>
+        <div class="infobox yellow" style="margin-top:6px">⚠️ Washout steroid ≥ 7 hari disarankan sebelum apheresis. Konfirmasi dengan tim manufaktur — bergantung pada dosis, durasi, dan urgensi klinis.</div>
+      </div>
+      <!-- G-CSF -->
+      <div class="trow">
+        <div class="tlbl">G-CSF / filgrastim dalam <strong>24–48 jam terakhir</strong>
+          <small>mobilisasi granulosit dapat mengganggu seleksi sel T</small></div>
+        <label class="toggle"><input type="checkbox" id="gcsf"><span class="slider"></span></label>
+      </div>
+      <!-- Imunosupresan -->
+      <div class="trow">
+        <div class="tlbl">Imunosupresan aktif dalam <strong>2 minggu terakhir</strong>
+          <small>siklosporin, tacrolimus, MMF, sirolimus</small></div>
+        <label class="toggle"><input type="checkbox" id="imunosupres"><span class="slider"></span></label>
+      </div>
+      <!-- Kemoterapi -->
+      <div class="trow">
+        <div class="tlbl">Kemoterapi terakhir</div>
+        <label class="toggle"><input type="checkbox" id="chemoRecent"><span class="slider"></span></label>
+      </div>
+      <div id="chemoDate" style="display:none;padding:8px 0 4px">
+        <div class="g2">
+          <div class="fld"><label>Tanggal kemoterapi terakhir</label><input type="date" id="tglChemo"></div>
+          <div class="fld"><label>Agen utama</label>
+            <select id="chemoAgen">
+              <option value="standard">Kemoterapi standar (non-limfodeplesi)</option>
+              <option value="lymphodep">Limfodeplesi / fludarabin / bendamustine</option>
+              <option value="ATG">ATG / alemtuzumab (T-cell depleting)</option>
+            </select>
+          </div>
+        </div>
+        <div id="chemoWarnBox" class="infobox yellow" style="margin-top:6px"></div>
+      </div>
+      <!-- Anti-CD19 -->
+      <div class="trow">
+        <div class="tlbl">Anti-CD19 / blinatumomab dalam <strong>4 minggu terakhir</strong>
+          <small>dapat memengaruhi ekspresi CD19 target &amp; repertoire sel T</small></div>
+        <label class="toggle"><input type="checkbox" id="antiCD19"><span class="slider"></span></label>
+      </div>
+      <div id="antiCD19Date" style="display:none;padding:8px 0 4px">
+        <div class="g2">
+          <div class="fld"><label>Tanggal dosis terakhir</label><input type="date" id="tglAntiCD19"></div>
+          <div class="fld"><label>Agen</label>
+            <select id="agenAntiCD19">
+              <option value="blinatumomab">Blinatumomab</option>
+              <option value="inotuzumab">Inotuzumab ozogamisin</option>
+              <option value="rituximab">Rituximab</option>
+              <option value="other">Lainnya</option>
+            </select>
+          </div>
+        </div>
+        <div class="infobox yellow" style="margin-top:6px">⚠️ Washout bervariasi: blinatumomab umumnya ≥ 1–2 minggu, inotuzumab ≥ 4 minggu. Konfirmasi dengan manufaktur tentang dampak pada ekspresi target antigen dan T-cell fitness.</div>
+      </div>
+      <!-- Checkpoint inhibitor -->
+      <div class="trow">
+        <div class="tlbl">Checkpoint inhibitor (PD-1/PD-L1/CTLA-4) dalam <strong>3 bulan terakhir</strong>
+          <small>dapat memengaruhi fenotip sel T exhausted</small></div>
+        <label class="toggle"><input type="checkbox" id="checkpoint"><span class="slider"></span></label>
+      </div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-s" onclick="goTab('t4')">← Kembali</button>
+    <button class="btn-p" onclick="goTab('t6')">Lanjut →</button>
+  </div>
+</div>
+</div>
+
+<!-- ===== TAB 6: INFEKSI & KLINIS ===== -->
+<div class="page" id="t6">
+<div class="container">
+  <div class="sec">
+    <div class="sec-hdr">🦠 Status Infeksi &amp; Klinis</div>
+    <div class="sec-body">
+      <div class="fld" style="margin-bottom:12px">
+        <label>Status Infeksi Bakterial / Fungal<span class="req">*</span></label>
+        <select id="infeksiBF">
+          <option value="none">Tidak ada infeksi</option>
+          <option value="controlled">Infeksi terkontrol dengan terapi aktif</option>
+          <option value="uncontrolled">Infeksi aktif belum terkontrol</option>
+          <option value="sepsis">Sepsis / ketidakstabilan hemodinamik</option>
+        </select>
+      </div>
+      <div class="fld" style="margin-bottom:12px">
+        <label>Status CMV</label>
+        <select id="cmvStatus">
+          <option value="neg">Negatif / tidak ada viremia</option>
+          <option value="low">Viremia rendah – dalam pengobatan</option>
+          <option value="high">Viremia tinggi / belum diterapi</option>
+        </select>
+      </div>
+      <div class="fld" style="margin-bottom:12px">
+        <label>Status EBV</label>
+        <select id="ebvStatus">
+          <option value="neg">Negatif / tidak ada viremia</option>
+          <option value="low">Viremia rendah – dalam pengobatan</option>
+          <option value="high">Viremia tinggi / belum diterapi</option>
+        </select>
+      </div>
+      <div class="trow">
+        <div class="tlbl">Demam ≥ 38°C dalam <strong>48 jam terakhir</strong>
+          <small>belum teresolusi saat penilaian</small></div>
+        <label class="toggle"><input type="checkbox" id="demam"><span class="slider"></span></label>
+      </div>
+      <div class="trow">
+        <div class="tlbl">Pneumonia / infeksi saluran napas bawah aktif<small>termasuk COVID-19 aktif</small></div>
+        <label class="toggle"><input type="checkbox" id="pneumonia"><span class="slider"></span></label>
+      </div>
+      <div class="trow">
+        <div class="tlbl">Kondisi klinis tidak stabil (tanpa sepsis)<small>memerlukan oksigen suplementasi, perawatan ICU non-sepsis</small></div>
+        <label class="toggle"><input type="checkbox" id="tidakStabil"><span class="slider"></span></label>
+      </div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-s" onclick="goTab('t5')">← Kembali</button>
+    <button class="btn-p" onclick="goTab('t7')">Lanjut →</button>
+  </div>
+</div>
+</div>
+
+<!-- ===== TAB 7: TRANSFUSI ===== -->
+<div class="page" id="t7">
+<div class="container">
+  <div class="sec">
+    <div class="sec-hdr">🩸 Status Transfusi</div>
+    <div class="sec-body">
+      <div class="infobox green" style="margin-bottom:12px">
+        ℹ️ Transfusi pra-prosedur merupakan bagian dari optimisasi kondisi pasien. Dokumentasikan waktu dan komponen; pastikan CBC post-transfusi diulang dan strategi timing disesuaikan dengan kebijakan apheresis.
+      </div>
+      <div class="trow">
+        <div class="tlbl">Transfusi PRC dalam <strong>72 jam terakhir</strong>
+          <small>dokumentasikan: eritrosit donor dapat memengaruhi proporsi sel T pada produk</small></div>
+        <label class="toggle"><input type="checkbox" id="transfusiPRC"><span class="slider"></span></label>
+      </div>
+      <div id="transfusiPRCDetail" style="display:none;padding:8px 0 4px">
+        <div class="g2">
+          <div class="fld"><label>Tanggal transfusi PRC terakhir</label><input type="date" id="tglPRC"></div>
+          <div class="fld"><label>Jumlah kantong</label><input type="number" id="jmlPRC" min="1" max="20" placeholder="cth: 1"></div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="tlbl">Transfusi trombosit dalam <strong>24 jam terakhir</strong>
+          <small>konfirmasi profil koagulasi; trombosit dapat menurun selama proses apheresis</small></div>
+        <label class="toggle"><input type="checkbox" id="transfusiPLT"><span class="slider"></span></label>
+      </div>
+      <div class="trow">
+        <div class="tlbl">Riwayat reaksi transfusi berat
+          <small>anafilaksis / hemolitik akut — memerlukan premedikasi dan pengawasan ketat</small></div>
+        <label class="toggle"><input type="checkbox" id="reaksiTransfusi"><span class="slider"></span></label>
+      </div>
+      <div class="trow">
+        <div class="tlbl">CBC post-transfusi sudah diulang
+          <small>untuk memastikan nilai aktual Hb dan trombosit saat ini</small></div>
+        <label class="toggle"><input type="checkbox" id="cbcPostTransfusi"><span class="slider"></span></label>
+      </div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-s" onclick="goTab('t6')">← Kembali</button>
+    <button class="btn-p" onclick="goTab('t8')">Lanjut →</button>
+  </div>
+</div>
+</div>
+
+<!-- ===== TAB 8: LOGISTIK ===== -->
+<div class="page" id="t8">
+<div class="container">
+  <div class="sec">
+    <div class="sec-hdr">📦 Chain of Identity, Custody &amp; Logistik</div>
+    <div class="sec-body">
+      <div class="infobox" style="margin-bottom:12px">
+        ℹ️ Logistik pengiriman sel T ke manufaktur adalah titik kritis yang <strong>tidak boleh gagal</strong>. Pastikan semua item di bawah ini sudah terverifikasi sebelum memulai prosedur.
+      </div>
+      <div class="trow">
+        <div class="tlbl">Informed consent apheresis sudah ditandatangani <small>pasien / wali sah yang terverifikasi</small></div>
+        <label class="toggle"><input type="checkbox" id="consent"><span class="slider"></span></label>
+      </div>
+      <div class="trow">
+        <div class="tlbl">Manufacturing order diterima &amp; disetujui manufaktur <small>koleksi tidak boleh dimulai sebelum order dikonfirmasi</small></div>
+        <label class="toggle"><input type="checkbox" id="manufOrder"><span class="slider"></span></label>
+      </div>
+      <div class="trow">
+        <div class="tlbl">Chain of Identity form tersedia &amp; diisi <small>dua identifikasi pasien: nama lengkap + tanggal lahir + nomor rekam medis</small></div>
+        <label class="toggle"><input type="checkbox" id="chainID"><span class="slider"></span></label>
+      </div>
+      <div class="trow">
+        <div class="tlbl">Chain of Custody form tersedia <small>formulir pelacakan produk dari koleksi sampai manufaktur</small></div>
+        <label class="toggle"><input type="checkbox" id="chainCustody"><span class="slider"></span></label>
+      </div>
+      <div class="trow">
+        <div class="tlbl">Collection kit tersedia &amp; diperiksa <small>label, bag, antikoagulan, media — sesuai spesifikasi manufaktur</small></div>
+        <label class="toggle"><input type="checkbox" id="collKit"><span class="slider"></span></label>
+      </div>
+      <div class="trow">
+        <div class="tlbl">Validated shipper / cooler tersedia <small>suhu pengiriman terkalibrasi sesuai spesifikasi produk</small></div>
+        <label class="toggle"><input type="checkbox" id="shipper"><span class="slider"></span></label>
+      </div>
+      <div class="trow">
+        <div class="tlbl">Data logger aktif &amp; dikalibrasi <small>monitoring suhu kontinu selama pengiriman</small></div>
+        <label class="toggle"><input type="checkbox" id="dataLogger"><span class="slider"></span></label>
+      </div>
+      <div class="trow">
+        <div class="tlbl">Kurir / courier dikonfirmasi &amp; jadwal pickup ditetapkan <small>termasuk estimasi waktu tiba manufaktur</small></div>
+        <label class="toggle"><input type="checkbox" id="courier"><span class="slider"></span></label>
+      </div>
+      <div class="trow">
+        <div class="tlbl">Cut-off time pengiriman diketahui &amp; feasible <small>koleksi tidak boleh melebihi window waktu manufaktur</small></div>
+        <label class="toggle"><input type="checkbox" id="cutoffTime"><span class="slider"></span></label>
+      </div>
+      <div class="trow">
+        <div class="tlbl">Emergency contact manufaktur tersedia <small>nomor kontak 24 jam untuk masalah koleksi / pengiriman</small></div>
+        <label class="toggle"><input type="checkbox" id="emergContact"><span class="slider"></span></label>
+      </div>
+      <div class="trow">
+        <div class="tlbl">Backup plan pengiriman tersedia <small>jika pickup utama terlambat atau terjadi force majeure</small></div>
+        <label class="toggle"><input type="checkbox" id="backupPlan"><span class="slider"></span></label>
+      </div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-s" onclick="goTab('t7')">← Kembali</button>
+    <button class="btn-p" id="btnAssess">🔍 NILAI KESIAPAN SEKARANG</button>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result" style="margin-top:20px">
+    <hr style="margin:16px 0;border-color:var(--border)">
+    <div style="font-size:13px;font-weight:700;color:var(--pdark);margin-bottom:12px;letter-spacing:.5px">📋 HASIL PENILAIAN KESIAPAN APHERESIS</div>
+    <div id="verdictBox"></div>
+    <div id="scoreBox"></div>
+    <div id="labBox"></div>
+    <div id="volumeBox"></div>
+    <div id="reasonBox"></div>
+    <div id="checklistBox"></div>
+    <div id="warningBox"></div>
+    <div id="dayofBox"></div>
+    <div class="disc">
+      ⚠️ <strong>Disclaimer Klinis:</strong> Tool ini adalah alat bantu keputusan klinis (clinical decision support) dan <strong>tidak menggantikan penilaian dokter</strong>. Keputusan akhir kesiapan apheresis harus dibuat oleh tim multidisiplin (hematolog-onkolog, dokter apheresis, koordinator cell therapy) berdasarkan kondisi klinis individual dan kriteria spesifik manufaktur produk CAR-T yang digunakan.
+    </div>
+    <div class="btn-row" style="margin-top:12px">
+      <button class="btn-s" onclick="window.print()">🖨️ Cetak / PDF</button>
+      <button class="btn-s" onclick="exportJSON()">💾 Export JSON</button>
+      <button class="btn-s" onclick="resetAll()">🔄 Reset</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ===== TAB NAVIGATION =====
+window.addEventListener('load', function() {
+  document.querySelectorAll('.tab').forEach(function(t) {
+    t.addEventListener('click', function() { goTab(this.dataset.tab); });
+  });
+  document.getElementById('btnAssess').addEventListener('click', assess);
+
+  // BB/TB/usia/sex -> BSA, IBW, EBV
+  ['bb','tb','usia','sex','pbvTarget'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', calcAnthro);
+    el.addEventListener('change', calcAnthro);
+  });
+  // juga trigger saat tab Antropometri dibuka ulang
+  document.querySelector('[data-tab="t2"]').addEventListener('click', function() {
+    setTimeout(calcAnthro, 50);
+  });
+
+  // Toggle reveals
+  toggleReveal('steroid','steroidDate');
+  toggleReveal('chemoRecent','chemoDate');
+  toggleReveal('antiCD19','antiCD19Date');
+  toggleReveal('transfusiPRC','transfusiPRCDetail');
+
+  // Slot manufaktur warning
+  document.getElementById('slotManufaktur').addEventListener('change', function() {
+    document.getElementById('warnSlot').style.display = (this.value !== 'confirmed') ? 'block' : 'none';
+  });
+  document.getElementById('tipeCART').addEventListener('change', function() {
+    document.getElementById('warnAllogeneic').style.display = (this.value === 'allogeneic') ? 'block' : 'none';
+  });
+
+  // Radio button styling
+  document.querySelectorAll('.rgrp input[type=radio]').forEach(function(r) {
+    r.addEventListener('change', function() {
+      var grp = this.closest('.rgrp');
+      grp.querySelectorAll('.rbtn').forEach(function(b) { b.classList.remove('selected'); });
+      this.closest('.rbtn').classList.add('selected');
+    });
+  });
+
+  // Blast warning
+  document.getElementById('blast').addEventListener('input', blastWarn);
+
+  // Chemo agen warning
+  document.getElementById('chemoAgen').addEventListener('change', chemoAgenWarn);
+  chemoAgenWarn();
+
+  // localStorage autosave
+  loadSaved();
+  document.querySelectorAll('input,select').forEach(function(el) {
+    el.addEventListener('change', saveData);
+    el.addEventListener('input', saveData);
+  });
+});
+
+function goTab(id) {
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelector('[data-tab="'+id+'"]').classList.add('active');
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function toggleReveal(chkId, targetId) {
+  var chk = document.getElementById(chkId);
+  var tgt = document.getElementById(targetId);
+  if (!chk || !tgt) return;
+  chk.addEventListener('change', function() {
+    tgt.style.display = this.checked ? 'block' : 'none';
+  });
+}
+
+// ===== ANTHRO CALC =====
+function calcAnthro() {
+  var bb = parseFloat(document.getElementById('bb').value)||0;
+  var tb = parseFloat(document.getElementById('tb').value)||0;
+  var usia = parseFloat(document.getElementById('usia').value)||0;
+  var sex = document.getElementById('sex').value;
+  var pbvMult = parseFloat(document.getElementById('pbvTarget').value)||2;
+
+  if (bb>0 && tb>0) {
+    var bsa = Math.sqrt((bb*tb)/3600);
+    document.getElementById('bsa').value = bsa.toFixed(2);
+    // IBW Traub-Johnson
+    var ibw = usia>=18 ? (sex==='L' ? 50+2.3*(tb/2.54-60) : 45.5+2.3*(tb/2.54-60)) : (bsa*22).toFixed(1);
+    document.getElementById('ibw').value = typeof ibw==='number' ? ibw.toFixed(1) : ibw;
+    // EBV by age
+    var ebvMlKg = usia<1?85:usia<3?80:usia<12?75:usia<18?70:65;
+    var ebvTotal = Math.round(bb*ebvMlKg);
+    document.getElementById('ebv').value = ebvTotal;
+    // Calc box
+    var pbv = Math.round(ebvTotal*pbvMult);
+    var ecv = Math.round(bb*13); // ~13 mL/kg estimasi sirkuit
+    var pct = ((ecv/ebvTotal)*100).toFixed(1);
+    var co = document.getElementById('calcOutput');
+    co.style.display = 'block';
+    document.getElementById('co-ebv').textContent = ebvTotal+' mL ('+ebvMlKg+' mL/kg)';
+    document.getElementById('co-pbv').textContent = pbv+' mL ('+pbvMult+'× EBV)';
+    document.getElementById('co-ecv').textContent = ecv+' mL (estimasi)';
+    document.getElementById('co-pct').textContent = pct+'%';
+    var primingRow = document.getElementById('co-priming-row');
+    if (parseFloat(pct)>=15) {
+      primingRow.style.display='flex';
+      document.getElementById('co-priming').textContent='ECV ≥15% TBV — pertimbangkan priming sirkuit dengan PRC irradiated atau albumin. Konsultasi tim apheresis/anestesi.';
+    } else if (parseFloat(pct)>=10) {
+      primingRow.style.display='flex';
+      document.getElementById('co-priming').textContent='ECV 10–15% TBV — diskusikan priming dengan tim apheresis.';
+      document.getElementById('co-priming').style.color='var(--warn)';
+    } else {
+      primingRow.style.display='none';
+    }
+  } else {
+    document.getElementById('bsa').value='';
+    document.getElementById('ibw').value='';
+    document.getElementById('ebv').value='';
+    document.getElementById('calcOutput').style.display='none';
+  }
+}
+
+function blastWarn() {
+  var blast = parseFloat(document.getElementById('blast').value)||0;
+  var box = document.getElementById('blastWarnBox');
+  if (blast>=5) {
+    box.style.display='block';
+    box.className='infobox yellow';
+    box.innerHTML='⚠️ Blast perifer '+blast+'%: risiko kontaminasi sel tumor pada produk leukapheresis. Pertimbangkan debulking kemoterapi dahulu, evaluasi morfologi &amp; flow darah tepi terkini, dan diskusikan dengan tim manufaktur tentang penerimaan produk.';
+    if (blast>=20) {
+      box.className='infobox';
+      box.style.background='#FDEDEC';box.style.borderColor='#E74C3C';box.style.color='#922B21';
+      box.innerHTML='🚨 Blast perifer ≥20%: relaps aktif / leukemia berat — apheresis sangat tidak direkomendasikan sampai blast terkontrol. Risiko kegagalan manufaktur sangat tinggi akibat kontaminasi tumor.';
+    }
+  } else {
+    box.style.display='none';
+  }
+}
+
+function chemoAgenWarn() {
+  var agen = document.getElementById('chemoAgen').value;
+  var box = document.getElementById('chemoWarnBox');
+  var msgs = {
+    'standard':'Kemoterapi standar: washout ≥ 2 minggu disarankan. Konfirmasi dengan manufaktur.',
+    'lymphodep':'⚠️ Agen limfodeplesi (fludarabin/bendamustine): T-cell count mungkin sangat rendah setelah penggunaan — evaluasi ALC dan CD3 secara ketat. Interval ≥ 4 minggu direkomendasikan.',
+    'ATG':'🚨 ATG / alemtuzumab: T-cell depleting yang sangat kuat. Interval minimal 4–8 minggu diperlukan, dengan verifikasi CD3 recovery sebelum apheresis. Diskusikan dengan manufaktur.'
+  };
+  box.textContent = msgs[agen]||'';
+  box.style.display = agen ? 'block':'none';
+}
+
+// ===== GETTERS =====
+function g(id) { return document.getElementById(id); }
+function gv(id) { return parseFloat(g(id).value)||0; }
+function gc(id) { return g(id).checked; }
+function gsel(id) { return g(id).value; }
+function grd(name) { var r=document.querySelector('input[name="'+name+'"]:checked'); return r?r.value:''; }
+
+// ===== MAIN ASSESSMENT =====
+function assess() {
+  var bb=gv('bb'), hb=gv('hb'), plt=gv('plt'), alc=gv('alc');
+  if (!bb || !gv('tb') || !hb || !plt || !alc) {
+    alert('⚠️ Mohon lengkapi semua field wajib (BB, TB, Hb, Trombosit, ALC) di tab Antropometri dan Laboratorium.');
+    return;
+  }
+  var vena = grd('vena');
+  if (!vena) {
+    alert('⚠️ Status akses vena wajib dipilih (Tab 4).');
+    goTab('t4'); return;
+  }
+  var diag = gsel('diagnosis'), antigen = gsel('antigen');
+  if (!diag || !antigen) {
+    alert('⚠️ Mohon pilih Diagnosis dan Target Antigen (Tab 1).');
+    goTab('t1'); return;
+  }
+
+  var hardStops = [], cautions = [], warnings = [], logisticIssues = [];
+
+  // ---- SLOT MANUFAKTUR ----
+  var slot = gsel('slotManufaktur');
+  if (slot==='notyet') hardStops.push({l:'LOGISTIK KRITIS',t:'Manufacturing order belum diajukan ke manufaktur — apheresis tidak boleh dimulai tanpa konfirmasi slot.'});
+  else if (slot==='pending') cautions.push({l:'LOGISTIK',t:'Manufacturing slot masih pending — pastikan konfirmasi diterima sebelum hari-H apheresis.'});
+
+  // ---- DISEASE BURDEN / BLAST ----
+  var blast = gv('blast');
+  var burden = gsel('diseaseBurden');
+  if (blast>=20) hardStops.push({l:'DISEASE BURDEN',t:'Blast perifer ≥20%: relaps aktif. Kontaminasi tumor pada produk apheresis akan menyebabkan kegagalan manufaktur. Tunda hingga blast terkontrol.'});
+  else if (blast>=5) cautions.push({l:'BLAST PERIFER',t:'Blast perifer '+blast+'%: risiko kontaminasi tumor. Evaluasi morfologi darah tepi dan diskusikan penerimaan produk dengan manufaktur.'});
+  if (burden==='pd') hardStops.push({l:'RELAPS AKTIF',t:'Status disease: Progressive disease / relaps aktif — evaluasi ulang kandidasi CAR-T dan kelayakan koleksi saat ini.'});
+  else if (burden==='unknown') cautions.push({l:'DISEASE STATUS',t:'Status penyakit belum dievaluasi — wajib konfirmasi sebelum apheresis.'});
+
+  // ---- INFEKSI ----
+  var infBF = gsel('infeksiBF');
+  if (infBF==='sepsis') hardStops.push({l:'KONTRA ABSOLUT',t:'Sepsis / ketidakstabilan hemodinamik — apheresis harus ditunda hingga pasien stabil secara hemodinamik.'});
+  if (infBF==='uncontrolled') hardStops.push({l:'KONTRA ABSOLUT',t:'Infeksi aktif belum terkontrol — risiko kontaminasi produk dan perburukan klinis selama prosedur.'});
+  if (infBF==='controlled') cautions.push({l:'INFEKSI',t:'Infeksi terkontrol dengan terapi: pastikan kultur terbaru negatif / klinis membaik sebelum apheresis.'});
+  if (gc('demam')) hardStops.push({l:'KONTRA',t:'Demam ≥38°C dalam 48 jam terakhir — klarifikasi etiologi dan defervesens ≥48 jam sebelum prosedur.'});
+  if (gc('pneumonia')) hardStops.push({l:'KONTRA',t:'Pneumonia / infeksi saluran napas bawah aktif — risiko hipoksemia selama prosedur.'});
+  if (gc('tidakStabil')) cautions.push({l:'KLINIS',t:'Kondisi klinis tidak stabil — evaluasi ulang kesiapan prosedur dengan tim anestesi/apheresis.'});
+  var cmv = gsel('cmvStatus'), ebv = gsel('ebvStatus');
+  if (cmv==='high') hardStops.push({l:'CMV VIREMIA',t:'CMV viremia tinggi / belum diterapi — mulai antiviral, tunda apheresis sampai viral load terkontrol.'});
+  else if (cmv==='low') cautions.push({l:'CMV',t:'CMV viremia rendah dalam pengobatan — verifikasi respons terapi dan stabilitas klinis.'});
+  if (ebv==='high') hardStops.push({l:'EBV VIREMIA',t:'EBV viremia tinggi / belum diterapi — evaluasi risiko PTLD; tunda sampai terkontrol.'});
+  else if (ebv==='low') cautions.push({l:'EBV',t:'EBV viremia rendah dalam pengobatan — pantau ketat dan koordinasikan dengan tim.'});
+
+  // ---- LABORATORIUM ----
+  if (hb<7) hardStops.push({l:'LAB KRITIS',t:'Hb <7 g/dL: anemia berat — transfusi hingga Hb ≥8 g/dL dan jaga jeda ≥72 jam sebelum apheresis.'});
+  else if (hb<8) cautions.push({l:'LAB',t:'Hb 7–8 g/dL: pertimbangkan transfusi pre-apheresis dan jaga jeda ≥72 jam.'});
+  if (plt<50) hardStops.push({l:'LAB KRITIS',t:'Trombosit <50×10³/µL: risiko perdarahan signifikan — transfusi hingga ≥75×10³/µL sebelum prosedur.'});
+  else if (plt<75) cautions.push({l:'LAB',t:'Trombosit 50–75×10³/µL: dapat dilakukan dengan pengawasan ketat; transfusi profilaksis dipertimbangkan.'});
+
+  // ALC nuanced
+  var cd3 = gv('cd3');
+  if (alc<0.2) hardStops.push({l:'ALC SANGAT RENDAH',t:'ALC <0.2×10³/µL: limfopenia berat. Risiko yield sangat rendah — diskusikan dengan manufaktur; pertimbangkan recovery window sebelum koleksi.'});
+  else if (alc<0.3) cautions.push({l:'ALC HIGH-RISK',t:'ALC 0.2–0.3×10³/µL: di bawah batas acceptable. Risiko koleksi suboptimal tinggi — diskusikan enlarged processed volume atau hari koleksi tambahan dengan tim manufaktur.'});
+  else if (alc<0.5) cautions.push({l:'ALC BORDERLINE',t:'ALC 0.3–0.5×10³/µL: acceptable range, tetapi di bawah preferred (≥0.5). Pertimbangkan CD3 absolut sebelum memutuskan waktu koleksi.'});
+
+  if (cd3>0) {
+    if (cd3<200) hardStops.push({l:'CD3 SANGAT RENDAH',t:'CD3+ <200 sel/µL: yield sel T kemungkinan tidak memenuhi spesifikasi minimum manufaktur. Diskusikan penerimaan dengan manufaktur; pertimbangkan recovery lebih lanjut.'});
+    else if (cd3<350) cautions.push({l:'CD3 HIGH-RISK',t:'CD3+ 200–350 sel/µL: high risk for low yield — konfirmasi minimum requirements manufaktur dan pertimbangkan extended collection volume.'});
+    else if (cd3<500) cautions.push({l:'CD3 BORDERLINE',t:'CD3+ 350–500 sel/µL: borderline range. Koordinasikan dengan manufaktur tentang kelayakan produk akhir.'});
+  }
+
+  var wbc = gv('wbc');
+  if (wbc>50) cautions.push({l:'HIPERLEUKOSITOSIS',t:'WBC >50×10³/µL: pastikan bukan leukemia aktif yang mengontaminasi produk — evaluasi morfologi dan imunofenotiping terkini.'});
+
+  // ---- AKSES VENA ----
+  if (vena==='cvc' && !gc('cvcPasang')) hardStops.push({l:'AKSES VENA',t:'Membutuhkan CVC tetapi belum terpasang — apheresis tidak dapat dimulai tanpa akses adekuat.'});
+  if (vena==='cvc' && gc('cvcPasang') && !gc('cvcKonfirmasi')) cautions.push({l:'CVC',t:'CVC terpasang namun posisi belum dikonfirmasi radiologi — pastikan foto thoraks sebelum memulai.'});
+  if (vena==='marginal') cautions.push({l:'AKSES VENA',t:'Vena perifer marginal — antisipasi akses sulit; siapkan rencana CVC bila diperlukan.'});
+  if (!gc('flowTest')) cautions.push({l:'FLOW TEST',t:'Flow test akses vena belum dilakukan — verifikasi laju aliran sebelum memulai koleksi.'});
+
+  // ---- WASHOUT ----
+  if (gc('steroid')) cautions.push({l:'WASHOUT STEROID',t:'Steroid aktif dalam 7 hari: diperlukan washout sesuai protokol manufaktur. Bukan kontraindikasi absolut — bergantung dosis, durasi, urgensi klinis. Diskusikan dengan tim manufaktur.'});
+  if (gc('imunosupres')) cautions.push({l:'IMUNOSUPRESAN',t:'Imunosupresan aktif: dapat memengaruhi fenotip dan fitness sel T. Verifikasi washout sesuai produk yang digunakan.'});
+  if (gc('chemoRecent')) {
+    var agenChemo = gsel('chemoAgen');
+    if (agenChemo==='ATG') hardStops.push({l:'ATG/ALEMTUZUMAB',t:'ATG / alemtuzumab dalam periode washout: T-cell depleting sangat kuat. Interval minimal 4–8 minggu dan verifikasi CD3 recovery diperlukan sebelum apheresis.'});
+    else if (agenChemo==='lymphodep') cautions.push({l:'LIMFODEPLESI',t:'Agen limfodeplesi dalam periode washout: evaluasi ketat ALC dan CD3 recovery. Interval ≥4 minggu direkomendasikan.'});
+    else cautions.push({l:'KEMOTERAPI',t:'Kemoterapi terkini: pastikan washout adekuat (≥2 minggu untuk agen standar) dan konfirmasi dengan manufaktur.'});
+  }
+  if (gc('gcsf')) cautions.push({l:'G-CSF',t:'G-CSF ≤48 jam: mobilisasi granulosit dapat mengganggu seleksi sel T — idealnya jeda ≥24–48 jam sebelum koleksi.'});
+  if (gc('antiCD19')) cautions.push({l:'ANTI-CD19',t:'Anti-CD19 / blinatumomab dalam periode washout: dapat mengubah ekspresi target antigen dan repertoire sel T. Washout bervariasi per agen — koordinasikan dengan manufaktur.'});
+  if (gc('checkpoint')) warnings.push('Riwayat checkpoint inhibitor: dapat memengaruhi proporsi sel T exhausted pada produk. Informasikan ke manufaktur dan evaluasi fenotip sel T bila memungkinkan.');
+
+  // ---- TRANSFUSI ----
+  if (gc('transfusiPRC')) cautions.push({l:'TRANSFUSI PRC',t:'PRC terkini: dokumentasikan waktu pemberian. Pastikan CBC post-transfusi tersedia dan strategi timing disesuaikan.'});
+  if (gc('transfusiPLT')) cautions.push({l:'TRANSFUSI PLT',t:'Transfusi trombosit terkini: konfirmasi profil koagulasi dan diskusikan timing dengan tim apheresis.'});
+  if (gc('reaksiTransfusi')) cautions.push({l:'REAKSI TRANSFUSI',t:'Riwayat reaksi transfusi berat: siapkan premedikasi (antihistamin + paracetamol ± hidrokortison) dan emergency kit.'});
+
+  // ---- LOGISTIK ----
+  var logChecks = [{id:'consent',txt:'Informed consent'},{id:'manufOrder',txt:'Manufacturing order'},{id:'chainID',txt:'Chain of Identity form'},{id:'chainCustody',txt:'Chain of Custody form'},{id:'collKit',txt:'Collection kit'},{id:'shipper',txt:'Validated shipper/cooler'},{id:'dataLogger',txt:'Data logger'},{id:'courier',txt:'Konfirmasi kurir & pickup'},{id:'cutoffTime',txt:'Cut-off time'},{id:'emergContact',txt:'Emergency contact manufaktur'},{id:'backupPlan',txt:'Backup plan pengiriman'}];
+  logChecks.forEach(function(lc) {
+    if (!gc(lc.id)) logisticIssues.push(lc.txt);
+  });
+  if (!gc('manufOrder')) hardStops.push({l:'LOGISTIK KRITIS',t:'Manufacturing order belum dikonfirmasi — koleksi tidak boleh dimulai.'});
+
+  // ---- VOLUME WARNING ----
+  var ebvVal = gv('ebv');
+  var bb2 = gv('bb');
+  if (ebvVal>0) {
+    var ecv = Math.round(bb2*13);
+    var pct = (ecv/ebvVal)*100;
+    if (pct>=15) warnings.push('ECV ≥15% Total Blood Volume ('+pct.toFixed(1)+'%): pertimbangkan priming sirkuit dengan PRC irradiated atau albumin untuk mencegah hipovolemia selama prosedur pada pasien anak.');
+    else if (pct>=10) warnings.push('ECV 10–15% Total Blood Volume ('+pct.toFixed(1)+'%): diskusikan strategi priming dengan tim apheresis.');
+  }
+
+  // Standard warnings
+  warnings.push('Pastikan tidak ada relaps/progresi penyakit aktif sebelum apheresis — evaluasi morfologi sumsum tulang terkini harus tersedia.');
+  warnings.push('Kualitas produk dapat menurun akibat heavy pretreatment, T-cell exhaustion, atau lymphopenia persisten. Koordinasikan ekspektasi yield dengan manufaktur.');
+  warnings.push('Kelalaian cold chain atau melewati cut-off waktu pengiriman dapat menyebabkan produk ditolak dan koleksi harus diulang.');
+
+  // ---- BUILD OUTPUT ----
+  var isHardStop = hardStops.length>0;
+  var isCaution = !isHardStop && cautions.length>0;
+  var vBox = g('verdictBox');
+  if (!isHardStop && !isCaution) {
+    vBox.innerHTML='<div class="verdict v-ready"><div class="v-icon">✅</div><div><div class="v-title">SIAP APHERESIS</div><div class="v-sub">Tidak ditemukan kontraindikasi atau kondisi tunda. Lanjutkan dengan checklist day-of-apheresis dan koordinasi tim multidisiplin.</div></div></div>';
+  } else if (isHardStop) {
+    vBox.innerHTML='<div class="verdict v-delay"><div class="v-icon">🚫</div><div><div class="v-title">TUNDA APHERESIS</div><div class="v-sub">Ditemukan '+hardStops.length+' hard stop yang harus diselesaikan sebelum prosedur dapat dilanjutkan.</div></div></div>';
+  } else {
+    vBox.innerHTML='<div class="verdict v-caution"><div class="v-icon">⚠️</div><div><div class="v-title">DAPAT DILANJUTKAN DENGAN KEWASPADAAN</div><div class="v-sub">Tidak ada hard stop, namun terdapat '+cautions.length+' kondisi yang memerlukan perhatian dan manajemen aktif sebelum/selama prosedur.</div></div></div>';
+  }
+
+  // SCORE (multi-domain)
+  var scoreData = [
+    {lbl:'Lab Readiness', score: labScore(hb,plt,alc,cd3), icon:'🧪'},
+    {lbl:'Collection Risk', score: collScore(alc,cd3,gv('blast')), icon:'🎯'},
+    {lbl:'Clinical Safety', score: clinScore(), icon:'🏥'},
+    {lbl:'Logistic Readiness', score: Math.round(100-(logisticIssues.length/logChecks.length)*100), icon:'📦'},
+    {lbl:'Access Readiness', score: accessScore(vena), icon:'💉'},
+    {lbl:'Washout Status', score: washoutScore(), icon:'💊'}
+  ];
+  var sHtml='<div class="rc"><div class="rch rch-b">📊 Skor Kesiapan Multi-Domain</div><div class="rcb"><div class="score-grid">';
+  scoreData.forEach(function(s) {
+    var cl = s.score>=70?'bar-g':s.score>=40?'bar-y':'bar-r';
+    sHtml+='<div class="sbar-wrap"><div class="slbl"><span>'+s.icon+' '+s.lbl+'</span><span><strong>'+s.score+'</strong>/100</span></div><div class="sbar-bg"><div class="sbar-fill '+cl+'" style="width:'+s.score+'%"></div></div></div>';
+  });
+  sHtml+='</div></div></div>';
+  g('scoreBox').innerHTML=sHtml;
+
+  // LAB SUMMARY
+  var lb='<div class="rc"><div class="rch rch-b">🧪 Ringkasan Parameter Lab</div><div class="rcb">';
+  lb+=lrow('Hemoglobin',hb,'g/dL',hb>=9?'OK':hb>=7?'warn':'bad',hb>=9?'Adekuat':hb>=7?'Borderline':'Kritis');
+  lb+=lrow('Trombosit',plt,'×10³/µL',plt>=75?'OK':plt>=50?'warn':'bad',plt>=75?'Adekuat':plt>=50?'Waspada':'Kritis');
+  lb+=lrow('ALC',alc,'×10³/µL',alc>=0.5?'OK':alc>=0.3?'warn':'bad',alc>=0.5?'Preferred':alc>=0.3?'Acceptable (high risk)':'Di bawah batas');
+  if (gv('wbc')) lb+=lrow('WBC',gv('wbc'),'×10³/µL',gv('wbc')<=50&&gv('wbc')>=1?'OK':gv('wbc')<1?'bad':'warn',gv('wbc')<=50&&gv('wbc')>=1?'Dalam rentang':gv('wbc')<1?'Neutropenia berat':'Hiperleukositosis');
+  if (cd3) lb+=lrow('CD3+',cd3,'sel/µL',cd3>=500?'OK':cd3>=350?'warn':'bad',cd3>=500?'Adekuat':cd3>=350?'Borderline':'Risiko tinggi');
+  if (gv('cd4')) lb+=lrow('CD4+',gv('cd4'),'sel/µL','OK','–');
+  if (gv('cd8')) lb+=lrow('CD8+',gv('cd8'),'sel/µL','OK','–');
+  if (gv('crp')) lb+=lrowHigh('CRP',gv('crp'),'mg/L',gv('crp')<10?'OK':gv('crp')<30?'warn':'bad',gv('crp')<10?'Normal':gv('crp')<30?'Elevasi ringan':'Elevasi signifikan');
+  if (gv('blast')) lb+=lrowHigh('Blast Perifer',gv('blast'),'%',gv('blast')===0?'OK':gv('blast')<5?'warn':'bad',gv('blast')===0?'Tidak terdeteksi':gv('blast')<5?'Minimal':'Signifikan — evaluasi');
+  lb+='</div></div>';
+  g('labBox').innerHTML=lb;
+
+  // VOLUME SUMMARY
+  if (gv('bb')&&gv('tb')) {
+    var ebvD=gv('ebv'), pbvMult=parseFloat(gsel('pbvTarget')), pbvD=Math.round(ebvD*pbvMult), ecvD=Math.round(gv('bb')*13), pctD=((ecvD/ebvD)*100).toFixed(1);
+    var vHtml='<div class="rc"><div class="rch rch-p">📐 Ringkasan Volume &amp; ECV</div><div class="rcb">';
+    vHtml+='<div class="lrow"><span>EBV (Estimated Blood Volume)</span><span class="lval">'+ebvD+' mL</span></div>';
+    vHtml+='<div class="lrow"><span>Target Processed Blood Volume ('+pbvMult+'× EBV)</span><span class="lval">'+pbvD+' mL</span></div>';
+    vHtml+='<div class="lrow"><span>Estimasi Extracorporeal Volume (sirkuit)</span><span class="lval">'+ecvD+' mL</span></div>';
+    vHtml+='<div class="lrow"><span>%ECV dari Total Blood Volume</span><span class="lval '+(parseFloat(pctD)>=15?'calc-warn':'')+'">'+pctD+'%'+(parseFloat(pctD)>=15?' ⚠️':parseFloat(pctD)>=10?' ℹ️':' ✅')+'</span></div>';
+    if (parseFloat(pctD)>=10) vHtml+='<div class="infobox yellow" style="margin-top:8px">'+( parseFloat(pctD)>=15?'ECV ≥15% TBV: pertimbangkan priming sirkuit dengan PRC irradiated atau albumin 5% untuk mencegah hipovolemia.':'ECV 10–15% TBV: diskusikan strategi priming dengan tim apheresis.')+'</div>';
+    vHtml+='</div></div>';
+    g('volumeBox').innerHTML=vHtml;
+  }
+
+  // REASONS
+  var rHtml='';
+  if (hardStops.length) {
+    rHtml+='<div class="rc"><div class="rch rch-r">🚫 Hard Stop — Alasan Tunda ('+hardStops.length+')</div><div class="rcb"><ul class="rlist">';
+    hardStops.forEach(function(r){rHtml+='<li><span class="tag tr">'+r.l+'</span><span>'+r.t+'</span></li>';});
+    rHtml+='</ul></div></div>';
+  }
+  if (cautions.length) {
+    rHtml+='<div class="rc"><div class="rch rch-w">⚠️ Kondisi Perlu Perhatian ('+cautions.length+')</div><div class="rcb"><ul class="rlist">';
+    cautions.forEach(function(c){rHtml+='<li><span class="tag tw">'+c.l+'</span><span>'+c.t+'</span></li>';});
+    rHtml+='</ul></div></div>';
+  }
+  g('reasonBox').innerHTML=rHtml;
+
+  // CHECKLIST
+  var chHtml='<div class="rc"><div class="rch rch-g">📋 Checklist Pra-Apheresis</div><div class="rcb">';
+  var ckGroups = {
+    '🔐 Administrasi & Persetujuan': ['✅ Informed consent ditandatangani pasien/wali sah','✅ Manufacturing order diterima dan dikonfirmasi manufaktur','✅ Identifikasi pasien terverifikasi dua pengenal (nama + tanggal lahir + nomor rekam medis)','✅ Diagnosis dan target antigen terdokumentasi: '+diag+' → '+antigen],
+    '🧪 Laboratorium Hari-H': ['✅ CBC lengkap hari ini tersedia','✅ Profil koagulasi (PT, aPTT, fibrinogen)','✅ Kimia darah (elektrolit: Ca, Mg, K)','✅ Ionized calcium baseline (bila tersedia)','✅ CRP / penanda inflamasi terbaru'],
+    '🩺 Klinis Hari-H': ['✅ Tanda vital stabil: TD, nadi, SpO₂, suhu ✓','✅ Berat badan hari ini: '+gv('bb')+' kg (volume dihitung ulang)','✅ Tidak ada demam dalam 48 jam terakhir dikonfirmasi','✅ Akses vena: '+vena+' — telah diverifikasi','✅ Flow test akses vena sudah dilakukan (atau direncanakan)','✅ Antikoagulan (ACD-A / heparin) &amp; kalsium glukonat sudah siap','✅ Target Processed Blood Volume: '+(gv('ebv')?Math.round(gv('ebv')*parseFloat(gsel('pbvTarget')))+' mL':'– konfirmasi setelah BB hari-H')],
+    '📦 Chain of Identity & Logistik': logisticIssues.length?logChecks.map(function(lc){return (gc(lc.id)?'✅':'❌ Belum: ')+lc.txt;}):logChecks.map(function(lc){return '✅ '+lc.txt;}),
+    '🚨 Emergency Preparedness': ['✅ Tim resusitasi tersedia di ruangan apheresis','✅ Emergency kit (epinefrin, antihistamin, cairan IV) siap','✅ Rencana adverse event terdokumentasi','✅ Kalsium glukonat/karbonat oral/IV untuk hipokalsemia siap', gc('reaksiTransfusi')?'✅ Premedikasi reaksi transfusi siap':'']
+  };
+  Object.keys(ckGroups).forEach(function(grp) {
+    chHtml+='<div class="ck-group"><div class="ck-group-ttl">'+grp+'</div><ul class="klist">';
+    ckGroups[grp].forEach(function(item){if(item)chHtml+='<li>'+item+'</li>';});
+    chHtml+='</ul></div>';
+  });
+  chHtml+='</div></div>';
+  g('checklistBox').innerHTML=chHtml;
+
+  // WARNINGS
+  var wHtml='<div class="rc"><div class="rch rch-p">⚡ Peringatan Risiko Gagal Koleksi</div><div class="rcb"><ul class="wlist">';
+  warnings.forEach(function(w){wHtml+='<li>🔶 '+w+'</li>';});
+  wHtml+='</ul></div></div>';
+  g('warningBox').innerHTML=wHtml;
+
+  // DAY-OF MONITORING
+  var dHtml='<div class="rc"><div class="rch rch-b">📡 Monitoring Selama Prosedur Apheresis</div><div class="rcb"><ul class="klist"><div class="ck-group-ttl">⏱️ Monitoring Per Jam</div>';
+  ['Vital sign setiap 15–30 menit (TD, nadi, SpO₂, suhu)','Gejala hipokalsemia: parestesia, kram, Chvostek sign','Inlet/outlet flow rates dan volume yang diproses','Warna dan kondisi produk (hemolisis?)','Keluhan pasien: mual, pusing, menggigil, sesak'].forEach(function(i){dHtml+='<li>✅ '+i+'</li>';});
+  dHtml+='<div class="ck-group-ttl" style="margin-top:10px">🏁 Pasca Koleksi</div>';
+  ['Inspeksi volume dan tampilan produk apheresis','Label produk diverifikasi ulang dengan Chain of Identity form','Suhu validated shipper dikonfirmasi sebelum sealing','Handover ke kurir terdokumentasi dengan waktu dan tandatangan','Laporan adverse event diisi bila ada kejadian selama prosedur','CBC post-prosedur dijadwalkan'].forEach(function(i){dHtml+='<li>✅ '+i+'</li>';});
+  dHtml+='</ul></div></div>';
+  g('dayofBox').innerHTML=dHtml;
+
+  g('result').style.display='block';
+  g('result').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ===== HELPER FUNCTIONS =====
+function lrow(lbl, val, unit, cls, tag) {
+  var cc = cls==='OK'?'lok':cls==='warn'?'lwarn':'lbad';
+  return '<div class="lrow"><span>'+lbl+'</span><span><span class="lval">'+val+' '+unit+'</span> &nbsp;<span class="lst '+cc+'">'+tag+'</span></span></div>';
+}
+function lrowHigh(lbl, val, unit, cls, tag) {
+  var cc = cls==='OK'?'lok':cls==='warn'?'lwarn':'lbad';
+  return '<div class="lrow"><span>'+lbl+'</span><span><span class="lval">'+val+' '+unit+'</span> &nbsp;<span class="lst '+cc+'">'+tag+'</span></span></div>';
+}
+function labScore(hb,plt,alc,cd3) {
+  var s=100;
+  if(hb<7)s-=30;else if(hb<8)s-=15;else if(hb<9)s-=5;
+  if(plt<50)s-=30;else if(plt<75)s-=15;
+  if(alc<0.2)s-=30;else if(alc<0.3)s-=20;else if(alc<0.5)s-=10;
+  if(cd3>0){if(cd3<200)s-=20;else if(cd3<350)s-=12;else if(cd3<500)s-=5;}
+  return Math.max(0,s);
+}
+function collScore(alc,cd3,blast) {
+  var s=100;
+  if(alc<0.2)s-=40;else if(alc<0.3)s-=25;else if(alc<0.5)s-=10;
+  if(cd3>0){if(cd3<200)s-=30;else if(cd3<350)s-=20;else if(cd3<500)s-=8;}
+  if(blast>=20)s-=40;else if(blast>=5)s-=20;
+  return Math.max(0,s);
+}
+function clinScore() {
+  var s=100;
+  var infBF=gsel('infeksiBF');
+  if(infBF==='sepsis')s-=50;
+  if(infBF==='uncontrolled')s-=40;
+  if(infBF==='controlled')s-=10;
+  if(gc('demam'))s-=30;
+  if(gc('pneumonia'))s-=25;
+  if(gc('tidakStabil'))s-=20;
+  var cmv=gsel('cmvStatus'),ebv=gsel('ebvStatus');
+  if(cmv==='high')s-=20;else if(cmv==='low')s-=8;
+  if(ebv==='high')s-=20;else if(ebv==='low')s-=8;
+  return Math.max(0,s);
+}
+function accessScore(vena) {
+  var s=100;
+  if(vena==='cvc'&&!gc('cvcPasang'))s-=50;
+  if(vena==='cvc'&&gc('cvcPasang')&&!gc('cvcKonfirmasi'))s-=20;
+  if(vena==='marginal')s-=15;
+  if(!gc('flowTest'))s-=10;
+  return Math.max(0,s);
+}
+function washoutScore() {
+  var s=100;
+  if(gc('steroid'))s-=20;
+  if(gc('imunosupres'))s-=20;
+  if(gc('chemoRecent')){var a=gsel('chemoAgen');if(a==='ATG')s-=40;else if(a==='lymphodep')s-=25;else s-=10;}
+  if(gc('gcsf'))s-=10;
+  if(gc('antiCD19'))s-=15;
+  if(gc('checkpoint'))s-=5;
+  return Math.max(0,s);
+}
+
+// ===== SAVE/LOAD =====
+function saveData() {
+  var data={};
+  document.querySelectorAll('input[type=number],input[type=text],input[type=date],select').forEach(function(el){if(el.id&&!el.readOnly)data[el.id]=el.value;});
+  document.querySelectorAll('input[type=checkbox]').forEach(function(el){if(el.id)data[el.id]=el.checked;});
+  document.querySelectorAll('input[type=radio]').forEach(function(el){if(el.checked&&el.name)data['radio_'+el.name]=el.value;});
+  try{localStorage.setItem('cartApheresis_v2',JSON.stringify(data));}catch(e){}
+}
+function loadSaved() {
+  try{
+    var saved=localStorage.getItem('cartApheresis_v2');
+    if(!saved)return;
+    var data=JSON.parse(saved);
+    Object.keys(data).forEach(function(k){
+      if(k.startsWith('radio_')){
+        var name=k.replace('radio_','');
+        var el=document.querySelector('input[name="'+name+'"][value="'+data[k]+'"]');
+        if(el){el.checked=true;el.closest('.rbtn')&&el.closest('.rbtn').classList.add('selected');}
+      } else {
+        var el=document.getElementById(k);
+        if(!el||el.readOnly)return;
+        if(el.type==='checkbox')el.checked=data[k];
+        else el.value=data[k];
+      }
+    });
+    calcAnthro();
+  }catch(e){}
+}
+
+function exportJSON() {
+  var data={meta:{tool:'CAR-T Apheresis Readiness Tool v2.0',brand:'drAisyi EduCare',tanggal:new Date().toLocaleDateString('id-ID'),tanggalApheresis:gsel('tglApheresis')}};
+  ['diagnosis','antigen','tipeCART','manufaktur','bb','tb','bsa','usia','hb','plt','wbc','alc','cd3','cd4','cd8','blast','crp','diseaseBurden'].forEach(function(k){data[k]=document.getElementById(k)?document.getElementById(k).value:'';});
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='CAR-T_Apheresis_ReadinessTool_'+new Date().toISOString().slice(0,10)+'.json';a.click();
+}
+
+function resetAll() {
+  if(!confirm('Reset semua input?'))return;
+  try{localStorage.removeItem('cartApheresis_v2');}catch(e){}
+  location.reload();
+}
+</script>
+</body>
+</html>

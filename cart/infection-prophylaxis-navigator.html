@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infection Prophylaxis Navigator</title>
+<style>
+:root{--pr:#1a3a5c;--ac:#0ea5e9;--ac2:#7c3aed;--gn:#16a34a;--yw:#ca8a04;--rd:#dc2626;--bl:#1d4ed8;--bg:#f0f6ff;--cd:#fff;--br:#cbd5e1;--tx:#1e293b;--mu:#64748b;--lt:#e8f0fe}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Segoe UI,sans-serif;background:var(--bg);color:var(--tx);font-size:14px}
+.hdr{background:linear-gradient(135deg,var(--pr) 0%,#0f2744 60%,var(--ac2) 100%);color:#fff;padding:16px 20px 12px}
+.htop{display:flex;align-items:center;gap:12px}
+.logo{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.brand{font-size:10px;opacity:.7;letter-spacing:2px;text-transform:uppercase}
+.ttl{font-size:15px;font-weight:700;line-height:1.3}
+.sub{font-size:11px;opacity:.65;margin-top:2px}
+.ver{margin-left:auto;background:rgba(255,255,255,.15);border-radius:20px;padding:3px 10px;font-size:10px;white-space:nowrap}
+.bnr{margin-top:10px;background:rgba(14,165,233,.18);border-left:3px solid var(--ac);border-radius:6px;padding:8px 12px;font-size:11px;line-height:1.5}
+.tabs{display:flex;background:var(--pr);border-bottom:2px solid var(--ac);overflow-x:auto}
+.tab{padding:10px 15px;font-size:12px;font-weight:600;color:rgba(255,255,255,.6);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent}
+.tab.active{color:#fff;border-bottom-color:var(--ac);background:rgba(14,165,233,.15)}
+.wrap{padding:14px;max-width:960px;margin:0 auto}
+.pnl{display:none}.pnl.active{display:block}
+.card{background:var(--cd);border-radius:10px;border:1px solid var(--br);padding:14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.ct{font-size:13px;font-weight:700;color:var(--pr);margin-bottom:12px}
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mbtn{border:2px solid var(--br);border-radius:9px;padding:10px 8px;text-align:center;cursor:pointer;background:#fff}
+.mbtn.on{border-color:var(--ac2);background:#f5f3ff}
+.mi{font-size:18px;margin-bottom:4px}
+.ml{font-size:11px;font-weight:700}
+.ms{font-size:10px;color:var(--mu);margin-top:1px}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:11px;font-weight:600;color:var(--mu);text-transform:uppercase;letter-spacing:.4px}
+.fg input,.fg select{padding:8px 10px;border:1.5px solid var(--br);border-radius:7px;font-size:13px;color:var(--tx);background:#fafbff}
+.fg input:focus,.fg select:focus{outline:none;border-color:var(--ac)}
+.unit{font-size:10px;color:var(--mu);margin-top:1px}
+.fw{grid-column:1/-1}
+.btn{padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-weight:700;font-size:13px}
+.bp{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff}
+.bs{background:var(--lt);color:var(--pr);border:1px solid var(--br)}
+.bpr{background:linear-gradient(135deg,var(--gn),#14532d);color:#fff}
+.brow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.vbox{background:#fef2f2;border:1px solid #fca5a5;border-radius:7px;padding:10px 13px;font-size:12px;color:#991b1b;margin-top:10px;display:none}
+.vbox ul{padding-left:16px;margin-top:4px}
+.tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.tc{border-radius:9px;padding:10px 8px;text-align:center;border:2px solid transparent}
+.tc.gn{background:#dcfce7;border-color:var(--gn)}.tc.yw{background:#fefce8;border-color:var(--yw)}.tc.rd{background:#fee2e2;border-color:var(--rd)}.tc.bl{background:#dbeafe;border-color:var(--bl)}.tc.gr{background:#f1f5f9;border-color:var(--br)}
+.td{width:14px;height:14px;border-radius:50%;margin:0 auto 5px}
+.tc.gn .td{background:var(--gn)}.tc.yw .td{background:var(--yw)}.tc.rd .td{background:var(--rd)}.tc.bl .td{background:var(--bl)}.tc.gr .td{background:var(--mu)}
+.tl{font-size:11px;font-weight:700}.tv{font-size:10px;color:var(--mu);margin-top:2px}.tn{font-size:10px;color:#0369a1;margin-top:2px;font-style:italic}
+.rb{border-radius:8px;padding:12px 14px;margin-bottom:10px;border-left:4px solid}
+.rb.rd{background:#fff1f2;border-color:var(--rd)}.rb.yw{background:#fffbeb;border-color:var(--yw)}.rb.gn{background:#f0fdf4;border-color:var(--gn)}.rb.bl{background:#eff6ff;border-color:var(--ac)}.rb.pu{background:#f5f3ff;border-color:var(--ac2)}.rb.gr{background:#f8fafc;border-color:var(--br)}
+.rt{font-weight:700;font-size:12px;margin-bottom:5px;color:var(--pr)}.rb2{font-size:12px;line-height:1.65}.rb2 ul{padding-left:16px;margin-top:4px}.rb2 li{margin-bottom:3px}
+.ev{background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:10px 12px;font-size:11px;color:#0369a1;line-height:1.6;margin-top:10px}
+.sh{font-size:14px;font-weight:700;color:var(--pr);margin:14px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--lt)}
+.mbg{display:inline-flex;align-items:center;gap:6px;background:var(--lt);border:1px solid var(--ac);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;color:var(--ac2);margin-bottom:12px}
+.disc{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 12px;font-size:11px;color:#92400e;margin-top:12px;line-height:1.5}
+.emp{text-align:center;padding:40px 20px;color:var(--mu)}
+.emp .ei{font-size:48px;margin-bottom:12px}
+.hid{display:none!important}
+.pbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.pb{padding:6px 14px;border-radius:20px;border:2px solid var(--br);background:#fff;font-size:11px;font-weight:600;cursor:pointer;color:var(--mu)}
+.pb.on{background:var(--ac);border-color:var(--ac);color:#fff}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:var(--pr);color:#fff;padding:8px 10px;text-align:left;font-size:11px}
+td{padding:7px 10px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.5}
+tr:nth-child(even) td{background:#f8fafc}
+.bdg{display:inline-block;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700}
+.brd{background:#fee2e2;color:var(--rd)}.byw{background:#fefce8;color:#92400e}.bgn{background:#dcfce7;color:var(--gn)}.bbl{background:#dbeafe;color:#1d4ed8}
+@media print{.tabs,.brow,.ver{display:none!important}#pi,#pp,#pf{display:none!important}#pr{display:block!important}body{background:#fff}.card{box-shadow:none;border:1px solid #ccc}}
+@media(max-width:540px){.fg2{grid-template-columns:1fr}.mgrid{grid-template-columns:1fr 1fr}.tg{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="htop">
+    <div class="logo">&#x1F6E1;&#xFE0F;</div>
+    <div>
+      <div class="brand">drAisyi EduCare</div>
+      <div class="ttl">Infection Prophylaxis &amp; Immune Reconstitution Navigator</div>
+      <div class="sub">Post-HSCT &amp; CAR-T &middot; Pediatric Hematology-Oncology &middot; v2.2</div>
+    </div>
+    <div class="ver">2025 &middot; ASTCT 2024</div>
+  </div>
+  <div class="bnr">&#x26A0;&#xFE0F; <strong>ASTCT 2024:</strong> Risiko infeksi pasca CAR-T dipengaruhi burden imunosupresi, lymphodepletion, dan faktor pasien. Infeksi terbanyak dalam 30 hari pertama. IVIG empiris universal tidak direkomendasikan rutin.</div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" id="t-pi">&#x1F4CB; Input</div>
+  <div class="tab" id="t-pr">&#x1F9EC; Rekomendasi</div>
+  <div class="tab" id="t-pp">&#x1F4C5; Timeline</div>
+  <div class="tab" id="t-pf">&#x1F4DA; Referensi</div>
+</div>
+
+<div class="wrap">
+
+<!-- INPUT -->
+<div id="pi" class="pnl active">
+  <div class="card">
+    <div class="ct">1&#xFE0F;&#x20E3; Mode Terapi <span style="color:var(--rd);font-size:11px">*wajib</span></div>
+    <div class="mgrid">
+      <div class="mbtn" id="m-allo"><div class="mi">&#x1F52C;</div><div class="ml">Allo-HSCT</div><div class="ms">Allogeneic</div></div>
+      <div class="mbtn" id="m-auto"><div class="mi">&#x1F9EC;</div><div class="ml">Auto-HSCT</div><div class="ms">Autologous</div></div>
+      <div class="mbtn" id="m-c19"><div class="mi">&#x1F3AF;</div><div class="ml">CAR-T CD19</div><div class="ms">mis. Tisagenl.</div></div>
+      <div class="mbtn" id="m-cbm"><div class="mi">&#x26A1;</div><div class="ml">CAR-T Myeloma</div><div class="ms">Anti-myeloma</div></div>
+      <div class="mbtn" id="m-cxa"><div class="mi">&#x1F504;</div><div class="ml">CAR-T pasca Allo</div><div class="ms">Kombinasi</div></div>
+      <div class="mbtn" id="m-bsp"><div class="mi">&#x1F9A0;</div><div class="ml">Bispecific</div><div class="ms">T-cell engager</div></div>
+    </div>
+    <div id="mw" class="hid" style="color:var(--rd);font-size:11px">&#x26A0;&#xFE0F; Pilih mode terapi.</div>
+  </div>
+
+  <div class="card">
+    <div class="ct">2&#xFE0F;&#x20E3; Data Klinis <span style="color:var(--rd);font-size:11px">*ANC, IgG, Fase wajib</span></div>
+    <div class="fg2">
+      <div class="fg"><label>ANC *</label><input type="number" id="anc" placeholder="cth. 500" min="0"><div class="unit">sel/uL</div></div>
+      <div class="fg"><label>Limfosit Total</label><input type="number" id="lym" placeholder="cth. 300" min="0"><div class="unit">sel/uL</div></div>
+      <div class="fg"><label>CD4+ (opsional)</label><input type="number" id="cd4" placeholder="cth. 200" min="0"><div class="unit">sel/uL</div></div>
+      <div class="fg"><label>IgG Serum *</label><input type="number" id="igg" placeholder="cth. 400" min="0"><div class="unit">mg/dL</div></div>
+      <div class="fg">
+        <label>B-cell Aplasia</label>
+        <select id="bcel">
+          <option value="">-- Pilih --</option>
+          <option value="cd19">Ya - pasca CD19 (expected)</option>
+          <option value="other">Ya - konteks lain</option>
+          <option value="tidak">Tidak / recovery</option>
+          <option value="blm">Belum diperiksa</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Fase Terapi *</label>
+        <select id="fase">
+          <option value="">-- Pilih --</option>
+          <option value="pre">Pra-terapi / kondisioning</option>
+          <option value="neu">Neutropenik / pre-engraftment</option>
+          <option value="ear">Early (&lt;100 hari / &lt;3 bulan)</option>
+          <option value="lat">Late (&gt;=100 hari / &gt;=3 bulan)</option>
+          <option value="ois">Masih dalam imunosupresi aktif</option>
+          <option value="rec">Imun rekonstituisi lengkap</option>
+        </select>
+      </div>
+      <div class="fg"><label>Berat Badan (kg)</label><input type="number" id="bb" placeholder="cth. 25" min="1"></div>
+      <div class="fg"><label>Usia (tahun)</label><input type="number" id="usia" placeholder="cth. 8" min="0"></div>
+      <div class="fg">
+        <label>Fungsi Ginjal</label>
+        <select id="gin">
+          <option value="nor">Normal (&gt;60)</option>
+          <option value="rin">Ringan 30-60</option>
+          <option value="sed">Sedang 15-30</option>
+          <option value="ber">&lt;15 / dialisis</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Alergi / KI</label>
+        <select id="alg">
+          <option value="tidak">Tidak ada</option>
+          <option value="sulfa">Alergi sulfa/TMP-SMX</option>
+          <option value="g6pd">Defisiensi G6PD</option>
+          <option value="azol">KI azole</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">3&#xFE0F;&#x20E3; Status Virologis</div>
+    <div class="fg2">
+      <div class="fg" id="fcdr">
+        <label>CMV Donor/Resipien (HSCT)</label>
+        <select id="cdr">
+          <option value="">-- Pilih --</option>
+          <option value="nn">R-/D-</option>
+          <option value="rp">R+ resipien</option>
+          <option value="dp">D+/R-</option>
+          <option value="bd">R+/D+</option>
+          <option value="rv">Reaktivasi aktif</option>
+        </select>
+      </div>
+      <div class="fg hid" id="fcct">
+        <label>CMV Status Pasien (CAR-T/Auto)</label>
+        <select id="cct">
+          <option value="">-- Pilih --</option>
+          <option value="neg">IgG CMV negatif</option>
+          <option value="low">Seropositif, PCR negatif</option>
+          <option value="pcr">PCR terdeteksi</option>
+          <option value="rv">CMV disease / simptomatik</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Status EBV</label>
+        <select id="ebv">
+          <option value="">-- Pilih --</option>
+          <option value="neg">Negatif</option>
+          <option value="pos">Seropositif, PCR negatif</option>
+          <option value="up">PCR rising</option>
+          <option value="ptld">PTLD / simptomatik</option>
+        </select>
+      </div>
+      <div class="fg hid" id="febr">
+        <label>Faktor Risiko PTLD</label>
+        <select id="ebr">
+          <option value="low">Risiko rendah</option>
+          <option value="atg">ATG / Alemtuzumab</option>
+          <option value="tcd">T-cell depletion</option>
+          <option value="hmu">Haplo / MUD</option>
+          <option value="mis">EBV D+/R- mismatch</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Status HBV *</label>
+        <select id="hbv">
+          <option value="">-- Pilih --</option>
+          <option value="neg">HBsAg-, anti-HBc- (naif)</option>
+          <option value="vak">Tervaksinasi anti-HBs+</option>
+          <option value="res">Resolved: HBsAg-, anti-HBc+</option>
+          <option value="akt">HBsAg positif</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Riwayat HSV/VZV</label>
+        <select id="hsv">
+          <option value="neg">Tidak ada / seronegatif</option>
+          <option value="hsv">Riwayat HSV</option>
+          <option value="vzv">Riwayat VZV</option>
+          <option value="kd2">Keduanya</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">4&#xFE0F;&#x20E3; Risk Drivers</div>
+    <div class="fg2">
+      <div class="fg fw">
+        <label>Riwayat Infeksi Berat/Berulang</label>
+        <select id="inf">
+          <option value="tdk">Tidak ada</option>
+          <option value="bak">Bakteri invasif (1 episode)</option>
+          <option value="jam">Jamur invasif (prior IFI)</option>
+          <option value="vir">Viral berat</option>
+          <option value="mul">&gt;=2 episode / berulang</option>
+        </select>
+      </div>
+      <div class="fg hid" id="fgvh">
+        <label>GVHD (Allo-HSCT)</label>
+        <select id="gvh">
+          <option value="tdk">Tidak ada</option>
+          <option value="g12">Akut Grade I-II</option>
+          <option value="g34">Akut Grade III-IV</option>
+          <option value="ckr">Kronik ringan</option>
+          <option value="ckb">Kronik sedang-berat</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Steroid / Imunosupresi</label>
+        <select id="ste">
+          <option value="tdk">Tidak / selesai</option>
+          <option value="ren">&lt;0.5 mg/kg/hr</option>
+          <option value="sed">0.5-1 mg/kg/hr</option>
+          <option value="tin">&gt;=1 mg/kg/hr</option>
+          <option value="mul">Multidrug IS</option>
+        </select>
+      </div>
+      <div class="fg hid" id="fcrs">
+        <label>CRS Grade (CAR-T)</label>
+        <select id="crs">
+          <option value="na">N/A</option>
+          <option value="g0">Grade 0</option>
+          <option value="g12">Grade 1-2</option>
+          <option value="g34">Grade 3-4</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Neutropenia Berkepanjangan</label>
+        <select id="pneu">
+          <option value="tdk">&lt;7 hari</option>
+          <option value="sed">7-14 hari</option>
+          <option value="pjg">&gt;14 hari</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Mukositis</label>
+        <select id="muk">
+          <option value="tdk">Tidak / ringan</option>
+          <option value="sed">Grade 2</option>
+          <option value="ber">Grade 3-4</option>
+        </select>
+      </div>
+    </div>
+    <div id="vbox" class="vbox"><strong>Data belum lengkap:</strong><ul id="vlist"></ul></div>
+    <div class="brow">
+      <button class="btn bp" id="btnGo">&#x1F50D; Analisis &amp; Generate Rekomendasi</button>
+      <button class="btn bs" id="btnRst">&#x21BA; Reset</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="pr" class="pnl">
+  <div id="remp" class="emp"><div class="ei">&#x1F6E1;&#xFE0F;</div><p>Isi form lalu klik <strong>Analisis &amp; Generate Rekomendasi</strong></p></div>
+  <div id="rcon" class="hid">
+    <div id="mbg" class="mbg"></div>
+    <div class="sh">&#x1F6A6; Status Imunologi</div>
+    <div class="card"><div id="tgrid" class="tg"></div></div>
+    <div class="sh">&#x1F48A; Rekomendasi Profilaksis</div>
+    <div id="rproph"></div>
+    <div class="sh">&#x1F489; Keputusan IVIG</div>
+    <div id="rivigg"></div>
+    <div class="sh">&#x1F52C; Monitoring</div>
+    <div id="rmon"></div>
+    <div class="sh">&#x26A1; Peringatan Klinis</div>
+    <div id="raler"></div>
+    <div class="sh">&#x1F489; Vaksinasi</div>
+    <div id="rvaks"></div>
+    <div class="ev"><strong>Panduan:</strong> ASTCT 2024, ECIL-8, IDSA HSCT Guidelines, Tomblyn et al. BBMT 2009. Dosis indikatif - sesuaikan BB, eGFR, TDM, protokol lokal.</div>
+    <div class="brow">
+      <button class="btn bpr" id="btnPr">&#x1F5A8;&#xFE0F; Cetak</button>
+      <button class="btn bs" id="btnBk">&#x2190; Input</button>
+    </div>
+    <div class="disc">&#x2695;&#xFE0F; Tool edukasi - tidak menggantikan penilaian klinis spesialis.</div>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<div id="pp" class="pnl">
+  <div class="card">
+    <div class="ct">&#x1F4C5; Timeline Rekonstituisi Imun</div>
+    <div class="pbar">
+      <button class="pb on" id="pbA">Allo-HSCT</button>
+      <button class="pb" id="pbB">Auto-HSCT</button>
+      <button class="pb" id="pbC">CAR-T CD19</button>
+    </div>
+    <div id="phA">
+      <table><thead><tr><th>Fase</th><th>Waktu</th><th>Risiko Utama</th><th>Profilaksis</th></tr></thead>
+      <tbody>
+        <tr><td><span class="bdg brd">Fase I</span> Pre-engraftment</td><td>D0-30</td><td>Gram negatif, Candida, HSV</td><td>Antibakteri, flukonazol, asiklovir</td></tr>
+        <tr><td><span class="bdg byw">Fase II</span> Post-engraftment</td><td>D30-100</td><td>CMV, Aspergillus, PCP, EBV-PTLD</td><td>CMV preemptive, kotrimoksazol, mold-active*, EBV monitor</td></tr>
+        <tr><td><span class="bdg bgn">Fase III</span> Late</td><td>&gt;D100</td><td>Encapsulated bacteria, VZV, CMV (GVHD)</td><td>Kotrimoksazol (GVHD), VZV profilaksis, revaksinasi</td></tr>
+      </tbody></table>
+      <div class="ev" style="margin-top:10px"><strong>*Mold-active:</strong> Vorikonazol/Posakonazol bila GVHD, steroid &gt;=1mg/kg, prior IFI, prolonged neutropenia, atau ICU.</div>
+    </div>
+    <div id="phB" class="hid">
+      <table><thead><tr><th>Fase</th><th>Waktu</th><th>Risiko Utama</th><th>Profilaksis</th></tr></thead>
+      <tbody>
+        <tr><td><span class="bdg brd">Neutropenik</span></td><td>D0-14</td><td>Gram negatif, Candida</td><td>Antibakteri, flukonazol, asiklovir</td></tr>
+        <tr><td><span class="bdg byw">Recovery</span></td><td>D14-60</td><td>PCP, HSV, VZV</td><td>Kotrimoksazol, asiklovir</td></tr>
+        <tr><td><span class="bdg bgn">Late</span></td><td>&gt;D60</td><td>Sesuai penyakit dasar</td><td>Stop setelah CD4 &gt;200 dan bebas imunosupresi</td></tr>
+      </tbody></table>
+    </div>
+    <div id="phC" class="hid">
+      <table><thead><tr><th>Fase</th><th>Waktu</th><th>Risiko Utama</th><th>Profilaksis</th></tr></thead>
+      <tbody>
+        <tr><td><span class="bdg brd">Akut</span> CRS/ICANS</td><td>D1-14</td><td>Infeksi sekunder post-tocilizumab/steroid</td><td>Monitor infeksi; jangan tunda antibiotik</td></tr>
+        <tr><td><span class="bdg byw">Early</span></td><td>D14-bln3</td><td>Bakteri encapsulated, CMV (seropositif+steroid), PCP</td><td>Kotrimoksazol D+30, asiklovir, monitor IgG</td></tr>
+        <tr><td><span class="bdg bgn">Late</span></td><td>&gt;Bln3</td><td>Infeksi berulang jika hipogammaglobulinemia</td><td>IVIG bila IgG &lt;400 + infeksi; revaksinasi setelah B-cell recovery</td></tr>
+      </tbody></table>
+      <div class="ev" style="margin-top:10px"><strong>ASTCT 2024:</strong> B-cell aplasia adalah marker respons, bukan selalu bahaya. CMV D/R tidak relevan untuk CAR-T autologous.</div>
+    </div>
+  </div>
+</div>
+
+<!-- REFERENSI -->
+<div id="pf" class="pnl">
+  <div class="card">
+    <div class="ct">&#x1F52C; Threshold Klinis</div>
+    <table><thead><tr><th>Parameter</th><th>Normal</th><th>Threshold Kritis</th><th>Interpretasi</th></tr></thead>
+    <tbody>
+      <tr><td><strong>ANC</strong></td><td>&gt;1500/uL</td><td>&lt;500 febrile risk; &lt;100 profound; =0 kritis</td><td>Profilaksis wajib &lt;500</td></tr>
+      <tr><td><strong>Limfosit</strong></td><td>&gt;1000/uL</td><td>&lt;200 berat</td><td>Risiko oportunistik</td></tr>
+      <tr><td><strong>CD4+</strong></td><td>&gt;500/uL</td><td>&lt;200 PCP; &lt;50 CMV/MAC</td><td>Panduan profilaksis OI</td></tr>
+      <tr><td><strong>IgG</strong></td><td>600-1600 mg/dL</td><td>&lt;400 berat; &lt;600 borderline</td><td>Monitor pre dan &lt;3 bln pasca CAR-T</td></tr>
+      <tr><td><strong>B-cell aplasia</strong></td><td>Tidak ada</td><td>Pasca CD19 CAR-T</td><td>Expected marker respons; risiko bila IgG &lt;400 + infeksi</td></tr>
+    </tbody></table>
+  </div>
+  <div class="card">
+    <div class="ct">&#x1F4D6; Referensi Utama</div>
+    <div style="font-size:12px;line-height:2;color:var(--mu)">
+      <p>- ASTCT 2024: Infection Prevention and Management After CAR-T Cell Therapy</p>
+      <p>- ECIL-8: CMV Management after Allogeneic HSCT (Lancet Infect Dis 2019)</p>
+      <p>- Tomblyn et al.: Guidelines for Preventing Infectious Complications (BBMT 2009)</p>
+      <p>- IDSA: Guidelines for OI Prevention in HSCT Recipients</p>
+      <p>- Hill JA et al.: Infectious Complications of CD19 CAR-T (Blood 2018)</p>
+      <p>- PMC8837681: Hypogammaglobulinemia after CAR-T: systematic review</p>
+    </div>
+  </div>
+</div>
+
+</div><!-- wrap -->
+
+<script>
+var SM = "";
+
+function gi(id) { return document.getElementById(id); }
+function gv(id) { var e = gi(id); return e ? e.value : ""; }
+function nan(id) {
+  var e = gi(id);
+  if (!e) return null;
+  var s = e.value.trim();
+  if (s === "") return null;
+  var n = parseFloat(s);
+  return isNaN(n) ? null : n;
+}
+function sh(id) { var e = gi(id); if (e) e.classList.remove("hid"); }
+function hd(id) { var e = gi(id); if (e) e.classList.add("hid"); }
+
+function isAllo() { return SM === "allo" || SM === "cxa"; }
+function isCart() { return SM === "c19" || SM === "cbm" || SM === "cxa" || SM === "bsp"; }
+
+function adapt() {
+  if (isCart() && !isAllo()) { hd("fcdr"); sh("fcct"); } else { sh("fcdr"); hd("fcct"); }
+  if (isAllo()) { sh("fgvh"); sh("febr"); } else { hd("fgvh"); hd("febr"); }
+  if (isCart()) { sh("fcrs"); } else { hd("fcrs"); }
+}
+
+function showTab(name) {
+  var ids = ["pi","pr","pp","pf"];
+  var tabs = ["t-pi","t-pr","t-pp","t-pf"];
+  for (var i = 0; i < ids.length; i++) {
+    var p = gi(ids[i]); if (p) p.classList.remove("active");
+    var t = gi(tabs[i]); if (t) t.classList.remove("active");
+  }
+  var tp = gi(name); if (tp) tp.classList.add("active");
+  var tt = gi("t-" + name); if (tt) tt.classList.add("active");
+}
+
+function tcard(c, lb, vl, nt) {
+  return "<div class='tc " + c + "'><div class='td'></div><div class='tl'>" + lb + "</div><div class='tv'>" + vl + "</div>" + (nt ? "<div class='tn'>" + nt + "</div>" : "") + "</div>";
+}
+function rblock(c, ic, ti, bd) {
+  return "<div class='rb " + c + "'><div class='rt'>" + ic + " " + ti + "</div><div class='rb2'>" + bd + "</div></div>";
+}
+function modeName() {
+  if (SM === "allo") return "Allo-HSCT";
+  if (SM === "auto") return "Auto-HSCT";
+  if (SM === "c19") return "CAR-T CD19";
+  if (SM === "cbm") return "CAR-T Myeloma";
+  if (SM === "cxa") return "CAR-T pasca Allo";
+  if (SM === "bsp") return "Bispecific";
+  return SM;
+}
+
+// Mode buttons
+var modes = ["allo","auto","c19","cbm","cxa","bsp"];
+for (var mi = 0; mi < modes.length; mi++) {
+  (function(m) {
+    var btn = gi("m-" + m);
+    if (!btn) return;
+    btn.onclick = function() {
+      var all = document.querySelectorAll(".mbtn");
+      for (var i = 0; i < all.length; i++) all[i].classList.remove("on");
+      btn.classList.add("on");
+      SM = m;
+      hd("mw");
+      adapt();
+    };
+  })(modes[mi]);
+}
+
+// Tab clicks
+gi("t-pi").onclick = function() { showTab("pi"); };
+gi("t-pr").onclick = function() { showTab("pr"); };
+gi("t-pp").onclick = function() { showTab("pp"); };
+gi("t-pf").onclick = function() { showTab("pf"); };
+
+// Phase buttons
+gi("pbA").onclick = function() {
+  var pbs = document.querySelectorAll(".pb");
+  for (var i = 0; i < pbs.length; i++) pbs[i].classList.remove("on");
+  gi("pbA").classList.add("on");
+  sh("phA"); hd("phB"); hd("phC");
+};
+gi("pbB").onclick = function() {
+  var pbs = document.querySelectorAll(".pb");
+  for (var i = 0; i < pbs.length; i++) pbs[i].classList.remove("on");
+  gi("pbB").classList.add("on");
+  hd("phA"); sh("phB"); hd("phC");
+};
+gi("pbC").onclick = function() {
+  var pbs = document.querySelectorAll(".pb");
+  for (var i = 0; i < pbs.length; i++) pbs[i].classList.remove("on");
+  gi("pbC").classList.add("on");
+  hd("phA"); hd("phB"); sh("phC");
+};
+
+gi("btnBk").onclick = function() { showTab("pi"); };
+gi("btnPr").onclick = function() { window.print(); };
+
+gi("btnRst").onclick = function() {
+  var nums = ["anc","lym","cd4","igg","bb","usia"];
+  for (var i = 0; i < nums.length; i++) { var e = gi(nums[i]); if (e) e.value = ""; }
+  var sels = ["bcel","fase","cdr","cct","ebv","ebr","hbv","hsv","inf","gvh","ste","crs","pneu","muk","gin","alg"];
+  for (var j = 0; j < sels.length; j++) { var s = gi(sels[j]); if (s) s.selectedIndex = 0; }
+  SM = "";
+  var all = document.querySelectorAll(".mbtn");
+  for (var k = 0; k < all.length; k++) all[k].classList.remove("on");
+  hd("vbox");
+  gi("remp").classList.remove("hid");
+  hd("rcon");
+};
+
+gi("btnGo").onclick = function() {
+  var anc  = nan("anc");
+  var lym  = nan("lym");
+  var cd4  = nan("cd4");
+  var igg  = nan("igg");
+  var usia = nan("usia");
+  var bcel = gv("bcel");
+  var fase = gv("fase");
+  var cdr  = gv("cdr");
+  var cct  = gv("cct");
+  var ebv  = gv("ebv");
+  var ebr  = gv("ebr");
+  var hbv  = gv("hbv");
+  var hsv  = gv("hsv");
+  var inf  = gv("inf");
+  var gvh  = gv("gvh");
+  var ste  = gv("ste");
+  var crs  = gv("crs");
+  var pneu = gv("pneu");
+  var muk  = gv("muk");
+  var gin  = gv("gin");
+  var alg  = gv("alg");
+
+  var miss = [];
+  if (!SM) miss.push("Mode terapi pasien");
+  if (anc === null) miss.push("ANC");
+  if (igg === null) miss.push("IgG Serum");
+  if (!fase) miss.push("Fase terapi");
+  if (!hbv) miss.push("Status HBV");
+
+  if (miss.length > 0) {
+    var vl = gi("vlist");
+    var html = "";
+    for (var i = 0; i < miss.length; i++) html += "<li>" + miss[i] + "</li>";
+    vl.innerHTML = html;
+    gi("vbox").style.display = "block";
+    if (!SM) sh("mw");
+    return;
+  }
+  gi("vbox").style.display = "none";
+
+  var hiS  = (ste === "tin" || ste === "mul");
+  var hiG  = (gvh === "g34" || gvh === "ckb");
+  var IFI  = (inf === "jam");
+  var plN  = (pneu === "pjg");
+  var mold = (hiS || hiG || IFI || plN || crs === "g34" || muk === "ber");
+  var bapla = (bcel === "cd19" || bcel === "other");
+  var anak  = (usia !== null && usia < 6);
+  var cmvS  = isAllo() ? cdr : cct;
+
+  // Traffic light
+  var tl = "";
+  if (anc !== null) {
+    if (anc === 0)      tl += tcard("rd","ANC","0 /uL","Kritis");
+    else if (anc < 100) tl += tcard("rd","ANC",anc+" /uL","Profound");
+    else if (anc < 500) tl += tcard("yw","ANC",anc+" /uL","Febrile risk");
+    else                tl += tcard("gn","ANC",anc+" /uL","");
+  } else { tl += tcard("gr","ANC","-",""); }
+
+  if (lym !== null) {
+    if (lym < 200)      tl += tcard("rd","Limfosit",lym+" /uL","Berat");
+    else if (lym < 500) tl += tcard("yw","Limfosit",lym+" /uL","Rendah");
+    else                tl += tcard("gn","Limfosit",lym+" /uL","");
+  } else { tl += tcard("gr","Limfosit","-",""); }
+
+  if (cd4 !== null) {
+    if (cd4 < 50)       tl += tcard("rd","CD4+",cd4+" /uL","OI risk");
+    else if (cd4 < 200) tl += tcard("yw","CD4+",cd4+" /uL","PCP risk");
+    else                tl += tcard("gn","CD4+",cd4+" /uL","");
+  } else { tl += tcard("gr","CD4+","Tdk diperiksa",""); }
+
+  if (igg !== null) {
+    if (igg < 400)      tl += tcard("rd","IgG",igg+" mg/dL","Hipogamma berat");
+    else if (igg < 600) tl += tcard("yw","IgG",igg+" mg/dL","Borderline");
+    else                tl += tcard("gn","IgG",igg+" mg/dL","");
+  }
+
+  if (bcel === "cd19")       tl += tcard("bl","B-cell","Aplasia","Marker respons CD19");
+  else if (bcel === "other") tl += tcard("yw","B-cell","Aplasia","Evaluasi konteks");
+  else if (bcel === "tidak") tl += tcard("gn","B-cell","Recovery","");
+  else                       tl += tcard("gr","B-cell","Blm diperiksa","");
+
+  if (cmvS === "rv")                              tl += tcard("rd","CMV","Reaktivasi","Terapi");
+  else if (cmvS==="bd"||cmvS==="rp"||cmvS==="dp"||cmvS==="pcr") tl += tcard("yw","CMV","Risiko tinggi","Monitor");
+  else if (cmvS==="nn"||cmvS==="neg")             tl += tcard("gn","CMV","Risiko rendah","");
+  else if (cmvS==="low")                          tl += tcard("yw","CMV","Seropositif","Monitor PCR");
+  else                                            tl += tcard("gr","CMV","-","");
+
+  if (ebv==="ptld")     tl += tcard("rd","EBV/PTLD","PTLD aktif","Segera");
+  else if (ebv==="up")  tl += tcard("yw","EBV","PCR rising","Monitor");
+  else if (ebv==="pos") tl += tcard("yw","EBV","Seropositif","");
+  else if (ebv==="neg") tl += tcard("gn","EBV","Negatif","");
+  else                  tl += tcard("gr","EBV","-","");
+
+  if (hbv==="akt")      tl += tcard("rd","HBV","HBsAg+","Terapi wajib");
+  else if (hbv==="res") tl += tcard("yw","HBV","Resolved","Reaktivasi risk");
+  else if (hbv==="neg") tl += tcard("gn","HBV","Naif","Vaksinasi?");
+  else if (hbv==="vak") tl += tcard("gn","HBV","Tervaksinasi","");
+  else                  tl += tcard("gr","HBV","-","");
+
+  gi("tgrid").innerHTML = tl;
+
+  // Prophylaxis
+  var rec = "";
+  var pjp = (fase==="ear"||fase==="lat"||fase==="neu"||fase==="ois"||(cd4!==null&&cd4<200)||hiG||hiS);
+
+  if (pjp) {
+    var dur = isAllo() ? "Minimal sampai CD4 &gt;200 x6 bulan dan bebas imunosupresi; lebih panjang bila GVHD kronik" : "CAR-T: mulai D+30-60; minimal 3-6 bulan atau CD4 &gt;200 dan bebas steroid";
+    if (alg==="sulfa"||alg==="g6pd") {
+      rec += rblock("yw","&#x1FA7A;","PJP Prophylaxis - Diindikasikan (Perhatian Alergi)","<ul><li>Kotrimoksazol KI ("+alg+")</li><li>Alternatif: <strong>Pentamidin inhalasi</strong> 300 mg/bulan</li><li>Dapsone 2 mg/kg/hr jika bukan G6PD (cek G6PD dulu)</li><li>Durasi: "+dur+"</li></ul>");
+    } else {
+      rec += rblock("bl","&#x1FA7A;","PJP Prophylaxis - Diindikasikan","<ul><li><strong>Kotrimoksazol</strong> 5 mg/kg/hr (TMP) 3x/minggu</li>"+(gin!=="nor"?"<li>eGFR "+gin+" - sesuaikan dosis</li>":"")+"<li>Durasi: "+dur+"</li></ul>");
+    }
+  } else {
+    rec += rblock("gn","&#x2705;","PJP Prophylaxis - Belum Diindikasikan","Pantau imun. Mulai bila imunosupresi berat, CD4 &lt;200, atau GVHD.");
+  }
+
+  var avN = (gin==="ber"||gin==="sed") ? " Sesuaikan dosis asiklovir - eGFR "+gin+"." : "";
+  var vzv = (hsv==="vzv"||hsv==="kd2");
+  if (SM==="allo"||SM==="cxa") {
+    rec += rblock("bl","&#x1F48A;","Antiviral HSV/VZV - Allo-HSCT","<ul><li><strong>Asiklovir</strong> wajib semua pasien Allo-HSCT</li><li>Dosis: 250 mg/m2/dosis 2-3x/hr (sesuaikan BSA dan eGFR)"+avN+"</li><li>Durasi: minimal 1 tahun; lebih panjang bila GVHD atau IS berlanjut</li>"+(vzv?"<li>Riwayat VZV - minimal 2 tahun</li>":"")+"</ul>");
+  } else if (isCart()) {
+    rec += rblock("bl","&#x1F48A;","Antiviral HSV/VZV - CAR-T/Auto","<ul><li>Asiklovir bila HSV/VZV seropositif, steroid aktif, atau CD4 &lt;200</li><li>Durasi berbasis CD4 recovery dan steroid - bukan fixed 1 tahun"+avN+"</li>"+(vzv?"<li>Riwayat VZV - lanjutkan selama imunosupresi berlanjut</li>":"")+"</ul>");
+  }
+
+  if (cmvS==="rv") {
+    rec += rblock("rd","&#x1F6A8;","CMV - Terapi Preemptive AKTIF","<ul><li>Gansiklovir IV - dosis sesuai eGFR, neutropenia, dan protokol ID</li><li>Jangan dosis fixed tanpa eGFR dan CBC</li><li>Alternatif: Foskarnet bila resistensi atau neutropenia berat</li><li>Monitor CMV PCR 1-2x/minggu; CBC 2x/minggu</li><li>Konsultasi Tim Infeksi/Transplant</li></ul>");
+  } else if (cmvS==="pcr") {
+    rec += rblock("yw","&#x26A0;&#xFE0F;","CMV - Viremia Terdeteksi","<ul><li>Mulai preemptive bila viral load melebihi threshold institusi atau ada gejala</li><li>Monitor PCR mingguan</li></ul>");
+  } else if (isAllo()&&(cmvS==="rp"||cmvS==="bd")) {
+    rec += rblock("yw","&#x26A0;&#xFE0F;","CMV - Strategi Preemptive (R+)","<ul><li>CMV PCR tiap 1-2 minggu selama 100 hari pertama</li><li>Pertimbangkan Letermovir profilaksis bila risiko sangat tinggi</li></ul>");
+  } else if (isAllo()&&cmvS==="dp") {
+    rec += rblock("yw","&#x26A0;&#xFE0F;","CMV - Risiko Primer (D+/R-)","<ul><li>Monitor PCR tiap 1-2 minggu minimal 6 bulan</li><li>Produk darah CMV-negatif / leukodepleted</li></ul>");
+  } else {
+    rec += rblock("gn","&#x2705;","CMV - Monitoring Standar","Monitor per protokol; produk darah CMV-safe bila tersedia.");
+  }
+
+  if (ebv==="ptld") {
+    rec += rblock("rd","&#x1F6A8;","EBV/PTLD - Terapi Aktif","<ul><li>Reduksi imunosupresi bila memungkinkan</li><li>Rituximab 375 mg/m2 - konsultasi onkologi</li><li>Monitor EBV PCR mingguan; imaging sesuai klinis</li></ul>");
+  } else if (ebv==="up"&&isAllo()) {
+    var ptldEx = (ebr==="atg"||ebr==="tcd"||ebr==="hmu"||ebr==="mis") ? "<li>Faktor risiko PTLD tinggi ("+ebr+") - threshold intervensi lebih rendah</li>" : "";
+    rec += rblock("yw","&#x26A0;&#xFE0F;","EBV - PCR Rising (Risiko PTLD)","<ul><li>Monitor EBV PCR mingguan</li>"+ptldEx+"<li>Pertimbangkan reduksi IS atau Rituximab preemptive bila PCR terus naik</li></ul>");
+  }
+
+  if (hbv==="akt") {
+    rec += rblock("rd","&#x1F6A8;","HBV - Terapi Antiviral WAJIB","<ul><li>Entekavir atau Tenofovir sebelum kondisioning - sesuaikan eGFR</li><li>Monitor HBV DNA dan ALT tiap 3 bulan</li><li>Lanjutkan minimal 12-18 bulan pasca IS selesai</li><li>Konsultasi Hepatologi</li></ul>");
+  } else if (hbv==="res") {
+    rec += rblock("yw","&#x26A0;&#xFE0F;","HBV - Resolved (Risiko Reaktivasi)","<ul><li>Profilaksis Entekavir/Tenofovir sangat direkomendasikan selama imunosupresi intensif atau B-cell depletion</li><li>Monitor HBsAg dan HBV DNA tiap 3 bulan</li><li>Hentikan profilaksis 12 bulan setelah IS selesai dan HBV DNA negatif</li></ul>");
+  } else if (hbv==="neg") {
+    rec += rblock("bl","&#x2139;&#xFE0F;","HBV Naif - Pertimbangkan Vaksinasi","Vaksinasi HBV setelah rekonstituisi imun (12-24 bulan pasca HSCT/CAR-T).");
+  }
+
+  if (mold) {
+    var mfR = [];
+    if (hiS) mfR.push("steroid tinggi");
+    if (hiG) mfR.push("GVHD berat");
+    if (plN) mfR.push("neutropenia &gt;14 hr");
+    if (IFI) mfR.push("prior IFI");
+    if (crs==="g34") mfR.push("CRS 3-4");
+    if (muk==="ber") mfR.push("mukositis berat");
+    rec += rblock("yw","&#x1F344;","Antifungal - Mold-Active (Risiko Tinggi)","<ul><li>Faktor: <strong>"+mfR.join(", ")+"</strong></li><li>Pertimbangkan <strong>Vorikonazol</strong> atau <strong>Posakonazol</strong></li><li>Dosis anak BERBEDA dewasa; TDM wajib (target 2-6 ug/mL)</li><li>Flukonazol TIDAK cukup untuk risiko Aspergillus</li>"+(gin==="ber"?"<li>eGFR berat - hindari posakonazol oral suspensi</li>":"")+"</ul>");
+  } else if (fase==="neu"||(anc!==null&&anc<500)) {
+    rec += rblock("bl","&#x1F344;","Antifungal - Candida Coverage (Standar)","<ul><li><strong>Flukonazol</strong> 3-6 mg/kg/hr (maks 200 mg)</li><li>Eskalasi ke mold-active bila demam persisten &gt;5 hr antibiotik, GVHD, atau steroid</li>"+(gin!=="nor"?"<li>Sesuaikan dosis dengan eGFR</li>":"")+"</ul>");
+  } else {
+    rec += rblock("gn","&#x2705;","Antifungal - Tidak Diindikasikan Saat Ini","Tidak ada neutropenia aktif / faktor risiko mold. Monitor bila kondisi berubah.");
+  }
+
+  gi("rproph").innerHTML = rec;
+
+  // IVIG
+  var iv = "";
+  if (igg!==null && igg<400 && (inf==="mul"||inf==="bak"||inf==="vir")) {
+    iv += rblock("pu","&#x1F489;","IVIG - Direkomendasikan","<ul><li>Dosis: <strong>400-600 mg/kg/dosis</strong> tiap 3-4 minggu</li><li>Target IgG trough: &gt;400-600 mg/dL (naikkan &gt;600 bila infeksi berulang)</li><li>Monitor IgG trough 3-4 minggu setelah infus pertama</li><li>Reassess tiap 1-3 bulan</li></ul>");
+  } else if (igg!==null && igg<400 && (bapla||anak||SM==="cbm")) {
+    var kxt = "IgG sangat rendah (" + igg + " mg/dL)";
+    if (anak) kxt += " pada anak muda";
+    if (bapla) kxt += " dengan B-cell aplasia";
+    if (SM==="cbm") kxt += " pada konteks CAR-T myeloma";
+    iv += rblock("pu","&#x26A0;&#xFE0F;","IVIG - Pertimbangkan (Risiko Tinggi)","<ul><li>"+kxt+"</li><li>Banyak pusat mempertimbangkan IVIG lebih proaktif</li><li>Putuskan per protokol institusi dan cost-benefit</li></ul>");
+  } else if (igg!==null && igg>=400 && igg<600 && inf==="mul") {
+    iv += rblock("yw","&#x26A0;&#xFE0F;","IVIG - Pertimbangkan (Borderline + Infeksi Berulang)","<ul><li>IgG "+igg+" mg/dL borderline; infeksi berulang mengindikasikan insufisiensi fungsional</li><li>Target trough &gt;600 bila memulai</li></ul>");
+  } else if (igg!==null && igg>=400 && igg<600) {
+    iv += rblock("yw","&#x2139;&#xFE0F;","IVIG - Monitor Ketat","IgG "+igg+" mg/dL borderline. Ukur ulang tiap 4-6 minggu. Mulai IVIG jika &lt;400 atau infeksi baru.");
+  } else if (igg!==null && igg>=600) {
+    iv += rblock("gn","&#x2705;","IVIG - Tidak Diindikasikan","IgG "+igg+" mg/dL aman. Pantau berkala.");
+  }
+  iv += "<div class='ev'><strong>ASTCT 2024:</strong> IVIG direkomendasikan pada IgG &lt;400 disertai infeksi berat/berulang. IVIG empiris universal tidak direkomendasikan rutin. Hipogammaglobulinemia pasca CAR-T bisa menetap bertahun-tahun.</div>";
+  gi("rivigg").innerHTML = iv;
+
+  // Monitoring
+  var mon = "<div class='rb bl'><div class='rt'>&#x1F52C; Jadwal Monitoring</div><div class='rb2'><ul>";
+  mon += (anc!==null&&anc<500) ? "<li>CBC: 2-3x/minggu sampai ANC &gt;500 stabil</li>" : "<li>CBC: tiap 1-2 minggu fase awal, kemudian bulanan</li>";
+  mon += (igg!==null&&igg<600) ? "<li>IgG serum: tiap 4-6 minggu"+(isCart()?" (wajib dalam 3 bulan pertama pasca CAR-T)":"")+"</li>" : "<li>IgG serum: tiap 3 bulan</li>";
+  mon += (cd4!==null&&cd4<200) ? "<li>CD4+: tiap 4-8 minggu sampai &gt;200/uL stabil x6 bulan</li>" : "<li>CD4+: tiap 3 bulan</li>";
+  if (cmvS==="rp"||cmvS==="bd"||cmvS==="dp"||cmvS==="low"||cmvS==="pcr") mon += "<li>CMV PCR darah: tiap 1-2 minggu (100 hari pertama)</li>";
+  if (ebv==="pos"&&isAllo()) mon += "<li>EBV PCR: tiap 2-4 minggu fase awal pasca-HSCT</li>";
+  if (hbv==="res"||hbv==="akt") mon += "<li>HBV DNA + ALT: tiap 3 bulan</li>";
+  mon += "<li>Fungsi ginjal: tiap bulan selama obat nefrotoksik aktif</li>";
+  if (bapla) mon += "<li>B-cell count (flow cytometry): tiap 3-6 bulan untuk evaluasi recovery</li>";
+  mon += "</ul></div></div>";
+  gi("rmon").innerHTML = mon;
+
+  // Alerts
+  var al = "";
+  if (anc!==null&&anc<=100) al += rblock("rd","&#x1F6A8;","PROFOUND NEUTROPENIA (ANC &lt;=100/uL)","Risiko gram negatif dan jamur sangat tinggi. Isolasi protektif, profilaksis antibakteri, antifungal spektrum luas.");
+  if (ebv==="ptld") al += rblock("rd","&#x1F6A8;","EBV/PTLD AKTIF","Reduksi imunosupresi dan pertimbangkan Rituximab. Konsultasi onkologi segera.");
+  if (hiG) al += rblock("rd","&#x26A0;&#xFE0F;","GVHD BERAT - Risiko Infeksi Meningkat","Pastikan PJP, antiviral, CMV monitoring, dan mold-active antifungal aktif.");
+  if (crs==="g34") al += rblock("rd","&#x26A1;","CRS GRADE 3-4","Waspadai infeksi sekunder post-tocilizumab/steroid. Monitor kultur, CRP serial. Jangan tunda antibiotik.");
+  if (hbv==="akt") al += rblock("rd","&#x1F6A8;","HBV AKTIF","Antiviral wajib sebelum kondisioning. Risiko fulminant hepatitis tinggi tanpa profilaksis.");
+  if (bapla&&igg!==null&&igg<400&&inf!=="tdk") al += rblock("yw","&#x26A0;&#xFE0F;","B-cell Aplasia + IgG &lt;400 + Riwayat Infeksi","Indikasi kuat IVIG. Hipogammaglobulinemia bisa menetap bertahun-tahun pasca CAR-T.");
+  if ((alg==="sulfa"||alg==="g6pd")&&pjp) al += rblock("yw","&#x26A0;&#xFE0F;","Alergi Sulfa + PJP Diindikasikan","Gunakan Pentamidin inhalasi atau Dapsone (cek G6PD). Jangan kotrimoksazol.");
+  if (SM==="c19"&&fase==="ear"&&igg===null) al += rblock("yw","&#x26A0;&#xFE0F;","IgG Belum Diperiksa","ASTCT 2024: wajib ukur IgG sebelum dan dalam 3 bulan pertama pasca CAR-T CD19.");
+  if (!al) al = rblock("gn","&#x2705;","Tidak Ada Peringatan Kritis","Berdasarkan data yang dimasukkan. Lanjutkan monitoring protokol standar.");
+  gi("raler").innerHTML = al;
+
+  // Vaksinasi
+  var vk = "";
+  if (fase==="rec"||(fase==="lat"&&isAllo())) {
+    vk = rblock("gn","&#x1F489;","Pertimbangkan Revaksinasi","<ul><li>Allo-HSCT: mulai 12-24 bulan pasca transplant setelah bebas IS</li><li>CAR-T: setelah B-cell recovery terkonfirmasi</li><li><strong>KONTRAINDIKASI: vaksin live (MMR, varicella)</strong> selama imunosupresi / B-cell aplasia</li><li>Vaksin inactivated (flu, pneumokokus, Hib, hepatitis B) bisa dimulai lebih awal</li></ul>");
+  } else if (bcel==="cd19") {
+    vk = rblock("yw","&#x26A0;&#xFE0F;","Tunda Vaksinasi - B-cell Aplasia Aktif","Revaksinasi ditunda sampai B-cell recovery. Jangan vaksin live selama aplasia.");
+  } else {
+    vk = rblock("gr","&#x2139;&#xFE0F;","Vaksinasi - Belum Waktunya","Evaluasi setelah rekonstituisi imun. Hindari vaksin live selama imunosupresi aktif.");
+  }
+  gi("rvaks").innerHTML = vk;
+
+  gi("mbg").innerHTML = "Mode: <strong>" + modeName() + "</strong> &nbsp;&middot;&nbsp; Fase: <strong>" + fase + "</strong>";
+  gi("remp").classList.add("hid");
+  sh("rcon");
+  showTab("pr");
+  window.scrollTo({top:0,behavior:"smooth"});
+};
+
+adapt();
+</script>
+</body>
+</html>

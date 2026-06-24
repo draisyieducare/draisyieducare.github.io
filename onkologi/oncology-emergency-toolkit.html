@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>drAisyiEduCare – Pediatric Oncology Emergency Toolkit</title>
+<style>
+:root{
+  --blue:#1565C0;--blue-l:#1976D2;--blue-d:#0D47A1;--blue-bg:#E3F2FD;--blue-bg2:#BBDEFB;
+  --red:#C62828;--red-l:#E53935;--red-bg:#FFEBEE;--red-b:#FFCDD2;
+  --yellow:#F57F17;--yellow-l:#F9A825;--yellow-bg:#FFFDE7;--yellow-b:#FFF9C4;
+  --green:#2E7D32;--green-l:#388E3C;--green-bg:#E8F5E9;--green-b:#C8E6C9;
+  --gray:#546E7A;--gray-bg:#ECEFF1;--gray-l:#F5F7FA;--gray-b:#CFD8DC;
+  --white:#fff;--text:#1A237E;--body:#263238;--muted:#607D8B;
+  --r:10px;--rs:7px;--rxs:5px;--shadow:0 2px 8px rgba(21,101,192,.10);--shadow-sm:0 1px 3px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--gray-l);color:var(--body);min-height:100vh;font-size:14px}
+a{color:var(--blue);text-decoration:none}
+/* TOPBAR */
+#topbar{background:linear-gradient(135deg,var(--blue-d) 0%,var(--blue) 70%,var(--blue-l) 100%);color:#fff;padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(13,71,161,.3)}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand-icon{width:34px;height:34px;background:rgba(255,255,255,.18);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.brand-name{font-size:14px;font-weight:700;letter-spacing:.3px}
+.brand-sub{font-size:9px;opacity:.75;text-transform:uppercase;letter-spacing:.8px}
+.top-actions{display:flex;gap:6px;align-items:center}
+/* EMERGENCY BANNER */
+#emg-banner{background:var(--red-l);color:#fff;text-align:center;padding:5px 12px;font-size:11px;font-weight:600;letter-spacing:.3px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+/* LAYOUT */
+#app{display:flex;min-height:calc(100vh - 54px)}
+/* SIDEBAR */
+#sidebar{width:230px;background:#fff;border-right:1px solid #e0e7ef;overflow-y:auto;position:sticky;top:54px;height:calc(100vh - 54px);flex-shrink:0;transition:transform .25s}
+.sb-section{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:12px 14px 3px}
+.sb-item{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;font-size:12px;color:var(--body);border-left:3px solid transparent;transition:all .12s;user-select:none}
+.sb-item:hover{background:var(--blue-bg);color:var(--blue)}
+.sb-item.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue);font-weight:600}
+.sb-badge{margin-left:auto;font-size:9px;padding:1px 6px;border-radius:99px;font-weight:700}
+.sbb-red{background:var(--red-bg);color:var(--red)}
+.sbb-yellow{background:var(--yellow-bg);color:var(--yellow)}
+.sbb-green{background:var(--green-bg);color:var(--green)}
+.sbb-blue{background:var(--blue-bg);color:var(--blue)}
+/* MAIN */
+#content{flex:1;overflow-y:auto;padding:18px 20px;max-width:860px;width:100%}
+/* PAGE */
+.section-page{display:none}
+.section-page.active{display:block}
+.page-header{margin-bottom:16px}
+.page-title{font-size:20px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.page-sub{font-size:12px;color:var(--muted);margin-top:3px}
+/* CARDS */
+.card{background:#fff;border-radius:var(--r);box-shadow:var(--shadow-sm);border:1px solid #e4eaf2;margin-bottom:14px;overflow:hidden}
+.card-header{padding:12px 16px;border-bottom:1px solid #edf2f8;display:flex;align-items:center;gap:8px}
+.card-title{font-size:13px;font-weight:700;color:var(--text)}
+.card-body{padding:16px}
+/* GRID */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+/* STAT CARD */
+.stat-card{background:#fff;border-radius:var(--r);padding:14px;box-shadow:var(--shadow-sm);border:1px solid #e4eaf2;display:flex;align-items:center;gap:10px}
+.stat-icon{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.stat-val{font-size:20px;font-weight:800;color:var(--text)}
+.stat-lbl{font-size:11px;color:var(--muted)}
+/* EMERGENCY CARDS */
+.emg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.emg-card{background:#fff;border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:all .16s;border:1.5px solid #e4eaf2;display:flex;align-items:flex-start;gap:8px}
+.emg-card:hover{border-color:var(--blue);box-shadow:0 3px 12px rgba(21,101,192,.14);transform:translateY(-1px)}
+.emg-card.crit:hover{border-color:var(--red)}
+.emg-icon{width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.emg-name{font-size:11px;font-weight:600;color:var(--body);line-height:1.3}
+.emg-badge{font-size:9px;margin-top:2px;padding:1px 5px;border-radius:99px;font-weight:700;width:fit-content}
+/* TRAFFIC LIGHT */
+.tl{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700}
+.tl-g{background:var(--green-bg);color:var(--green)}
+.tl-y{background:var(--yellow-bg);color:var(--yellow)}
+.tl-r{background:var(--red-bg);color:var(--red)}
+.tl-b{background:var(--blue-bg);color:var(--blue)}
+/* RESULT BOXES */
+.rb{border-radius:var(--rs);padding:13px 16px;margin-bottom:10px;border-left:4px solid}
+.rb-g{background:var(--green-bg);border-color:var(--green)}
+.rb-y{background:var(--yellow-bg);border-color:var(--yellow)}
+.rb-r{background:var(--red-bg);border-color:var(--red)}
+.rb-b{background:var(--blue-bg);border-color:var(--blue)}
+.rb-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;color:inherit}
+.rb-val{font-size:16px;font-weight:800}
+.rb-note{font-size:12px;margin-top:4px;line-height:1.5}
+/* FORMS */
+.fg{margin-bottom:11px}
+.fg label{display:block;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.fg input,.fg select,.fg textarea{width:100%;padding:7px 10px;border:1.5px solid #d0dae5;border-radius:var(--rxs);font-size:13px;color:var(--body);outline:none;transition:border .12s;background:#fff}
+.fg input:focus,.fg select:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(21,101,192,.08)}
+.fg .hint{font-size:10px;color:var(--muted);margin-top:2px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:10px}
+.cb-group{display:flex;align-items:flex-start;gap:8px;padding:7px 9px;border:1.5px solid #d0dae5;border-radius:var(--rxs);cursor:pointer;font-size:12px;transition:all .12s;margin-bottom:5px}
+.cb-group:hover{background:var(--blue-bg);border-color:var(--blue-bg2)}
+.cb-group input[type=checkbox]{width:15px;height:15px;cursor:pointer;flex-shrink:0;margin-top:1px}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:var(--rxs);font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .13s;text-decoration:none}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue-d)}
+.btn-red{background:var(--red-l);color:#fff}.btn-red:hover{background:var(--red)}
+.btn-outline{background:#fff;color:var(--blue);border:1.5px solid var(--blue)}.btn-outline:hover{background:var(--blue-bg)}
+.btn-sm{padding:5px 11px;font-size:11px}
+.btn-ghost{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3)}.btn-ghost:hover{background:rgba(255,255,255,.25)}
+/* RED FLAG */
+.rf-card{background:var(--red-bg);border:1.5px solid var(--red-b);border-radius:var(--rs);padding:12px 14px;margin-top:10px}
+.rf-title{color:var(--red);font-weight:700;font-size:12px;margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.rf-item{display:flex;align-items:flex-start;gap:6px;font-size:12px;color:var(--red);margin-bottom:3px;font-weight:600;line-height:1.4}
+/* CHECK LIST ITEMS */
+.ci{display:flex;align-items:flex-start;gap:7px;padding:7px 0;border-bottom:1px solid #f0f4f8;font-size:12px;line-height:1.5}
+.ci:last-child{border-bottom:none}
+.ci-icon{color:var(--green);font-size:14px;flex-shrink:0;margin-top:1px}
+/* TABS */
+.tab-row{display:flex;gap:5px;margin-bottom:14px;flex-wrap:wrap}
+.tab-btn{padding:6px 13px;border-radius:var(--rxs);font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid #d0dae5;background:#fff;color:var(--muted);transition:all .13s}
+.tab-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* ACCORDION */
+.accordion{border:1px solid #e4eaf2;border-radius:var(--rs);overflow:hidden;margin-bottom:7px}
+.acc-head{padding:10px 13px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:600;transition:background .12s;gap:8px}
+.acc-head:hover{background:var(--blue-bg)}
+.acc-body{background:#fafbfe;padding:0 14px;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .25s}
+.acc-body.open{max-height:600px;padding:12px 14px}
+/* DRUG TABLE */
+.dtable{width:100%;border-collapse:collapse;font-size:11px;margin:8px 0}
+.dtable th{background:var(--blue-bg);color:var(--blue);padding:6px 9px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+.dtable td{padding:6px 9px;border-bottom:1px solid #f0f4f8;vertical-align:top}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:#fafbfe}
+/* DISCLAIMER */
+.disclaimer{background:#fff8e1;border:1px solid #ffe082;border-radius:var(--rxs);padding:10px 14px;font-size:11px;color:#5D4037;margin-top:16px;line-height:1.6;display:flex;gap:8px}
+/* SEARCH */
+.search-wrap{display:flex;align-items:center;gap:7px;background:#fff;border:1.5px solid #d0dae5;border-radius:var(--rxs);padding:7px 10px;margin:8px 10px}
+.search-wrap input{border:none;outline:none;font-size:12px;color:var(--body);flex:1;min-width:0}
+/* ALGO FLOW */
+.flow-col{display:flex;flex-direction:column;align-items:center;gap:5px}
+.flow-box{border-radius:7px;padding:9px 14px;font-size:11px;font-weight:600;text-align:center;width:240px}
+.flow-arrow{color:var(--muted);font-size:16px;text-align:center}
+.flow-row{display:flex;gap:8px;justify-content:center;width:100%}
+.flow-col-item{flex:1;max-width:160px;border-radius:7px;padding:8px 10px;font-size:11px;text-align:center}
+/* PILLS */
+.pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700}
+.pill-b{background:var(--blue-bg);color:var(--blue)}
+.pill-r{background:var(--red-bg);color:var(--red)}
+.pill-y{background:var(--yellow-bg);color:var(--yellow)}
+.pill-g{background:var(--green-bg);color:var(--green)}
+/* ROLE STRIP */
+.role-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:14px}
+.role-card{border-radius:var(--rs);padding:10px 12px;border:1px solid}
+.role-card h4{font-size:11px;font-weight:700;margin-bottom:4px}
+.role-card ul{font-size:11px;padding-left:14px;line-height:1.6;color:var(--body)}
+/* QUICK ACTION CARDS */
+.qa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:14px}
+.qa-card{border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:all .15s;border:1.5px solid}
+.qa-card:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.qa-title{font-size:12px;font-weight:700;margin-bottom:4px}
+.qa-desc{font-size:11px;line-height:1.5}
+/* UNIVERSAL PANEL */
+.abcde-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.abcde-item{border-radius:var(--rs);padding:10px 12px;background:var(--blue-bg);border:1px solid var(--blue-bg2)}
+.abcde-letter{font-size:18px;font-weight:800;color:var(--blue);line-height:1}
+.abcde-word{font-size:11px;font-weight:700;color:var(--blue);margin-bottom:4px}
+.abcde-desc{font-size:11px;color:var(--body);line-height:1.5}
+/* MOBILE TOGGLE */
+#mob-toggle{display:none;background:none;border:none;cursor:pointer;padding:4px;color:#fff;font-size:20px}
+/* HIDDEN */
+.hidden{display:none!important}
+/* PRINT */
+@media print{
+  #topbar,#sidebar,#emg-banner,.btn,.search-wrap,#mob-toggle,.top-actions{display:none!important}
+  #content{padding:0;max-width:100%}
+  .card{box-shadow:none;border:1px solid #ddd}
+  #app{display:block}
+}
+/* MOBILE */
+@media(max-width:760px){
+  #mob-toggle{display:flex}
+  #sidebar{position:fixed;top:54px;left:0;height:calc(100vh - 54px);z-index:150;transform:translateX(-100%)}
+  #sidebar.open{transform:translateX(0)}
+  #content{padding:12px}
+  .emg-grid{grid-template-columns:repeat(2,1fr)}
+  .grid-2,.grid-3,.form-grid{grid-template-columns:1fr 1fr}
+  .qa-grid{grid-template-columns:1fr 1fr}
+  .role-strip{grid-template-columns:1fr 1fr}
+  .flow-box{width:180px}
+}
+@media(max-width:420px){
+  .grid-2,.grid-3,.form-grid,.qa-grid,.role-strip,.emg-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- EMERGENCY BANNER -->
+<div id="emg-banner">
+  ⚠️ drAisyiEduCare adalah clinical support tool — tidak menggantikan protokol lokal, pemeriksaan klinis, farmasi klinik, atau konsultasi senior ⚠️
+</div>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div style="display:flex;align-items:center;gap:8px">
+    <button id="mob-toggle" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+    <div class="brand" onclick="showPage('dashboard')">
+      <div class="brand-icon">🏥</div>
+      <div>
+        <div class="brand-name">drAisyiEduCare</div>
+        <div class="brand-sub">Pediatric Oncology Emergency Toolkit</div>
+      </div>
+    </div>
+  </div>
+  <div class="top-actions">
+    <button class="btn btn-ghost btn-sm" onclick="showPage('universal')">▶ First 5 Min</button>
+    <button class="btn btn-ghost btn-sm" onclick="showPage('checklist')">☑ Checklist</button>
+    <button class="btn btn-ghost btn-sm" onclick="doPrint()">🖨 Print</button>
+  </div>
+</div>
+
+<div id="app">
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="search-wrap">
+    <span style="color:var(--muted);flex-shrink:0">🔍</span>
+    <input type="text" id="sb-search" placeholder="Cari modul..." oninput="filterSB(this.value)">
+  </div>
+  <div class="sb-section sb-cat">Utama</div>
+  <div class="sb-item active" onclick="showPage('dashboard')" data-page="dashboard">🏠 Command Center</div>
+  <div class="sb-item" onclick="showPage('universal')" data-page="universal">⚡ First 5 Minutes</div>
+  <div class="sb-item" onclick="showPage('quickref')" data-page="quickref">📋 Quick Reference</div>
+  <div class="sb-section sb-cat">Kegawatdaruratan</div>
+  <div class="sb-item" onclick="showPage('tls')" data-page="tls">🧪 Tumor Lysis Syndrome <span class="sb-badge sbb-red">TLS</span></div>
+  <div class="sb-item" onclick="showPage('fn')" data-page="fn">🌡️ Febrile Neutropenia <span class="sb-badge sbb-red">FN</span></div>
+  <div class="sb-item" onclick="showPage('hl')" data-page="hl">🔬 Hyperleukocytosis</div>
+  <div class="sb-item" onclick="showPage('scc')" data-page="scc">🦴 Spinal Cord Compression</div>
+  <div class="sb-item" onclick="showPage('mm')" data-page="mm">🫁 Mediastinal Mass</div>
+  <div class="sb-item" onclick="showPage('svc')" data-page="svc">💓 SVC Syndrome</div>
+  <div class="sb-item" onclick="showPage('dic')" data-page="dic">💧 DIC</div>
+  <div class="sb-item" onclick="showPage('hem')" data-page="hem">🩸 Hemorrhagic Emergency</div>
+  <div class="sb-item" onclick="showPage('icp')" data-page="icp">🧠 Increased ICP</div>
+  <div class="sb-item" onclick="showPage('atr')" data-page="atr">🩺 Acute Transfusion Reaction</div>
+  <div class="sb-item" onclick="showPage('ext')" data-page="ext">💉 Extravasation Injury</div>
+  <div class="sb-section sb-cat">Tools</div>
+  <div class="sb-item" onclick="showPage('checklist')" data-page="checklist">☑️ Emergency Checklist</div>
+  <div class="sb-item" onclick="showPage('family')" data-page="family">👨‍👩‍👧 Family Education</div>
+  <div class="sb-item" onclick="showPage('algo')" data-page="algo">🔀 Visual Algorithms</div>
+  <div class="sb-item" onclick="showPage('refs')" data-page="refs">📚 References</div>
+</nav>
+
+<main id="content">
+
+<!-- =================== DASHBOARD =================== -->
+<div id="page-dashboard" class="section-page active">
+  <div class="page-header">
+    <div class="page-title">🏥 Emergency Command Center</div>
+    <div class="page-sub">drAisyiEduCare · Pediatric Oncology Emergency Toolkit · Clinical Support Tool</div>
+  </div>
+
+  <!-- ROLE STRIP -->
+  <div class="role-strip">
+    <div class="role-card" style="background:#E8F5E9;border-color:#A5D6A7">
+      <h4 style="color:var(--green)">👩‍⚕️ Perawat</h4>
+      <ul><li>Triase & vital signs</li><li>Red flags</li><li>Monitoring UO</li><li>Eskalasi ke dokter</li></ul>
+    </div>
+    <div class="role-card" style="background:#E3F2FD;border-color:#90CAF9">
+      <h4 style="color:var(--blue)">🩺 Dokter Umum/IGD</h4>
+      <ul><li>ABCDE assessment</li><li>Stabilisasi awal</li><li>Lab cito</li><li>Antibiotik FN ≤60 menit</li></ul>
+    </div>
+    <div class="role-card" style="background:#FFF8E1;border-color:#FFE082">
+      <h4 style="color:var(--yellow)">👨‍⚕️ SpA</h4>
+      <ul><li>Assessment lengkap</li><li>Initial management</li><li>Eskalasi HOA/ICU</li><li>Konfirmasi diagnosis</li></ul>
+    </div>
+    <div class="role-card" style="background:#FCE4EC;border-color:#F48FB1">
+      <h4 style="color:var(--red)">🔬 Konsultan HOA</h4>
+      <ul><li>Keputusan definitif</li><li>Sitoreduksi</li><li>Terapi spesifik</li><li>Koordinasi ICU/bedah</li></ul>
+    </div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="stat-card"><div class="stat-icon" style="background:var(--blue-bg)">📊</div><div><div class="stat-val">11</div><div class="stat-lbl">Modul Kalkulator</div></div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:var(--red-bg)">⚠️</div><div><div class="stat-val">6</div><div class="stat-lbl">Kondisi Paling Kritis</div></div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:var(--yellow-bg)">⏱️</div><div><div class="stat-val">60'</div><div class="stat-lbl">Target Antibiotik FN</div></div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:var(--green-bg)">🔀</div><div><div class="stat-val">5</div><div class="stat-lbl">Visual Algoritma</div></div></div>
+  </div>
+
+  <!-- QUICK ACTION CARDS -->
+  <div class="card" style="border-top:3px solid var(--red-l)">
+    <div class="card-header">⚡<span class="card-title">Quick Action Cards — Kondisi Kritis</span></div>
+    <div class="card-body" style="padding:12px">
+      <div class="qa-grid">
+        <div class="qa-card" style="background:var(--red-bg);border-color:var(--red-b)" onclick="showPage('fn')">
+          <div class="qa-title" style="color:var(--red)">⏱️ FN Antibiotic Clock</div>
+          <div class="qa-desc">Antibiotik ≤60 menit (≤30 menit bila sepsis). Kultur darah dahulu bila tidak menunda.</div>
+        </div>
+        <div class="qa-card" style="background:var(--red-bg);border-color:var(--red-b)" onclick="showPage('tls')">
+          <div class="qa-title" style="color:var(--red)">⚡ TLS Electrolyte Danger</div>
+          <div class="qa-desc">K⁺↑ + PO₄↑ + Ca↓ + Asam urat↑ = bahaya aritmia, kejang, gagal ginjal.</div>
+        </div>
+        <div class="qa-card" style="background:var(--red-bg);border-color:var(--red-b)" onclick="showPage('scc')">
+          <div class="qa-title" style="color:var(--red)">🦴 SCC MRI Clock</div>
+          <div class="qa-desc">Nyeri punggung + kelemahan = MRI segera. Steroid dulu, jangan tunggu MRI.</div>
+        </div>
+        <div class="qa-card" style="background:var(--yellow-bg);border-color:var(--yellow-b)" onclick="showPage('hl')">
+          <div class="qa-title" style="color:var(--yellow)">🔬 Hyperleukocytosis</div>
+          <div class="qa-desc">WBC ≥100K + gejala neuro/resp = leukostasis. HINDARI transfusi PRC. Leukaferesis bila perlu.</div>
+        </div>
+        <div class="qa-card" style="background:var(--yellow-bg);border-color:var(--yellow-b)" onclick="showPage('mm')">
+          <div class="qa-title" style="color:var(--yellow)">⚠️ Sedation Warning</div>
+          <div class="qa-desc">Mediastinal mass + stridor/orthopnea = HINDARI sedasi dalam/anestesi umum tanpa evaluasi lengkap.</div>
+        </div>
+        <div class="qa-card" style="background:var(--red-bg);border-color:var(--red-b)" onclick="showPage('atr')">
+          <div class="qa-title" style="color:var(--red)">🛑 Stop Transfusion</div>
+          <div class="qa-desc">Reaksi transfusi sedang/berat: STOP segera, pertahankan IV-line dengan NaCl 0.9%.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALL MODULES -->
+  <div class="card">
+    <div class="card-header">📱<span class="card-title">Semua Modul</span></div>
+    <div class="card-body" style="padding:12px">
+      <div class="emg-grid">
+        <div class="emg-card crit" onclick="showPage('tls')"><div class="emg-icon" style="background:var(--red-bg)">🧪</div><div><div class="emg-name">Tumor Lysis Syndrome</div><div class="emg-badge sbb-red">ICU potential</div></div></div>
+        <div class="emg-card crit" onclick="showPage('fn')"><div class="emg-icon" style="background:var(--red-bg)">🌡️</div><div><div class="emg-name">Febrile Neutropenia</div><div class="emg-badge sbb-red">60 min rule</div></div></div>
+        <div class="emg-card crit" onclick="showPage('hl')"><div class="emg-icon" style="background:var(--red-bg)">🔬</div><div><div class="emg-name">Hyperleukocytosis</div><div class="emg-badge sbb-red">Leukostasis</div></div></div>
+        <div class="emg-card crit" onclick="showPage('scc')"><div class="emg-icon" style="background:var(--red-bg)">🦴</div><div><div class="emg-name">Spinal Cord Compression</div><div class="emg-badge sbb-red">MRI urgent</div></div></div>
+        <div class="emg-card" onclick="showPage('mm')"><div class="emg-icon" style="background:var(--yellow-bg)">🫁</div><div><div class="emg-name">Mediastinal Mass</div><div class="emg-badge sbb-yellow">Airway risk</div></div></div>
+        <div class="emg-card" onclick="showPage('svc')"><div class="emg-icon" style="background:var(--yellow-bg)">💓</div><div><div class="emg-name">SVC Syndrome</div><div class="emg-badge sbb-yellow">Obstruksi vena</div></div></div>
+        <div class="emg-card crit" onclick="showPage('dic')"><div class="emg-icon" style="background:var(--red-bg)">💧</div><div><div class="emg-name">DIC</div><div class="emg-badge sbb-red">Transfusi cito</div></div></div>
+        <div class="emg-card" onclick="showPage('hem')"><div class="emg-icon" style="background:var(--yellow-bg)">🩸</div><div><div class="emg-name">Hemorrhagic Emergency</div><div class="emg-badge sbb-yellow">Transfusi</div></div></div>
+        <div class="emg-card crit" onclick="showPage('icp')"><div class="emg-icon" style="background:var(--red-bg)">🧠</div><div><div class="emg-name">Increased ICP</div><div class="emg-badge sbb-red">CT segera</div></div></div>
+        <div class="emg-card" onclick="showPage('atr')"><div class="emg-icon" style="background:var(--blue-bg)">🩺</div><div><div class="emg-name">Transfusion Reaction</div><div class="emg-badge sbb-blue">Stop transfusi</div></div></div>
+        <div class="emg-card" onclick="showPage('ext')"><div class="emg-icon" style="background:var(--blue-bg)">💉</div><div><div class="emg-name">Extravasation Injury</div><div class="emg-badge sbb-blue">SLAP protocol</div></div></div>
+        <div class="emg-card" onclick="showPage('checklist')"><div class="emg-icon" style="background:var(--green-bg)">☑️</div><div><div class="emg-name">Emergency Checklist</div><div class="emg-badge sbb-green">IGD ready</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== UNIVERSAL FIRST 5 MINUTES =================== -->
+<div id="page-universal" class="section-page">
+  <div class="page-header">
+    <div class="page-title">⚡ Universal First 5 Minutes</div>
+    <div class="page-sub">Berlaku untuk SEMUA kegawatdaruratan onkologi anak</div>
+  </div>
+  <div class="card" style="border-top:3px solid var(--blue)">
+    <div class="card-header">🔡<span class="card-title">ABCDE Assessment</span></div>
+    <div class="card-body">
+      <div class="abcde-grid">
+        <div class="abcde-item"><div class="abcde-letter">A</div><div class="abcde-word">Airway</div><div class="abcde-desc">Nilai patensi jalan napas. Stridor? Orthopnea? Posisi optimal.</div></div>
+        <div class="abcde-item"><div class="abcde-letter">B</div><div class="abcde-word">Breathing</div><div class="abcde-desc">Laju napas, SpO₂, tanda distres (retraksi, wheeze). O₂ bila SpO₂ &lt;94%.</div></div>
+        <div class="abcde-item"><div class="abcde-letter">C</div><div class="abcde-word">Circulation</div><div class="abcde-desc">Nadi, TD, CRT, warna kulit. IV/CVAD akses. Resusitasi bila syok.</div></div>
+        <div class="abcde-item"><div class="abcde-letter">D</div><div class="abcde-word">Disability</div><div class="abcde-desc">GCS/AVPU, pupil, tanda fokal. Glukosa darah.</div></div>
+        <div class="abcde-item"><div class="abcde-letter">E</div><div class="abcde-word">Exposure</div><div class="abcde-desc">Periksa seluruh tubuh. Ruam, edema, perdarahan, tanda infeksi lokal.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">🧪<span class="card-title">Pemeriksaan Penunjang Cito (Sesuai Indikasi)</span></div>
+    <div class="card-body">
+      <div class="ci"><span class="ci-icon">📋</span><div><b>DPL + diff:</b> Cek ANC, trombosit, Hb, hapus darah tepi</div></div>
+      <div class="ci"><span class="ci-icon">⚗️</span><div><b>Elektrolit:</b> K⁺, Na⁺, Ca, PO₄, Mg — wajib bila TLS/FN/HL</div></div>
+      <div class="ci"><span class="ci-icon">🩸</span><div><b>Fungsi ginjal:</b> BUN/ureum, kreatinin, asam urat, LDH</div></div>
+      <div class="ci"><span class="ci-icon">🔬</span><div><b>Koagulasi:</b> PT, aPTT, fibrinogen, D-dimer — bila curiga DIC/perdarahan</div></div>
+      <div class="ci"><span class="ci-icon">🧫</span><div><b>Kultur darah:</b> Ambil <i>sebelum</i> antibiotik bila FN — <b>jangan menunda antibiotik demi kultur</b></div></div>
+      <div class="ci"><span class="ci-icon">🅱️</span><div><b>Golongan darah + crossmatch:</b> Bila ada risiko transfusi</div></div>
+      <div class="ci"><span class="ci-icon">📷</span><div><b>Foto thorax:</b> Bila distres napas, demam, curiga mediastinal mass</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">📝<span class="card-title">Dokumentasi Waktu Kritis</span></div>
+    <div class="card-body">
+      <div class="ci"><span class="ci-icon">⏰</span><div>Waktu <b>kedatangan</b> pasien</div></div>
+      <div class="ci"><span class="ci-icon">⏰</span><div>Waktu <b>antibiotik pertama</b> (target ≤60 menit, ≤30 menit bila sepsis)</div></div>
+      <div class="ci"><span class="ci-icon">⏰</span><div>Waktu <b>konsultasi</b> senior/HOA</div></div>
+      <div class="ci"><span class="ci-icon">⏰</span><div>Waktu <b>tindakan kritis</b> (transfusi, steroid, MRI)</div></div>
+    </div>
+  </div>
+  <div class="rf-card" style="margin-top:0">
+    <div class="rf-title">🚨 Eskalasi SEGERA ke Senior/ICU bila:</div>
+    <div class="rf-item">⚠️ Syok (TD rendah, nadi lemah/kencang, CRT >3 detik)</div>
+    <div class="rf-item">⚠️ Distres napas berat atau SpO₂ tidak membaik dengan O₂</div>
+    <div class="rf-item">⚠️ Penurunan kesadaran atau kejang</div>
+    <div class="rf-item">⚠️ Perdarahan mayor atau tidak terkontrol</div>
+    <div class="rf-item">⚠️ Oliguria/anuria (&lt;0.5 mL/kgBB/jam)</div>
+    <div class="rf-item">⚠️ Progresi gejala cepat tanpa respons tatalaksana awal</div>
+  </div>
+</div>
+
+<!-- =================== TLS =================== -->
+<div id="page-tls" class="section-page">
+  <div class="page-header">
+    <div class="page-title">🧪 Tumor Lysis Syndrome</div>
+    <div class="page-sub">Kriteria Cairo-Bishop | Stratifikasi Risiko | Tatalaksana Awal</div>
+  </div>
+  <div class="tab-row">
+    <button class="tab-btn active" onclick="tlsTab('input',this)">Input Pasien</button>
+    <button class="tab-btn" onclick="tlsTab('result',this)">Hasil & Tatalaksana</button>
+    <button class="tab-btn" onclick="tlsTab('fam',this)">Edukasi Keluarga</button>
+  </div>
+  <div id="tls-input">
+    <div class="card">
+      <div class="card-header">📋<span class="card-title">Data Laboratorium & Klinis</span></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="fg"><label>Kalium (mEq/L)</label><input type="number" id="tls-k" placeholder="Normal 3.5–5.0" step="0.1"><div class="hint">Nilai absolut</div></div>
+          <div class="fg"><label>Fosfat (mg/dL)</label><input type="number" id="tls-po4" placeholder="Normal 2.5–4.5" step="0.1"><div class="hint">Nilai absolut</div></div>
+          <div class="fg"><label>Kalsium (mg/dL)</label><input type="number" id="tls-ca" placeholder="Normal 8.5–10.5" step="0.1"><div class="hint">Nilai absolut</div></div>
+          <div class="fg"><label>Asam Urat (mg/dL)</label><input type="number" id="tls-ua" placeholder="Batas atas &lt;8" step="0.1"><div class="hint">Nilai absolut</div></div>
+          <div class="fg"><label>Kreatinin (mg/dL)</label><input type="number" id="tls-cr" placeholder="Normal sesuai usia" step="0.01"><div class="hint">Nilai absolut</div></div>
+          <div class="fg"><label>BB (kg)</label><input type="number" id="tls-bb" placeholder="Berat badan" step="0.1"></div>
+          <div class="fg"><label>Usia (tahun)</label><input type="number" id="tls-age" placeholder="Usia pasien" step="1"></div>
+          <div class="fg"><label>Leukosit (×10³/µL)</label><input type="number" id="tls-wbc" placeholder="WBC" step="0.1"></div>
+          <div class="fg"><label>LDH (U/L)</label><input type="number" id="tls-ldh" placeholder="Normal &lt;2× ULN" step="1"></div>
+        </div>
+        <div class="fg"><label>Diagnosis</label>
+          <select id="tls-dx">
+            <option value="">Pilih diagnosis</option>
+            <option value="BL">Burkitt Lymphoma / B-NHL burden tinggi</option>
+            <option value="ALL-high">ALL WBC ≥100K atau burden tinggi</option>
+            <option value="AML-high">AML WBC ≥50K</option>
+            <option value="ALL-int">ALL WBC 10–100K</option>
+            <option value="AML-mod">AML WBC &lt;50K</option>
+            <option value="other">Tumor padat / lainnya</option>
+          </select>
+        </div>
+        <div style="margin-top:4px"><label style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px">Gejala Klinis (Clinical TLS)</label>
+          <label class="cb-group"><input type="checkbox" id="tls-ar"> Aritmia (baru atau tidak mendasar)</label>
+          <label class="cb-group"><input type="checkbox" id="tls-cr2"> Kreatinin ≥1.5× ULN usia (tanpa sebab lain)</label>
+          <label class="cb-group"><input type="checkbox" id="tls-sei"> Kejang</label>
+          <label class="cb-group"><input type="checkbox" id="tls-oli"> Oliguria/anuria (&lt;0.5 mL/kgBB/jam)</label>
+          <label class="cb-group"><input type="checkbox" id="tls-fl"> Overload cairan</label>
+        </div>
+        <button class="btn btn-primary" style="margin-top:10px" onclick="calcTLS()">⚡ Hitung & Stratifikasi</button>
+      </div>
+    </div>
+  </div>
+  <div id="tls-result" class="hidden"></div>
+  <div id="tls-fam" class="hidden">
+    <div class="card">
+      <div class="card-header">👨‍👩‍👧<span class="card-title">Edukasi Keluarga — Tumor Lysis Syndrome</span></div>
+      <div class="card-body">
+        <div class="rb rb-b"><div class="rb-title">Apa yang terjadi?</div><div class="rb-note">Saat obat kemoterapi mulai bekerja menghancurkan sel kanker, zat-zat dari dalam sel kanker keluar ke aliran darah dalam jumlah besar dan sangat cepat. Ini bisa membebani ginjal dan menyebabkan ketidakseimbangan mineral dalam darah.</div></div>
+        <div class="rb rb-y"><div class="rb-title">Mengapa berbahaya?</div><div class="rb-note">Ketidakseimbangan mineral (kalium dan fosfat yang terlalu tinggi, kalsium terlalu rendah, asam urat terlalu tinggi) bisa menyebabkan gangguan irama jantung, kejang, dan kerusakan ginjal. Kondisi ini bisa terjadi 1–5 hari setelah kemoterapi dimulai.</div></div>
+        <div class="rb rb-b"><div class="rb-title">Tanda bahaya yang perlu dipantau</div><div class="rb-note">• Anak tidak bisa atau sangat jarang buang air kecil<br>• Detak jantung terasa tidak beraturan<br>• Kejang<br>• Sangat lemas, tidak mau makan/minum<br>• Mual muntah yang tidak berhenti</div></div>
+        <div class="rb rb-r"><div class="rb-title">Kapan harus segera kembali ke fasilitas kesehatan?</div><div class="rb-note">SEGERA kembali bila anak: kejang, tidak buang air kecil &gt;8 jam, detak jantung tidak teratur, atau kesadaran menurun.</div></div>
+        <div class="rb rb-g"><div class="rb-title">Apa yang akan dilakukan tim medis?</div><div class="rb-note">Tim medis akan memasang infus, memberikan cairan dalam jumlah banyak untuk membantu ginjal membuang zat berbahaya, memantau darah secara berkala, dan bila perlu memberikan obat untuk menurunkan asam urat.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== FN =================== -->
+<div id="page-fn" class="section-page">
+  <div class="page-header">
+    <div class="page-title">🌡️ Febrile Neutropenia</div>
+    <div class="page-sub">Definisi | Risk Assessment | Target Antibiotik ≤60 menit</div>
+  </div>
+  <div class="card">
+    <div class="card-header">📋<span class="card-title">Data Klinis</span></div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="fg"><label>Suhu (°C)</label><input type="number" id="fn-temp" placeholder="mis. 38.5" step="0.1"></div>
+        <div class="fg"><label>ANC (/µL)</label><input type="number" id="fn-anc" placeholder="mis. 450"></div>
+        <div class="fg"><label>TD Sistolik (mmHg)</label><input type="number" id="fn-sbp" placeholder="mis. 90"></div>
+        <div class="fg"><label>Nadi (x/mnt)</label><input type="number" id="fn-hr" placeholder="mis. 110"></div>
+        <div class="fg"><label>Laju Napas (x/mnt)</label><input type="number" id="fn-rr" placeholder="mis. 24"></div>
+        <div class="fg"><label>SpO₂ (%)</label><input type="number" id="fn-spo2" placeholder="mis. 97"></div>
+      </div>
+      <div class="fg"><label>Fase Terapi</label>
+        <select id="fn-phase">
+          <option value="">Pilih fase</option>
+          <option value="induction">Induksi</option>
+          <option value="consolidation">Konsolidasi</option>
+          <option value="maintenance">Maintenance</option>
+          <option value="post-hsct">Post-HSCT/SCT</option>
+          <option value="relapse">Relapse/Reinduction</option>
+        </select>
+      </div>
+      <div style="margin-top:8px"><label style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px">Faktor Risiko Tinggi (centang semua yang ada)</label>
+        <label class="cb-group"><input type="checkbox" id="fn-hypo"> Hipotensi (SBP &lt;70+2×usia mmHg, atau turun &gt;30 mmHg)</label>
+        <label class="cb-group"><input type="checkbox" id="fn-hypox"> Hipoksia (SpO₂ &lt;92% atau butuh O₂ tambahan)</label>
+        <label class="cb-group"><input type="checkbox" id="fn-alcon"> Perubahan kesadaran / altered consciousness</label>
+        <label class="cb-group"><input type="checkbox" id="fn-src"> Sumber infeksi jelas (pneumonia, selulitis, periorbital)</label>
+        <label class="cb-group"><input type="checkbox" id="fn-muc"> Mukositis berat (Grade 3–4)</label>
+        <label class="cb-group"><input type="checkbox" id="fn-abd"> Nyeri abdomen/perineal atau tanda tiflitis</label>
+        <label class="cb-group"><input type="checkbox" id="fn-cvad"> Tanda infeksi CVAD (exit site, tunnel)</label>
+      </div>
+      <button class="btn btn-primary" style="margin-top:10px" onclick="calcFN()">⚡ Evaluasi Risiko</button>
+    </div>
+  </div>
+  <div id="fn-output"></div>
+</div>
+
+<!-- =================== HYPERLEUKOCYTOSIS =================== -->
+<div id="page-hl" class="section-page">
+  <div class="page-header">
+    <div class="page-title">🔬 Hyperleukocytosis & Leukostasis</div>
+    <div class="page-sub">WBC ≥100K atau gejala leukostasis | Stratifikasi | Manajemen Darurat</div>
+  </div>
+  <div class="card">
+    <div class="card-header">📋<span class="card-title">Data Klinis & Laboratorium</span></div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="fg"><label>WBC (×10³/µL)</label><input type="number" id="hl-wbc" placeholder="mis. 150" step="0.1"></div>
+        <div class="fg"><label>Blast (%)</label><input type="number" id="hl-blast" placeholder="mis. 85" step="1"></div>
+        <div class="fg"><label>Diagnosis probable</label>
+          <select id="hl-dx">
+            <option value="">Pilih</option>
+            <option value="ALL">ALL</option>
+            <option value="AML">AML</option>
+            <option value="APML">APML (AML-M3)</option>
+            <option value="CML">CML</option>
+            <option value="amb">Ambiguous/belum ditentukan</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:4px"><label style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px">Gejala Leukostasis (centang semua yang ada)</label>
+        <label class="cb-group"><input type="checkbox" id="hl-headache"> Sakit kepala / headache</label>
+        <label class="cb-group"><input type="checkbox" id="hl-visual"> Perubahan visus / pandangan kabur</label>
+        <label class="cb-group"><input type="checkbox" id="hl-sei"> Kejang</label>
+        <label class="cb-group"><input type="checkbox" id="hl-ams"> Perubahan kesadaran / altered mental status</label>
+        <label class="cb-group"><input type="checkbox" id="hl-focal"> Defisit neurologis fokal</label>
+        <label class="cb-group"><input type="checkbox" id="hl-resp"> Hipoksemia / dispnea / infiltrat difus</label>
+        <label class="cb-group"><input type="checkbox" id="hl-oligo"> Oliguria / kreatinin meningkat</label>
+        <label class="cb-group"><input type="checkbox" id="hl-priap"> Priapismus</label>
+        <label class="cb-group"><input type="checkbox" id="hl-hear"> Gangguan pendengaran</label>
+      </div>
+      <button class="btn btn-primary" style="margin-top:10px" onclick="calcHL()">⚡ Evaluasi</button>
+    </div>
+  </div>
+  <div id="hl-output"></div>
+</div>
+
+<!-- =================== SCC =================== -->
+<div id="page-scc" class="section-page">
+  <div class="page-header">
+    <div class="page-title">🦴 Spinal Cord Compression</div>
+    <div class="page-sub">Deteksi Dini | MRI Urgent | Steroid Awal</div>
+  </div>
+  <div class="card">
+    <div class="card-header">📋<span class="card-title">Checklist Gejala & Data</span></div>
+    <div class="card-body">
+      <label class="cb-group"><input type="checkbox" id="scc-back"> Nyeri punggung progresif dan/atau nokturnal</label>
+      <label class="cb-group"><input type="checkbox" id="scc-gait"> Gangguan berjalan / gait abnormal</label>
+      <label class="cb-group"><input type="checkbox" id="scc-weak"> Kelemahan tungkai (paraparesis/paraplegia)</label>
+      <label class="cb-group"><input type="checkbox" id="scc-sen"> Level sensorik</label>
+      <label class="cb-group"><input type="checkbox" id="scc-ur"> Retensi urin atau inkontinensia urin</label>
+      <label class="cb-group"><input type="checkbox" id="scc-bow"> Disfungsi bowel (konstipasi berat / inkontinensia)</label>
+      <label class="cb-group"><input type="checkbox" id="scc-ref"> Refleks abnormal (hiperrefleks / arefleks)</label>
+      <div class="form-grid" style="margin-top:10px">
+        <div class="fg"><label>BB Pasien (kg)</label><input type="number" id="scc-bb" placeholder="untuk estimasi dosis steroid" step="0.1"><div class="hint">Dosis steroid harus diverifikasi konsultan</div></div>
+      </div>
+      <button class="btn btn-primary" onclick="calcSCC()">⚡ Evaluasi & Estimasi Dosis</button>
+    </div>
+  </div>
+  <div id="scc-output"></div>
+</div>
+
+<!-- =================== MEDIASTINAL MASS =================== -->
+<div id="page-mm" class="section-page">
+  <div class="page-header">
+    <div class="page-title">🫁 Mediastinal Mass Emergency</div>
+    <div class="page-sub">Airway Collapse Risk | Sedation Warning</div>
+  </div>
+  <div class="card">
+    <div class="card-header">📋<span class="card-title">Penilaian Klinis</span></div>
+    <div class="card-body">
+      <label class="cb-group"><input type="checkbox" id="mm-stridor"> Stridor</label>
+      <label class="cb-group"><input type="checkbox" id="mm-ortho"> Orthopnea (tidak bisa berbaring datar)</label>
+      <label class="cb-group"><input type="checkbox" id="mm-wheeze"> Wheezing ekspirasi</label>
+      <label class="cb-group"><input type="checkbox" id="mm-svc"> Tanda SVC syndrome (edema wajah/leher)</label>
+      <div class="form-grid" style="margin-top:8px">
+        <div class="fg"><label>SpO₂ (%)</label><input type="number" id="mm-spo2" placeholder="Udara ruang"></div>
+        <div class="fg"><label>CT Thorax tersedia?</label><select id="mm-ct"><option value="yes">Ya, tersedia</option><option value="no">Belum ada</option></select></div>
+      </div>
+      <button class="btn btn-primary" onclick="calcMM()">⚡ Stratifikasi Risiko</button>
+    </div>
+  </div>
+  <div id="mm-output"></div>
+</div>
+
+<!-- =================== SVC =================== -->
+<div id="page-svc" class="section-page">
+  <div class="page-header">
+    <div class="page-title">💓 Superior Vena Cava Syndrome</div>
+    <div class="page-sub">Severity Score | Tatalaksana Awal | Indikasi ICU</div>
+  </div>
+  <div class="card">
+    <div class="card-header">📋<span class="card-title">Penilaian Klinis</span></div>
+    <div class="card-body">
+      <label class="cb-group"><input type="checkbox" id="svc-face"> Edema wajah / leher</label>
+      <label class="cb-group"><input type="checkbox" id="svc-jvd"> Distensi vena leher</label>
+      <label class="cb-group"><input type="checkbox" id="svc-dysp"> Sesak napas</label>
+      <label class="cb-group"><input type="checkbox" id="svc-cough"> Batuk persisten</label>
+      <label class="cb-group"><input type="checkbox" id="svc-hoarse"> Suara serak</label>
+      <label class="cb-group"><input type="checkbox" id="svc-stri"> Stridor</label>
+      <label class="cb-group"><input type="checkbox" id="svc-ams"> Perubahan kesadaran</label>
+      <div class="form-grid" style="margin-top:8px"><div class="fg"><label>SpO₂ (%)</label><input type="number" id="svc-spo2" placeholder="mis. 94"></div></div>
+      <button class="btn btn-primary" onclick="calcSVC()">⚡ Nilai Severity</button>
+    </div>
+  </div>
+  <div id="svc-output"></div>
+</div>
+
+<!-- =================== DIC =================== -->
+<div id="page-dic" class="section-page">
+  <div class="page-header">
+    <div class="page-title">💧 DIC Tool</div>
+    <div class="page-sub">Skor ISTH (anak) | Komponen Transfusi | Tatalaksana</div>
+  </div>
+  <div class="card">
+    <div class="card-header">📋<span class="card-title">Data Laboratorium Koagulasi</span></div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="fg"><label>Trombosit (×10³/µL)</label><input type="number" id="dic-plt" placeholder="mis. 45"></div>
+        <div class="fg"><label>PT Prolongation vs Kontrol (detik)</label><input type="number" id="dic-pt" placeholder="PT pasien MINUS PT kontrol" step="0.1"><div class="hint">Masukkan SELISIH terhadap nilai kontrol/normal</div></div>
+        <div class="fg"><label>Fibrinogen (mg/dL)</label><input type="number" id="dic-fib" placeholder="mis. 90" step="1"></div>
+        <div class="fg"><label>BB (kg)</label><input type="number" id="dic-bb" placeholder="untuk kalkulasi dosis" step="0.1"></div>
+      </div>
+      <div class="fg"><label>D-dimer / FDP</label>
+        <select id="dic-ddim">
+          <option value="0">Normal / Tidak ada data</option>
+          <option value="1">Meningkat ringan–sedang (&lt;5× ULN)</option>
+          <option value="2">Meningkat kuat (≥5× ULN)</option>
+        </select>
+      </div>
+      <div class="fg"><label>Perdarahan aktif?</label>
+        <select id="dic-bleed">
+          <option value="no">Tidak ada / minimal</option>
+          <option value="yes">Ya, ada perdarahan aktif</option>
+        </select>
+      </div>
+      <div class="rb rb-y" style="font-size:11px;margin:8px 0"><b>⚠️ Catatan klinis:</b> Skor ISTH-DIC tidak divalidasi khusus untuk populasi anak dengan keganasan dan harus selalu diinterpretasi bersama konteks klinis penuh. Nilai batas dapat berbeda pada kondisi tertentu.</div>
+      <button class="btn btn-primary" onclick="calcDIC()">⚡ Hitung Skor DIC</button>
+    </div>
+  </div>
+  <div id="dic-output"></div>
+</div>
+
+<!-- =================== HEMORRHAGIC =================== -->
+<div id="page-hem" class="section-page">
+  <div class="page-header">
+    <div class="page-title">🩸 Hemorrhagic Emergency</div>
+    <div class="page-sub">Derajat Perdarahan | Kebutuhan Transfusi | Indikasi ICU</div>
+  </div>
+  <div class="card">
+    <div class="card-header">📋<span class="card-title">Penilaian Perdarahan</span></div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="fg"><label>Hb (g/dL)</label><input type="number" id="hem-hb" placeholder="mis. 7.0" step="0.1"></div>
+        <div class="fg"><label>Trombosit (×10³/µL)</label><input type="number" id="hem-plt" placeholder="mis. 12"></div>
+        <div class="fg"><label>BB (kg)</label><input type="number" id="hem-bb" placeholder="berat badan" step="0.1"></div>
+      </div>
+      <div class="fg"><label>Lokasi Perdarahan</label>
+        <select id="hem-site">
+          <option value="minor">Minor (petekie, epistaksis ringan, bercak kulit)</option>
+          <option value="mucosal">Mukosa (gusi, mulut, epistaksis berulang)</option>
+          <option value="major">Mayor (GI, paru, hemoptisis masif)</option>
+          <option value="ic">Intrakranial / CNS</option>
+        </select>
+      </div>
+      <div class="fg"><label>Status Hemodinamik</label>
+        <select id="hem-hemo">
+          <option value="stable">Stabil</option>
+          <option value="unstable">Tidak stabil (takikardia, hipotensi)</option>
+          <option value="shock">Syok</option>
+        </select>
+      </div>
+      <div class="rb rb-y" style="font-size:11px;margin:8px 0"><b>⚠️ Catatan:</b> NSAID dan suntikan intramuskular dikontraindikasikan pada trombositopenia berat.</div>
+      <button class="btn btn-primary" onclick="calcHEM()">⚡ Evaluasi & Hitung Transfusi</button>
+    </div>
+  </div>
+  <div id="hem-output"></div>
+</div>
+
+<!-- =================== ICP =================== -->
+<div id="page-icp" class="section-page">
+  <div class="page-header">
+    <div class="page-title">🧠 Increased Intracranial Pressure</div>
+    <div class="page-sub">Probabilitas TTIK | Tindakan Awal | CT/MRI Urgency</div>
+  </div>
+  <div class="card">
+    <div class="card-header">📋<span class="card-title">Checklist Tanda & Gejala</span></div>
+    <div class="card-body">
+      <label class="cb-group"><input type="checkbox" id="icp-vom"> Muntah proyektil</label>
+      <label class="cb-group"><input type="checkbox" id="icp-pap"> Papiledema (funduskopi)</label>
+      <label class="cb-group"><input type="checkbox" id="icp-loc"> Penurunan kesadaran (GCS turun)</label>
+      <label class="cb-group"><input type="checkbox" id="icp-sei"> Kejang</label>
+      <label class="cb-group"><input type="checkbox" id="icp-brad"> Bradikardia (relatif terhadap baseline)</label>
+      <label class="cb-group"><input type="checkbox" id="icp-htn"> Hipertensi</label>
+      <label class="cb-group"><input type="checkbox" id="icp-head"> Sakit kepala progresif (terutama pagi hari atau nokturnal)</label>
+      <label class="cb-group"><input type="checkbox" id="icp-cn6"> Parese N.VI (esotropia / diplopia)</label>
+      <div class="form-grid" style="margin-top:10px">
+        <div class="fg"><label>BB (kg)</label><input type="number" id="icp-bb" placeholder="untuk estimasi dosis" step="0.1"><div class="hint">Dosis steroid & mannitol harus diverifikasi konsultan</div></div>
+      </div>
+      <button class="btn btn-primary" onclick="calcICP()">⚡ Evaluasi TTIK</button>
+    </div>
+  </div>
+  <div id="icp-output"></div>
+</div>
+
+<!-- =================== ATR =================== -->
+<div id="page-atr" class="section-page">
+  <div class="page-header">
+    <div class="page-title">🩺 Acute Transfusion Reaction</div>
+    <div class="page-sub">Identifikasi Jenis Reaksi | Tatalaksana Segera</div>
+  </div>
+  <div class="card" style="border-top:3px solid var(--red-l)">
+    <div class="card-header">🛑<span class="card-title" style="color:var(--red)">TINDAKAN UNIVERSAL — Semua Reaksi Sedang/Berat</span></div>
+    <div class="card-body">
+      <div class="ci"><span class="ci-icon" style="color:var(--red)">🛑</span><div><b>STOP transfusi SEGERA</b> — pertahankan akses IV dengan NaCl 0.9%</div></div>
+      <div class="ci"><span class="ci-icon">✅</span><div><b>Verifikasi identitas</b> pasien dan kantong darah</div></div>
+      <div class="ci"><span class="ci-icon">📦</span><div><b>Simpan kantong darah + selang</b> untuk dikirim ke bank darah</div></div>
+      <div class="ci"><span class="ci-icon">🔤</span><div><b>ABCDE assessment</b> segera</div></div>
+      <div class="ci"><span class="ci-icon">📞</span><div><b>Lapor senior dan bank darah</b> segera</div></div>
+      <div class="ci"><span class="ci-icon">🧫</span><div><b>Kirim sampel darah</b> pasien sesuai protokol (goldar ulang, Coombs, kultur)</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">📋<span class="card-title">Identifikasi Gejala</span></div>
+    <div class="card-body">
+      <label class="cb-group"><input type="checkbox" id="atr-fever"> Demam ≥38°C atau naik ≥1°C dari sebelum transfusi</label>
+      <label class="cb-group"><input type="checkbox" id="atr-itch"> Gatal / urtikaria</label>
+      <label class="cb-group"><input type="checkbox" id="atr-hypo"> Hipotensi (turun ≥30 mmHg sistolik)</label>
+      <label class="cb-group"><input type="checkbox" id="atr-dysp"> Sesak napas / distres napas</label>
+      <label class="cb-group"><input type="checkbox" id="atr-back"> Nyeri pinggang / flank</label>
+      <label class="cb-group"><input type="checkbox" id="atr-hgbu"> Hemoglobinuria (urin merah)</label>
+      <label class="cb-group"><input type="checkbox" id="atr-angio"> Angioedema (wajah, lidah, laring)</label>
+      <label class="cb-group"><input type="checkbox" id="atr-wheeze"> Wheeze / bronkospasme</label>
+      <label class="cb-group"><input type="checkbox" id="atr-edema"> Edema paru (sesak akut, crackles)</label>
+      <label class="cb-group"><input type="checkbox" id="atr-htn"> Hipertensi</label>
+      <label class="cb-group"><input type="checkbox" id="atr-rig"> Rigors / menggigil berat</label>
+      <button class="btn btn-primary" style="margin-top:10px" onclick="calcATR()">⚡ Identifikasi Reaksi</button>
+    </div>
+  </div>
+  <div id="atr-output" style="margin-top:10px"></div>
+</div>
+
+<!-- =================== EXTRAVASATION =================== -->
+<div id="page-ext" class="section-page">
+  <div class="page-header">
+    <div class="page-title">💉 Extravasation Injury</div>
+    <div class="page-sub">Protokol SLAP | Klasifikasi Obat | Antidot | Kompres</div>
+  </div>
+  <div class="card" style="border-top:3px solid var(--blue)">
+    <div class="card-header">🔑<span class="card-title">Protokol SLAP</span></div>
+    <div class="card-body">
+      <div class="ci"><span class="ci-icon" style="color:var(--red)">🛑</span><div><b>S — Stop</b> infus SEGERA. Jangan lanjutkan apapun melalui kanul yang sama.</div></div>
+      <div class="ci"><span class="ci-icon">📍</span><div><b>L — Leave</b> kanul/VAD di tempatnya sementara — aspirasi sisa cairan/obat dari kanul sebelum dilepas.</div></div>
+      <div class="ci"><span class="ci-icon">💨</span><div><b>A — Aspirate</b> cairan residual sebanyak mungkin melalui kanul sebelum dicabut. JANGAN flush.</div></div>
+      <div class="ci"><span class="ci-icon">📋</span><div><b>P — Plan</b> tindakan selanjutnya sesuai jenis obat (lihat di bawah). Tandai batas area, foto dokumentasi, catat waktu, nama obat, konsentrasi, estimasi volume.</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">💊<span class="card-title">Pilih Obat</span></div>
+    <div class="card-body">
+      <div class="fg"><label>Obat yang mengalami ekstravasasi</label>
+        <select id="ext-drug" onchange="calcEXT()">
+          <option value="">Pilih obat...</option>
+          <optgroup label="Anthracyclines (Vesicant — COLD)">
+            <option value="doxo">Doxorubicin (Adriamycin)</option>
+            <option value="dauno">Daunorubicin</option>
+            <option value="epiru">Epirubicin</option>
+            <option value="idar">Idarubicin</option>
+          </optgroup>
+          <optgroup label="Vinca Alkaloids (Vesicant — WARM + Hyaluronidase)">
+            <option value="vinc">Vincristine</option>
+            <option value="vinb">Vinblastine</option>
+            <option value="vino">Vinorelbine</option>
+            <option value="vind">Vindesine</option>
+          </optgroup>
+          <optgroup label="Vesicant Lainnya">
+            <option value="dact">Dactinomycin</option>
+            <option value="mito">Mitomycin C</option>
+            <option value="taxol">Paclitaxel</option>
+            <option value="melph">Melphalan</option>
+            <option value="bend">Bendamustine</option>
+          </optgroup>
+          <optgroup label="Irritant">
+            <option value="etopo">Etoposide</option>
+            <option value="carbo">Carboplatin</option>
+            <option value="gem">Gemcitabine</option>
+            <option value="5fu">5-Fluorouracil</option>
+          </optgroup>
+          <optgroup label="Non-Vesicant / Umumnya Aman">
+            <option value="cyclo">Cyclophosphamide</option>
+            <option value="mtx">Methotrexate</option>
+            <option value="arac">Cytarabine (Ara-C)</option>
+            <option value="aspa">L-Asparaginase / Pegaspargase</option>
+            <option value="mesna">Mesna</option>
+          </optgroup>
+          <optgroup label="Perlu Review Senior">
+            <option value="cis-high">Cisplatin (konsentrasi tinggi / volume besar)</option>
+            <option value="cis-low">Cisplatin (konsentrasi rendah / volume kecil)</option>
+          </optgroup>
+        </select>
+      </div>
+      <div id="ext-output"></div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== CHECKLIST =================== -->
+<div id="page-checklist" class="section-page">
+  <div class="page-header">
+    <div class="page-title">☑️ Emergency Checklist</div>
+    <div class="page-sub">Kapan Hubungi Konsultan HOA | Checklist IGD Lengkap</div>
+  </div>
+  <div class="card" style="border-top:3px solid var(--red-l)">
+    <div class="card-header">📞<span class="card-title">Segera Hubungi Konsultan HOA bila:</span></div>
+    <div class="card-body">
+      <div class="ci"><span class="ci-icon">🔴</span><div><b>TLS:</b> Aritmia, anuria, kejang, kreatinin meningkat pada pasien risiko TLS</div></div>
+      <div class="ci"><span class="ci-icon">🔴</span><div><b>Leukostasis:</b> WBC ≥100K dengan gejala neurologis/respirasi/visual</div></div>
+      <div class="ci"><span class="ci-icon">🔴</span><div><b>FN Sepsis:</b> Febrile neutropenia dengan tanda syok, hipoksia, atau penurunan kesadaran</div></div>
+      <div class="ci"><span class="ci-icon">🔴</span><div><b>DIC:</b> Perdarahan aktif + trombositopenia + PT/aPTT memanjang</div></div>
+      <div class="ci"><span class="ci-icon">🔴</span><div><b>SCC:</b> Kelemahan tungkai, retensi urin, inkontinensia baru, atau nyeri punggung progresif</div></div>
+      <div class="ci"><span class="ci-icon">🔴</span><div><b>SVC/Mediastinal Mass:</b> Stridor, orthopnea, edema wajah dengan obstruksi</div></div>
+      <div class="ci"><span class="ci-icon">🔴</span><div><b>TTIK:</b> Muntah proyektil + penurunan kesadaran + bradikardi (Cushing triad)</div></div>
+      <div class="ci"><span class="ci-icon">🔴</span><div><b>Perdarahan Mayor:</b> Perdarahan intrakranial atau hemodinamik tidak stabil</div></div>
+      <div class="ci"><span class="ci-icon">🔴</span><div><b>Reaksi Transfusi Berat:</b> Anafilaksis, TRALI, hemolisis akut</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">📋<span class="card-title">Checklist Manajemen IGD</span></div>
+    <div class="card-body">
+      <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:7px">Airway & Breathing</div>
+      <label class="cb-group"><input type="checkbox"> Nilai patensi jalan napas, SpO₂, laju napas</label>
+      <label class="cb-group"><input type="checkbox"> O₂ supplementasi bila SpO₂ &lt;94%</label>
+      <label class="cb-group"><input type="checkbox"> Posisi optimal (duduk/elevasi bila mediastinal mass/SVC)</label>
+      <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;margin:10px 0 7px">Circulation</div>
+      <label class="cb-group"><input type="checkbox"> Nilai HR, TD, CRT, tanda syok</label>
+      <label class="cb-group"><input type="checkbox"> Pasang IV akses (hindari ekstremitas atas bila ada SVC syndrome)</label>
+      <label class="cb-group"><input type="checkbox"> Resusitasi cairan bila syok (NaCl 0.9% 10–20 mL/kgBB bolus)</label>
+      <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;margin:10px 0 7px">Laboratorium Cito</div>
+      <label class="cb-group"><input type="checkbox"> DPL + diff, hapus darah tepi</label>
+      <label class="cb-group"><input type="checkbox"> Elektrolit, kreatinin, BUN, asam urat, LDH</label>
+      <label class="cb-group"><input type="checkbox"> PT, aPTT, fibrinogen, D-dimer (bila curiga DIC)</label>
+      <label class="cb-group"><input type="checkbox"> Golongan darah + crossmatch</label>
+      <label class="cb-group"><input type="checkbox"> Kultur darah sebelum antibiotik (bila FN, jangan menunda antibiotik)</label>
+      <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;margin:10px 0 7px">Tatalaksana Segera</div>
+      <label class="cb-group"><input type="checkbox"> FN: Antibiotik empiris anti-pseudomonal IV dalam ≤60 menit</label>
+      <label class="cb-group"><input type="checkbox"> TLS: Hidrasi agresif tanpa K⁺, allopurinol atau rasburicase sesuai protokol</label>
+      <label class="cb-group"><input type="checkbox"> SCC: Steroid segera (verifikasi dosis dengan konsultan), MRI urgent</label>
+      <label class="cb-group"><input type="checkbox"> DIC: Transfusi komponen sesuai defisit, atasi penyebab dasar</label>
+      <label class="cb-group"><input type="checkbox"> Reaksi transfusi: Stop transfusi, simpan kantong darah, lapor bank darah</label>
+      <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;margin:10px 0 7px">Monitoring</div>
+      <label class="cb-group"><input type="checkbox"> Vital sign setiap 30 menit (bila tidak stabil: kontinu)</label>
+      <label class="cb-group"><input type="checkbox"> Pantau urine output (target ≥1 mL/kgBB/jam, sesuaikan kondisi kardio-renal)</label>
+      <label class="cb-group"><input type="checkbox"> Catat semua waktu intervensi kritis</label>
+      <label class="cb-group"><input type="checkbox"> Hubungi konsultan HOA dan siapkan transfer bila perlu</label>
+    </div>
+  </div>
+</div>
+
+<!-- =================== FAMILY EDUCATION =================== -->
+<div id="page-family" class="section-page">
+  <div class="page-header">
+    <div class="page-title">👨‍👩‍👧 Edukasi Keluarga</div>
+    <div class="page-sub">Penjelasan sederhana untuk orang tua & keluarga pasien</div>
+  </div>
+  <div class="accordion" onclick="toggleAcc(this)"><div class="acc-head"><span>🧪 Tumor Lysis Syndrome</span><span>▼</span></div>
+    <div class="acc-body"><div class="rb rb-b"><b>Apa yang terjadi?</b><br>Saat obat kemoterapi mulai bekerja, sel kanker hancur dan melepaskan isinya ke aliran darah dalam jumlah besar. Ini bisa membebani ginjal dan menyebabkan ketidakseimbangan mineral.</div><div class="rb rb-y"><b>Mengapa berbahaya?</b><br>Ketidakseimbangan mineral bisa menyebabkan gangguan irama jantung, kejang, dan kerusakan ginjal. Kondisi ini biasa terjadi 1–5 hari setelah kemoterapi dimulai.</div><div class="rb rb-b"><b>Tanda bahaya yang perlu dipantau:</b><br>• Tidak bisa atau jarang buang air kecil<br>• Detak jantung terasa tidak beraturan<br>• Kejang<br>• Sangat lemas atau tidak mau makan/minum</div><div class="rb rb-r"><b>Kapan segera ke fasilitas kesehatan?</b><br>SEGERA bila: kejang, tidak buang air kecil >8 jam, detak jantung tidak beraturan, atau kesadaran menurun.</div><div class="rb rb-g"><b>Apa yang akan dilakukan tim medis?</b><br>Memasang infus, memberikan cairan banyak untuk membantu ginjal, memantau darah berkala, dan bila perlu memberikan obat untuk menurunkan asam urat.</div></div>
+  </div>
+  <div class="accordion" onclick="toggleAcc(this)"><div class="acc-head"><span>🌡️ Demam saat Kemoterapi</span><span>▼</span></div>
+    <div class="acc-body"><div class="rb rb-b"><b>Apa yang terjadi?</b><br>Kemoterapi menurunkan sel darah putih yang melawan infeksi. Ketika sel darah putih sangat sedikit, infeksi ringan pun bisa menjadi serius.</div><div class="rb rb-y"><b>Mengapa berbahaya?</b><br>Tanpa sel darah putih yang cukup, tubuh tidak bisa melawan bakteri. Infeksi bisa menyebar ke seluruh tubuh (sepsis) dengan sangat cepat.</div><div class="rb rb-b"><b>Tanda bahaya:</b><br>• Demam ≥38°C<br>• Tubuh terasa sangat dingin dan menggigil<br>• Sangat lemas<br>• Napas cepat atau sesak</div><div class="rb rb-r"><b>Kapan segera ke fasilitas kesehatan?</b><br>SEGERA bila demam ≥38°C selama dalam pengobatan kemoterapi. Ini adalah KEDARURATAN MEDIS. Jangan tunggu pagi hari.</div><div class="rb rb-g"><b>Apa yang akan dilakukan tim medis?</b><br>Mengambil kultur darah, memberikan antibiotik melalui infus, memantau kondisi, dan merawat inap.</div></div>
+  </div>
+  <div class="accordion" onclick="toggleAcc(this)"><div class="acc-head"><span>🦴 Tekanan pada Saraf Tulang Belakang</span><span>▼</span></div>
+    <div class="acc-body"><div class="rb rb-b"><b>Apa yang terjadi?</b><br>Kadang tumor menekan saraf di tulang belakang. Ini bisa terjadi perlahan atau tiba-tiba.</div><div class="rb rb-y"><b>Mengapa berbahaya?</b><br>Bila tidak ditangani cepat, bisa menyebabkan kelumpuhan permanen. Penanganan dalam jam pertama sangat menentukan hasil.</div><div class="rb rb-b"><b>Tanda bahaya:</b><br>• Nyeri punggung yang semakin memberat (terutama malam hari)<br>• Kaki terasa lemah, sulit berjalan<br>• Kaki mati rasa<br>• Tidak bisa buang air kecil atau besar</div><div class="rb rb-r"><b>Kapan segera ke fasilitas kesehatan?</b><br>SEGERA bila anak tiba-tiba tidak bisa berjalan, tidak bisa buang air kecil/besar, atau kaki mati rasa.</div><div class="rb rb-g"><b>Apa yang akan dilakukan tim medis?</b><br>Memberikan obat steroid untuk mengurangi bengkak, melakukan MRI segera, dan konsultasi ke dokter spesialis bedah saraf.</div></div>
+  </div>
+  <div class="accordion" onclick="toggleAcc(this)"><div class="acc-head"><span>🩸 Perdarahan pada Anak Kanker</span><span>▼</span></div>
+    <div class="acc-body"><div class="rb rb-b"><b>Apa yang terjadi?</b><br>Keping darah (trombosit) yang rendah akibat kemoterapi atau kanker menyebabkan risiko perdarahan meningkat.</div><div class="rb rb-y"><b>Mengapa berbahaya?</b><br>Perdarahan di otak atau organ dalam bisa terjadi bahkan tanpa benturan keras. Perdarahan di otak khususnya bisa mengancam jiwa.</div><div class="rb rb-b"><b>Tanda bahaya:</b><br>• Mimisan tidak berhenti lebih dari 10 menit<br>• Muntah darah atau BAB hitam/berdarah<br>• Sakit kepala tiba-tiba yang sangat hebat<br>• Memar besar yang muncul tiba-tiba</div><div class="rb rb-r"><b>Kapan segera ke fasilitas kesehatan?</b><br>SEGERA bila: mimisan tidak berhenti, muntah darah, BAB hitam/berdarah, sakit kepala hebat mendadak, atau kesadaran menurun.</div><div class="rb rb-g"><b>Apa yang akan dilakukan tim medis?</b><br>Memberikan transfusi trombosit atau komponen darah lain, melakukan pemeriksaan darah, dan bila perlu CT scan kepala.</div></div>
+  </div>
+  <div class="accordion" onclick="toggleAcc(this)"><div class="acc-head"><span>🧠 Tekanan di Dalam Kepala (TTIK)</span><span>▼</span></div>
+    <div class="acc-body"><div class="rb rb-b"><b>Apa yang terjadi?</b><br>Tumor atau efek samping pengobatan bisa menyebabkan tekanan di dalam kepala meningkat.</div><div class="rb rb-y"><b>Mengapa berbahaya?</b><br>Tekanan yang terlalu tinggi di dalam kepala bisa merusak otak secara permanen atau menyebabkan kondisi yang mengancam jiwa.</div><div class="rb rb-b"><b>Tanda bahaya:</b><br>• Sakit kepala yang semakin memberat, terutama di pagi hari<br>• Muntah menyembur tanpa mual<br>• Pandangan ganda atau buram<br>• Anak menjadi sangat mengantuk atau sulit dibangunkan</div><div class="rb rb-r"><b>Kapan segera ke fasilitas kesehatan?</b><br>SEGERA bila: sakit kepala berat tiba-tiba, muntah proyektil, anak sulit dibangunkan, kejang, atau pandangan terganggu.</div><div class="rb rb-g"><b>Apa yang akan dilakukan tim medis?</b><br>Melakukan CT scan kepala, memberikan obat untuk menurunkan tekanan, dan segera berkonsultasi dengan dokter spesialis bedah saraf bila perlu.</div></div>
+  </div>
+</div>
+
+<!-- =================== ALGORITHMS =================== -->
+<div id="page-algo" class="section-page">
+  <div class="page-header">
+    <div class="page-title">🔀 Visual Algorithms</div>
+    <div class="page-sub">Flowchart Interaktif Kegawatdaruratan</div>
+  </div>
+  <div class="tab-row">
+    <button class="tab-btn active" onclick="switchAlgo('tls',this)">TLS</button>
+    <button class="tab-btn" onclick="switchAlgo('fn',this)">FN</button>
+    <button class="tab-btn" onclick="switchAlgo('scc',this)">SCC</button>
+    <button class="tab-btn" onclick="switchAlgo('hl',this)">Hyperleukositosis</button>
+    <button class="tab-btn" onclick="switchAlgo('dic',this)">DIC</button>
+  </div>
+  <div id="algo-tls" class="card"><div class="card-header">🧪<span class="card-title">Algoritma TLS</span></div><div class="card-body">
+    <div class="flow-col">
+      <div class="flow-box" style="background:var(--blue-bg);color:var(--blue)">Pasien risiko TLS<br><small style="font-weight:400">Leukemia/Limfoma burden tinggi</small></div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box" style="background:var(--yellow-bg);border:1.5px solid var(--yellow-b)">Cek lab: K⁺, PO₄, Ca, Asam Urat, Kreatinin, LDH</div>
+      <div class="flow-arrow">↓ Cairo-Bishop ≥2 parameter abnormal?</div>
+      <div class="flow-row">
+        <div class="flow-col-item" style="background:var(--green-bg);border:1.5px solid var(--green-b)"><b style="color:var(--green)">Tidak</b><br><small>Profilaksis hidrasi<br>Monitor berkala<br>Allopurinol sesuai risiko</small></div>
+        <div class="flow-col-item" style="background:var(--yellow-bg);border:1.5px solid var(--yellow-b)"><b style="color:var(--yellow)">Lab TLS</b><br><small>Hidrasi 2–3× M<br>Allopurinol/Rasburicase<br>Monitor tiap 4–6 jam</small></div>
+        <div class="flow-col-item" style="background:var(--red-bg);border:1.5px solid var(--red-b)"><b style="color:var(--red)">Clinical TLS</b><br><small>ICU<br>Rasburicase<br>Pertimbangkan dialisis</small></div>
+      </div>
+      <div class="rf-card" style="width:100%;margin-top:8px"><div class="rf-title">⚠️ Red Flags → ICU segera</div>
+        <div class="rf-item">⚡ Aritmia</div><div class="rf-item">💧 Anuria / oliguria</div><div class="rf-item">🧠 Kejang</div><div class="rf-item">💦 Fluid overload</div></div>
+    </div>
+  </div></div>
+  <div id="algo-fn" class="card hidden"><div class="card-header">🌡️<span class="card-title">Algoritma Febrile Neutropenia</span></div><div class="card-body">
+    <div class="flow-col">
+      <div class="flow-box" style="background:var(--red-bg);color:var(--red)">Demam ≥38°C pada pasien onkologi</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box" style="background:var(--yellow-bg);border:1.5px solid var(--yellow-b)">Cek ANC segera</div>
+      <div class="flow-row">
+        <div class="flow-col-item" style="background:var(--green-bg);border:1.5px solid var(--green-b)"><b style="color:var(--green)">ANC ≥500</b><br><small>Bukan FN tipikal<br>Evaluasi lebih lanjut</small></div>
+        <div class="flow-col-item" style="background:var(--red-bg);border:1.5px solid var(--red-b)"><b style="color:var(--red)">ANC &lt;500</b><br><small>= Febrile Neutropenia<br>→ Protokol FN</small></div>
+      </div>
+      <div class="flow-arrow">↓ (bila FN)</div>
+      <div class="flow-box" style="background:var(--blue-bg);color:var(--blue)">Kultur darah → Antibiotik anti-pseudomonal IV dalam ≤60 menit<br>(≤30 menit bila sepsis)</div>
+      <div class="flow-row">
+        <div class="flow-col-item" style="background:var(--green-bg);border:1.5px solid var(--green-b)"><b style="color:var(--green)">Risiko Rendah</b><br><small>Terseleksi: pertimbangkan oral antibiotik sesuai protokol lokal</small></div>
+        <div class="flow-col-item" style="background:var(--red-bg);border:1.5px solid var(--red-b)"><b style="color:var(--red)">Risiko Tinggi</b><br><small>Rawat inap IV<br>Anti-pseudomonal IV<br>Pertimbangkan tambahan sesuai indikasi</small></div>
+      </div>
+    </div>
+  </div></div>
+  <div id="algo-scc" class="card hidden"><div class="card-header">🦴<span class="card-title">Algoritma Spinal Cord Compression</span></div><div class="card-body">
+    <div class="flow-col">
+      <div class="flow-box" style="background:var(--yellow-bg);border:1.5px solid var(--yellow-b)">Nyeri punggung / gejala neurologis pada pasien kanker</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box" style="background:var(--blue-bg);color:var(--blue)">Evaluasi: kelemahan, gangguan BAB/BAK, refleks, level sensorik</div>
+      <div class="flow-row">
+        <div class="flow-col-item" style="background:var(--green-bg);border:1.5px solid var(--green-b)"><b style="color:var(--green)">Kecurigaan Rendah</b><br><small>MRI elektif<br>Pantau gejala</small></div>
+        <div class="flow-col-item" style="background:var(--yellow-bg);border:1.5px solid var(--yellow-b)"><b style="color:var(--yellow)">Kecurigaan Sedang</b><br><small>MRI dalam 24 jam<br>Diskusi steroid dg konsultan</small></div>
+        <div class="flow-col-item" style="background:var(--red-bg);border:1.5px solid var(--red-b)"><b style="color:var(--red)">Kecurigaan Tinggi</b><br><small>Steroid SEGERA<br>MRI cito<br>Konsul bedah saraf</small></div>
+      </div>
+      <div class="rf-card" style="width:100%;margin-top:8px"><div class="rf-title">⚠️ Red Flags</div>
+        <div class="rf-item">🚽 Retensi urin akut</div><div class="rf-item">🦿 Paraplegia</div><div class="rf-item">⚡ Progresi defisit cepat</div></div>
+    </div>
+  </div></div>
+  <div id="algo-hl" class="card hidden"><div class="card-header">🔬<span class="card-title">Algoritma Hyperleukocytosis</span></div><div class="card-body">
+    <div class="flow-col">
+      <div class="flow-box" style="background:var(--blue-bg);color:var(--blue)">WBC ≥100.000/µL (atau &lt;100K dengan gejala leukostasis)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box" style="background:var(--yellow-bg);border:1.5px solid var(--yellow-b)">Smear review + flow cytometry STAT. CBC + elektrolit tiap 4–6 jam</div>
+      <div class="flow-arrow">↓ Gejala leukostasis?</div>
+      <div class="flow-row">
+        <div class="flow-col-item" style="background:var(--yellow-bg);border:1.5px solid var(--yellow-b)"><b style="color:var(--yellow)">Tidak ada gejala</b><br><small>Hyperhydration 2× M tanpa K⁺<br>HINDARI transfusi PRC rutin<br>Mulai terapi leukemia SEGERA</small></div>
+        <div class="flow-col-item" style="background:var(--red-bg);border:1.5px solid var(--red-b)"><b style="color:var(--red)">LEUKOSTASIS</b><br><small>ICU + konsul HOA CITO<br>Pertimbangkan leukaferesis<br>Jangan tunda terapi definitif</small></div>
+      </div>
+    </div>
+  </div></div>
+  <div id="algo-dic" class="card hidden"><div class="card-header">💧<span class="card-title">Algoritma DIC</span></div><div class="card-body">
+    <div class="flow-col">
+      <div class="flow-box" style="background:var(--red-bg);color:var(--red)">Klinis: Perdarahan + Trombosis mikrovaskular</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box" style="background:var(--blue-bg);color:var(--blue)">Lab: PLT↓ PT↑ Fibrinogen↓ D-dimer↑</div>
+      <div class="flow-arrow">↓ ISTH Score</div>
+      <div class="flow-row">
+        <div class="flow-col-item" style="background:var(--yellow-bg);border:1.5px solid var(--yellow-b)"><b style="color:var(--yellow)">Skor &lt;5</b><br><small>Non-overt DIC<br>Monitor ketat<br>Atasi penyebab</small></div>
+        <div class="flow-col-item" style="background:var(--red-bg);border:1.5px solid var(--red-b)"><b style="color:var(--red)">Skor ≥5</b><br><small>Overt DIC<br>FFP + PLT + Kriopresipitat<br>sesuai defisit + ICU</small></div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px;text-align:center">⚠️ Atasi penyebab dasar (sepsis, tumor, dll) sebagai prioritas utama</div>
+    </div>
+  </div></div>
+</div>
+
+<!-- =================== QUICK REF =================== -->
+<div id="page-quickref" class="section-page">
+  <div class="page-header">
+    <div class="page-title">📋 Quick Reference</div>
+    <div class="page-sub">Ringkasan kegawatdaruratan — satu halaman. Verifikasi semua dosis dengan protokol lokal.</div>
+  </div>
+  <div class="card"><div class="card-body">
+    <table class="dtable">
+      <tr><th>Kondisi</th><th>Kriteria Kunci</th><th>Red Flags</th><th>Tatalaksana Awal</th></tr>
+      <tr><td><b>TLS</b></td><td>≥2 dari: K⁺≥6, PO₄≥6.5, Ca≤7, UA≥8 (mg/dL)</td><td>Aritmia, anuria, kejang</td><td>Hidrasi 2–3×M tanpa K⁺/PO₄, allopurinol/rasburicase per protokol</td></tr>
+      <tr><td><b>FN</b></td><td>Suhu ≥38°C + ANC &lt;500/µL</td><td>Syok, SpO₂&lt;92%, AMS</td><td>Kultur darah → antibiotik anti-pseudomonal IV ≤60 menit</td></tr>
+      <tr><td><b>SCC</b></td><td>Nyeri punggung + gejala neurologis/urologis</td><td>Paraplegia, retensi urin akut</td><td>Steroid segera (verifikasi dosis), MRI whole spine cito</td></tr>
+      <tr><td><b>DIC</b></td><td>PLT↓ + PT↑ + Fibrinogen↓ + D-dimer↑</td><td>Perdarahan tidak terkontrol</td><td>Atasi penyebab; FFP 10–15 mL/kg, PLT, kriopresipitat per defisit</td></tr>
+      <tr><td><b>Hyperleukositosis</b></td><td>WBC ≥100K/µL</td><td>Leukostasis (neuro/resp)</td><td>Hidrasi 2×M, HINDARI PRC, sitoreduksi segera</td></tr>
+      <tr><td><b>SVC</b></td><td>Edema wajah + JVD + dyspnea</td><td>Stridor, AMS</td><td>Elevasi kepala 30–45°, hindari IV atas, imaging, tissue dx</td></tr>
+      <tr><td><b>ICP ↑</b></td><td>Cushing triad: bradikardi + HTN + napas ireguler</td><td>Anisokoria, GCS turun cepat</td><td>Head-up 30°, O₂, CT non-kontras SEGERA, jangan LP dulu</td></tr>
+      <tr><td><b>Reaksi Transfusi</b></td><td>Gejala saat/setelah transfusi</td><td>Anafilaksis, hemoglobinuria, edema paru</td><td>STOP transfusi, NaCl 0.9%, simpan kantong, lapor bank darah</td></tr>
+      <tr><td><b>Extravasation</b></td><td>Ekstravasasi obat kemoterapi</td><td>Vesicant = risiko nekrosis</td><td>SLAP protocol, kompres (dingin/hangat per obat), antidot per protokol</td></tr>
+    </table>
+  </div></div>
+</div>
+
+<!-- =================== REFERENCES =================== -->
+<div id="page-refs" class="section-page">
+  <div class="page-header">
+    <div class="page-title">📚 References & Validation</div>
+    <div class="page-sub">Ringkasan sumber klinis yang digunakan sebagai referensi tool ini</div>
+  </div>
+  <div class="card"><div class="card-body">
+    <div class="ci"><span class="ci-icon">📄</span><div><b>Tumor Lysis Syndrome:</b> Cairo MS & Bishop MR. Tumour lysis syndrome: new therapeutic strategies and classification. Br J Haematol. 2004; Howard SC et al. The tumor lysis syndrome. NEJM 2011.</div></div>
+    <div class="ci"><span class="ci-icon">📄</span><div><b>Febrile Neutropenia:</b> IDSA Clinical Practice Guideline for the use of antimicrobial agents in neutropenic patients with cancer (2010, updated guidance); SIOPE/COG guidance on pediatric fever and neutropenia management.</div></div>
+    <div class="ci"><span class="ci-icon">📄</span><div><b>Hyperleukocytosis & Leukostasis:</b> Abla O et al. Pediatric hyperleukocytosis pathways and management review; COG Supportive Care guidelines.</div></div>
+    <div class="ci"><span class="ci-icon">📄</span><div><b>Spinal Cord Compression:</b> Prasad D & Schiff D. Malignant spinal cord compression. Lancet Oncol 2005; NICE guidance on metastatic spinal cord compression (referensi prinsip umum manajemen).</div></div>
+    <div class="ci"><span class="ci-icon">📄</span><div><b>Extravasation:</b> eviQ Cancer Treatments Online (Australia) — Extravasation clinical procedure; ONS Chemotherapy and Biotherapy Guidelines; Schulmeister L. Extravasation Management: Clinical Update. Semin Oncol Nurs 2011.</div></div>
+    <div class="ci"><span class="ci-icon">📄</span><div><b>Transfusion Reaction:</b> British Society for Haematology (BSH) Guidelines for the management of acute transfusion reactions (2012); SHOT Annual Reports.</div></div>
+    <div class="ci"><span class="ci-icon">📄</span><div><b>DIC:</b> Levi M & Toh CH. ISTH scoring system for overt DIC. J Thromb Haemost 2001; Catatan: sistem skoring ISTH tidak divalidasi khusus untuk anak dengan keganasan — harus diinterpretasi dengan konteks klinis.</div></div>
+    <div class="ci"><span class="ci-icon">📄</span><div><b>Pediatric Emergency General:</b> Advanced Pediatric Life Support (APLS); Pediatric Advanced Life Support (PALS) principles; Brierley J et al. Clinical practice parameters for hemodynamic support of pediatric and neonatal septic shock (2009, Crit Care Med).</div></div>
+  </div></div>
+  <div class="rb rb-y" style="font-size:11px"><b>⚠️ Validasi Tool:</b> drAisyiEduCare tidak menggantikan guideline institusional, formularium lokal, atau konsultasi klinis langsung. Semua dosis obat yang ditampilkan adalah estimasi kalkulasi berbasis literatur dan harus diverifikasi dengan konsultan dan farmasi klinik sebelum pemberian. Tidak ada nama pribadi, institusi, atau akronim institusi dalam tool ini.</div>
+</div>
+
+<!-- DISCLAIMER -->
+<div class="disclaimer">
+  <span style="flex-shrink:0">ℹ️</span>
+  <span><b>drAisyiEduCare</b> adalah clinical support tool untuk edukasi dan pengambilan keputusan awal. Tidak menggantikan pemeriksaan klinis langsung, protokol lokal, farmasi klinik, konsultasi onkologi/hematologi anak, ICU, bedah, anestesi, atau bank darah. Tidak memuat nama pribadi maupun institusi tertentu.</span>
+</div>
+
+</main>
+</div>
+
+<script>
+// ---- NAV ----
+function doPrint(){
+  try{window.print();}catch(e){
+    var w=window.open('','_blank');
+    if(w){w.document.write('<pre>'+document.getElementById('content').innerText+'</pre>');w.print();}
+  }
+}
+function showPage(id){
+  document.querySelectorAll('.section-page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  var p=document.getElementById('page-'+id);
+  if(p)p.classList.add('active');
+  var s=document.querySelector('[data-page="'+id+'"]');
+  if(s)s.classList.add('active');
+  document.getElementById('content').scrollTop=0;
+  if(window.innerWidth<=760)document.getElementById('sidebar').classList.remove('open');
+}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
+function filterSB(v){
+  var lo=v.toLowerCase();
+  document.querySelectorAll('.sb-item').forEach(i=>{i.style.display=i.textContent.toLowerCase().includes(lo)||!v?'':'none'});
+  document.querySelectorAll('.sb-section').forEach(s=>s.style.display=v?'none':'');
+}
+function toggleAcc(el){
+  var b=el.querySelector('.acc-body');
+  var wasOpen=b.classList.contains('open');
+  b.classList.toggle('open',!wasOpen);
+}
+// ---- TLS TABS ----
+function tlsTab(which,btn){
+  ['input','result','fam'].forEach(t=>{
+    var el=document.getElementById('tls-'+t);
+    if(!el)return;
+    if(t===which){el.classList.remove('hidden');el.style.display='block';}
+    else{el.classList.add('hidden');el.style.display='none';}
+  });
+  document.querySelectorAll('[onclick^="tlsTab"]').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+}
+// ---- ALGO TABS ----
+function switchAlgo(id,btn){
+  ['tls','fn','scc','hl','dic'].forEach(k=>{
+    var el=document.getElementById('algo-'+k);
+    if(el)el.classList.toggle('hidden',k!==id);
+  });
+  document.querySelectorAll('[onclick^="switchAlgo"]').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+}
+
+// ---- HELPERS ----
+function g(id){return document.getElementById(id)}
+function gv(id){return parseFloat(g(id).value)||0}
+function gc(id){return g(id)?g(id).checked:false}
+function gs(id){return g(id)?g(id).value:'';}
+
+function rb(cls,title,val,note){
+  return `<div class="rb ${cls}"><div class="rb-title">${title}</div>${val?`<div class="rb-val">${val}</div>`:''}${note?`<div class="rb-note">${note}</div>`:''}</div>`;
+}
+function rfCard(items,title){
+  var t=title||'RED FLAGS';
+  return `<div class="rf-card"><div class="rf-title">⚠️ ${t}</div>${items.map(i=>`<div class="rf-item">⚠️ ${i}</div>`).join('')}</div>`;
+}
+function checkCard(items,title,ico){
+  var t=title||'Tatalaksana';
+  var ic=ico||'⚡';
+  return `<div class="card"><div class="card-header">${ic}<span class="card-title">${t}</span></div><div class="card-body">${items.map(i=>`<div class="ci"><span class="ci-icon">✅</span><div>${i}</div></div>`).join('')}</div></div>`;
+}
+function verNote(){return '<div class="rb rb-y" style="font-size:11px"><b>⚠️ Verifikasi protokol lokal:</b> Semua dosis dan rekomendasi adalah estimasi dan harus diverifikasi dengan konsultan dan farmasi klinik sebelum pemberian.</div>';}
+
+// ---- TLS ----
+function calcTLS(){
+  var k=gv('tls-k'),po4=gv('tls-po4'),ca=gv('tls-ca'),ua=gv('tls-ua'),cr=gv('tls-cr');
+  var bb=gv('tls-bb'),wbc=gv('tls-wbc'),ldh=gv('tls-ldh');
+  var dx=gs('tls-dx');
+  var aritmia=gc('tls-ar'),cr2=gc('tls-cr2'),sei=gc('tls-sei'),oli=gc('tls-oli'),fl=gc('tls-fl');
+
+  var lab=[];
+  if(k>=6)lab.push('K⁺ ≥6 mEq/L ('+k+')');
+  if(po4>=6.5)lab.push('PO₄ ≥6.5 mg/dL ('+po4+')');
+  if(ca>0&&ca<=7)lab.push('Ca ≤7.0 mg/dL ('+ca+')');
+  if(ua>=8)lab.push('Asam urat ≥8 mg/dL ('+ua+')');
+  var isLabTLS=lab.length>=2;
+  var hasClinical=aritmia||cr2||sei||oli||fl;
+  var isClinTLS=isLabTLS&&hasClinical;
+
+  var riskLabel,riskClass;
+  if(dx==='BL'||dx==='ALL-high'||dx==='AML-high'){riskLabel='RISIKO TINGGI';riskClass='rb-r';}
+  else if(dx==='ALL-int'){riskLabel='RISIKO INTERMEDIATE';riskClass='rb-y';}
+  else if(dx){riskLabel='RISIKO RENDAH';riskClass='rb-g';}
+  else{riskLabel='Pilih diagnosis untuk stratifikasi';riskClass='rb-b';}
+
+  var h1x=bb>0?Math.round(bb<10?bb*100:bb<20?1000+(bb-10)*50:1500+(bb-20)*20):null;
+  var h2x=h1x?Math.round(h1x*2):null;
+  var h3x=h1x?Math.round(h1x*3):null;
+
+  var out='';
+  if(isClinTLS){
+    out+=rb('rb-r','🔴 CLINICAL TLS','Clinical TLS',`Lab TLS terpenuhi (${lab.join(', ')}) + komplikasi klinis: ${[aritmia&&'Aritmia',cr2&&'Kreatinin ≥1.5×ULN',sei&&'Kejang',oli&&'Oliguria/Anuria',fl&&'Fluid overload'].filter(Boolean).join(', ')}.`);
+  }else if(isLabTLS){
+    out+=rb('rb-y','🟡 LABORATORY TLS','Lab TLS',`≥2 parameter Cairo-Bishop terpenuhi: ${lab.join(', ')}. Belum ada komplikasi klinis.`);
+  }else{
+    out+=rb('rb-g','🟢 Tidak Memenuhi Kriteria TLS','',lab.length?`Hanya ${lab.length} parameter terpenuhi (perlu ≥2). ${lab.join(', ')}.`:'Tidak ada parameter Lab TLS terpenuhi.');
+  }
+
+  out+=rb(riskClass,'Stratifikasi Risiko TLS',riskLabel,dx?`Diagnosis: ${dx} | WBC: ${wbc||'?'}×10³/µL | LDH: ${ldh||'?'} U/L`:'');
+
+  var mgm=[];
+  mgm.push(`<b>Hidrasi:</b> ${isClinTLS||riskLabel.includes('TINGGI')?`3× maintenance (est. ${h3x||'?'} mL/hari)`:riskLabel.includes('INTERMEDIATE')?`2–3× maintenance (est. ${h2x||'?'}–${h3x||'?'} mL/hari)`:'1.5× maintenance'} — tanpa kalium, tanpa fosfat. Sesuaikan fungsi jantung dan ginjal. Target UO ≥2 mL/kgBB/jam bila aman secara hemodinamik.`);
+  mgm.push('<b>Allopurinol:</b> Untuk profilaksis risiko rendah–menengah. Dosis sesuai protokol lokal. Mulai 24–48 jam sebelum kemoterapi bila memungkinkan. Verifikasi dengan konsultan dan farmasi.');
+  if(riskLabel.includes('TINGGI')||isClinTLS)mgm.push('<b>Rasburicase:</b> Untuk risiko tinggi atau established/clinical TLS sesuai protokol. Kontraindikasi: defisiensi G6PD, kehamilan, hemolisis. Verifikasi dosis dan ketersediaan dengan konsultan dan farmasi.');
+  mgm.push('<b>Jangan alkalinisasi urin rutin.</b> Tidak terbukti bermanfaat dan dapat memperburuk kalsifikasi fosfat.');
+  mgm.push(`<b>Monitoring:</b> Elektrolit, kreatinin, asam urat, PO₄, Ca tiap ${isClinTLS?'4':'6'}–${isClinTLS?'6':'8'} jam. EKG bila hiperkalemia. Timbang BB 2× sehari.`);
+  mgm.push(`<b>Rawat:</b> ${isClinTLS?'ICU/PICU segera':riskLabel.includes('TINGGI')?'Rawat inap onkologi, siapkan ICU':'Rawat inap, monitoring ketat'}.`);
+  if(isClinTLS||cr>1.5||oli)mgm.push('<b>Pertimbangkan dialisis</b> bila: hiperkalemia refrakter, anuria, overload cairan tidak tertangani, uremia, atau gejala neurologis berat. Diskusi dengan konsultan dan ICU.');
+  out+=checkCard(mgm,'Tatalaksana Awal','⚡');
+  out+=rfCard(['Aritmia → EKG segera, monitor kontinu','Anuria/Oliguria → Pertimbangkan dialisis','Kejang → Koreksi hipokalsemia, antikonvulsan','Overload cairan → Furosemid atau dialisis']);
+  out+=verNote();
+
+  g('tls-result').innerHTML=out;
+  tlsTab('result',document.querySelector('[onclick="tlsTab(\'result\',this)"]'));
+}
+
+// ---- FN ----
+function calcFN(){
+  var temp=gv('fn-temp'),anc=gv('fn-anc')||9999,sbp=gv('fn-sbp'),hr=gv('fn-hr'),rr=gv('fn-rr'),spo2=gv('fn-spo2');
+  var phase=gs('fn-phase');
+  var hypo=gc('fn-hypo'),hypox=gc('fn-hypox'),alcon=gc('fn-alcon'),src=gc('fn-src'),muc=gc('fn-muc'),abd=gc('fn-abd'),cvad=gc('fn-cvad');
+
+  var isFN=(temp>=38)&&(anc<500);
+  var isSepsis=hypo||hypox||alcon;
+  var isHighRisk=isSepsis||src||muc||abd||cvad||(phase==='induction')||(phase==='post-hsct')||(phase==='relapse');
+
+  var out='';
+  if(!temp&&!anc){out=rb('rb-b','','','Masukkan data suhu dan ANC untuk evaluasi.');g('fn-output').innerHTML=out;return;}
+
+  if(!isFN){
+    out+=rb('rb-g','Definisi FN','Tidak Terpenuhi',`Suhu: ${temp||'?'}°C | ANC: ${anc>=9999?'?':anc}/µL. ${temp<38&&anc<500?'Neutropenia tanpa demam — pantau ketat.':anc>=500&&temp>=38?'Demam tapi ANC cukup.':'Data belum lengkap.'}`);
+  }else{
+    out+=rb('rb-r','Definisi Febrile Neutropenia','✅ TERPENUHI',`Suhu: ${temp}°C | ANC: ${anc}/µL | Fase: ${phase||'tidak dipilih'}`);
+    if(isSepsis){
+      out+=rb('rb-r','⚠️ SEPSIS / SYSTEMIC COMPROMISE','RESUSITASI ≤30 MENIT',`Tanda sepsis: ${[hypo&&'Hipotensi',hypox&&'Hipoksia',alcon&&'Altered consciousness'].filter(Boolean).join(', ')}. Target antibiotik ≤30 menit.`);
+    }
+    out+=rb(isHighRisk?'rb-r':'rb-g','Penilaian Risiko',isHighRisk?'RISIKO TINGGI':'RISIKO RENDAH (Terseleksi)',isHighRisk?'Rawat inap, IV antibiotik segera.':'Pertimbangkan oral antibiotik bila tidak ada faktor risiko tinggi dan sesuai protokol lokal.');
+
+    var mgm=[];
+    mgm.push(`<b>TARGET:</b> Antibiotik dalam <b>${isSepsis?'≤30':'≤60'} menit</b> sejak pasien datang.`);
+    mgm.push('<b>Kultur darah</b> (2 set, termasuk dari CVAD bila ada) SEBELUM antibiotik — <b>jangan menunda antibiotik demi kultur</b>.');
+    mgm.push(`<b>Antibiotik empiris:</b> ${isHighRisk?'<b>Anti-pseudomonal beta-laktam IV</b> (mis. piperasilin-tazobaktam, seftazidim, atau meropenem) sesuai protokol lokal dan pola resistensi fasilitas. Pertimbangkan tambahan aminoglikosida atau vankomisin bila ada indikasi spesifik (CVAD infection, MRSA risk).':'Pertimbangkan regimen oral (mis. sefiksim atau amoksisilin-klavulanat) pada pasien risiko rendah yang sangat terseleksi dan sesuai protokol lokal.'}. <b>Verifikasi dosis dan pemilihan antibiotik dengan konsultan dan farmasi lokal.</b>`);
+    if(isSepsis)mgm.push('<b>Resusitasi cairan:</b> NaCl 0.9% 10–20 mL/kgBB bolus, ulangi sesuai respons. Pertimbangkan vasopresor bila refrakter. Target: CRT ≤2 detik, TD normal usia, UO ≥1 mL/kgBB/jam.');
+    mgm.push('<b>Rawat inap</b> di ruangan isolasi neutropenia / onkologi.');
+    out+=checkCard(mgm,'Initial Management FN','⏱️');
+    out+=rfCard(['Syok/Hipotensi → Resusitasi + ICU segera','SpO₂ <92% → O₂ + pertimbangkan ICU','Altered consciousness → CT kepala, ICU','Antibiotik terlambat >60 menit → Eskalasi ke senior']);
+  }
+  out+=verNote();
+  g('fn-output').innerHTML=out;
+}
+
+// ---- HYPERLEUKOCYTOSIS ----
+function calcHL(){
+  var wbc=gv('hl-wbc'),blast=gv('hl-blast');
+  var dx=gs('hl-dx');
+  var headache=gc('hl-headache'),visual=gc('hl-visual'),sei=gc('hl-sei'),ams=gc('hl-ams'),focal=gc('hl-focal');
+  var resp=gc('hl-resp'),oligo=gc('hl-oligo'),priap=gc('hl-priap'),hear=gc('hl-hear');
+  var hasSymptoms=headache||visual||sei||ams||focal||resp||oligo||priap||hear;
+  var isHL=wbc>=100;
+  var isLeukostasis=isHL&&hasSymptoms;
+
+  var out='';
+  if(!wbc){out=rb('rb-b','','','Masukkan jumlah WBC untuk evaluasi.');g('hl-output').innerHTML=out;return;}
+  if(!isHL){
+    out+=rb('rb-g','Kategori','WBC Normal / Belum Hyperleukocytosis',`WBC: ${wbc}×10³/µL (perlu ≥100 untuk definisi hyperleukocytosis). Perhatikan bila ada gejala leukostasis meski WBC &lt;100K.`);
+  }else if(isLeukostasis){
+    out+=rb('rb-r','⚠️ LEUKOSTASIS','DARURAT — Tindakan SEGERA',`WBC ${wbc}×10³/µL${dx?' | '+dx:''} dengan gejala: ${[headache&&'Headache',visual&&'Gangguan visus',sei&&'Kejang',ams&&'AMS',focal&&'Defisit fokal',resp&&'Hipoksemia/Dispnea',oligo&&'Oliguria',priap&&'Priapismus',hear&&'Gangguan pendengaran'].filter(Boolean).join(', ')}`);
+    if(dx==='APML')out+=rb('rb-r','⚠️ PERINGATAN APML','','APML (AML-M3) memiliki risiko DIC sangat tinggi. Koagulasi lengkap SEGERA. Jangan tunda ATRA. Konsul HOA cito.');
+    out+=checkCard([
+      '<b>Huddle segera:</b> Onkologi, ICU, hematopatologi.',
+      '<b>ICU/PICU segera</b> — konsul HOA CITO.',
+      '<b>Smear review + flow cytometry STAT</b> untuk konfirmasi morfologi.',
+      '<b>CBC + elektrolit + LDH + koagulasi tiap 4–6 jam</b> awal.',
+      '<b>Hyperhydration:</b> ~2× maintenance tanpa K⁺. Pantau balans cairan ketat.',
+      '<b>HINDARI transfusi PRC rutin</b>: meningkatkan viskositas darah dan risiko leukostasis. Berikan hanya bila ada inadequate oxygen delivery yang mengancam jiwa setelah diskusi konsultan.',
+      '<b>Leukaferesis:</b> Pertimbangkan pada AML dengan leukostasis persisten, atau CML dengan priapismus/gangguan pendengaran — sebagai adjunct, tidak menggantikan atau menunda terapi definitif leukemia. Ketersediaan terbatas — koordinasi dengan bank darah/konsultan.',
+      '<b>Jangan tunda terapi leukemia-directed</b> (hidroxiurea/kemoterapi): ini prioritas sitoreduksi.',
+      '<b>HINDARI PRC dan platelet profilaksis agresif</b> sebelum sitoreduksi.'
+    ],'Tatalaksana Leukostasis','🚨');
+    out+=rfCard(['Gejala neurologis progresif → ICU + CT/MRI segera','SpO₂ menurun → O₂, CPAP, pertimbangkan ventilasi','Priapismus → Konsul urologi + pertimbangkan leukaferesis']);
+  }else{
+    out+=rb('rb-y','Hyperleukocytosis — Tanpa Leukostasis',`WBC ${wbc}×10³/µL`,`${dx?'Diagnosis: '+dx+'.':''} Belum ada gejala leukostasis. Monitor ketat — gejala bisa muncul kapan saja.`);
+    if(dx==='APML')out+=rb('rb-r','⚠️ PERINGATAN APML','','Risiko DIC sangat tinggi. Koagulasi segera. ATRA jangan ditunda.');
+    out+=checkCard([
+      '<b>Huddle onkologi/ICU/hematopatologi</b> segera.',
+      '<b>Smear review + flow cytometry STAT.</b>',
+      '<b>CBC + elektrolit + uric acid + LDH + koagulasi tiap 4–6 jam.</b>',
+      '<b>Hyperhydration ~2× maintenance tanpa K⁺.</b>',
+      '<b>HINDARI transfusi PRC</b> kecuali ada inadequate oxygen delivery mengancam jiwa.',
+      '<b>Mulai sitoreduksi/terapi leukemia sesegera mungkin</b> (hidroxiurea atau kemoterapi sesuai protokol).',
+      '<b>Monitor ketat</b> tanda leukostasis (neuro, respirasi, visus, UO).'
+    ],'Tatalaksana HL Tanpa Leukostasis','⚡');
+  }
+  out+=verNote();
+  g('hl-output').innerHTML=out;
+}
+
+// ---- SCC ----
+function calcSCC(){
+  var back=gc('scc-back'),gait=gc('scc-gait'),weak=gc('scc-weak'),sen=gc('scc-sen');
+  var ur=gc('scc-ur'),bow=gc('scc-bow'),ref=gc('scc-ref');
+  var bb=gv('scc-bb');
+  var w=[back?1:0,gait?1:0,weak?2:0,sen?2:0,ur?2:0,bow?1:0,ref?1:0];
+  var score=w.reduce((a,b)=>a+b,0);
+  var susp=score>=6?'tinggi':score>=3?'sedang':'rendah';
+  var cls=susp==='tinggi'?'rb-r':susp==='sedang'?'rb-y':'rb-g';
+  var dexaBolus=bb>0?Math.min(parseFloat((bb*1).toFixed(1)),10):null;
+  var dexaMaint=bb>0?Math.min(parseFloat((bb*0.5).toFixed(1)),4):null;
+
+  var out=rb(cls,'Tingkat Kecurigaan SCC',susp.toUpperCase()+` (Skor: ${score}/10)`,
+    `Gejala: ${[back&&'Nyeri punggung',gait&&'Gait abnormal',weak&&'Kelemahan tungkai',sen&&'Level sensorik',ur&&'Disfungsi urin',bow&&'Disfungsi bowel',ref&&'Refleks abnormal'].filter(Boolean).join(', ')||'Tidak ada'}`);
+
+  out+=rb(cls,'Rekomendasi Imaging','',susp==='tinggi'?'🔴 MRI Whole Spine SEGERA (cito) — tanpa dan dengan kontras':susp==='sedang'?'🟡 MRI Whole Spine dalam 24 jam':'🟢 MRI elektif sesuai perkembangan klinis');
+
+  var mgm=[];
+  if(susp!=='rendah'){
+    mgm.push('<b>Jangan tunda MRI</b> dan terapi definitif — steroid diberikan segera, tidak perlu menunggu konfirmasi MRI bila kecurigaan sedang/tinggi.');
+    mgm.push('<b>Konsultasi:</b> Neurosurgeri + Radioterapi + Onkologi anak — etiologi menentukan modalitas terapi definitif.');
+    if(ur||weak)mgm.push('<b>Pasang kateter urin</b> bila ada retensi urin atau inkontinensia.');
+  }
+
+  // Dosis steroid selalu ditampilkan bila BB tersedia
+  var steroidBlock='';
+  if(bb>0){
+    steroidBlock='<div class="rb rb-b" style="margin-top:10px">'
+      +'<div class="rb-title">💊 Estimasi Dosis Deksametason (BB: '+bb+' kg)</div>'
+      +'<div class="rb-note">'
+      +'<b>Bolus awal:</b> <span style="font-size:15px;font-weight:800;color:var(--blue)">'+dexaBolus+' mg IV</span>'
+      +' &nbsp;(1 mg/kgBB, maks 10 mg) — berikan segera.<br><br>'
+      +'<b>Maintenance:</b> <span style="font-size:15px;font-weight:800;color:var(--blue)">'+dexaMaint+' mg IV</span>'
+      +' per dosis tiap 6 jam &nbsp;(0.5 mg/kgBB/dosis, maks 4 mg/dosis).<br><br>'
+      +'<span style="font-size:11px;color:var(--muted)">⚠️ Estimasi ini harus diverifikasi dengan konsultan dan farmasi klinik sebelum pemberian. '
+      +'Steroid diindikasikan untuk edema peritumor — efektivitas tergantung etiologi SCC.</span>'
+      +'</div></div>';
+  }else{
+    steroidBlock='<div class="rb rb-y" style="margin-top:10px">'
+      +'<div class="rb-title">💊 Estimasi Dosis Deksametason</div>'
+      +'<div class="rb-note"><span style="color:var(--red);font-weight:700">BB pasien belum diisi.</span> '
+      +'Kembali ke form dan masukkan berat badan untuk melihat estimasi dosis bolus dan maintenance.</div></div>';
+  }
+
+  if(mgm.length)out+=checkCard(mgm,'Tatalaksana Awal SCC','⚡');
+  out+=steroidBlock;
+  if(susp==='tinggi'||ur||weak)out+=rfCard(['Retensi urin akut → Kateter segera + MRI cito','Paraplegia/Paraparesis → MRI &lt;2 jam + bedah saraf','Progresi defisit cepat → Steroid dosis tinggi + ICU']);
+  out+=verNote();
+  g('scc-output').innerHTML=out;
+}
+
+// ---- MEDIASTINAL MASS ----
+function calcMM(){
+  var stri=gc('mm-stridor'),ortho=gc('mm-ortho'),wheeze=gc('mm-wheeze'),svc=gc('mm-svc');
+  var spo2=gv('mm-spo2')||100,ct=gs('mm-ct');
+  var score=(stri?3:0)+(ortho?2:0)+(wheeze?1:0)+(svc?1:0)+(spo2<92?3:spo2<95?1:0);
+  var risk=score>=5?'high':score>=2?'moderate':'low';
+  var cls=risk==='high'?'rb-r':risk==='moderate'?'rb-y':'rb-g';
+
+  var out=rb(cls,'Risiko Airway Collapse',risk==='high'?'TINGGI — DARURAT':risk==='moderate'?'SEDANG — Waspada':'RENDAH',`Skor: ${score} | SpO₂: ${spo2||'?'}%`);
+
+  if(risk==='high'){
+    out+=`<div class="rb rb-r"><div class="rb-title" style="font-size:14px;color:var(--red)">⚠️ SEDATION WARNING — KRITIKAL</div><div class="rb-note" style="font-weight:700;color:var(--red)">HINDARI anestesi umum / sedasi dalam sebelum evaluasi multidisiplin lengkap.<br>Risiko obstruksi jalan napas total saat sedasi sangat tinggi.</div></div>`;
+  }
+
+  var mgm=['<b>Posisi duduk tegak / elevasi kepala 45°.</b> Jangan paksa pasien berbaring.'];
+  if(spo2<95||risk!=='low')mgm.push('<b>O₂ supplementasi</b> bila SpO₂ &lt;95% atau ada distres napas.');
+  if(risk!=='low')mgm.push(`<b>CT Thorax:</b> ${ct==='yes'?'Tersedia — evaluasi segera dengan posisi yang aman.':'Upayakan dengan posisi duduk bila kondisi memungkinkan.'}`);
+  if(risk==='high')mgm.push('<b>ICU segera</b> dengan kesiapan intubasi darurat. Koordinasi anestesi SENIOR sebelum prosedur apapun.');
+  mgm.push('<b>Koordinasi multidisiplin:</b> Onkologi anak, anestesi, ICU, radiologi/intervensi sebelum tindakan apapun.');
+  out+=checkCard(mgm,'Tatalaksana','⚡');
+  out+=verNote();
+  g('mm-output').innerHTML=out;
+}
+
+// ---- SVC ----
+function calcSVC(){
+  var face=gc('svc-face'),jvd=gc('svc-jvd'),dysp=gc('svc-dysp'),cough=gc('svc-cough');
+  var hoarse=gc('svc-hoarse'),stri=gc('svc-stri'),ams=gc('svc-ams');
+  var spo2=gv('svc-spo2')||100;
+  var score=(face?1:0)+(jvd?2:0)+(dysp?2:0)+(cough?1:0)+(hoarse?1:0)+(stri?3:0)+(ams?3:0)+(spo2<92?3:spo2<95?1:0);
+  var sev=score>=7?'berat':score>=4?'sedang':'ringan';
+  var cls=sev==='berat'?'rb-r':sev==='sedang'?'rb-y':'rb-g';
+
+  var out=rb(cls,'Severity SVC Syndrome','Derajat '+sev.toUpperCase()+` (Skor: ${score})`,
+    `Gejala: ${[face&&'Edema wajah',jvd&&'JVD',dysp&&'Dyspnea',cough&&'Batuk',hoarse&&'Hoarse',stri&&'Stridor',ams&&'AMS'].filter(Boolean).join(', ')||'Tidak ada'} | SpO₂: ${spo2||'?'}%`);
+
+  var mgm=['<b>Posisi kepala dan badan elevasi 30–45°.</b>','<b>HINDARI IV line di ekstremitas atas</b> (aksila/antekubiti). Gunakan femoralis atau CVAD bila perlu.'];
+  if(sev!=='ringan')mgm.push('<b>O₂ supplementasi</b> bila SpO₂ &lt;94% atau ada distres napas.');
+  if(sev!=='ringan')mgm.push('<b>Deksametason:</b> Pertimbangkan untuk edema peritumor sesuai indikasi dan protokol. Verifikasi dosis dengan konsultan.');
+  mgm.push('<b>CT Thorax kontras</b> segera (atau MRI) bila kondisi memungkinkan.');
+  mgm.push('<b>Tissue diagnosis</b> sesegera mungkin dengan sedasi minimal — pilih modalitas dengan risiko anastesi paling rendah.');
+  if(sev==='berat')mgm.push('<b>ICU segera</b> — monitor kontinu, siapkan airway management darurat, koordinasi anestesi senior.');
+  out+=checkCard(mgm,'Tatalaksana SVC Syndrome','⚡');
+  if(sev==='berat')out+=rfCard(['Stridor + AMS → ICU SEGERA + anestesi senior','SpO₂ tidak membaik dengan O₂ → Pertimbangkan ventilasi','Jangan tidurkan / sedasi dalam tanpa evaluasi lengkap']);
+  out+=verNote();
+  g('svc-output').innerHTML=out;
+}
+
+// ---- DIC ----
+function calcDIC(){
+  var plt=gv('dic-plt'),ptProl=gv('dic-pt'),fib=gv('dic-fib'),ddim=parseInt(gs('dic-ddim'))||0;
+  var bb=gv('dic-bb'),bleed=gs('dic-bleed');
+
+  var score=0,det=[];
+  if(plt<50){score+=2;det.push('PLT&lt;50K (+2)');}else if(plt<100){score+=1;det.push('PLT 50–100K (+1)');}
+  if(ptProl>6){score+=2;det.push('PT prolongation >6 dtk di atas kontrol (+2)');}else if(ptProl>3){score+=1;det.push('PT prolongation 3–6 dtk (+1)');}
+  if(fib>0&&fib<100){score+=1;det.push('Fibrinogen <100 (+1)');}
+  score+=ddim;
+  if(ddim===1)det.push('D-dimer meningkat ringan (+1)');
+  if(ddim===2)det.push('D-dimer meningkat signifikan (+2)');
+
+  var isDIC=score>=5;
+  var cls=score>=5?'rb-r':score>=3?'rb-y':'rb-g';
+  var interp=score>=5?'Kompatibel dengan OVERT DIC':score>=3?'NON-OVERT DIC / Probable — ulangi dalam 1–2 jam':'DIC TIDAK MUNGKIN berdasarkan skor';
+
+  var out=rb(cls,'Skor ISTH-DIC',`${score}/7 — ${interp}`,det.length?det.join(' | '):'Tidak cukup data');
+  out+=rb('rb-y','⚠️ Catatan Klinis','','Skor ISTH-DIC tidak divalidasi khusus untuk anak dengan keganasan. Selalu interpretasi bersama konteks klinis penuh, konsultan, dan parameter lab serial.');
+
+  if(isDIC||score>=3){
+    var mgm=['<b>ATASI PENYEBAB DASAR</b> (sepsis, komplikasi tumor, dll) — ini PRIORITAS UTAMA.'];
+    if(bb>0&&bleed==='yes'){
+      var ffp=Math.round(bb*15),cryo=Math.round(bb*5),prc=Math.round(bb*15);
+      mgm.push(`<b>Fresh Frozen Plasma (FFP):</b> ${ffp} mL (10–15 mL/kgBB) — bila PT/aPTT memanjang + perdarahan aktif atau prosedur. Verifikasi protokol lokal.`);
+      mgm.push(`<b>Kriopresipitat / Fibrinogen concentrate:</b> ${cryo} mL (5 mL/kgBB) atau 1 unit/5 kgBB — bila fibrinogen &lt;100 mg/dL + perdarahan. Verifikasi protokol.`);
+      mgm.push(`<b>Trombosit:</b> Target PLT ≥50K bila perdarahan mayor, ≥100K bila CNS/intrakranial. ~1 unit/10 kgBB.`);
+      mgm.push(`<b>PRC:</b> ${prc} mL (10–15 mL/kgBB) bila Hb &lt;7 g/dL atau hemodinamik tidak stabil. Verifikasi target Hb dengan konsultan.`);
+    }else{
+      mgm.push('<b>Komponen darah:</b> Masukkan data BB dan centang "perdarahan aktif" untuk kalkulasi estimasi dosis. Semua dosis harus diverifikasi protokol lokal dan farmasi.');
+    }
+    mgm.push('<b>Monitor serial:</b> PT, aPTT, fibrinogen, PLT tiap 4–6 jam sampai stabil.');
+    mgm.push('<b>ICU</b> bila DIC berat, perdarahan masif, atau kegagalan organ.');
+    out+=checkCard(mgm,'Tatalaksana DIC','⚡');
+    out+=rfCard(['Perdarahan tidak terkontrol → ICU + transfusi masif protocol','Purpura fulminan → ICU segera','Kegagalan organ → ICU, pertimbangkan dialisis']);
+  }
+  out+=verNote();
+  g('dic-output').innerHTML=out;
+}
+
+// ---- HEMORRHAGIC ----
+function calcHEM(){
+  var hb=gv('hem-hb'),plt=gv('hem-plt'),bb=gv('hem-bb');
+  var site=gs('hem-site'),hemo=gs('hem-hemo');
+  var isMajor=site==='major'||site==='ic'||hemo==='shock'||hemo==='unstable';
+  var cls=site==='ic'||hemo==='shock'?'rb-r':isMajor?'rb-r':'rb-y';
+  var siteLabel={minor:'Minor (petekie/epistaksis ringan)',mucosal:'Mukosa',major:'Mayor (GI/paru/hemoptisis)',ic:'INTRAKRANIAL/CNS'}[site]||site;
+
+  var out=rb(cls,'Derajat Perdarahan',siteLabel,`Hb: ${hb||'?'} g/dL | PLT: ${plt||'?'}×10³/µL | Hemodinamik: ${hemo}`);
+
+  if(bb>0){
+    var prcDose15=Math.round(bb*15),prcDose10=Math.round(bb*10);
+    var pltUnit=Math.max(1,Math.round(bb/10));
+    var pltTarget=site==='ic'?'≥100K':'≥50K (mayor) / ≥20K (mukosal/profilaksis)';
+    out+=`<div class="card"><div class="card-header">🩸<span class="card-title">Kebutuhan Transfusi Estimasi (BB: ${bb} kg)</span></div><div class="card-body">`;
+    out+=`<table class="dtable"><tr><th>Produk</th><th>Indikasi</th><th>Estimasi Dosis</th><th>Target</th></tr>`;
+    if(hb<8||isMajor){out+=`<tr><td><b>PRC</b></td><td>${isMajor?'Perdarahan aktif':'Hb &lt;8 g/dL'}</td><td><b>${prcDose10}–${prcDose15} mL</b> (10–15 mL/kgBB)</td><td>Hb ≥8 g/dL (atau sesuai kondisi)</td></tr>`;}
+    if(plt<(site==='ic'?100:50)||isMajor){out+=`<tr><td><b>Trombosit</b></td><td>${site==='ic'?'PLT &lt;100K (IC)':isMajor?'PLT &lt;50K (mayor)':'PLT &lt;20K (mukosal)'}</td><td><b>${pltUnit} unit</b> (~1 unit/10 kgBB)</td><td>${pltTarget}</td></tr>`;}
+    out+=`</table><div style="font-size:11px;color:var(--muted);margin-top:6px">⚠️ Semua dosis transfusi harus diverifikasi dengan konsultan dan bank darah. Hindari NSAID dan suntikan IM bila trombositopenia berat.</div></div></div>`;
+  }else{
+    out+=rb('rb-b','','','Masukkan BB untuk estimasi kebutuhan transfusi.');
+  }
+
+  var mgm=[];
+  if(isMajor){
+    mgm.push('<b>O₂ supplementasi</b> bila SpO₂ &lt;94%.');
+    mgm.push('<b>Akses IV dua jalur</b>. Resusitasi NaCl 0.9% bila syok.');
+    if(site==='ic')mgm.push('<b>CT Kepala SEGERA</b>. Konsul bedah saraf CITO.');
+    mgm.push('<b>Konsultasi onkologi + hematologi + bank darah</b> segera.');
+    mgm.push('<b>ICU</b> bila syok, perdarahan intrakranial, atau tidak terkontrol.');
+  }
+  if(mgm.length)out+=checkCard(mgm,'Tatalaksana Segera','🚨');
+  if(isMajor)out+=rfCard(['Perdarahan intrakranial → CT + bedah saraf SEGERA','Hemodinamik tidak stabil → Resusitasi + ICU','Perdarahan tidak terkontrol → Transfusi masif protocol']);
+  out+=verNote();
+  g('hem-output').innerHTML=out;
+}
+
+// ---- ICP ----
+function calcICP(){
+  var vom=gc('icp-vom'),pap=gc('icp-pap'),loc=gc('icp-loc'),sei=gc('icp-sei');
+  var brad=gc('icp-brad'),htn=gc('icp-htn'),head=gc('icp-head'),cn6=gc('icp-cn6');
+  var bb=gv('icp-bb');
+  var W=[vom?2:0,pap?3:0,loc?3:0,sei?2:0,brad?2:0,htn?1:0,head?1:0,cn6?1:0];
+  var score=W.reduce((a,b)=>a+b,0);
+  var prob=score>=7?'tinggi':score>=4?'sedang':'rendah';
+  var cls=prob==='tinggi'?'rb-r':prob==='sedang'?'rb-y':'rb-g';
+  var cushingTriad=brad&&htn;
+
+  var dexaBolus=bb>0?Math.min(parseFloat((bb*1).toFixed(1)),10):null;
+  var dexaMaint=bb>0?Math.min(parseFloat((bb*0.5).toFixed(1)),4):null;
+  var mannitolVol=bb>0?Math.round(bb*2.5)+' – '+Math.round(bb*5):null; // 0.5–1 g/kg = 2.5–5 mL/kg of 20%
+
+  var out=rb(cls,'Probabilitas TTIK Meningkat','Probabilitas '+prob.toUpperCase()+` (Skor: ${score})`,
+    [vom&&'Muntah proyektil',pap&&'Papiledema',loc&&'Penurunan kesadaran',sei&&'Kejang',brad&&'Bradikardia',htn&&'Hipertensi',head&&'Sakit kepala progresif',cn6&&'Parese N.VI'].filter(Boolean).join(', ')||'Tidak ada gejala');
+  if(cushingTriad)out+=rb('rb-r','⚠️ CUSHING TRIAD TERDETEKSI','','Bradikardia + Hipertensi + (±Napas ireguler) = HERNIASI IMMINENT. Tindakan darurat segera!');
+
+  if(prob!=='rendah'){
+    out+=rb(cls,'Urgensi CT/MRI','',prob==='tinggi'?'🔴 CT Kepala NON-KONTRAS SEGERA (sebelum LP!)':'🟡 CT Kepala dalam waktu dekat, atau bila ada progresi gejala');
+    var mgm=['<b>Elevasi kepala 30°, posisi netral/midline.</b>','<b>Hindari hipoksia dan hiperkarbia:</b> O₂ target SpO₂ ≥95%. Hiperventilasi ringan hanya sebagai tindakan jembatan sementara bila herniasi.','<b>JANGAN LP sebelum CT scan!</b>'];
+    if(bb>0){
+      mgm.push(`<b>Deksametason (ESTIMASI) — hanya bila edema peritumor:</b> Bolus ${dexaBolus} mg IV (1 mg/kgBB, maks 10 mg), maintenance ${dexaMaint} mg tiap 6 jam. Steroid TIDAK untuk semua etiologi TTIK. Verifikasi wajib dengan konsultan.`);
+      mgm.push(`<b>Osmoterapi (ESTIMASI) — bila herniasi atau TTIK berat akut:</b> Mannitol 20%: ${mannitolVol} mL (0.5–1 g/kgBB = 2.5–5 mL/kgBB dari mannitol 20%) infus 20 menit. ATAU NaCl 3%: 3–5 mL/kgBB sesuai protokol. <b>Verifikasi wajib dengan konsultan.</b>`);
+    }else{
+      mgm.push('<b>Deksametason & Osmoterapi:</b> Masukkan BB untuk estimasi dosis. Verifikasi wajib dengan konsultan.');
+    }
+    if(prob==='tinggi')mgm.push('<b>ICU segera</b>, pertimbangkan monitoring ICP invasif. Konsul bedah saraf.');
+    out+=checkCard(mgm,'Tindakan Awal TTIK','⚡');
+    out+=rfCard(['Cushing triad → Herniasi imminent, intubasi + mannitol SEGERA','GCS turun cepat → Intubasi + ICU + bedah saraf','Anisokoria / pupil fixed → Herniasi transtentorial, neurosurgery CITO']);
+  }
+  out+=verNote();
+  g('icp-output').innerHTML=out;
+}
+
+// ---- ATR ----
+function calcATR(){
+  var outEl=document.getElementById('atr-output');
+  if(!outEl){console.error('atr-output not found');return;}
+
+  var fever=gc('atr-fever'),itch=gc('atr-itch'),hypo=gc('atr-hypo'),dysp=gc('atr-dysp');
+  var back=gc('atr-back'),hgbu=gc('atr-hgbu'),angio=gc('atr-angio'),wheeze=gc('atr-wheeze');
+  var edema=gc('atr-edema'),htn=gc('atr-htn'),rig=gc('atr-rig');
+
+  var reactions=[];
+
+  // Anaphylaxis — check first (most urgent)
+  if(hypo||(angio||wheeze)){
+    reactions.push({n:'⚠️ ANAFILAKSIS',c:'rb-r',
+      tx:'STOP transfusi SEGERA. Epinefrin 0.01 mg/kgBB IM (maks 0.5 mg) di lateral paha — ulangi tiap 5–15 mnt bila perlu. O₂ aliran tinggi. NaCl 0.9% bolus 20 mL/kgBB. ICU segera. Difenhidramin + hidrokortison sebagai adjunct.'});
+  }
+  // Acute hemolytic
+  if(hgbu||(fever&&back)){
+    reactions.push({n:'⚠️ ACUTE HEMOLYTIC TRANSFUSION REACTION (AHTR)',c:'rb-r',
+      tx:'STOP transfusi SEGERA. Pertahankan IV-line dengan NaCl 0.9%. Jaga UO ≥1 mL/kgBB/jam. Furosemid bila diperlukan. Verifikasi ulang identitas pasien dan kantong darah. Kirim sampel untuk goldar ulang, DAT, dan kultur. Lapor bank darah segera.'});
+  }
+  // TRALI
+  if(dysp&&edema&&!htn){
+    reactions.push({n:'⚠️ TRALI (Transfusion-Related Acute Lung Injury)',c:'rb-r',
+      tx:'STOP transfusi SEGERA. O₂ aliran tinggi. CPAP atau ventilasi mekanik bila distres berat. ICU. JANGAN berikan diuretik (berbeda dengan TACO). Laporkan ke bank darah dan hemovigilans.'});
+  }
+  // TACO
+  if(dysp&&edema&&htn){
+    reactions.push({n:'TACO (Transfusion-Associated Circulatory Overload)',c:'rb-y',
+      tx:'Hentikan atau perlambat transfusi. Posisi duduk tegak. Furosemid 1 mg/kgBB IV. O₂ supplementasi. Monitor TD dan balans cairan ketat.'});
+  }
+  // Bacterial contamination
+  if(rig&&fever&&!hgbu){
+    reactions.push({n:'⚠️ Kemungkinan Kontaminasi Bakteri / Sepsis Transfusi',c:'rb-r',
+      tx:'STOP transfusi SEGERA. Simpan kantong darah dan selang untuk dikultur. Mulai antibiotik IV broad-spectrum segera. ICU bila syok. Lapor bank darah.'});
+  }
+  // FNHTR — only if no major reaction
+  if(fever&&!hgbu&&!back&&!hypo&&!rig){
+    reactions.push({n:'Febrile Non-Hemolytic Reaction (FNHTR)',c:'rb-y',
+      tx:'Hentikan transfusi sementara. Parasetamol 15 mg/kgBB. Evaluasi apakah aman melanjutkan. Pertimbangkan premedikasi untuk transfusi berikutnya sesuai protokol.'});
+  }
+  // Mild allergic
+  if(itch&&!hypo&&!dysp&&!angio&&!wheeze){
+    reactions.push({n:'Reaksi Alergi Ringan (Urtikaria)',c:'rb-y',
+      tx:'Hentikan transfusi sementara. Difenhidramin 1 mg/kgBB IV atau oral. Bila membaik dalam 30 menit dan tidak ada gejala sistemik, pertimbangkan melanjutkan transfusi perlahan sesuai protokol.'});
+  }
+
+  var out='';
+  if(!reactions.length){
+    out=rb('rb-b','','Pilih gejala di atas lalu tekan tombol Identifikasi Reaksi','Minimal satu gejala harus dipilih untuk dapat mengidentifikasi jenis reaksi transfusi.');
+  } else {
+    reactions.forEach(function(r){
+      out+='<div class="rb '+r.c+'">'
+        +'<div class="rb-title" style="color:'+(r.c==='rb-r'?'var(--red)':'var(--yellow)')+'">'+r.n+'</div>'
+        +'<div class="rb-note"><b>Tatalaksana:</b> '+r.tx+'</div>'
+        +'</div>';
+    });
+  }
+  out+=verNote();
+  outEl.innerHTML=out;
+  outEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ---- EXTRAVASATION ----
+var EXT={
+  doxo:{t:'Vesicant',c:'❄️ DINGIN (cold compress) 15–20 menit, 4× sehari, 24–48 jam',a:'Dexrazoxane SAVENE (1000 mg/m² hari 1–2, 500 mg/m² hari 3) — first-line bila tersedia sesuai protokol. ALTERNATIF: DMSO 99% topikal tiap 8 jam selama 7 hari. JANGAN kombinasikan keduanya kecuali protokol menyatakan demikian. Verifikasi dengan farmasi klinik.',o:'Monitor 2 minggu. Foto dokumentasi. Konsul bedah plastik bila nekrosis atau bula besar.'},
+  dauno:{t:'Vesicant',c:'❄️ DINGIN',a:'Dexrazoxane atau DMSO 99% per protokol. Verifikasi farmasi.',o:'Monitor 2 minggu, konsul bedah bila nekrosis.'},
+  epiru:{t:'Vesicant',c:'❄️ DINGIN',a:'Dexrazoxane atau DMSO 99% per protokol. Verifikasi farmasi.',o:'Monitor 2 minggu, foto dokumentasi.'},
+  idar:{t:'Vesicant',c:'❄️ DINGIN',a:'Dexrazoxane atau DMSO 99% per protokol. Verifikasi farmasi.',o:'Monitor 2 minggu.'},
+  vinc:{t:'Vesicant (Non-DNA binding)',c:'🔥 HANGAT (warm compress) 15–20 menit, 4× sehari, 24–48 jam. JANGAN gunakan kompres dingin.',a:'Hialuronidase 150–1500 IU SC di area ekstravasasi dalam 1 jam pertama. Berikan melalui 5–6 injeksi kecil mengelilingi area. Verifikasi dosis dan ketersediaan dengan farmasi.',o:'Monitor 72 jam. Jarang menyebabkan nekrosis signifikan bila ditangani cepat.'},
+  vinb:{t:'Vesicant (Non-DNA binding)',c:'🔥 HANGAT. JANGAN gunakan kompres dingin.',a:'Hialuronidase seperti vincristine. Verifikasi dengan farmasi.',o:'Monitor 72 jam.'},
+  vino:{t:'Vesicant (Non-DNA binding)',c:'🔥 HANGAT. JANGAN gunakan kompres dingin.',a:'Hialuronidase. Verifikasi dosis dengan farmasi.',o:'Monitor 72 jam.'},
+  vind:{t:'Vesicant (Non-DNA binding)',c:'🔥 HANGAT. JANGAN gunakan kompres dingin.',a:'Hialuronidase. Verifikasi dengan farmasi.',o:'Monitor 72 jam.'},
+  dact:{t:'Vesicant',c:'❄️ DINGIN',a:'DMSO 99% topikal sesuai protokol. Verifikasi farmasi.',o:'Monitor 2 minggu, konsul bedah bila nekrosis.'},
+  mito:{t:'Vesicant',c:'❄️ DINGIN',a:'DMSO 99% topikal sesuai protokol. Verifikasi farmasi.',o:'Monitor 2 minggu.'},
+  taxol:{t:'Vesicant',c:'❄️ DINGIN',a:'Hialuronidase SC sebagai pilihan bila tersedia. Verifikasi dengan farmasi.',o:'Monitor 2 minggu.'},
+  melph:{t:'Vesicant/Irritant (higher-risk)',c:'❄️ DINGIN (sebagian referensi; verifikasi protokol lokal)',a:'Tidak ada antidot spesifik yang terbukti. Tindakan suportif segera.',o:'Monitor 2 minggu. Konsul bedah bila nekrosis.'},
+  bend:{t:'Irritant dengan sifat vesicant (higher-risk)',c:'❄️ DINGIN (beberapa referensi; verifikasi protokol)',a:'Tidak ada antidot spesifik. Diskusi dengan konsultan.',o:'Monitor 2 minggu.'},
+  etopo:{t:'Irritant',c:'🔥 HANGAT (warm compress)',a:'Tidak ada antidot spesifik. Tindakan suportif.',o:'Monitor 1 minggu.'},
+  carbo:{t:'Irritant',c:'❄️ DINGIN (beberapa referensi; konsentrasi tinggi lebih berisiko)',a:'Tidak ada antidot spesifik. Senior review bila volume/konsentrasi besar.',o:'Monitor 1 minggu.'},
+  gem:{t:'Irritant',c:'Bervariasi per referensi; umumnya tindakan suportif',a:'Tidak ada antidot spesifik.',o:'Monitor 1 minggu.'},
+  '5fu':{t:'Irritant',c:'❄️ DINGIN',a:'Tidak ada antidot spesifik.',o:'Monitor 1 minggu.'},
+  cyclo:{t:'Non-Vesicant / Neutral',c:'Umumnya tidak diperlukan kompres khusus. Suportif.',a:'Tidak ada antidot spesifik. Tindakan SLAP standar.',o:'Monitor 1 minggu. Jarang menyebabkan kerusakan jaringan bermakna.'},
+  mtx:{t:'Non-Vesicant / Neutral',c:'Suportif.',a:'Tidak ada antidot spesifik.',o:'Monitor 1 minggu.'},
+  arac:{t:'Non-Vesicant / Neutral',c:'Suportif.',a:'Tidak ada antidot spesifik.',o:'Monitor 1 minggu.'},
+  aspa:{t:'Non-Vesicant (risiko anafilaksis, bukan toksisitas jaringan)',c:'Suportif. Pantau tanda anafilaksis.',a:'Monitor anafilaksis — epinefrin, antihistamin, steroid siap. Bukan vesicant jaringan.',o:'Monitor 24–48 jam terutama untuk reaksi sistemik.'},
+  mesna:{t:'Non-Vesicant / Neutral',c:'Suportif.',a:'Tidak ada antidot spesifik.',o:'Monitor 1 minggu.'},
+  'cis-high':{t:'Vesicant (konsentrasi tinggi/volume besar) — Senior Review WAJIB',c:'❄️ DINGIN (mayoritas referensi)',a:'Tiosulfat Na 1/6 M injeksi SC di area ekstravasasi — data terbatas, diskusi senior dan farmasi.',o:'Senior review segera. Monitor 2 minggu. Konsul bedah bila nekrosis.'},
+  'cis-low':{t:'Irritant (konsentrasi rendah/volume kecil)',c:'❄️ DINGIN',a:'Tindakan SLAP standar. Pertimbangkan tiosulfat Na hanya bila konsentrasi signifikan — diskusi farmasi.',o:'Monitor 1 minggu.'}
+};
+
+function calcEXT(){
+  var drug=gs('ext-drug');
+  g('ext-output').innerHTML='';
+  if(!drug)return;
+  var d=EXT[drug];
+  if(!d)return;
+  var isVesicant=d.t.toLowerCase().includes('vesicant');
+  var tc=isVesicant?'rb-r':d.t.toLowerCase().includes('irritant')?'rb-y':'rb-g';
+  var out=rb(tc,'Klasifikasi Obat',d.t,'');
+  out+=checkCard([
+    `<b>Kompres:</b> ${d.c}`,
+    `<b>Antidot/Tindakan Khusus:</b> ${d.a}`,
+    `<b>Dokumentasi:</b> Foto area ekstravasasi, tandai batas dengan spidol permanen, catat: waktu kejadian, nama obat, konsentrasi, estimasi volume.`,
+    `<b>Observasi:</b> ${d.o}`
+  ],'Penanganan Segera','⚡');
+  if(isVesicant)out+=rfCard(['Konsul bedah plastik SEGERA bila ada tanda nekrosis atau bula','Antidot harus diberikan &lt;6 jam pertama untuk efek optimal','Jangan flush kanul — aspirasi sisa cairan sebelum mencabut']);
+  out+=verNote();
+  g('ext-output').innerHTML=out;
+}
+
+// Initialize
+document.querySelectorAll('[id$="-result"],[id$="-fam"]').forEach(el=>{el.classList.add('hidden');el.style.display='none';});
+</script>
+</body>
+</html>

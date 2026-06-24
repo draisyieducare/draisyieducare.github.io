@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Triage Trombositopenia Anak v2 – drAisyi EduCare</title>
+<style>
+:root {
+  --primary:#6a1b9a; --plight:#9c4dcc; --pdark:#4a148c;
+  --accent:#e91e8c; --bg:#f8f4fc; --card:#fff; --text:#2d2d2d;
+  --muted:#666; --border:#e0d6f0;
+  --green:#2e7d32; --gbg:#e8f5e9; --gborder:#a5d6a7;
+  --yellow:#f57f17; --ybg:#fff8e1; --yborder:#ffe082;
+  --orange:#e65100; --obg:#fff3e0; --oborder:#ffcc80;
+  --red:#b71c1c; --rbg:#ffebee; --rborder:#ef9a9a;
+  --blue:#1565c0; --bbg:#e3f2fd; --bborder:#90caf9;
+  --purple:#4527a0; --pbg2:#ede7f6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+header{background:linear-gradient(135deg,var(--pdark),var(--plight));color:#fff;padding:16px 20px;text-align:center;box-shadow:0 3px 12px rgba(106,27,154,.3)}
+header .brand{font-size:10px;letter-spacing:3px;text-transform:uppercase;opacity:.8;margin-bottom:3px}
+header h1{font-size:18px;font-weight:800}
+header p{font-size:11px;opacity:.75;margin-top:3px}
+
+.tabs{display:flex;background:#fff;border-bottom:2px solid var(--border);position:sticky;top:0;z-index:10}
+.tab{flex:1;padding:10px 6px;text-align:center;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;transition:.2s}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary);background:#faf5ff}
+
+.container{max-width:780px;margin:0 auto;padding:16px 14px 50px}
+.section{display:none}.section.active{display:block}
+
+.card{background:var(--card);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(106,27,154,.07);border:1px solid var(--border)}
+.card-title{font-size:12px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.card-title span{font-size:15px}
+
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.field-group{margin-bottom:12px}
+label.field-label{display:block;font-size:12px;font-weight:600;margin-bottom:5px;color:var(--text)}
+label.field-label small{font-weight:400;color:var(--muted)}
+
+input[type=number],select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg);color:var(--text);transition:.2s}
+input[type=number]:focus,select:focus{outline:none;border-color:var(--primary)}
+
+.radio-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:7px}
+.radio-opt,.check-opt{display:flex;align-items:center;gap:7px;padding:8px 11px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;transition:.2s;background:var(--bg);line-height:1.3}
+.radio-opt:hover,.check-opt:hover{border-color:var(--plight);background:#f3e5f5}
+.radio-opt.selected{border-color:var(--primary);background:#f3e5f5;font-weight:700}
+.radio-opt input,.check-opt input{accent-color:var(--primary);width:14px;height:14px;flex-shrink:0}
+
+.check-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:7px}
+.check-grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:7px}
+
+.divider{height:1px;background:var(--border);margin:4px 0 12px}
+.section-sub{font-size:11px;color:var(--muted);margin:-8px 0 10px;font-style:italic}
+
+.btn-analyze{width:100%;padding:13px;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(233,30,140,.3);transition:.2s}
+.btn-analyze:hover{opacity:.92}
+.btn-reset{width:100%;padding:9px;background:transparent;color:var(--primary);border:1.5px solid var(--primary);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;margin-top:9px;transition:.2s}
+.btn-reset:hover{background:#f3e5f5}
+.btn-print{width:100%;padding:9px;background:var(--bbg);color:var(--blue);border:1.5px solid var(--bborder);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;margin-top:7px;transition:.2s}
+.btn-print:hover{background:#c5e1fb}
+
+/* Results */
+.triage-badge{border-radius:12px;padding:15px 18px;margin-bottom:14px;display:flex;align-items:flex-start;gap:13px}
+.triage-badge .bicon{font-size:30px;flex-shrink:0}
+.triage-badge .blabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;opacity:.7}
+.triage-badge .btitle{font-size:17px;font-weight:800;margin:2px 0 4px}
+.triage-badge .bdesc{font-size:12px;line-height:1.5}
+.triage-badge .breasons{margin-top:7px;font-size:11px;font-weight:600;line-height:1.5}
+
+.t-obs{background:var(--gbg);color:var(--green);border:2px solid var(--gborder)}
+.t-eval{background:var(--ybg);color:var(--yellow);border:2px solid var(--yborder)}
+.t-rujuk{background:var(--obg);color:var(--orange);border:2px solid var(--oborder)}
+.t-emergency{background:var(--rbg);color:var(--red);border:2px solid var(--rborder)}
+
+.ddx-section{margin-bottom:14px}
+.ddx-header{font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.ddx-item{display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--bbg);border:1px solid var(--bborder);border-radius:8px;margin-bottom:6px}
+.ddx-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ddx-name{font-size:12px;font-weight:600;flex:1.5}
+.ddx-tags{flex:2;display:flex;flex-wrap:wrap;gap:4px}
+.tag{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600}
+.tag-support{background:#e3f2fd;color:#1565c0}
+.tag-mnm{background:#ffebee;color:#b71c1c}
+.tag-miss{background:#f3e5f5;color:#6a1b9a}
+
+.mnm-box{background:#fff3e0;border:1.5px solid #ffcc80;border-radius:10px;padding:12px 14px;margin-bottom:12px}
+.mnm-box h4{font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
+.mnm-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;margin-bottom:5px;line-height:1.4}
+
+.action-list{list-style:none}
+.action-list li{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid #eee;font-size:12px;line-height:1.5}
+.action-list li:last-child{border-bottom:none}
+.action-list .icon{font-size:15px;flex-shrink:0;margin-top:1px}
+
+.do-not-box{background:#ffebee;border:1.5px solid #ef9a9a;border-radius:10px;padding:12px 14px;margin-top:12px}
+.do-not-box h4{font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
+.do-not-box li{font-size:12px;margin-bottom:5px;display:flex;align-items:flex-start;gap:8px;line-height:1.4}
+
+.exam-box{background:var(--pbg2);border:1.5px solid #ce93d8;border-radius:10px;padding:12px 14px;margin-top:12px}
+.exam-box h4{font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
+.exam-box .exam-item{font-size:12px;margin-bottom:4px;display:flex;gap:8px;line-height:1.4}
+
+.info-box{background:#f3e5f5;border:1.5px solid #ce93d8;border-radius:9px;padding:12px 14px;margin-top:12px;font-size:12px;color:var(--pdark);line-height:1.6}
+.info-box strong{display:block;margin-bottom:3px}
+
+.disclaimer{background:#fff;border:1.5px solid var(--border);border-radius:9px;padding:10px 14px;margin-top:10px;font-size:11px;color:var(--muted);line-height:1.6;text-align:center}
+
+.referral-box{background:#e3f2fd;border:1.5px solid #90caf9;border-radius:10px;padding:14px;margin-top:12px;font-size:12px;color:#0d47a1;line-height:1.7;white-space:pre-line;font-family:monospace}
+.referral-box h4{font-family:'Segoe UI',sans-serif;font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
+
+.alert-box{background:var(--rbg);border:2px solid var(--rborder);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:var(--red);font-weight:600;display:none}
+
+footer{text-align:center;font-size:10px;color:var(--muted);padding:10px;border-top:1px solid var(--border)}
+.tag-brand{color:var(--primary);font-weight:700}
+
+@media(max-width:500px){
+  .field-row{grid-template-columns:1fr}
+  .radio-grid{grid-template-columns:1fr 1fr}
+  .check-grid,.check-grid2{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">drAisyi EduCare · Clinical Decision Support</div>
+  <h1>🩸 Pediatric Thrombocytopenia Triage & Bleeding Risk Navigator</h1>
+  <p>v2.0 · Alat bantu klinis — Bukan pengganti penilaian dokter</p>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab(0)">📋 Data Dasar</div>
+  <div class="tab" onclick="switchTab(1)">🔬 CBC & Apusan</div>
+  <div class="tab" onclick="switchTab(2)">🩺 Klinis & Riwayat</div>
+  <div class="tab" onclick="switchTab(3)">📊 Hasil</div>
+</div>
+
+<div class="container">
+
+<!-- TAB 0: DATA DASAR -->
+<div class="section active" id="tab0">
+  <div class="card">
+    <div class="card-title"><span>👤</span> Identitas & Trombosit</div>
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">Usia Pasien <small>(tahun)</small> *</label>
+        <input type="number" id="age" min="0" max="18" step="0.1" placeholder="mis. 5.0">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Jumlah Trombosit <small>(×10³/µL)</small> *</label>
+        <input type="number" id="plt" min="0" max="500" placeholder="mis. 45">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Kondisi Umum Anak *</label>
+      <div class="radio-grid" id="kondisi-group">
+        <label class="radio-opt" onclick="sel('kondisi','baik')"><input type="radio" name="kondisi" value="baik"> 😊 Tampak baik</label>
+        <label class="radio-opt" onclick="sel('kondisi','kurang')"><input type="radio" name="kondisi" value="kurang"> 😐 Kurang aktif</label>
+        <label class="radio-opt" onclick="sel('kondisi','sakit')"><input type="radio" name="kondisi" value="sakit"> 😰 Tampak sakit</label>
+        <label class="radio-opt" onclick="sel('kondisi','toksik')"><input type="radio" name="kondisi" value="toksik"> 🚨 Toksik/letargi</label>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Demam</label>
+      <div class="radio-grid" id="demam-group">
+        <label class="radio-opt" onclick="sel('demam','tidak')"><input type="radio" name="demam" value="tidak"> Tidak ada</label>
+        <label class="radio-opt" onclick="sel('demam','ringan')"><input type="radio" name="demam" value="ringan"> ≤38.5°C</label>
+        <label class="radio-opt" onclick="sel('demam','tinggi')"><input type="radio" name="demam" value="tinggi"> >38.5°C</label>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Durasi Demam <small>(hari)</small></label>
+      <input type="number" id="hari_demam" min="0" max="30" placeholder="0 = tidak demam">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🩸</span> Derajat Perdarahan</div>
+    <div class="field-group">
+      <label class="field-label">Petekie</label>
+      <div class="radio-grid" id="petekie-group">
+        <label class="radio-opt" onclick="sel('petekie','tidak')"><input type="radio" name="petekie" value="tidak"> Tidak ada</label>
+        <label class="radio-opt" onclick="sel('petekie','ada')"><input type="radio" name="petekie" value="ada"> Ada, terlokalisir</label>
+        <label class="radio-opt" onclick="sel('petekie','luas')"><input type="radio" name="petekie" value="luas"> Luas/konfluen</label>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Perdarahan Mukosa</label>
+      <div class="radio-grid" id="mukosa-group">
+        <label class="radio-opt" onclick="sel('mukosa','tidak')"><input type="radio" name="mukosa" value="tidak"> Tidak ada</label>
+        <label class="radio-opt" onclick="sel('mukosa','ringan')"><input type="radio" name="mukosa" value="ringan"> Ringan (epistaksis/gusi)</label>
+        <label class="radio-opt" onclick="sel('mukosa','wet')"><input type="radio" name="mukosa" value="wet"> Wet purpura oral</label>
+        <label class="radio-opt" onclick="sel('mukosa','berat')"><input type="radio" name="mukosa" value="berat"> Aktif berat/masif</label>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Perdarahan Mayor Lain</label>
+      <div class="check-grid">
+        <label class="check-opt"><input type="checkbox" id="gi_bleed"> Hematemesis/melena</label>
+        <label class="check-opt"><input type="checkbox" id="hematuria"> Hematuria berat</label>
+        <label class="check-opt"><input type="checkbox" id="cns_bleed"> Sakit kepala berat/kejang</label>
+        <label class="check-opt"><input type="checkbox" id="sesak"> Sesak napas</label>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-analyze" onclick="goTab(1)">Lanjut → CBC & Apusan 🔬</button>
+</div>
+
+<!-- TAB 1: CBC & APUSAN -->
+<div class="section" id="tab1">
+  <div class="card">
+    <div class="card-title"><span>🔬</span> CBC Lengkap</div>
+    <p class="section-sub">Isi bila sudah tersedia. Sangat dianjurkan untuk diagnosis tepat.</p>
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">Hemoglobin <small>(g/dL)</small></label>
+        <input type="number" id="hb" min="0" max="20" step="0.1" placeholder="mis. 11.5">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Leukosit <small>(×10³/µL)</small></label>
+        <input type="number" id="wbc" min="0" max="500" step="0.1" placeholder="mis. 8.5">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">ANC <small>(×10³/µL, opsional)</small></label>
+        <input type="number" id="anc" min="0" max="50" step="0.1" placeholder="mis. 2.5">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Hematokrit <small>(%, opsional)</small></label>
+        <input type="number" id="hct" min="0" max="70" step="0.1" placeholder="mis. 38">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🧫</span> Apusan Darah Tepi</div>
+    <p class="section-sub">Tandai semua yang ditemukan pada pemeriksaan atau hasil laboratorium.</p>
+    <div class="field-group">
+      <label class="field-label">Temuan Apusan</label>
+      <div class="check-grid">
+        <label class="check-opt"><input type="checkbox" id="blast"> Blast / sel muda</label>
+        <label class="check-opt"><input type="checkbox" id="schistocyte"> Schistocyte</label>
+        <label class="check-opt"><input type="checkbox" id="plt_clumping"> Platelet clumping</label>
+        <label class="check-opt"><input type="checkbox" id="giant_plt"> Giant platelet</label>
+        <label class="check-opt"><input type="checkbox" id="atypical_lymph"> Atypical lymphocyte</label>
+        <label class="check-opt"><input type="checkbox" id="nrbc"> NRBC / eritroblas</label>
+        <label class="check-opt"><input type="checkbox" id="adt_normal"> Normal / tidak ada kelainan</label>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Ukuran Platelet di Smear</label>
+      <div class="radio-grid" id="plt_size-group">
+        <label class="radio-opt" onclick="sel('plt_size','normal')"><input type="radio" name="plt_size" value="normal"> Normal</label>
+        <label class="radio-opt" onclick="sel('plt_size','besar')"><input type="radio" name="plt_size" value="besar"> Besar (giant)</label>
+        <label class="radio-opt" onclick="sel('plt_size','kecil')"><input type="radio" name="plt_size" value="kecil"> Kecil</label>
+        <label class="radio-opt" onclick="sel('plt_size','belum')"><input type="radio" name="plt_size" value="belum"> Belum diperiksa</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>⚗️</span> Lab Pendukung <small style="font-weight:400;font-size:11px">(opsional)</small></div>
+    <div class="check-grid2">
+      <label class="check-opt"><input type="checkbox" id="ldh_tinggi"> LDH meningkat</label>
+      <label class="check-opt"><input type="checkbox" id="ua_tinggi"> Asam urat meningkat</label>
+      <label class="check-opt"><input type="checkbox" id="pt_abnormal"> PT/APTT memanjang</label>
+      <label class="check-opt"><input type="checkbox" id="fibrinogen_rendah"> Fibrinogen rendah</label>
+      <label class="check-opt"><input type="checkbox" id="ddimer_tinggi"> D-dimer meningkat</label>
+      <label class="check-opt"><input type="checkbox" id="kreatinin_tinggi"> Kreatinin meningkat</label>
+      <label class="check-opt"><input type="checkbox" id="ferritin_tinggi"> Ferritin sangat tinggi</label>
+      <label class="check-opt"><input type="checkbox" id="hct_naik"> Hematokrit naik ≥20%</label>
+    </div>
+  </div>
+
+  <button class="btn-analyze" onclick="goTab(2)">Lanjut → Klinis & Riwayat 🩺</button>
+</div>
+
+<!-- TAB 2: KLINIS & RIWAYAT -->
+<div class="section" id="tab2">
+  <div class="card">
+    <div class="card-title"><span>🫁</span> Tanda Vital & Fisik</div>
+    <div class="field-group">
+      <label class="field-label">Hepatosplenomegali</label>
+      <div class="radio-grid" id="hsm-group">
+        <label class="radio-opt" onclick="sel('hsm','tidak')"><input type="radio" name="hsm" value="tidak"> Tidak ada</label>
+        <label class="radio-opt" onclick="sel('hsm','ada')"><input type="radio" name="hsm" value="ada"> Ada</label>
+        <label class="radio-opt" onclick="sel('hsm','masif')"><input type="radio" name="hsm" value="masif"> Masif</label>
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Limfadenopati</label>
+      <div class="radio-grid" id="lnn-group">
+        <label class="radio-opt" onclick="sel('lnn','tidak')"><input type="radio" name="lnn" value="tidak"> Tidak ada</label>
+        <label class="radio-opt" onclick="sel('lnn','ada')"><input type="radio" name="lnn" value="ada"> Ada</label>
+        <label class="radio-opt" onclick="sel('lnn','multipel')"><input type="radio" name="lnn" value="multipel"> Multipel / besar</label>
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Tanda Syok / Perfusi Buruk</label>
+      <div class="radio-grid" id="syok-group">
+        <label class="radio-opt" onclick="sel('syok','tidak')"><input type="radio" name="syok" value="tidak"> Tidak ada</label>
+        <label class="radio-opt" onclick="sel('syok','ada')"><input type="radio" name="syok" value="ada"> Ada tanda syok</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🦟</span> Dengue Warning Signs</div>
+    <p class="section-sub">Centang semua yang ada — penting untuk klasifikasi dengue berat.</p>
+    <div class="check-grid2">
+      <label class="check-opt"><input type="checkbox" id="d_nyeri_perut"> Nyeri perut/tenderness</label>
+      <label class="check-opt"><input type="checkbox" id="d_muntah"> Muntah persisten</label>
+      <label class="check-opt"><input type="checkbox" id="d_efusi"> Akumulasi cairan/asites</label>
+      <label class="check-opt"><input type="checkbox" id="d_letargi"> Letargi/restlessness</label>
+      <label class="check-opt"><input type="checkbox" id="d_hepato"> Hepatomegali</label>
+      <label class="check-opt"><input type="checkbox" id="d_urine"> Urine output turun</label>
+      <label class="check-opt"><input type="checkbox" id="d_naadi"> Tekanan nadi sempit</label>
+      <label class="check-opt"><input type="checkbox" id="d_ns1"> NS1/IgM positif</label>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🧬</span> Red Flags Keganasan / Aplasia</div>
+    <div class="check-grid2">
+      <label class="check-opt"><input type="checkbox" id="pucat"> Pucat signifikan</label>
+      <label class="check-opt"><input type="checkbox" id="bb_turun"> BB turun/nafsu makan turun</label>
+      <label class="check-opt"><input type="checkbox" id="nyeri_tulang"> Nyeri tulang / tidak bisa jalan</label>
+      <label class="check-opt"><input type="checkbox" id="keringat_malam"> Keringat malam</label>
+      <label class="check-opt"><input type="checkbox" id="demam_lama"> Demam lama (>2 minggu)</label>
+      <label class="check-opt"><input type="checkbox" id="kelelahan"> Kelelahan ekstrem</label>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>⚠️</span> TMA / HUS / DIC</div>
+    <div class="check-grid2">
+      <label class="check-opt"><input type="checkbox" id="diare_darah"> Diare berdarah</label>
+      <label class="check-opt"><input type="checkbox" id="oliguria"> Oliguria / edema</label>
+      <label class="check-opt"><input type="checkbox" id="hipertensi"> Hipertensi</label>
+      <label class="check-opt"><input type="checkbox" id="anemia_hemolitik"> Anemia hemolitik</label>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>📋</span> Riwayat</div>
+    <div class="field-group">
+      <label class="field-label">Riwayat Infeksi / Vaksinasi</label>
+      <div class="check-grid2">
+        <label class="check-opt"><input type="checkbox" id="inf_viral"> Infeksi viral 1–2 minggu lalu</label>
+        <label class="check-opt"><input type="checkbox" id="inf_dengue"> Curiga/konfirmasi dengue</label>
+        <label class="check-opt"><input type="checkbox" id="vaksin_baru"> Vaksinasi dalam 6 minggu</label>
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Riwayat Obat (5–10 hari terakhir)</label>
+      <div class="check-grid2">
+        <label class="check-opt"><input type="checkbox" id="obat_baru"> Obat baru (antibiotik, antikonvulsan, NSAID, dll)</label>
+        <label class="check-opt"><input type="checkbox" id="heparin"> Heparin</label>
+        <label class="check-opt"><input type="checkbox" id="herbal"> Herbal/suplemen</label>
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Riwayat Lain</label>
+      <div class="check-grid2">
+        <label class="check-opt"><input type="checkbox" id="riwayat_keluarga"> Riwayat keluarga trombositopenia</label>
+        <label class="check-opt"><input type="checkbox" id="sejak_bayi"> Trombosit rendah sejak bayi</label>
+        <label class="check-opt"><input type="checkbox" id="autoimun"> Riwayat autoimun/SLE</label>
+        <label class="check-opt"><input type="checkbox" id="trombosit_persisten"> Trombositopenia >2–4 minggu</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert-box" id="alert-required">⚠️ Mohon lengkapi field wajib: Usia, Jumlah Trombosit, dan Kondisi Umum Anak.</div>
+  <button class="btn-analyze" onclick="analyze()">🔍 Analisis Triage Sekarang</button>
+</div>
+
+<!-- TAB 3: HASIL -->
+<div class="section" id="tab3">
+  <div id="result-content"></div>
+  <button class="btn-print" onclick="printReferral()">🖨️ Cetak / Salin Catatan Rujukan</button>
+  <button class="btn-reset" onclick="resetForm()">↩ Ulangi Penilaian</button>
+</div>
+
+</div><!-- end container -->
+
+<footer>
+  <p><span class="tag-brand">drAisyi EduCare</span> · Hanya untuk tenaga kesehatan terlatih · Selalu integrasikan dengan penilaian klinis lengkap</p>
+</footer>
+
+<script>
+// ---- UTILS ----
+function sel(name, value) {
+  document.querySelectorAll(`[id^="${name}-group"] .radio-opt`).forEach(el => el.classList.remove('selected'));
+  const r = document.querySelector(`input[name="${name}"][value="${value}"]`);
+  if (r) { r.checked = true; r.closest('.radio-opt').classList.add('selected'); }
+}
+function getR(name) { const r = document.querySelector(`input[name="${name}"]:checked`); return r ? r.value : null; }
+function getC(id) { return document.getElementById(id) ? document.getElementById(id).checked : false; }
+function numOrNull(id) { const v = document.getElementById(id).value; return v === '' ? null : Number(v); }
+
+function goTab(i) { switchTab(i); }
+function switchTab(i) {
+  document.querySelectorAll('.section').forEach((s,idx) => s.classList.toggle('active', idx===i));
+  document.querySelectorAll('.tab').forEach((t,idx) => t.classList.toggle('active', idx===i));
+  window.scrollTo(0,0);
+}
+
+// ---- ANALYZE ----
+function analyze() {
+  const plt = numOrNull('plt');
+  const age = numOrNull('age');
+  if (plt === null || isNaN(plt)) { showAlert('Masukkan jumlah trombosit.'); return; }
+  if (age === null || isNaN(age)) { showAlert('Masukkan usia pasien.'); return; }
+  if (!getR('kondisi')) { showAlert('Pilih kondisi umum anak.'); return; }
+  document.getElementById('alert-required').style.display = 'none';
+
+  // Collect inputs
+  const kondisi = getR('kondisi') || 'baik';
+  const demam = getR('demam') || 'tidak';
+  const petekie = getR('petekie') || 'tidak';
+  const mukosa = getR('mukosa') || 'tidak';
+  const hsm = getR('hsm') || 'tidak';
+  const lnn = getR('lnn') || 'tidak';
+  const syok = getR('syok') || 'tidak';
+  const plt_size = getR('plt_size') || 'belum';
+
+  const hb = numOrNull('hb');
+  const wbc = numOrNull('wbc');
+  const anc = numOrNull('anc');
+  const hct = numOrNull('hct');
+  const hari_demam = numOrNull('hari_demam') || 0;
+
+  // CBC status
+  const has_anemia = hb !== null && hb < (age < 2 ? 10 : age < 6 ? 11 : 11.5);
+  const has_leukopenia = wbc !== null && wbc < 4;
+  const has_leukositosis = wbc !== null && wbc > 20;
+  const has_neutropenia = anc !== null && anc < 1.5;
+  const bicytopenia = (has_anemia && plt < 100) || (has_leukopenia && plt < 100);
+  const pancytopenia = has_anemia && plt < 100 && (has_leukopenia || has_neutropenia);
+
+  // CBC flags
+  const blast = getC('blast');
+  const schistocyte = getC('schistocyte');
+  const plt_clumping = getC('plt_clumping');
+  const giant_plt = getC('giant_plt');
+  const atypical_lymph = getC('atypical_lymph');
+  const nrbc = getC('nrbc');
+  const adt_normal = getC('adt_normal');
+
+  const ldh_tinggi = getC('ldh_tinggi');
+  const ua_tinggi = getC('ua_tinggi');
+  const pt_abnormal = getC('pt_abnormal');
+  const fibrinogen_rendah = getC('fibrinogen_rendah');
+  const ddimer_tinggi = getC('ddimer_tinggi');
+  const kreatinin_tinggi = getC('kreatinin_tinggi');
+  const ferritin_tinggi = getC('ferritin_tinggi');
+  const hct_naik = getC('hct_naik');
+
+  const gi_bleed = getC('gi_bleed');
+  const hematuria = getC('hematuria');
+  const cns_bleed = getC('cns_bleed');
+  const sesak = getC('sesak');
+
+  const pucat = getC('pucat');
+  const bb_turun = getC('bb_turun');
+  const nyeri_tulang = getC('nyeri_tulang');
+  const keringat_malam = getC('keringat_malam');
+  const demam_lama = getC('demam_lama');
+  const kelelahan = getC('kelelahan');
+
+  const diare_darah = getC('diare_darah');
+  const oliguria = getC('oliguria');
+  const hipertensi = getC('hipertensi');
+  const anemia_hemolitik = getC('anemia_hemolitik');
+
+  const inf_viral = getC('inf_viral');
+  const inf_dengue = getC('inf_dengue');
+  const vaksin_baru = getC('vaksin_baru');
+  const obat_baru = getC('obat_baru');
+  const heparin = getC('heparin');
+  const herbal = getC('herbal');
+  const riwayat_keluarga = getC('riwayat_keluarga');
+  const sejak_bayi = getC('sejak_bayi');
+  const autoimun = getC('autoimun');
+  const trombosit_persisten = getC('trombosit_persisten');
+
+  const d_nyeri_perut = getC('d_nyeri_perut');
+  const d_muntah = getC('d_muntah');
+  const d_efusi = getC('d_efusi');
+  const d_letargi = getC('d_letargi');
+  const d_hepato = getC('d_hepato');
+  const d_urine = getC('d_urine');
+  const d_naadi = getC('d_naadi');
+  const d_ns1 = getC('d_ns1');
+  const dengue_warning_count = [d_nyeri_perut,d_muntah,d_efusi,d_letargi,d_hepato,d_urine,d_naadi].filter(Boolean).length;
+
+  // isolated thrombocytopenia check
+  const isolated_thrombocytopenia =
+    adt_normal &&
+    !blast && !schistocyte && !nrbc &&
+    !has_anemia && !has_leukopenia && !has_leukositosis &&
+    !ldh_tinggi && !ua_tinggi;
+
+  // ---- HARD TRIGGER EMERGENCY ----
+  let level = 'observasi';
+  let hard_emergency = [];
+  let hard_rujuk = [];
+
+  if (syok === 'ada') hard_emergency.push('Tanda syok / perfusi buruk');
+  if (cns_bleed) hard_emergency.push('Gejala neurologis (sakit kepala berat/kejang) → curiga perdarahan intrakranial');
+  if (mukosa === 'berat' || gi_bleed) hard_emergency.push('Perdarahan mukosa/GI aktif berat');
+  if (plt < 10 && (kondisi === 'sakit' || kondisi === 'toksik')) hard_emergency.push('PLT <10 dengan kondisi buruk');
+  if (plt < 10 && mukosa !== 'tidak') hard_emergency.push('PLT <10 dengan perdarahan mukosa');
+  if (kondisi === 'toksik') hard_emergency.push('Anak tampak toksik/letargi berat');
+  if (sesak) hard_emergency.push('Sesak napas');
+  if (blast) hard_emergency.push('Blast pada apusan darah tepi');
+  if ((diare_darah || schistocyte) && (oliguria || kreatinin_tinggi)) hard_emergency.push('Curiga HUS/TMA');
+  if (dengue_warning_count >= 2 && plt < 50) hard_emergency.push(`Dengue: ${dengue_warning_count} warning signs dengan PLT <50`);
+  if (pancytopenia) hard_emergency.push('Pancytopenia → evaluasi segera');
+  if (demam === 'tinggi' && (kondisi === 'sakit' || kondisi === 'toksik') && plt < 50) hard_emergency.push('Demam tinggi + tampak sakit + PLT <50 → curiga sepsis');
+
+  // RUJUK triggers (if not emergency)
+  if (plt < 20) hard_rujuk.push('PLT <20 ×10³/µL');
+  if (plt < 50 && demam !== 'tidak') hard_rujuk.push('PLT <50 dengan demam');
+  if (bicytopenia && !pancytopenia) hard_rujuk.push('Bisitopenia (PLT + Hb/leukosit rendah)');
+  if (pucat || bb_turun || nyeri_tulang || keringat_malam || demam_lama) hard_rujuk.push('Red flags keganasan');
+  if (hsm === 'ada' || hsm === 'masif') hard_rujuk.push('Hepatosplenomegali');
+  if (lnn === 'ada' || lnn === 'multipel') hard_rujuk.push('Limfadenopati');
+  if (ldh_tinggi || ua_tinggi) hard_rujuk.push('LDH/asam urat meningkat → curiga keganasan/TLS');
+  if (inf_dengue && plt < 100) hard_rujuk.push('Dengue dengan trombositopenia bermakna');
+  if (trombosit_persisten) hard_rujuk.push('Trombositopenia persisten >2–4 minggu');
+  if (sejak_bayi || riwayat_keluarga) hard_rujuk.push('Curiga trombositopenia kongenital/herediter');
+  if (autoimun) hard_rujuk.push('Riwayat autoimun/SLE');
+  if (ferritin_tinggi && hsm !== 'tidak') hard_rujuk.push('Curiga HLH/MAS (ferritin tinggi + HSM)');
+  if (mukosa === 'wet') hard_rujuk.push('Wet purpura oral');
+
+  // Determine level
+  if (hard_emergency.length > 0) level = 'emergency';
+  else if (hard_rujuk.length > 0) level = 'rujuk';
+  else if (kondisi === 'baik' && isolated_thrombocytopenia && plt >= 20 && !pucat && !bb_turun && !nyeri_tulang) level = 'observasi';
+  else if (plt >= 30 && kondisi !== 'sakit' && kondisi !== 'toksik' && hard_rujuk.length === 0) level = 'eval48';
+  else level = 'rujuk';
+
+  // ---- DIAGNOSIS BANDING PATTERN ----
+  let ddx = [];
+
+  // ITP
+  let itp_support = [];
+  let itp_against = [];
+  if (inf_viral || vaksin_baru) itp_support.push('Riwayat infeksi viral/vaksinasi');
+  if (hsm === 'tidak') itp_support.push('Tidak ada HSM');
+  if (lnn === 'tidak') itp_support.push('Tidak ada LNN');
+  if (!pucat && !bb_turun && !nyeri_tulang) itp_support.push('Tidak ada red flags sistemik');
+  if (demam === 'tidak') itp_support.push('Tanpa demam');
+  if (age >= 1 && age <= 10) itp_support.push('Usia khas ITP anak');
+  if (isolated_thrombocytopenia) itp_support.push('Trombositopenia terisolasi');
+  if (blast || bicytopenia || pancytopenia) itp_against.push('Blast/bisitopenia/pancytopenia');
+  if (!adt_normal && !isolated_thrombocytopenia) itp_against.push('ADT tidak normal');
+  if (itp_support.length >= 3 && itp_against.length === 0) ddx.push({ key:'itp', support:itp_support, against:itp_against, priority: itp_support.length * 10 - itp_against.length * 20 });
+
+  // Dengue
+  let dng_support = [];
+  if (inf_dengue || d_ns1) dng_support.push('Curiga/konfirmasi dengue (NS1/IgM)');
+  if (demam !== 'tidak') dng_support.push('Demam akut');
+  if (dengue_warning_count > 0) dng_support.push(`${dengue_warning_count} dengue warning signs`);
+  if (hct_naik) dng_support.push('Hematokrit naik ≥20% (kebocoran plasma)');
+  if (atypical_lymph) dng_support.push('Atypical lymphocyte di ADT');
+  if (dng_support.length >= 2) ddx.push({ key:'dengue', support:dng_support, against:[], priority: dng_support.length * 12 });
+
+  // Leukemia / Keganasan
+  let leu_support = [];
+  if (blast) leu_support.push('Blast pada ADT');
+  if (pucat) leu_support.push('Pucat');
+  if (bb_turun) leu_support.push('BB turun');
+  if (nyeri_tulang) leu_support.push('Nyeri tulang');
+  if (lnn !== 'tidak') leu_support.push('Limfadenopati');
+  if (hsm !== 'tidak') leu_support.push('HSM');
+  if (ldh_tinggi || ua_tinggi) leu_support.push('LDH/asam urat tinggi');
+  if (bicytopenia || pancytopenia) leu_support.push('Bisitopenia/pancytopenia');
+  if (demam_lama) leu_support.push('Demam lama');
+  if (leu_support.length >= 2) ddx.push({ key:'leukemia', support:leu_support, against:[], priority: leu_support.length * 15 });
+
+  // Drug-induced
+  let drug_support = [];
+  if (obat_baru) drug_support.push('Obat baru 5–10 hari terakhir');
+  if (heparin) drug_support.push('Paparan heparin (HIT)');
+  if (herbal) drug_support.push('Herbal/suplemen');
+  if (demam === 'tidak') drug_support.push('Tanpa demam sistemik');
+  if (drug_support.length >= 1) ddx.push({ key:'drug', support:drug_support, against:[], priority: drug_support.length * 18 });
+
+  // Sepsis/DIC
+  let sep_support = [];
+  if (syok === 'ada') sep_support.push('Tanda syok');
+  if (demam === 'tinggi' && kondisi === 'toksik') sep_support.push('Demam tinggi + tampak toksik');
+  if (pt_abnormal && fibrinogen_rendah && ddimer_tinggi) sep_support.push('Koagulopati (PT/APTT/D-dimer/fibrinogen)');
+  if (kondisi === 'toksik') sep_support.push('Tampak toksik');
+  if (sep_support.length >= 1) ddx.push({ key:'sepsis', support:sep_support, against:[], priority: sep_support.length * 20 });
+
+  // TMA/HUS
+  let tma_support = [];
+  if (schistocyte) tma_support.push('Schistocyte di ADT');
+  if (anemia_hemolitik) tma_support.push('Anemia hemolitik');
+  if (kreatinin_tinggi) tma_support.push('Kreatinin meningkat');
+  if (hipertensi) tma_support.push('Hipertensi');
+  if (oliguria) tma_support.push('Oliguria');
+  if (diare_darah) tma_support.push('Diare berdarah (HUS tipikal)');
+  if (tma_support.length >= 2) ddx.push({ key:'tma', support:tma_support, against:[], priority: tma_support.length * 18 });
+
+  // HLH/MAS
+  let hlh_support = [];
+  if (ferritin_tinggi) hlh_support.push('Ferritin sangat tinggi');
+  if (hsm !== 'tidak') hlh_support.push('HSM');
+  if (demam === 'tinggi' && kondisi === 'toksik') hlh_support.push('Demam tinggi + tampak toksik');
+  if (pancytopenia) hlh_support.push('Pancytopenia');
+  if (hlh_support.length >= 2) ddx.push({ key:'hlh', support:hlh_support, against:[], priority: hlh_support.length * 17 });
+
+  // Aplastic / marrow failure
+  let apl_support = [];
+  if (pancytopenia) apl_support.push('Pancytopenia');
+  if (!blast && has_anemia && has_leukopenia) apl_support.push('Bisitopenia/pancytopenia tanpa blast');
+  if (pucat && !lnn) apl_support.push('Pucat tanpa limfadenopati');
+  if (apl_support.length >= 1 && !blast) ddx.push({ key:'aplastik', support:apl_support, against:[], priority: apl_support.length * 12 });
+
+  // Congenital/hereditary
+  let con_support = [];
+  if (sejak_bayi) con_support.push('Trombositopenia sejak bayi');
+  if (riwayat_keluarga) con_support.push('Riwayat keluarga trombositopenia');
+  if (giant_plt || plt_size === 'besar') con_support.push('Giant platelet');
+  if (plt_size === 'kecil') con_support.push('Platelet kecil (Wiskott-Aldrich?)');
+  if (con_support.length >= 1) ddx.push({ key:'kongenital', support:con_support, against:[], priority: con_support.length * 16 });
+
+  // Sort by priority
+  ddx.sort((a,b) => b.priority - a.priority);
+
+  // ---- GENERATE REFERRAL NOTE ----
+  const now = new Date();
+  const tgl = now.toLocaleDateString('id-ID', {day:'2-digit',month:'long',year:'numeric'});
+  const hb_str = hb !== null ? `${hb} g/dL` : 'belum diperiksa';
+  const wbc_str = wbc !== null ? `${wbc} ×10³/µL` : 'belum diperiksa';
+  const plt_str = `${plt} ×10³/µL`;
+
+  window._referralNote = `===== CATATAN TRIAGE TROMBOSITOPENIA ANAK =====
+drAisyi EduCare · ${tgl}
+
+TRIAGE : ${level === 'emergency' ? '🔴 EMERGENSI' : level === 'rujuk' ? '🟠 RUJUK SEGERA' : level === 'eval48' ? '🟡 EVALUASI 24–48 JAM' : '🟢 OBSERVASI RAWAT JALAN'}
+Usia   : ${age} tahun
+PLT    : ${plt_str}
+Hb     : ${hb_str}
+Leukosit: ${wbc_str}
+Kondisi: ${kondisi}
+
+ALASAN TRIAGE:
+${(hard_emergency.length ? hard_emergency : hard_rujuk).map(r => `• ${r}`).join('\n') || '• Stabil, tidak ada red flags'}
+
+DIAGNOSIS BANDING:
+${ddx.slice(0,3).map(d => `• ${getDdxName(d.key)}`).join('\n') || '• Perlu evaluasi lebih lanjut'}
+
+CATATAN ITP: ${isolated_thrombocytopenia ? 'Pola mendukung ITP — trombositopenia terisolasi, ADT normal' : 'Belum dapat disimpulkan ITP — perlu CBC + ADT lengkap untuk konfirmasi'}
+
+=== ALAT BANTU KLINIS — BUKAN DIAGNOSIS DEFINITIF ===`;
+
+  // ---- BUILD RESULT HTML ----
+  const triageMap = {
+    observasi: { cls:'t-obs', icon:'🟢', label:'Triage', title:'Observasi Rawat Jalan', desc:'Kondisi relatif stabil, tidak ada red flags. Pasien dapat diobservasi dengan edukasi tanda bahaya. Kontrol dalam 24–72 jam.' },
+    eval48: { cls:'t-eval', icon:'🟡', label:'Triage', title:'Evaluasi Ketat 24–48 Jam', desc:'Kondisi belum sepenuhnya jelas. Diperlukan evaluasi ulang CBC, klinis, dan apusan darah tepi dalam 24–48 jam.' },
+    rujuk: { cls:'t-rujuk', icon:'🟠', label:'Triage', title:'Rujuk Segera ke Spesialis', desc:'Terdapat tanda peringatan. Diperlukan evaluasi spesialis anak/hematologi anak pada hari yang sama.' },
+    emergency: { cls:'t-emergency', icon:'🔴', label:'⚠️ TRIAGE DARURAT', title:'EMERGENSI — Tata Laksana Segera', desc:'Kondisi mengancam jiwa. Butuh stabilisasi dan tata laksana segera di fasilitas dengan kemampuan intensif.' }
+  };
+
+  const t = triageMap[level];
+  const reasons = level === 'emergency' ? hard_emergency : level === 'rujuk' ? hard_rujuk : [];
+
+  let html = `<div class="triage-badge ${t.cls}">
+    <div class="bicon">${t.icon}</div>
+    <div>
+      <div class="blabel">${t.label}</div>
+      <div class="btitle">${t.title}</div>
+      <div class="bdesc">${t.desc}</div>
+      ${reasons.length ? `<div class="breasons">Alasan: ${reasons.join(' · ')}</div>` : ''}
+    </div>
+  </div>`;
+
+  // ITP disclaimer if relevant
+  if (ddx.find(d => d.key === 'itp')) {
+    html += `<div class="info-box"><strong>ℹ️ Catatan ITP</strong>${isolated_thrombocytopenia ? 'Pola klinis <b>mendukung kemungkinan ITP</b>. Namun diagnosis ITP baru dapat ditegakkan bila trombositopenia benar-benar <i>terisolasi</i> (Hb normal, leukosit normal, ADT tidak menunjukkan blast/schistocyte/kelainan lain). Pertimbangkan observasi tanpa steroid pada ITP baru dengan perdarahan minor saja (ASH 2019).' : '<b>Diagnosis ITP belum dapat disimpulkan.</b> Perlu CBC lengkap + apusan darah tepi untuk memastikan trombositopenia terisolasi dan menyingkirkan keganasan, aplasia, atau TMA.'}</div>`;
+  }
+
+  // DDx
+  const ddxColors = { itp:'#7b1fa2', dengue:'#0277bd', leukemia:'#c62828', drug:'#558b2f', sepsis:'#d84315', tma:'#6a1b9a', hlh:'#4527a0', aplastik:'#37474f', kongenital:'#00695c' };
+  const ddxLabels = { itp:'ITP (Imun Trombositopenia)', dengue:'Trombositopenia Dengue', leukemia:'Leukemia / Keganasan', drug:'Drug-Induced Trombositopenia', sepsis:'Sepsis / DIC', tma:'TMA / HUS', hlh:'HLH / MAS', aplastik:'Aplastic Anemia / Gagal Sumsum', kongenital:'Kongenital / Herediter' };
+
+  if (ddx.length) {
+    html += `<div class="card"><div class="card-title"><span>🧬</span> Pola Diagnosis Banding yang Perlu Dipikirkan</div>`;
+    ddx.slice(0,4).forEach(d => {
+      html += `<div class="ddx-item"><div class="ddx-dot" style="background:${ddxColors[d.key]}"></div>
+        <div class="ddx-name">${ddxLabels[d.key]}</div>
+        <div class="ddx-tags">${d.support.slice(0,3).map(s => `<span class="tag tag-support">✓ ${s}</span>`).join('')}</div>
+      </div>`;
+    });
+    html += `<div style="font-size:11px;color:var(--muted);margin-top:8px">⚠️ Pola klinis — bukan estimasi probabilitas tervalidasi. Selalu integrasikan dengan penilaian klinis lengkap.</div></div>`;
+  }
+
+  // Must Not Miss
+  let mnm = [];
+  if (blast || ldh_tinggi || nyeri_tulang || lnn !== 'tidak') mnm.push({ icon:'🔴', text:'Leukemia / keganasan — jangan lewatkan bila ada blast, bisitopenia, nyeri tulang, atau LNN' });
+  if (syok === 'ada' || (demam === 'tinggi' && kondisi === 'toksik')) mnm.push({ icon:'🔴', text:'Sepsis / DIC — jangan tunda kultur darah, PT/APTT, fibrinogen, D-dimer' });
+  if (diare_darah || (schistocyte && oliguria)) mnm.push({ icon:'🔴', text:'HUS / TMA — triad: anemia hemolitik, trombositopenia, gagal ginjal akut' });
+  if (dengue_warning_count >= 2) mnm.push({ icon:'🔴', text:'Dengue berat — jangan pulangkan pasien dengue dengan warning signs' });
+  if (cns_bleed || (petekie === 'luas' && plt < 10)) mnm.push({ icon:'🔴', text:'Perdarahan intrakranial — curiga bila sakit kepala berat, kejang, atau penurunan kesadaran' });
+  if (plt_clumping) mnm.push({ icon:'⚠️', text:'Pseudotrombositopenia — periksa ulang tanpa EDTA / hitung manual bila klinis tidak sesuai' });
+
+  if (mnm.length) {
+    html += `<div class="mnm-box"><h4>🚨 Must Not Miss</h4>`;
+    mnm.forEach(m => { html += `<div class="mnm-item"><span>${m.icon}</span> ${m.text}</div>`; });
+    html += `</div>`;
+  }
+
+  // Actions
+  const actions = buildActions(level, plt, inf_dengue, dengue_warning_count, blast, bicytopenia, pancytopenia, obat_baru, isolated_thrombocytopenia, hb, wbc, pt_abnormal, schistocyte, cns_bleed, syok);
+  html += `<div class="card"><div class="card-title"><span>📋</span> Rekomendasi Tindakan</div><ul class="action-list">`;
+  actions.forEach(a => { html += `<li><span class="icon">${a.icon}</span> ${a.text}</li>`; });
+  html += `</ul>`;
+
+  // Lab recommendations
+  let labs = buildLabs(level, plt, inf_dengue, blast, schistocyte, bicytopenia, pt_abnormal, ferritin_tinggi, hb, wbc, kondisi);
+  html += `<div class="exam-box"><h4>🔬 Pemeriksaan yang Dianjurkan</h4>`;
+  labs.forEach(l => { html += `<div class="exam-item"><span>→</span> ${l}</div>`; });
+  html += `</div>`;
+
+  // Do NOT do
+  let donot = buildDoNot(level, inf_dengue, ddx, blast, bicytopenia, lnn);
+  html += `<div class="do-not-box"><h4>🚫 Jangan Lakukan</h4>`;
+  donot.forEach(d => { html += `<li><span>✕</span> ${d}</li>`; });
+  html += `</div></div>`;
+
+  // Disclaimer
+  html += `<div class="disclaimer">Alat bantu klinis <b>drAisyi EduCare</b> — Bukan pengganti penilaian dokter. Gunakan bersama data klinis, CBC, dan apusan darah tepi lengkap.</div>`;
+
+  document.getElementById('result-content').innerHTML = html;
+  switchTab(3);
+}
+
+function getDdxName(key) {
+  const m = { itp:'ITP (Imun Trombositopenia)', dengue:'Trombositopenia Dengue', leukemia:'Leukemia / Keganasan', drug:'Drug-Induced Trombositopenia', sepsis:'Sepsis / DIC', tma:'TMA / HUS', hlh:'HLH / MAS', aplastik:'Aplastic Anemia / Gagal Sumsum Tulang', kongenital:'Trombositopenia Kongenital/Herediter' };
+  return m[key] || key;
+}
+
+function buildActions(level, plt, inf_dengue, dng_warn, blast, bicyto, pancyto, obat, isolated, hb, wbc, pt_abn, schisto, cns, syok) {
+  let a = [];
+  if (level === 'emergency') {
+    a.push({ icon:'🚨', text:'AKTIVASI PROTOKOL DARURAT — panggil tim/dokter segera' });
+    a.push({ icon:'💉', text:'Pasang akses IV; resusitasi cairan bila ada tanda syok' });
+    if (cns) a.push({ icon:'🧠', text:'Konsultasi neurology + CT scan kepala STAT bila curiga perdarahan intrakranial' });
+    a.push({ icon:'🩸', text:'Siapkan trombosit: pertimbangkan transfusi bila PLT <10 dengan perdarahan aktif/mengancam jiwa, atau prosedur darurat. Pada dugaan ITP tanpa perdarahan mayor, transfusi trombosit TIDAK rutin — konsultasikan.' });
+    a.push({ icon:'🏥', text:'Pertimbangkan rawat PICU' });
+    a.push({ icon:'🩺', text:'Konsultasi hematologi anak segera' });
+  } else if (level === 'rujuk') {
+    a.push({ icon:'🏥', text:'Rujuk ke spesialis anak / hematologi anak hari ini' });
+    if (blast || pancyto) a.push({ icon:'🔬', text:'Siapkan pemeriksaan BMP (bone marrow puncture) bila ada blast atau pancytopenia' });
+    if (obat) a.push({ icon:'💊', text:'Tinjau ulang semua obat — hentikan agen yang dicurigai bersama dokter' });
+    if (inf_dengue) a.push({ icon:'🦟', text:'Pantau ketat warning signs dengue: nyeri perut, muntah, letargi, perdarahan. Transfusi trombosit profilaksis karena PLT rendah saja TIDAK dianjurkan pada dengue.' });
+    a.push({ icon:'🚫', text:'Hindari NSAID, aspirin, suntikan IM sampai trombosit aman' });
+  } else if (level === 'eval48') {
+    a.push({ icon:'📅', text:'Evaluasi ulang dalam 24–48 jam dengan CBC + apusan darah tepi' });
+    a.push({ icon:'🚫', text:'Hindari NSAID, aspirin, suntikan IM' });
+    a.push({ icon:'🏠', text:'Edukasi keluarga tanda bahaya: petekie luas baru, perdarahan aktif, penurunan kesadaran, sesak' });
+    a.push({ icon:'📞', text:'Instruksi kembali segera bila kondisi memburuk' });
+  } else {
+    a.push({ icon:'🩸', text:'Monitor DL ulang dalam 48–72 jam' });
+    a.push({ icon:'🚫', text:'Hindari NSAID, aspirin, suntikan IM, olahraga kontak' });
+    a.push({ icon:'📅', text:'Kontrol rawat jalan dalam 72 jam; lebih awal bila ada perburukan' });
+    a.push({ icon:'🏠', text:'Edukasi tanda bahaya kepada keluarga: petekie baru luas, perdarahan berat, penurunan kesadaran' });
+    if (isolated) a.push({ icon:'ℹ️', text:'Pada ITP baru dengan perdarahan minor saja: observasi dapat dipilih dibanding IVIG/steroid (ASH 2019)' });
+  }
+  return a;
+}
+
+function buildLabs(level, plt, inf_dengue, blast, schisto, bicyto, pt_abn, ferritin, hb, wbc, kondisi) {
+  let l = [];
+  l.push('CBC + hitung jenis + apusan darah tepi — WAJIB untuk semua kasus');
+  if (hb === null || wbc === null) l.push('Hemoglobin, leukosit, ANC — belum diinput, segera periksa');
+  if (level === 'emergency' || level === 'rujuk') {
+    l.push('PT, APTT, fibrinogen, D-dimer (koagulopati/DIC)');
+    l.push('LDH, asam urat, albumin (keganasan/TLS)');
+    l.push('SGOT/SGPT, kreatinin, ureum (fungsi organ)');
+    if (blast || bicyto) l.push('Bone marrow puncture (BMP) + flowcytometry bila blast atau pancytopenia');
+    if (inf_dengue) l.push('NS1 antigen (hari 1–5), IgM/IgG dengue, hematokrit serial');
+    if (schisto) l.push('LDH, bilirubin indirek, haptoglobin, urinalisis (TMA/HUS)');
+    if (ferritin) l.push('Ferritin, trigiserida, fibrinogen serial (HLH)');
+    l.push('Kultur darah bila tampak toksik/febris');
+  } else {
+    l.push('Retikulosit — untuk menilai respon sumsum tulang');
+    if (inf_dengue) l.push('NS1 / IgM/IgG dengue sesuai hari demam; hematokrit serial');
+  }
+  return l;
+}
+
+function buildDoNot(level, inf_dengue, ddx, blast, bicyto, lnn) {
+  let d = [];
+  d.push('Aspirin, NSAID, atau obat antiplatelet lain');
+  d.push('Suntikan intramuskular (IM)');
+  d.push('Transfusi trombosit rutin pada ITP tanpa perdarahan mayor atau prosedur darurat');
+  if (inf_dengue) d.push('Transfusi trombosit profilaksis hanya karena PLT rendah pada dengue tanpa perdarahan berat (WHO/CDC)');
+  if (!blast && !bicyto) d.push('Steroid empiris sebelum keganasan/leukemia disingkirkan bila ada red flags');
+  if (level === 'observasi') d.push('Memulangkan pasien tanpa edukasi tanda bahaya kepada keluarga');
+  d.push('Menyimpulkan ITP sebelum CBC + apusan darah tepi memastikan trombositopenia terisolasi');
+  return d;
+}
+
+function printReferral() {
+  if (!window._referralNote) { alert('Harap lakukan analisis terlebih dahulu.'); return; }
+  const w = window.open('', '_blank');
+  w.document.write(`<html><head><title>Catatan Triage – drAisyi EduCare</title><style>body{font-family:monospace;font-size:13px;padding:30px;line-height:1.8;white-space:pre-line}</style></head><body>${window._referralNote}</body></html>`);
+  w.document.close(); w.print();
+}
+
+function showAlert(msg) {
+  const el = document.getElementById('alert-required');
+  el.textContent = '⚠️ ' + msg;
+  el.style.display = 'block';
+  switchTab(2);
+}
+
+function resetForm() {
+  document.querySelectorAll('input[type=number]').forEach(el => el.value = '');
+  document.querySelectorAll('input[type=radio]').forEach(el => el.checked = false);
+  document.querySelectorAll('input[type=checkbox]').forEach(el => el.checked = false);
+  document.querySelectorAll('.radio-opt').forEach(el => el.classList.remove('selected'));
+  document.getElementById('result-content').innerHTML = '';
+  window._referralNote = '';
+  switchTab(0);
+}
+</script>
+</body>
+</html>

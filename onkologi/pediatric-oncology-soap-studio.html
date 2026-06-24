@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>drAisyiEduCare – Pediatric Oncology SOAP Studio</title>
+<style>
+:root{
+  --pri:#1565C0;--pri-d:#0D47A1;--pri-l:#1976D2;--pri-xl:#E3F2FD;
+  --sec:#00897B;--sec-l:#E0F2F1;--acc:#F57F17;--acc-l:#FFF8E1;
+  --dan:#C62828;--dan-l:#FFEBEE;--war:#F9A825;--war-l:#FFFDE7;
+  --suc:#2E7D32;--suc-l:#E8F5E9;
+  --g50:#FAFAFA;--g100:#F5F5F5;--g200:#EEEEEE;--g300:#E0E0E0;
+  --g400:#BDBDBD;--g600:#757575;--g700:#616161;--g800:#424242;--g900:#212121;
+  --wh:#FFFFFF;--sh:0 2px 8px rgba(0,0,0,.14);--sh-lg:0 4px 20px rgba(0,0,0,.18);--r:10px;--rs:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--g100);color:var(--g900);min-height:100vh;overflow-x:hidden;font-size:14px}
+button{cursor:pointer;font-family:inherit}
+select,input,textarea{font-family:inherit}
+#app{display:flex;min-height:100vh}
+#sb{width:256px;min-width:256px;background:var(--pri-d);color:#fff;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:200;overflow-y:auto;transition:transform .3s}
+#main{margin-left:256px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+#topbar{background:var(--wh);border-bottom:1px solid var(--g200);padding:10px 20px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+#content{padding:22px;flex:1}
+.sb-brand{padding:18px 14px 12px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-logo{font-size:1.2rem;font-weight:800;color:#fff}
+.sb-sub{font-size:.62rem;color:rgba(255,255,255,.5);margin-top:3px;line-height:1.4}
+.sb-sec{padding:6px 0}
+.sb-sec-t{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;padding:8px 14px 3px}
+.sbi{display:flex;align-items:center;gap:9px;padding:8px 14px;cursor:pointer;transition:background .15s;font-size:.82rem;color:rgba(255,255,255,.82);position:relative}
+.sbi:hover{background:rgba(255,255,255,.1);color:#fff}
+.sbi.active{background:var(--pri-l);color:#fff;font-weight:600}
+.sbi.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--acc)}
+.sbi-ic{font-size:1rem;width:20px;text-align:center}
+.sbi-badge{margin-left:auto;background:var(--acc);color:#fff;font-size:.58rem;font-weight:700;padding:2px 5px;border-radius:8px}
+.sbi-badge.red{background:var(--dan)}
+#search-wrap{flex:1;max-width:380px;position:relative}
+#srch{width:100%;padding:7px 10px 7px 32px;border:1px solid var(--g300);border-radius:18px;font-size:.82rem;background:var(--g50)}
+#srch:focus{outline:none;border-color:var(--pri)}
+.srch-ic{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--g400)}
+#srch-res{position:absolute;top:38px;left:0;right:0;background:var(--wh);border:1px solid var(--g300);border-radius:var(--rs);box-shadow:var(--sh-lg);z-index:300;max-height:280px;overflow-y:auto;display:none}
+.sri{padding:9px 13px;font-size:.8rem;cursor:pointer;border-bottom:1px solid var(--g100)}
+.sri:hover{background:var(--pri-xl)}
+.sri-cat{font-size:.65rem;color:var(--pri);font-weight:600}
+.tb-emg{background:var(--dan);color:#fff;border:none;padding:6px 13px;border-radius:var(--rs);font-size:.78rem;font-weight:700}
+#hmbg{display:none;background:none;border:none;font-size:1.3rem;color:var(--g700);padding:4px}
+#disc-bar{background:linear-gradient(90deg,var(--pri),var(--sec));color:#fff;font-size:.68rem;padding:5px 20px;text-align:center;line-height:1.5}
+#priv-bar{background:#4A148C;color:#fff;font-size:.65rem;padding:4px 20px;text-align:center}
+.pg-title{font-size:1.3rem;font-weight:700;color:var(--pri-d);margin-bottom:3px}
+.pg-sub{font-size:.78rem;color:var(--g600);margin-bottom:18px}
+.role-strip{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:20px}
+.role-card{border-radius:var(--rs);padding:14px;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.role-card:hover{transform:translateY(-1px);box-shadow:var(--sh)}
+.role-card.nurse{background:#E8F5E9;border-color:#4CAF50}
+.role-card.gp{background:var(--pri-xl);border-color:#2196F3}
+.role-card.resident{background:var(--war-l);border-color:#FF9800}
+.role-card.consultant{background:#F3E5F5;border-color:#9C27B0}
+.rc-title{font-size:.88rem;font-weight:700;margin-bottom:6px}
+.rc-items{font-size:.73rem;color:var(--g700);line-height:1.7}
+.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-bottom:20px}
+.mc{background:var(--wh);border-radius:var(--r);padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.1);cursor:pointer;border:2px solid transparent;transition:all .2s;position:relative}
+.mc:hover{border-color:var(--pri);box-shadow:var(--sh-lg);transform:translateY(-2px)}
+.mc.emg{border-left:4px solid var(--dan)}
+.mc.nur{border-left:4px solid var(--sec)}
+.mc.safe{border-left:4px solid #9C27B0}
+.mc-ic{font-size:1.8rem;margin-bottom:8px}
+.mc-title{font-size:.92rem;font-weight:700;margin-bottom:3px}
+.mc-desc{font-size:.74rem;color:var(--g600);line-height:1.5}
+.mc-badge{position:absolute;top:10px;right:10px;background:var(--pri-xl);color:var(--pri);font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:8px}
+.mc-badge.red{background:var(--dan-l);color:var(--dan)}
+.mc-badge.grn{background:var(--suc-l);color:var(--suc)}
+.mc-badge.pur{background:#F3E5F5;color:#9C27B0}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:18px}
+.stat{background:var(--wh);border-radius:var(--rs);padding:12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.stat-n{font-size:1.5rem;font-weight:700;color:var(--pri)}
+.stat-l{font-size:.68rem;color:var(--g600);margin-top:2px}
+.panel{background:var(--wh);border-radius:var(--r);box-shadow:0 1px 4px rgba(0,0,0,.1);margin-bottom:18px;overflow:hidden}
+.ph{padding:12px 18px;background:var(--pri-d);color:#fff;display:flex;align-items:center;gap:8px}
+.ph h3{font-size:.88rem;font-weight:700}
+.pb{padding:18px}
+.tabs{display:flex;border-bottom:2px solid var(--g200);margin-bottom:18px;overflow-x:auto}
+.tab{padding:9px 16px;font-size:.78rem;font-weight:600;color:var(--g600);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;background:none;border-top:none;border-left:none;border-right:none;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.tab:hover{color:var(--pri)}
+.tab.active{color:var(--pri);border-bottom-color:var(--pri)}
+.fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:14px}
+.f{display:flex;flex-direction:column;gap:3px}
+.f.full{grid-column:1/-1}
+label{font-size:.73rem;font-weight:600;color:var(--g700)}
+input[type=text],input[type=number],select,textarea{border:1px solid var(--g300);border-radius:var(--rs);padding:7px 9px;font-size:.8rem;color:var(--g900);transition:border .2s;background:var(--wh);width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 2px rgba(21,101,192,.1)}
+textarea{resize:vertical;min-height:72px}
+.cg{display:flex;flex-wrap:wrap;gap:6px;margin-top:3px}
+.ci{display:flex;align-items:center;gap:4px;font-size:.76rem;background:var(--g50);padding:4px 9px;border-radius:16px;cursor:pointer;border:1px solid var(--g200)}
+.ci input{margin:0;width:auto}
+.ci:hover{background:var(--pri-xl)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:var(--rs);font-size:.78rem;font-weight:600;border:none;cursor:pointer;transition:all .2s}
+.btn-pri{background:var(--pri);color:#fff}.btn-pri:hover{background:var(--pri-d)}
+.btn-sec{background:var(--g200);color:var(--g800)}.btn-sec:hover{background:var(--g300)}
+.btn-dan{background:var(--dan);color:#fff}
+.btn-sm{padding:5px 11px;font-size:.72rem}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.soap-out{background:var(--g50);border:1px solid var(--g200);border-radius:var(--rs);padding:18px;white-space:pre-wrap;font-size:.79rem;line-height:1.85;font-family:'Courier New',monospace}
+.soh{color:var(--pri-d);font-weight:700;font-size:.9rem;margin-top:14px;margin-bottom:3px}
+.prob-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+.pt{background:var(--dan-l);color:var(--dan);padding:3px 11px;border-radius:16px;font-size:.72rem;font-weight:600}
+.pt.w{background:var(--war-l);color:#7B4F00}
+.pt.i{background:var(--pri-xl);color:var(--pri)}
+.al{padding:11px 14px;border-radius:var(--rs);margin-bottom:10px;display:flex;gap:9px;align-items:flex-start}
+.al-dan{background:var(--dan-l);border-left:4px solid var(--dan);color:var(--dan)}
+.al-war{background:var(--war-l);border-left:4px solid var(--war);color:#7B4F00}
+.al-suc{background:var(--suc-l);border-left:4px solid var(--suc);color:var(--suc)}
+.al-inf{background:var(--pri-xl);border-left:4px solid var(--pri);color:var(--pri-d)}
+.al-pur{background:#F3E5F5;border-left:4px solid #9C27B0;color:#4A148C}
+.al-ic{font-size:1rem;margin-top:1px;flex-shrink:0}
+.al-b{flex:1}
+.al-t{font-weight:700;font-size:.82rem;margin-bottom:2px}
+.al-tx{font-size:.76rem;line-height:1.5}
+.caveat{background:var(--acc-l);border:1px dashed var(--acc);border-radius:var(--rs);padding:8px 12px;font-size:.72rem;color:#5D4037;margin-top:10px}
+.emg-banner{background:var(--dan);color:#fff;padding:11px 18px;border-radius:var(--rs);margin-bottom:14px;display:flex;align-items:center;gap:9px;font-weight:700;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.88}}
+.risk-badge{display:inline-block;padding:3px 12px;border-radius:16px;font-size:.76rem;font-weight:700}
+.rb-h{background:var(--dan);color:#fff}
+.rb-m{background:var(--war);color:var(--g900)}
+.rb-l{background:var(--suc);color:#fff}
+.sc-circle{width:90px;height:90px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 14px;font-size:1.7rem;font-weight:700;border:5px solid}
+.sc-g{border-color:var(--suc);color:var(--suc)}
+.sc-y{border-color:var(--war);color:var(--acc)}
+.sc-r{border-color:var(--dan);color:var(--dan)}
+.qbr{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.qbl{font-size:.74rem;width:110px;color:var(--g700);flex-shrink:0}
+.qbt{flex:1;background:var(--g200);border-radius:3px;height:9px;overflow:hidden}
+.qbf{height:100%;border-radius:3px;transition:width .5s}
+.qbv{font-size:.74rem;font-weight:700;width:30px;text-align:right}
+.fbi{background:var(--g50);border-radius:var(--rs);padding:9px 13px;margin-bottom:7px;font-size:.76rem;line-height:1.5;border-left:3px solid}
+.fbi.g{border-color:var(--suc);color:var(--suc)}
+.fbi.w{border-color:var(--war);color:#7B4F00}
+.fbi.b{border-color:var(--dan);color:var(--dan)}
+.grade-res{text-align:center;padding:14px;background:var(--g50);border-radius:var(--rs);margin-top:10px}
+.grade-n{font-size:2.2rem;font-weight:700}
+.chk{list-style:none;padding:0}
+.chk li{display:flex;align-items:flex-start;gap:7px;padding:5px 0;border-bottom:1px solid var(--g100);font-size:.78rem}
+.chk li::before{content:'☐';color:var(--pri);font-size:.9rem;flex-shrink:0;margin-top:1px}
+.lacc{border:1px solid var(--g200);border-radius:var(--rs);margin-bottom:7px;overflow:hidden}
+.lh{padding:11px 14px;background:var(--g50);cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:.82rem;font-weight:600;color:var(--g800)}
+.lh:hover{background:var(--pri-xl)}
+.lb{padding:13px 14px;font-size:.76rem;line-height:1.75;color:var(--g700);border-top:1px solid var(--g200);display:none}
+.lb.open{display:block}
+.lb ul{padding-left:16px;margin:5px 0}
+.lb li{margin-bottom:3px}
+.lb strong{color:var(--pri-d)}
+.lb .cvt{background:var(--acc-l);border-radius:4px;padding:5px 9px;font-size:.7rem;color:#5D4037;margin-top:7px;display:block}
+.fam-out{background:linear-gradient(135deg,var(--pri-xl),var(--sec-l));border-radius:var(--r);padding:18px;font-size:.86rem;line-height:1.8;color:var(--g800)}
+.vcard{background:var(--wh);border-radius:var(--rs);padding:14px;margin-bottom:10px;border-left:4px solid var(--pri)}
+.vcard.dan{border-color:var(--dan)}
+.vcard.war{border-color:var(--war)}
+.vcard.suc{border-color:var(--suc)}
+.vcard.pur{border-color:#9C27B0}
+.vc-t{font-size:.85rem;font-weight:700;margin-bottom:6px}
+.vc-b{font-size:.76rem;line-height:1.65;color:var(--g700)}
+.vc-b ul{padding-left:16px;margin:4px 0}
+.sim-case{background:var(--pri-xl);border-radius:var(--rs);padding:13px;margin-bottom:14px;font-size:.8rem;line-height:1.7}
+.tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px}
+.tc{background:var(--wh);border:1px solid var(--g200);border-radius:var(--rs);padding:13px;cursor:pointer;transition:all .2s}
+.tc:hover{border-color:var(--pri);box-shadow:var(--sh)}
+.tc-t{font-size:.82rem;font-weight:700;color:var(--pri-d);margin-bottom:3px}
+.tc-d{font-size:.72rem;color:var(--g600)}
+.tc-tag{font-size:.62rem;background:var(--pri-xl);color:var(--pri);padding:2px 7px;border-radius:8px;display:inline-block;margin-top:5px}
+@media print{#sb,#topbar,#disc-bar,#priv-bar,.btn-row,.no-print,#overlay{display:none!important}#main{margin-left:0!important}body{background:#fff}.soap-out{border:none;font-size:10pt}.panel{box-shadow:none}}
+@media(max-width:768px){#sb{transform:translateX(-100%)}#sb.open{transform:translateX(0)}#main{margin-left:0}#hmbg{display:block}.fg{grid-template-columns:1fr}#content{padding:14px}.mod-grid{grid-template-columns:1fr 1fr}.role-strip{grid-template-columns:1fr 1fr}}
+@media(max-width:440px){.mod-grid,.role-strip{grid-template-columns:1fr}}
+#overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:150}
+#overlay.open{display:block}
+</style>
+</head>
+<body>
+<div id="overlay" onclick="closeSB()"></div>
+<div id="app">
+<nav id="sb">
+  <div class="sb-brand">
+    <div style="font-size:1.3rem;margin-bottom:4px">🏥</div>
+    <div class="sb-logo">drAisyiEduCare</div>
+    <div class="sb-sub">Pediatric Oncology SOAP Studio<br>Clinical Documentation Support Only</div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-sec-t">Menu Utama</div>
+    <div class="sbi" id="nav-dashboard" onclick="go('dashboard')"><span class="sbi-ic">🏠</span>Dashboard</div>
+    <div class="sbi" id="nav-soap" onclick="go('soap')"><span class="sbi-ic">📋</span>SOAP Builder<span class="sbi-badge">14</span></div>
+    <div class="sbi" id="nav-progress" onclick="go('progress')"><span class="sbi-ic">📅</span>Daily Progress Note</div>
+    <div class="sbi" id="nav-emg" onclick="go('emg')"><span class="sbi-ic">🚨</span>Emergency SOAP<span class="sbi-badge red">10+</span></div>
+    <div class="sbi" id="nav-nursing" onclick="go('nursing')"><span class="sbi-ic">💊</span>Nursing SOAP</div>
+    <div class="sbi" id="nav-quality" onclick="go('quality')"><span class="sbi-ic">✅</span>SOAP Quality Checker</div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-sec-t">Tools</div>
+    <div class="sbi" id="nav-templates" onclick="go('templates')"><span class="sbi-ic">📄</span>Smart Templates</div>
+    <div class="sbi" id="nav-quickround" onclick="go('quickround')"><span class="sbi-ic">⚡</span>Quick Round</div>
+    <div class="sbi" id="nav-family" onclick="go('family')"><span class="sbi-ic">👨‍👩‍👧</span>Family Communication</div>
+    <div class="sbi" id="nav-library" onclick="go('library')"><span class="sbi-ic">📚</span>Oncology Library</div>
+    <div class="sbi" id="nav-training" onclick="go('training')"><span class="sbi-ic">🎓</span>Resident Training</div>
+    <div class="sbi" id="nav-safety" onclick="go('safety')"><span class="sbi-ic">🛡️</span>Validation &amp; Safety</div>
+  </div>
+  <div style="padding:12px 14px;margin-top:auto;border-top:1px solid rgba(255,255,255,.1);font-size:.6rem;color:rgba(255,255,255,.3);line-height:1.5">drAisyiEduCare · Pediatric Oncology SOAP Studio · Clinical Documentation Support Only</div>
+</nav>
+<div id="main">
+  <div id="disc-bar">⚕️ Alat bantu dokumentasi klinis dan edukasi. Tidak menggantikan pemeriksaan langsung, protokol lokal, farmasi klinik, konsultan, ICU/bedah bila diindikasikan, atau keputusan klinis dokter yang kompeten.</div>
+  <div id="priv-bar">🔒 Gunakan inisial/kode pasien. Jangan memasukkan nama lengkap, nomor rekam medis, alamat, tanggal lahir lengkap, atau identitas langsung lain.</div>
+  <div id="topbar">
+    <button id="hmbg" onclick="toggleSB()">☰</button>
+    <div style="font-weight:800;color:var(--pri-d);font-size:.9rem;white-space:nowrap">drAisyiEduCare</div>
+    <div id="search-wrap">
+      <span class="srch-ic">🔍</span>
+      <input type="text" id="srch" placeholder="Cari diagnosis, emergency, template..." oninput="doSearch(this.value)" onblur="setTimeout(hideSearch,200)">
+      <div id="srch-res"></div>
+    </div>
+    <button class="tb-emg no-print" onclick="go('emg')">🚨 Emergency</button>
+    <button class="btn btn-sec btn-sm no-print" onclick="window.print()">🖨️</button>
+  </div>
+  <div id="content"></div>
+</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+var DIAGS=['ALL','AML','Lymphoma','Neuroblastoma','Wilms Tumor','Hepatoblastoma','Osteosarcoma','Ewing Sarcoma','Retinoblastoma','Medulloblastoma','Aplastic Anemia','CML','HSCT','CAR-T'];
+var PHASES={
+  'ALL':['Induksi','Konsolidasi','Reinduksi','Maintenance'],
+  'AML':['Induksi I','Induksi II','Konsolidasi I','Konsolidasi II','Konsolidasi III'],
+  'Lymphoma':['CHOP 1','CHOP 2','CHOP 3','Konsolidasi','Radiasi'],
+  'Neuroblastoma':['Neoadjuvan','Bedah','Adjuvan','Konsolidasi','Maintenance'],
+  'Wilms Tumor':['Nefrektomi','Adjuvan','Radiasi','Follow-up'],
+  'Hepatoblastoma':['Preoperatif','Operasi','Postoperatif'],
+  'Osteosarcoma':['Neoadjuvan','Bedah','Adjuvan'],
+  'Ewing Sarcoma':['Neoadjuvan','Bedah/Radiasi','Adjuvan'],
+  'Retinoblastoma':['Kemoreduksi','Konsolidasi Lokal','Follow-up'],
+  'Medulloblastoma':['Bedah','Radioterapi','Adjuvan'],
+  'Aplastic Anemia':['IST Fase 1','IST Fase 2','Follow-up'],
+  'CML':['TKI Fase 1','Evaluasi Remisi','Maintenance TKI'],
+  'HSCT':['Pre-HSCT','Conditioning','Infus HSC','Engraftmen','D+30','D+100'],
+  'CAR-T':['Pre-CAR-T','Lymphodepletion','Infus CAR-T','D+7','D+14','D+28','D+100']
+};
+var EMGS=['Febrile Neutropenia','Tumor Lysis Syndrome','DIC','Hyperleukocytosis','Spinal Cord Compression','Sepsis/Syok Septik','SVC Syndrome','Reaksi Transfusi','Extravasasi Kemoterapi','Perdarahan Masif'];
+var NUR_MODS=['Monitoring Kemoterapi','Flebitis (VIP Scale)','Extravasasi','Central Line Care','FN Monitoring','Transfusion Monitoring'];
+var SIDX=[
+  {c:'Diagnosis',t:'ALL',p:'soap',s:'ALL'},{c:'Diagnosis',t:'AML',p:'soap',s:'AML'},
+  {c:'Diagnosis',t:'Lymphoma',p:'soap',s:'Lymphoma'},{c:'Diagnosis',t:'Neuroblastoma',p:'soap',s:'Neuroblastoma'},
+  {c:'Diagnosis',t:'HSCT',p:'soap',s:'HSCT'},{c:'Diagnosis',t:'CAR-T',p:'soap',s:'CAR-T'},
+  {c:'Diagnosis',t:'Aplastic Anemia',p:'soap',s:'Aplastic Anemia'},
+  {c:'Emergency',t:'Febrile Neutropenia',p:'emg',s:'Febrile Neutropenia'},
+  {c:'Emergency',t:'Tumor Lysis Syndrome',p:'emg',s:'Tumor Lysis Syndrome'},
+  {c:'Emergency',t:'DIC',p:'emg',s:'DIC'},
+  {c:'Emergency',t:'Sepsis',p:'emg',s:'Sepsis/Syok Septik'},
+  {c:'Emergency',t:'Hyperleukocytosis',p:'emg',s:'Hyperleukocytosis'},
+  {c:'Emergency',t:'Spinal Cord Compression',p:'emg',s:'Spinal Cord Compression'},
+  {c:'Emergency',t:'Reaksi Transfusi',p:'emg',s:'Reaksi Transfusi'},
+  {c:'Emergency',t:'Extravasasi',p:'emg',s:'Extravasasi Kemoterapi'},
+  {c:'Nursing',t:'Flebitis VIP Scale',p:'nursing',s:'Flebitis (VIP Scale)'},
+  {c:'Nursing',t:'Extravasasi Nursing',p:'nursing',s:'Extravasasi'},
+  {c:'Nursing',t:'Monitoring Kemoterapi',p:'nursing',s:'Monitoring Kemoterapi'},
+  {c:'Tool',t:'Quick Round',p:'quickround'},{c:'Tool',t:'SOAP Quality Checker',p:'quality'},
+  {c:'Tool',t:'Family Communication',p:'family'},{c:'Safety',t:'Validation & Safety',p:'safety'},
+];
+
+var curPage='dashboard', curSub=null;
+
+// ══════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════
+function go(p, s) {
+  curPage = p; curSub = s || null;
+  document.querySelectorAll('.sbi').forEach(function(el){ el.classList.remove('active'); });
+  var nav = document.getElementById('nav-' + p);
+  if (nav) nav.classList.add('active');
+  var pages = {
+    dashboard: pgDash, soap: pgSOAP, progress: pgProgress, emg: pgEmg,
+    nursing: pgNursing, quality: pgQuality, templates: pgTemplates,
+    quickround: pgQR, family: pgFamily, library: pgLibrary,
+    training: pgTraining, safety: pgSafety
+  };
+  var fn = pages[p];
+  document.getElementById('content').innerHTML = fn ? fn() : '<p>Halaman tidak ditemukan.</p>';
+  if (s) {
+    setTimeout(function(){
+      var el = document.querySelector('[data-key="'+s+'"]');
+      if (el) el.click();
+    }, 80);
+  }
+  closeSB();
+  window.scrollTo(0, 0);
+}
+
+function toggleSB(){ document.getElementById('sb').classList.toggle('open'); document.getElementById('overlay').classList.toggle('open'); }
+function closeSB(){ document.getElementById('sb').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); }
+
+// ══════════════════════════════════════════
+// SEARCH
+// ══════════════════════════════════════════
+function doSearch(q) {
+  var box = document.getElementById('srch-res');
+  if (!q || !q.trim()) { box.style.display='none'; return; }
+  var r = SIDX.filter(function(d){ return d.t.toLowerCase().indexOf(q.toLowerCase()) >= 0; }).slice(0,8);
+  box.innerHTML = r.length ? r.map(function(x){
+    return '<div class="sri" onclick="go(\''+x.p+'\',\''+(x.s||'')+'\')">'+'<div class="sri-cat">'+x.c+'</div>'+x.t+'</div>';
+  }).join('') : '<div class="sri" style="color:var(--g600)">Tidak ditemukan</div>';
+  box.style.display = 'block';
+}
+function hideSearch(){ document.getElementById('srch-res').style.display='none'; }
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function v(id){ var el=document.getElementById(id); return el?(el.value||'').trim():''; }
+function nv(id){ var val=parseFloat(v(id)); return isNaN(val)?null:val; }
+function checked(name){ return Array.prototype.slice.call(document.querySelectorAll('input[name="'+name+'"]:checked')).map(function(x){return x.value;}); }
+function copyText(id){
+  var el=document.getElementById(id); if(!el) return;
+  var txt=el.innerText||el.textContent;
+  if(navigator.clipboard){ navigator.clipboard.writeText(txt).then(function(){ alert('Teks berhasil disalin.'); }).catch(function(){ fbCopy(txt); }); }
+  else fbCopy(txt);
+}
+function fbCopy(txt){ var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); alert('Disalin.'); }catch(e){ alert('Salin manual: Ctrl+A lalu Ctrl+C.'); } document.body.removeChild(ta); }
+function caveat(){ return '<div class="caveat">⚠️ Verifikasi dengan protokol lokal, farmasi klinik, dan konsultan terkait sebelum implementasi.</div>'; }
+
+// ══════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════
+function pgDash(){
+  return '<div class="pg-title">🏥 Dashboard drAisyiEduCare</div>'+
+  '<div class="pg-sub">Pediatric Oncology SOAP Studio · Clinical Documentation Support Only</div>'+
+  '<div class="stats-row">'+
+    '<div class="stat"><div class="stat-n">14</div><div class="stat-l">Diagnosis</div></div>'+
+    '<div class="stat"><div class="stat-n">10+</div><div class="stat-l">Emergency</div></div>'+
+    '<div class="stat"><div class="stat-n">6</div><div class="stat-l">Nursing</div></div>'+
+    '<div class="stat"><div class="stat-n">AI</div><div class="stat-l">Quality</div></div>'+
+  '</div>'+
+  '<div class="pg-sub" style="font-weight:700;color:var(--g800);margin-bottom:10px">Pilih Peran Anda</div>'+
+  '<div class="role-strip">'+
+    '<div class="role-card nurse" onclick="go(\'nursing\')"><div class="rc-title">💊 Perawat</div><div class="rc-items">• Monitoring kemoterapi<br>• Flebitis VIP Scale<br>• Ekstravasasi drug-specific<br>• Nursing SOAP<br>• Monitoring transfusi</div></div>'+
+    '<div class="role-card gp" onclick="go(\'emg\')"><div class="rc-title">🏥 Dokter Umum / IGD</div><div class="rc-items">• Stabilisasi ABCDE<br>• Emergency SOAP<br>• FN & TLS protokol<br>• Kapan hubungi senior<br>• Sepsis pathway</div></div>'+
+    '<div class="role-card resident" onclick="go(\'soap\')"><div class="rc-title">📋 SpA / Residen / Fellow</div><div class="rc-items">• SOAP Builder lengkap<br>• Assessment & problem list<br>• Daily progress note<br>• Rencana kerja<br>• Resident training</div></div>'+
+    '<div class="role-card consultant" onclick="go(\'quality\')"><div class="rc-title">🎓 Konsultan / Supervisor</div><div class="rc-items">• SOAP Quality Checker<br>• Teaching feedback<br>• Standardisasi dokumentasi<br>• Validation & Safety<br>• Resident training cases</div></div>'+
+  '</div>'+
+  '<div class="pg-sub" style="font-weight:700;color:var(--g800);margin-bottom:10px">Modul Utama</div>'+
+  '<div class="mod-grid">'+
+    '<div class="mc" onclick="go(\'soap\')"><div class="mc-badge">14 Diagnosis</div><div class="mc-ic">📋</div><div class="mc-title">SOAP Builder</div><div class="mc-desc">Generate SOAP untuk 14 diagnosis hemato-onkologi anak termasuk HSCT dan CAR-T.</div></div>'+
+    '<div class="mc" onclick="go(\'progress\')"><div class="mc-badge grn">Rawat Inap</div><div class="mc-ic">📅</div><div class="mc-title">Daily Progress Note</div><div class="mc-desc">Progress note harian: rawat inap, pasca kemo, HSCT, CAR-T.</div></div>'+
+    '<div class="mc emg" onclick="go(\'emg\')"><div class="mc-badge red">10+ Protokol</div><div class="mc-ic">🚨</div><div class="mc-title">Emergency SOAP</div><div class="mc-desc">FN, TLS, DIC, Hyperleukocytosis, SCC, Sepsis, SVC, Transfusi, Extravasasi.</div></div>'+
+    '<div class="mc nur" onclick="go(\'nursing\')"><div class="mc-badge" style="background:var(--sec-l);color:var(--sec)">6 Modul</div><div class="mc-ic">💊</div><div class="mc-title">Nursing SOAP</div><div class="mc-desc">VIP flebitis, extravasasi drug-specific, monitoring kemo, transfusi, CVC.</div></div>'+
+    '<div class="mc" onclick="go(\'quality\')"><div class="mc-badge" style="background:var(--acc-l);color:var(--acc)">AI Scoring</div><div class="mc-ic">✅</div><div class="mc-title">SOAP Quality Checker</div><div class="mc-desc">Analisis kelengkapan 0–100, traffic light, safety flags, educational feedback.</div></div>'+
+    '<div class="mc safe" onclick="go(\'safety\')"><div class="mc-badge pur">Wajib Baca</div><div class="mc-ic">🛡️</div><div class="mc-title">Validation & Safety</div><div class="mc-desc">Disclaimer, privacy, safety notes, dan validation checklist per modul.</div></div>'+
+    '<div class="mc" onclick="go(\'templates\')"><div class="mc-ic">📄</div><div class="mc-title">Smart Templates</div><div class="mc-desc">Template siap pakai: ALL, HSCT D+30, CAR-T D+28, FN, DIC APL, dll.</div></div>'+
+    '<div class="mc" onclick="go(\'quickround\')"><div class="mc-ic">⚡</div><div class="mc-title">Quick Round Mode</div><div class="mc-desc">Input cepat ward round. Alert otomatis FN, anemia berat, trombositopenia.</div></div>'+
+    '<div class="mc" onclick="go(\'family\')"><div class="mc-ic">👨‍👩‍👧</div><div class="mc-title">Family Communication</div><div class="mc-desc">Ubah assessment klinis menjadi bahasa sederhana untuk keluarga pasien.</div></div>'+
+    '<div class="mc" onclick="go(\'library\')"><div class="mc-ic">📚</div><div class="mc-title">Oncology Library</div><div class="mc-desc">Referensi cepat ALL, AML, FN, TLS, DIC, HSCT, CAR-T, ekstravasasi, transfusi.</div></div>'+
+    '<div class="mc" onclick="go(\'training\')"><div class="mc-ic">🎓</div><div class="mc-title">Resident Training</div><div class="mc-desc">6 kasus simulasi dengan SOAP ideal, rubrik, dan common mistakes.</div></div>'+
+  '</div>'+
+  '<div class="al al-inf"><span class="al-ic">ℹ️</span><div class="al-b"><div class="al-t">Cara Penggunaan</div><div class="al-tx">Pilih peran atau klik kartu modul. Gunakan search bar untuk akses cepat. 🚨 untuk protokol darurat langsung.</div></div></div>';
+}
+
+// ══════════════════════════════════════════
+// SOAP BUILDER
+// ══════════════════════════════════════════
+function pgSOAP(){
+  var d = curSub || DIAGS[0];
+  return '<div class="pg-title">📋 SOAP Builder</div><div class="pg-sub">Generate SOAP profesional untuk pasien hematologi-onkologi anak</div>'+
+  '<div class="tabs" id="dtabs">'+DIAGS.map(function(x){ return '<button class="tab'+(x===d?' active':'')+'" data-key="'+x+'" onclick="switchDiag(\''+x+'\')">'+x+'</button>'; }).join('')+'</div>'+
+  '<div id="sf">'+soapForm(d)+'</div>';
+}
+function switchDiag(d){
+  curSub=d;
+  document.querySelectorAll('#dtabs .tab').forEach(function(t){ t.classList.toggle('active', t.dataset.key===d); });
+  document.getElementById('sf').innerHTML = soapForm(d);
+}
+function soapForm(d){
+  var phases = PHASES[d] || ['Fase 1'];
+  var gejalaList = ['Demam','Mual','Muntah','Nyeri','Diare','Konstipasi','Batuk','Sesak','Gangguan makan','Mudah lelah','Perdarahan','Pucat','Lemah','Anoreksia','Mucositis'];
+  var komplikasiList = ['Febrile Neutropenia','Anemia','Trombositopenia','Risiko Perdarahan','Mucositis','VOD/SOS','GVHD Akut','GVHD Kronik','CRS','ICANS','TLS','Sepsis','Malnutrisi','Neuropati'];
+  var terapiList = ['Lanjut kemoterapi sesuai protokol','Antibiotik empiris IV','Antifungal empiris','Antiviral','Steroid','Imunosupresan','G-CSF','IVIG','Nutrisi parenteral','Nutrisi enteral'];
+  var txList = ['Transfusi PRC','Transfusi Trombosit','FFP','Kriopresipitat','Albumin'];
+  var monList = ['DL serial','Fungsi ginjal','Fungsi hati','Elektrolit','Kultur darah','TTV tiap shift','Balance cairan','BB harian'];
+  return '<div class="panel"><div class="ph">📋 <h3>SOAP Builder – '+d+'</h3></div><div class="pb">'+
+  '<div class="tabs" id="stabs">'+
+    '<button class="tab active" onclick="showSect(\'s\')">S – Subjective</button>'+
+    '<button class="tab" onclick="showSect(\'o\')">O – Objective</button>'+
+    '<button class="tab" onclick="showSect(\'a\')">A – Assessment</button>'+
+    '<button class="tab" onclick="showSect(\'p\')">P – Plan</button>'+
+  '</div>'+
+  '<div id="ss-s">'+
+    '<div class="fg">'+
+      '<div class="f"><label>Inisial/Kode Pasien</label><input type="text" id="s-id" placeholder="An. AW / Kode 001"></div>'+
+      '<div class="f"><label>Usia</label><input type="text" id="s-age" placeholder="7 tahun 3 bulan"></div>'+
+      '<div class="f"><label>Jenis Kelamin</label><select id="s-jk"><option>Laki-laki</option><option>Perempuan</option></select></div>'+
+      '<div class="f"><label>Hari Rawat</label><input type="number" id="s-hr" min="1"></div>'+
+    '</div>'+
+    '<div class="f" style="margin-bottom:10px"><label>Keluhan Utama</label><textarea id="s-ku" rows="2" placeholder="Keluhan utama..."></textarea></div>'+
+    '<div class="f" style="margin-bottom:10px"><label>Onset / Durasi</label><input type="text" id="s-onset" placeholder="Sejak kapan, berapa lama..."></div>'+
+    '<div class="f" style="margin-bottom:10px"><label>Gejala</label><div class="cg">'+gejalaList.map(function(g){ return '<label class="ci"><input type="checkbox" value="'+g+'" name="sg"> '+g+'</label>'; }).join('')+'</div></div>'+
+    '<div class="fg">'+
+      '<div class="f"><label>Asupan Oral</label><select id="s-oral"><option value="">—</option><option>Baik</option><option>Berkurang</option><option>Sangat berkurang</option><option>Tidak mau makan</option></select></div>'+
+      '<div class="f"><label>BAK</label><select id="s-bak"><option value="">—</option><option>Normal</option><option>Berkurang</option><option>Oliguria</option><option>Hematuria</option></select></div>'+
+      '<div class="f"><label>BAB</label><select id="s-bab"><option value="">—</option><option>Normal</option><option>Diare</option><option>Melena</option></select></div>'+
+      '<div class="f"><label>Skala Nyeri (0–10)</label><input type="number" id="s-pain" min="0" max="10"></div>'+
+    '</div>'+
+    '<div class="fg"><div class="f"><label>Kemo Terakhir</label><input type="text" id="s-lc" placeholder="Obat & hari ke-"></div><div class="f"><label>Transfusi Terakhir</label><input type="text" id="s-lt" placeholder="Jenis & tanggal"></div></div>'+
+    '<div class="f"><label>Keterangan Tambahan</label><textarea id="s-ex" rows="2"></textarea></div>'+
+  '</div>'+
+  '<div id="ss-o" style="display:none">'+
+    '<div style="font-weight:700;font-size:.82rem;color:var(--pri-d);margin-bottom:8px">🌡️ Tanda-Tanda Vital</div>'+
+    '<div class="fg">'+
+      '<div class="f"><label>BB (kg)</label><input type="number" id="o-bb" step="0.1" min="0"></div>'+
+      '<div class="f"><label>TB (cm)</label><input type="number" id="o-tb" step="0.1" min="0"></div>'+
+      '<div class="f"><label>TD (mmHg)</label><input type="text" id="o-td"></div>'+
+      '<div class="f"><label>Nadi (x/mnt)</label><input type="number" id="o-hr" min="0"></div>'+
+      '<div class="f"><label>RR (x/mnt)</label><input type="number" id="o-rr" min="0"></div>'+
+      '<div class="f"><label>Suhu (°C)</label><input type="number" id="o-t" step="0.1" min="35" max="42"></div>'+
+      '<div class="f"><label>SpO₂ (%)</label><input type="number" id="o-spo2" min="0" max="100"></div>'+
+    '</div>'+
+    '<div class="fg">'+
+      '<div class="f"><label>KU</label><select id="o-ku"><option value="">—</option><option>Sakit ringan</option><option>Sakit sedang</option><option>Sakit berat</option></select></div>'+
+      '<div class="f"><label>Akses Vaskular</label><select id="o-iv"><option value="">—</option><option>IV perifer paten</option><option>CVC paten</option><option>Port-a-cath paten</option><option>Hickman paten</option></select></div>'+
+      '<div class="f"><label>Tanda Infeksi Lokal</label><select id="o-inf"><option value="">—</option><option>Tidak ada</option><option>Flebitis</option><option>CVC site infection</option></select></div>'+
+      '<div class="f"><label>Tanda Perdarahan</label><select id="o-bld"><option value="">—</option><option>Tidak ada</option><option>Petekie</option><option>Ekimosis</option><option>Perdarahan mukosa</option></select></div>'+
+    '</div>'+
+    '<div class="f" style="margin-bottom:12px"><label>Pemeriksaan Fisik</label><textarea id="o-pf" rows="3" placeholder="Kepala/leher, thoraks, abdomen, ekstremitas, limfadenopati, hepatosplenomegali..."></textarea></div>'+
+    '<div style="font-weight:700;font-size:.82rem;color:var(--pri-d);margin-bottom:8px">🔬 Laboratorium</div>'+
+    '<div class="fg">'+
+      '<div class="f"><label>Hb (g/dL)</label><input type="number" id="o-hb" step="0.1" min="0"></div>'+
+      '<div class="f"><label>WBC (/μL)</label><input type="number" id="o-wbc" min="0"></div>'+
+      '<div class="f"><label>ANC (/μL)</label><input type="number" id="o-anc" min="0"></div>'+
+      '<div class="f"><label>Plt (ribu/μL)</label><input type="number" id="o-plt" min="0"></div>'+
+      '<div class="f"><label>Kreatinin (mg/dL)</label><input type="number" id="o-cr" step="0.01" min="0"></div>'+
+      '<div class="f"><label>SGOT/SGPT</label><input type="text" id="o-liver" placeholder="SGOT — / SGPT —"></div>'+
+      '<div class="f"><label>CRP (mg/L)</label><input type="number" id="o-crp" step="0.1" min="0"></div>'+
+      '<div class="f"><label>K/Na/Ca (mEq/L)</label><input type="text" id="o-elec" placeholder="K — / Na — / Ca —"></div>'+
+      '<div class="f"><label>Asam Urat (mg/dL)</label><input type="number" id="o-au" step="0.1" min="0"></div>'+
+      '<div class="f"><label>LDH (U/L)</label><input type="number" id="o-ldh" min="0"></div>'+
+    '</div>'+
+    '<div class="f"><label>Kultur / Imaging</label><textarea id="o-kult" rows="2" placeholder="Hasil kultur, foto thoraks, USG, CT..."></textarea></div>'+
+  '</div>'+
+  '<div id="ss-a" style="display:none">'+
+    '<div class="fg">'+
+      '<div class="f"><label>Diagnosis Utama</label><select id="a-diag" onchange="updPhase()">'+DIAGS.map(function(x){ return '<option'+(x===d?' selected':'')+'>'+x+'</option>'; }).join('')+'</select></div>'+
+      '<div class="f"><label>Fase Terapi</label><select id="a-fase">'+phases.map(function(f){ return '<option>'+f+'</option>'; }).join('')+'</select></div>'+
+      '<div class="f"><label>Status Klinis</label><select id="a-stat"><option>Stabil</option><option>Membaik</option><option>Perlu perhatian</option><option>Kritis</option></select></div>'+
+    '</div>'+
+    '<div class="f" style="margin-bottom:10px"><label>Komplikasi / Masalah Aktif</label><div class="cg">'+komplikasiList.map(function(k){ return '<label class="ci"><input type="checkbox" value="'+k+'" name="ak"> '+k+'</label>'; }).join('')+'</div></div>'+
+    '<div class="f"><label>Grading Toksisitas (bila ada)</label><input type="text" id="a-tox" placeholder="Mucositis grade 2, Neuropati grade 1..."></div>'+
+    '<div class="f" style="margin-top:10px"><label>Assessment Tambahan</label><textarea id="a-note" rows="2"></textarea></div>'+
+  '</div>'+
+  '<div id="ss-p" style="display:none">'+
+    '<div class="f" style="margin-bottom:10px"><label>Rencana Terapi</label><div class="cg">'+terapiList.map(function(t){ return '<label class="ci"><input type="checkbox" value="'+t+'" name="pt"> '+t+'</label>'; }).join('')+'</div></div>'+
+    '<div class="f" style="margin-bottom:10px"><label>Transfusi (bila indikasi)</label><div class="cg">'+txList.map(function(t){ return '<label class="ci"><input type="checkbox" value="'+t+'" name="ptx"> '+t+'</label>'; }).join('')+'</div></div>'+
+    '<div class="f" style="margin-bottom:10px"><label>Monitoring</label><div class="cg">'+monList.map(function(m){ return '<label class="ci"><input type="checkbox" value="'+m+'" name="pm"> '+m+'</label>'; }).join('')+'</div></div>'+
+    '<div class="fg">'+
+      '<div class="f"><label>Konsultasi</label><input type="text" id="p-kons" placeholder="Bedah, Gizi, ICU..."></div>'+
+      '<div class="f"><label>Pemeriksaan Lanjutan</label><input type="text" id="p-px" placeholder="CT, BMP, ECHO..."></div>'+
+    '</div>'+
+    '<div class="f" style="margin-bottom:10px"><label>Edukasi Keluarga</label><textarea id="p-edu" rows="2"></textarea></div>'+
+    '<div class="f"><label>Rencana Lainnya / Eskalasi</label><textarea id="p-other" rows="2" placeholder="Rencana terapi tambahan, eskalasi bila..."></textarea></div>'+
+  '</div>'+
+  '<div class="btn-row">'+
+    '<button class="btn btn-pri" onclick="genSOAP(\''+d+'\')">✨ Generate SOAP</button>'+
+    '<button class="btn btn-sec" onclick="clearSF()">🗑️ Reset</button>'+
+  '</div></div></div>'+
+  '<div id="soap-out-area"></div>';
+}
+function showSect(s){
+  ['s','o','a','p'].forEach(function(x){ document.getElementById('ss-'+x).style.display = x===s?'block':'none'; });
+  document.querySelectorAll('#stabs .tab').forEach(function(t){ t.classList.toggle('active', t.textContent.toLowerCase().charAt(0)===s); });
+}
+function updPhase(){
+  var d=v('a-diag'); var phases=PHASES[d]||['Fase 1'];
+  document.getElementById('a-fase').innerHTML = phases.map(function(f){ return '<option>'+f+'</option>'; }).join('');
+}
+function genSOAP(d){
+  var T=nv('o-t'), ANC=nv('o-anc'), PLT=nv('o-plt'), HB=nv('o-hb');
+  var sg=checked('sg'), ak=checked('ak'), pt=checked('pt'), ptx=checked('ptx'), pm=checked('pm');
+  var diag=v('a-diag')||d, fase=v('a-fase'), stat=v('a-stat');
+  var probs=[];
+  if(T!==null&&T>=38.3&&ANC!==null&&ANC<500) probs.push({t:'⚠️ Febrile Neutropenia',c:''});
+  if(ANC!==null&&ANC<100) probs.push({t:'Neutropenia Berat (ANC<100)',c:''});
+  else if(ANC!==null&&ANC<500) probs.push({t:'Neutropenia (ANC<500)',c:'w'});
+  if(HB!==null&&HB<7) probs.push({t:'Anemia Berat',c:''});
+  else if(HB!==null&&HB<10) probs.push({t:'Anemia',c:'w'});
+  if(PLT!==null&&PLT<10) probs.push({t:'Trombositopenia Sangat Berat',c:''});
+  else if(PLT!==null&&PLT<50) probs.push({t:'Trombositopenia',c:'w'});
+  if(T!==null&&T>=38.3) probs.push({t:'Demam '+T+'°C',c:''});
+  ak.forEach(function(k){ probs.push({t:k,c:'i'}); });
+  var emgHtml='';
+  if(T!==null&&T>=38.3&&ANC!==null&&ANC<500) emgHtml='<div class="emg-banner">🚨 FEBRILE NEUTROPENIA: Suhu '+T+'°C, ANC '+ANC+'/μL — Antibiotik dalam 60 menit!</div>';
+  if(PLT!==null&&PLT<10) emgHtml+='<div class="al al-dan"><span class="al-ic">🚨</span><div class="al-b"><div class="al-t">Trombositopenia Sangat Berat</div><div class="al-tx">Plt '+PLT+' ribu. Pertimbangkan transfusi. Monitor risiko perdarahan.</div></div></div>';
+  var S='Pasien '+(v('s-id')||'—')+', '+(v('s-age')||'—')+', '+v('s-jk')+', hari rawat ke-'+(v('s-hr')||'—')+' dengan '+diag+(fase?' fase '+fase:'')+'. Keluhan: '+(v('s-ku')||'tidak ada keluhan bermakna')+'.'+(v('s-onset')?' Onset: '+v('s-onset')+'.':'')+(sg.length?' Gejala: '+sg.join(', ')+'.':'')+(v('s-oral')?' Asupan oral: '+v('s-oral')+'.':'')+(v('s-bak')?' BAK: '+v('s-bak')+'.':'')+(v('s-bab')?' BAB: '+v('s-bab')+'.':'')+(nv('s-pain')!==null?' Skala nyeri: '+v('s-pain')+'/10.':'')+(v('s-lc')?' Kemo terakhir: '+v('s-lc')+'.':'')+(v('s-lt')?' Transfusi terakhir: '+v('s-lt')+'.':'')+(v('s-ex')?' '+v('s-ex'):'');
+  var O='Keadaan umum: '+(v('o-ku')||'—')+'. BB '+(v('o-bb')||'—')+' kg, TB '+(v('o-tb')||'—')+' cm.\nTTV: TD '+(v('o-td')||'—')+' mmHg | N '+(v('o-hr')||'—')+'x/mnt | RR '+(v('o-rr')||'—')+'x/mnt | S '+(v('o-t')||'—')+'°C | SpO₂ '+(v('o-spo2')||'—')+'%.\nAkses: '+(v('o-iv')||'—')+'. Inf lokal: '+(v('o-inf')||'—')+'. Perdarahan: '+(v('o-bld')||'—')+'.'+(v('o-pf')?'\nPF: '+v('o-pf'):'')+'\nLab: Hb '+(v('o-hb')||'—')+' g/dL | WBC '+(v('o-wbc')||'—')+'/μL | ANC '+(v('o-anc')||'—')+'/μL | Plt '+(v('o-plt')||'—')+' ribu/μL.\nKimia: Cr '+(v('o-cr')||'—')+' | Hati: '+(v('o-liver')||'—')+' | CRP '+(v('o-crp')||'—')+' | Elektrolit: '+(v('o-elec')||'—')+' | AU '+(v('o-au')||'—')+' | LDH '+(v('o-ldh')||'—')+'.'+(v('o-kult')?'\nKultur/Imaging: '+v('o-kult'):'');
+  var A=diag+(fase?', fase '+fase:'')+'. Status: '+(stat||'—')+'.\n'+(ak.length?'Masalah aktif: '+ak.join('; ')+'.\n':'')+(v('a-tox')?'Toksisitas: '+v('a-tox')+'.\n':'')+(v('a-note')||'');
+  var P=(pt.length?'Terapi:\n'+pt.map(function(x){ return '  • '+x; }).join('\n')+'\n':'')+(ptx.length?'\nTransfusi:\n'+ptx.map(function(x){ return '  • '+x; }).join('\n')+'\n':'')+(pm.length?'\nMonitoring:\n'+pm.map(function(x){ return '  • '+x; }).join('\n')+'\n':'')+(v('p-kons')?'\nKonsultasi: '+v('p-kons'):'')+(v('p-px')?'\nPemeriksaan lanjutan: '+v('p-px'):'')+(v('p-edu')?'\nEdukasi keluarga: '+v('p-edu'):'')+(v('p-other')?'\n'+v('p-other'):'');
+  document.getElementById('soap-out-area').innerHTML=emgHtml+
+  '<div class="panel"><div class="ph">📄 <h3>SOAP – '+diag+'</h3>'+
+  '<div style="margin-left:auto;display:flex;gap:6px">'+
+    '<button class="btn btn-sec btn-sm no-print" onclick="copyText(\'soap-print\')">📋 Salin</button>'+
+    '<button class="btn btn-sec btn-sm no-print" onclick="window.print()">🖨️ Print</button>'+
+  '</div></div><div class="pb"><div id="soap-print">'+
+  '<div class="soh">S — SUBJECTIVE</div><div class="soap-out">'+S+'</div>'+
+  '<div class="soh">O — OBJECTIVE</div><div class="soap-out">'+O+'</div>'+
+  '<div class="soh">A — ASSESSMENT</div><div class="soap-out">'+A+'</div>'+
+  '<div class="soh">P — PLAN</div><div class="soap-out">'+P+'</div>'+
+  '</div>'+
+  (probs.length?'<div style="margin-top:12px"><div style="font-weight:700;font-size:.82rem;margin-bottom:7px">⚠️ Problem List</div><div class="prob-list">'+probs.map(function(p){ return '<span class="pt'+(p.c==='w'?' w':p.c==='i'?' i':'')+'">'+p.t+'</span>'; }).join('')+'</div></div>':'')+
+  caveat()+'</div></div>';
+}
+function clearSF(){ document.querySelectorAll('#sf input,#sf textarea,#sf select').forEach(function(el){ if(el.type==='checkbox')el.checked=false; else if(el.tagName==='SELECT')el.selectedIndex=0; else el.value=''; }); document.getElementById('soap-out-area').innerHTML=''; }
+
+// ══════════════════════════════════════════
+// DAILY PROGRESS
+// ══════════════════════════════════════════
+function pgProgress(){
+  return '<div class="pg-title">📅 Daily Progress Note</div><div class="pg-sub">Progress note harian profesional</div>'+
+  '<div class="tabs" id="dptabs">'+
+    '<button class="tab active" onclick="showDP(\'inap\')">Rawat Inap</button>'+
+    '<button class="tab" onclick="showDP(\'kemo\')">Pasca Kemo</button>'+
+    '<button class="tab" onclick="showDP(\'hsct\')">Pasca HSCT</button>'+
+    '<button class="tab" onclick="showDP(\'cart\')">Pasca CAR-T</button>'+
+  '</div><div id="dp-area">'+dpForm('inap')+'</div>';
+}
+function showDP(t){
+  document.querySelectorAll('#dptabs .tab').forEach(function(tab,i){ tab.classList.toggle('active',['inap','kemo','hsct','cart'][i]===t); });
+  document.getElementById('dp-area').innerHTML = dpForm(t);
+}
+function dpForm(t){
+  var ex='';
+  if(t==='hsct') ex='<div class="fg"><div class="f"><label>D+ HSCT</label><input type="number" id="dp-dh" placeholder="D+"></div><div class="f"><label>Jenis HSCT</label><select id="dp-typ"><option>Allogenik</option><option>Autologous</option><option>Haplo</option></select></div><div class="f"><label>Engraftmen</label><select id="dp-eng"><option>Belum</option><option>Netrofil</option><option>Trombosit</option><option>Komplit</option></select></div><div class="f"><label>GVHD</label><select id="dp-gvhd"><option>Tidak ada</option><option>Akut Grade I</option><option>Akut Grade II</option><option>Akut Grade III</option><option>Akut Grade IV</option><option>Kronik Mild</option><option>Kronik Moderate</option><option>Kronik Severe</option></select></div><div class="f"><label>IS / CsA Level</label><input type="text" id="dp-is" placeholder="CsA level, dosis..."></div><div class="f"><label>Chimerism/CMV/EBV</label><input type="text" id="dp-chi"></div></div>';
+  if(t==='kemo') ex='<div class="fg"><div class="f"><label>D+ Kemo</label><input type="number" id="dp-dk" placeholder="D+"></div><div class="f"><label>Regimen</label><input type="text" id="dp-reg"></div><div class="f"><label>Toksisitas (CTCAE)</label><input type="text" id="dp-tox" placeholder="Mucositis G2..."></div></div>';
+  if(t==='cart') ex='<div class="fg"><div class="f"><label>D+ CAR-T</label><input type="number" id="dp-dc" placeholder="D+"></div><div class="f"><label>Produk</label><input type="text" id="dp-prod"></div><div class="f"><label>CRS Grade (ASTCT)</label><select id="dp-crs"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div><div class="f"><label>ICANS Grade (ASTCT)</label><select id="dp-ican"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div><div class="f"><label>Status O₂/Vasopresor</label><input type="text" id="dp-o2" placeholder="RA / nasal / masker..."></div><div class="f"><label>Status Neurologis</label><input type="text" id="dp-neuro" placeholder="Sadar, orientasi, ICE score..."></div><div class="f"><label>Ferritin/CRP</label><input type="text" id="dp-fer"></div></div>';
+  return '<div class="panel"><div class="ph">📅 <h3>Daily Progress Note'+(t==='kemo'?' – Pasca Kemo':t==='hsct'?' – Pasca HSCT':t==='cart'?' – Pasca CAR-T':'')+'</h3></div><div class="pb">'+
+  '<div class="fg"><div class="f"><label>Hari Rawat</label><input type="number" id="dp-hr" min="1"></div><div class="f"><label>Diagnosis</label><select id="dp-diag">'+DIAGS.map(function(x){ return '<option>'+x+'</option>'; }).join('')+'</select></div><div class="f"><label>Status Umum</label><select id="dp-stat"><option>Sakit ringan</option><option>Sakit sedang</option><option>Sakit berat</option></select></div></div>'+ex+
+  '<div class="fg"><div class="f"><label>Suhu (°C)</label><input type="number" id="dp-t" step="0.1"></div><div class="f"><label>Nadi</label><input type="number" id="dp-hr2"></div><div class="f"><label>TD</label><input type="text" id="dp-td"></div><div class="f"><label>SpO₂ (%)</label><input type="number" id="dp-spo2"></div><div class="f"><label>Hb</label><input type="number" id="dp-hb" step="0.1"></div><div class="f"><label>ANC</label><input type="number" id="dp-anc"></div><div class="f"><label>Plt (ribu)</label><input type="number" id="dp-plt"></div></div>'+
+  '<div class="f" style="margin-bottom:10px"><label>Overnight Events</label><textarea id="dp-oe" rows="2"></textarea></div>'+
+  '<div class="f" style="margin-bottom:10px"><label>Clinical Course</label><textarea id="dp-cc" rows="2"></textarea></div>'+
+  '<div class="f" style="margin-bottom:10px"><label>Infection Monitoring</label><textarea id="dp-im" rows="2"></textarea></div>'+
+  '<div class="f" style="margin-bottom:10px"><label>Active Problems</label><textarea id="dp-ap" rows="2"></textarea></div>'+
+  '<div class="f" style="margin-bottom:10px"><label>Nutrition / Fluid Plan</label><textarea id="dp-nf" rows="2"></textarea></div>'+
+  '<div class="f" style="margin-bottom:10px"><label>Today\'s Plan</label><textarea id="dp-tp" rows="2"></textarea></div>'+
+  '<div class="f"><label>Discharge / Readiness Plan</label><textarea id="dp-dis" rows="2"></textarea></div>'+
+  '<div class="btn-row"><button class="btn btn-pri" onclick="genDP(\''+t+'\')">✨ Generate Progress Note</button></div>'+
+  '</div></div><div id="dp-out"></div>';
+}
+function genDP(t){
+  var ex='';
+  if(t==='hsct') ex='\nHSCT D+'+(v('dp-dh')||'—')+' | Jenis: '+(v('dp-typ')||'—')+' | Engraftmen: '+(v('dp-eng')||'—')+'\nGVHD: '+(v('dp-gvhd')||'—')+' | IS: '+(v('dp-is')||'—')+' | Chimerism/CMV/EBV: '+(v('dp-chi')||'—');
+  if(t==='kemo') ex='\nKemo D+'+(v('dp-dk')||'—')+' | Regimen: '+(v('dp-reg')||'—')+' | Toksisitas: '+(v('dp-tox')||'—');
+  if(t==='cart') ex='\nCAR-T D+'+(v('dp-dc')||'—')+' | Produk: '+(v('dp-prod')||'—')+'\nCRS Grade: '+(v('dp-crs')||'—')+' | ICANS Grade: '+(v('dp-ican')||'—')+' | O₂: '+(v('dp-o2')||'—')+' | Neurologis: '+(v('dp-neuro')||'—')+' | Ferritin/CRP: '+(v('dp-fer')||'—');
+  var note='DAILY PROGRESS NOTE\nHari Rawat: '+(v('dp-hr')||'—')+' | Diagnosis: '+v('dp-diag')+ex+'\n\nOVERNIGHT EVENTS:\n'+(v('dp-oe')||'Tidak ada kejadian bermakna.')+'\n\nCLINICAL COURSE:\n'+(v('dp-cc')||'Stabil.')+'\nStatus: '+v('dp-stat')+'. S '+(v('dp-t')||'—')+'°C | N '+(v('dp-hr2')||'—')+' | TD '+(v('dp-td')||'—')+' | SpO₂ '+(v('dp-spo2')||'—')+'%\nHb '+(v('dp-hb')||'—')+' | ANC '+(v('dp-anc')||'—')+' | Plt '+(v('dp-plt')||'—')+' ribu\n\nINFECTION MONITORING:\n'+(v('dp-im')||'—')+'\n\nACTIVE PROBLEMS:\n'+(v('dp-ap')||'—')+'\n\nNUTRITION / FLUID PLAN:\n'+(v('dp-nf')||'—')+'\n\nTODAY\'S PLAN:\n'+(v('dp-tp')||'—')+'\n\nDISCHARGE / READINESS:\n'+(v('dp-dis')||'Belum ada target keluar.');
+  document.getElementById('dp-out').innerHTML='<div class="panel"><div class="ph">📄 <h3>Daily Progress Note</h3><button class="btn btn-sec btn-sm no-print" style="margin-left:auto" onclick="copyText(\'dp-note\')">📋 Salin</button></div><div class="pb"><div class="soap-out" id="dp-note">'+note+'</div>'+caveat()+'</div></div>';
+}
+
+// ══════════════════════════════════════════
+// EMERGENCY
+// ══════════════════════════════════════════
+function pgEmg(){
+  var sel=curSub||EMGS[0];
+  return '<div class="pg-title">🚨 Emergency SOAP</div><div class="pg-sub">Protokol emergensi hematologi-onkologi anak</div>'+
+  '<div class="tabs" id="etabs">'+EMGS.map(function(e){ return '<button class="tab'+(e===sel?' active':'')+'" data-key="'+e+'" onclick="switchEmg(\''+e+'\')">'+e+'</button>'; }).join('')+'</div>'+
+  '<div id="emg-area">'+emgForm(sel)+'</div>';
+}
+function switchEmg(e){
+  curSub=e;
+  document.querySelectorAll('#etabs .tab').forEach(function(t){ t.classList.toggle('active', t.dataset.key===e); });
+  document.getElementById('emg-area').innerHTML = emgForm(e);
+}
+function emgForm(e){
+  if(e==='Febrile Neutropenia') return emgFN();
+  if(e==='Tumor Lysis Syndrome') return emgTLS();
+  if(e==='DIC') return emgDIC();
+  if(e==='Hyperleukocytosis') return emgHL();
+  if(e==='Spinal Cord Compression') return emgSCC();
+  if(e==='Sepsis/Syok Septik') return emgSepsis();
+  if(e==='Reaksi Transfusi') return emgTransRx();
+  if(e==='Extravasasi Kemoterapi') return emgExtrav();
+  return emgGeneric(e);
+}
+
+function emgFN(){
+  return '<div class="emg-banner">🚨 Febrile Neutropenia — Antibiotik empiris ≤60 menit! Lebih cepat bila sepsis/syok.</div>'+
+  '<div class="panel"><div class="ph">🌡️ <h3>Febrile Neutropenia Assessment</h3></div><div class="pb">'+
+  '<div class="fg">'+
+    '<div class="f"><label>Suhu (°C)</label><input type="number" id="fn-t" step="0.1" min="35" max="42"></div>'+
+    '<div class="f"><label>ANC (/μL)</label><input type="number" id="fn-anc" min="0"></div>'+
+    '<div class="f"><label>TD (mmHg)</label><input type="text" id="fn-td"></div>'+
+    '<div class="f"><label>Nadi</label><input type="number" id="fn-hr"></div>'+
+    '<div class="f"><label>SpO₂ (%)</label><input type="number" id="fn-spo2"></div>'+
+    '<div class="f"><label>CRP (mg/L)</label><input type="number" id="fn-crp" step="0.1"></div>'+
+    '<div class="f"><label>Durasi Demam</label><input type="text" id="fn-dur" placeholder="jam/hari"></div>'+
+    '<div class="f"><label>Status Kultur</label><select id="fn-cult"><option>Belum diambil</option><option>Sudah diambil</option><option>Positif</option><option>Negatif</option></select></div>'+
+    '<div class="f"><label>Diagnosis Dasar</label><input type="text" id="fn-diag"></div>'+
+    '<div class="f"><label>Konteks</label><select id="fn-ctx"><option>Kemo standar</option><option>AML Induksi</option><option>Pasca HSCT</option><option>Pasca CAR-T</option><option>Aplastic Anemia</option></select></div>'+
+  '</div>'+
+  '<div class="f" style="margin-bottom:10px"><label>High-Risk Features</label><div class="cg">'+
+    ['ANC <100','Hipotensi','Hipoksia','Penurunan kesadaran','Mucositis berat','Typhlitis tersangka','Pneumonia','CVC site infection'].map(function(x){ return '<label class="ci"><input type="checkbox" value="'+x+'" name="fn-hrf"> '+x+'</label>'; }).join('')+
+  '</div></div>'+
+  '<div class="btn-row"><button class="btn btn-dan" onclick="genFN()">🚨 Generate FN SOAP</button></div>'+
+  '</div></div><div id="fn-out"></div>';
+}
+function genFN(){
+  var T=nv('fn-t'), ANC=nv('fn-anc'), td=v('fn-td'), hr=v('fn-hr'), spo2=v('fn-spo2');
+  var crp=v('fn-crp'), dur=v('fn-dur'), cult=v('fn-cult'), diag=v('fn-diag'), ctx=v('fn-ctx');
+  var hrf=checked('fn-hrf');
+  var ancV=ANC!==null?ANC:9999;
+  var risk=ancV<100||hrf.length>=2?'RISIKO TINGGI':ancV<500?'RISIKO SEDANG':'PERLU EVALUASI';
+  var rc=ancV<100||hrf.length>=2?'rb-h':ancV<500?'rb-m':'rb-l';
+  var hasHD=hrf.some(function(x){ return x.indexOf('Hipotensi')>=0||x.indexOf('kesadaran')>=0; });
+  var soap='S: Pasien '+(diag||'keganasan')+' ('+(ctx||'—')+') demam '+(T||'—')+'°C '+(dur?'selama '+dur:'')+'. Tidak ada sumber infeksi yang jelas.\n\nO: TD '+(td||'—')+' | N '+(hr||'—')+'x/mnt | SpO₂ '+(spo2||'—')+'%\nANC: '+(ANC!==null?ANC:'—')+'/μL | CRP: '+(crp||'—')+' mg/L\nKultur: '+cult+'\nHigh-risk features: '+(hrf.length?hrf.join(', '):'Tidak ada')+'\n\nA: Febrile Neutropenia ('+risk+') pada '+(diag||'keganasan')+'.\nANC '+(ANC!==null?ANC:'—')+'/μL, Suhu '+(T||'—')+'°C.'+(hrf.length?'\nHigh-risk: '+hrf.join(', ')+'.':'')+(hasHD?'\n⚠️ Instabilitas hemodinamik — evaluasi sepsis/syok septik.':'')+'\n\nP: TINDAKAN SEGERA (0–60 MENIT):\n  • Kultur darah perifer x2 ± CVC — JANGAN tunda antibiotik\n  • Antibiotik empiris anti-pseudomonal IV: Cefepime / Pip-Tazo / Meropenem sesuai protokol lokal\n  • Target mulai antibiotik ≤60 mnt; ≤30 mnt bila tanda syok\n'+(hasHD?'  • Resusitasi cairan NaCl 0.9% 10–20 mL/kg\n  • KONSULTASI ICU SEGERA\n':'')+'\nMONITORING:\n  • TTV tiap 2–4 jam, balance cairan\n  • Evaluasi respons 48–72 jam\n  • Antifungal empiris bila demam persisten >96 jam pada pasien risiko tinggi (sesuai protokol lokal)\n  • Lapor senior bila tidak respons atau deteriorasi';
+  document.getElementById('fn-out').innerHTML=(hasHD?'<div class="emg-banner">🚨 HEMODINAMIK TIDAK STABIL — Resusitasi, ICU konsultasi, antibiotik SEGERA</div>':'')+
+  '<div class="panel"><div class="ph">📄 <h3>FN SOAP</h3><span class="risk-badge '+rc+'" style="margin-left:auto">'+risk+'</span></div>'+
+  '<div class="pb"><div class="soap-out" id="fn-note">'+soap+'</div>'+
+  '<div class="al al-inf" style="margin-top:10px"><span class="al-ic">💊</span><div class="al-b"><div class="al-t">Pilihan Antibiotik</div><div class="al-tx">Cefepime / Pip-Tazo / Meropenem — sesuaikan dengan protokol lokal dan pola resistensi setempat. Vankomisinatau gram-positif coverage bila ada risiko spesifik.</div></div></div>'+
+  caveat()+'<div class="btn-row no-print"><button class="btn btn-sec btn-sm" onclick="copyText(\'fn-note\')">📋 Salin</button></div></div></div>';
+}
+
+function emgTLS(){
+  return '<div class="emg-banner">🚨 Tumor Lysis Syndrome — Monitor elektrolit dan fungsi ginjal ketat!</div>'+
+  '<div class="panel"><div class="ph">⚗️ <h3>TLS Assessment (Cairo-Bishop)</h3></div><div class="pb">'+
+  '<div class="al al-inf"><span class="al-ic">ℹ️</span><div class="al-b"><div class="al-t">Catatan Pediatrik</div><div class="al-tx">Fosfat threshold anak: ≥6.5 mg/dL. Hipokalemia BUKAN kriteria TLS. Hanya hiperkalemia ≥6 mEq/L.</div></div></div>'+
+  '<div class="fg">'+
+    '<div class="f"><label>Usia (tahun)</label><input type="number" id="tls-age" min="0" max="18" step="0.5"></div>'+
+    '<div class="f"><label>Diagnosis</label><input type="text" id="tls-diag"></div>'+
+    '<div class="f"><label>Asam Urat (mg/dL)</label><input type="number" id="tls-au" step="0.1" min="0"></div>'+
+    '<div class="f"><label>Kalium (mEq/L)</label><input type="number" id="tls-k" step="0.1" min="0"></div>'+
+    '<div class="f"><label>Fosfat (mg/dL)</label><input type="number" id="tls-p" step="0.1" min="0"></div>'+
+    '<div class="f"><label>Kalsium (mg/dL)</label><input type="number" id="tls-ca" step="0.1" min="0"></div>'+
+    '<div class="f"><label>Kreatinin (mg/dL)</label><input type="number" id="tls-cr" step="0.01" min="0"></div>'+
+    '<div class="f"><label>Diuresis (mL/kg/jam)</label><input type="number" id="tls-uo" step="0.1" min="0"></div>'+
+    '<div class="f"><label>Status G6PD</label><select id="tls-g6pd"><option value="">—tidak diketahui—</option><option>Normal</option><option>Defisiensi G6PD</option></select></div>'+
+  '</div>'+
+  '<div class="f" style="margin-bottom:10px"><label>Gejala Klinis</label><div class="cg">'+['Oliguria/Anuria','Aritmia','Kejang','Hipokalsemia simptomatik'].map(function(x){ return '<label class="ci"><input type="checkbox" value="'+x+'" name="tls-sx"> '+x+'</label>'; }).join('')+'</div></div>'+
+  '<div class="btn-row"><button class="btn btn-dan" onclick="genTLS()">⚗️ Generate TLS SOAP</button></div>'+
+  '</div></div><div id="tls-out"></div>';
+}
+function genTLS(){
+  var age=nv('tls-age'), diag=v('tls-diag');
+  var AU=nv('tls-au'), K=nv('tls-k'), P=nv('tls-p'), CA=nv('tls-ca'), CR=nv('tls-cr'), UO=nv('tls-uo');
+  var g6pd=v('tls-g6pd'), sx=checked('tls-sx');
+  var pThresh=(age!==null&&age<=18)?6.5:4.5;
+  var labCrit=0, labFlags=[];
+  if(AU!==null&&AU>=8){labCrit++;labFlags.push('AU≥8');}
+  if(K!==null&&K>=6){labCrit++;labFlags.push('K≥6');}
+  if(P!==null&&P>=pThresh){labCrit++;labFlags.push('P≥'+pThresh);}
+  if(CA!==null&&CA<=7){labCrit++;labFlags.push('Ca≤7');}
+  var labTLS=labCrit>=2;
+  var clinTLS=labTLS&&(sx.length>0||(CR!==null&&CR>1.5)||(UO!==null&&UO<0.5));
+  var grade=!labTLS?'Tidak memenuhi kriteria Lab TLS':!clinTLS?'TLS Laboratoris':'TLS Klinis (Berat)';
+  var ac=!labTLS?'al-inf':!clinTLS?'al-war':'al-dan';
+  var soap='S: Pasien '+(diag||'keganasan')+' dipantau TLS.'+(sx.length?' Gejala: '+sx.join(', ')+'.':'')+'\n\nO: Lab (Cairo-Bishop, fosfat threshold pediatrik ≥'+pThresh+' mg/dL):\n- AU: '+(AU!==null?AU:'—')+' mg/dL'+(AU!==null&&AU>=8?' ⚠️':'')+'\n- K: '+(K!==null?K:'—')+' mEq/L'+(K!==null&&K>=6?' ⚠️ HIPERKALEMIA':'')+' [hipokalemia BUKAN kriteria TLS]\n- Fosfat: '+(P!==null?P:'—')+' mg/dL (threshold ≥'+pThresh+')'+(P!==null&&P>=pThresh?' ⚠️':'')+'\n- Ca: '+(CA!==null?CA:'—')+' mg/dL'+(CA!==null&&CA<=7?' ⚠️':'')+'\n- Cr: '+(CR!==null?CR:'—')+' mg/dL'+(CR!==null&&CR>1.5?' ⚠️ AKI':'')+'\n- Diuresis: '+(UO!==null?UO:'—')+' mL/kg/jam'+(UO!==null&&UO<0.5?' ⚠️ OLIGURIA':'')+'\nKriteria: '+labCrit+'/4'+(labFlags.length?' ('+labFlags.join(', ')+')':'')+'\n\nA: '+grade+' pada '+(diag||'keganasan')+'.\n'+(clinTLS?'TLS Klinis — ada AKI/aritmia/kejang.':labTLS?'TLS Laboratoris — belum ada manifestasi berat.':'Belum memenuhi kriteria TLS.')+'\n\nP: SEGERA:\n  • Hidrasi IV agresif TANPA kalium — 2–3× maintenance\n  • Target diuresis ≥2 mL/kg/jam\n  '+(AU!==null&&AU>=8&&g6pd!=='Defisiensi G6PD'?'• Rasburicase sesuai protokol lokal (cek G6PD)':'• Allopurinol profilaksis/tatalaksana sesuai protokol')+(g6pd==='Defisiensi G6PD'?'\n  • ⚠️ G6PD DEFISIENSI — Rasburicase KONTRAINDIKASI':'')+'\n  '+(K!==null&&K>=6?'• Tata laksana hiperkalemia: Salbutamol neb, Resonium, pertimbangkan Insulin-Glukosa':'')+'\n  • HINDARI koreksi Ca rutin — risiko kalsifikasi (koreksi hanya bila simptomatik/EKG abnormal)\n  • Hindari alkalinisasi urin rutin bila rasburicase digunakan\n  • Elektrolit/Cr/AU tiap 4–6 jam\n  '+(clinTLS?'• Konsultasi Nefrologi — pertimbangkan hemodialisis\n  • Konsultasi ICU bila aritmia/kejang':'');
+  document.getElementById('tls-out').innerHTML='<div class="al '+ac+'" style="margin-bottom:12px"><span class="al-ic">⚗️</span><div class="al-b"><div class="al-t">'+grade+'</div><div class="al-tx">'+labCrit+'/4 kriteria lab. G6PD: '+(g6pd||'tidak diketahui')+'.</div></div></div>'+
+  '<div class="panel"><div class="ph">📄 <h3>TLS SOAP</h3></div><div class="pb"><div class="soap-out" id="tls-note">'+soap+'</div>'+caveat()+'<div class="btn-row no-print"><button class="btn btn-sec btn-sm" onclick="copyText(\'tls-note\')">📋 Salin</button></div></div></div>';
+}
+
+function emgDIC(){
+  return '<div class="emg-banner">🚨 DIC — Atasi kausa dasar sebagai prioritas utama!</div>'+
+  '<div class="panel"><div class="ph">🩸 <h3>DIC Assessment (ISTH Score)</h3></div><div class="pb">'+
+  '<div class="al al-inf"><span class="al-ic">ℹ️</span><div class="al-b"><div class="al-t">ISTH DIC Score</div><div class="al-tx">Memakai PT prolongation vs kontrol (bukan nilai absolut). Score ≥5 = Overt DIC. D-Dimer dikategorikan.</div></div></div>'+
+  '<div class="fg">'+
+    '<div class="f"><label>Diagnosis Dasar</label><input type="text" id="dic-diag" placeholder="APL, sepsis, AML..."></div>'+
+    '<div class="f"><label>PT Pasien (detik)</label><input type="number" id="dic-pt" step="0.1" min="0"></div>'+
+    '<div class="f"><label>PT Kontrol (detik)</label><input type="number" id="dic-ptc" step="0.1" min="0" placeholder="Nilai normal lab"></div>'+
+    '<div class="f"><label>Fibrinogen (mg/dL)</label><input type="number" id="dic-fib" min="0"></div>'+
+    '<div class="f"><label>D-Dimer / FDP</label><select id="dic-dd"><option value="0">Normal</option><option value="2">Meningkat sedang</option><option value="3">Meningkat sangat</option></select></div>'+
+    '<div class="f"><label>Trombosit (ribu/μL)</label><input type="number" id="dic-plt" min="0"></div>'+
+    '<div class="f"><label>Perdarahan Aktif</label><select id="dic-bld"><option>Tidak</option><option>Ya – minor</option><option>Ya – mayor</option></select></div>'+
+  '</div>'+
+  '<div class="btn-row"><button class="btn btn-dan" onclick="genDIC()">🩸 Generate DIC SOAP</button></div>'+
+  '</div></div><div id="dic-out"></div>';
+}
+function genDIC(){
+  var diag=v('dic-diag'), pt=nv('dic-pt'), ptc=nv('dic-ptc');
+  var fib=nv('dic-fib'), dd=parseInt(v('dic-dd')||'0'), plt=nv('dic-plt'), bld=v('dic-bld');
+  var ptDiff=(pt!==null&&ptc!==null)?pt-ptc:null;
+  var score=0;
+  if(plt!==null){ if(plt<50)score+=2; else if(plt<100)score+=1; }
+  score+=dd;
+  if(ptDiff!==null){ if(ptDiff>6)score+=2; else if(ptDiff>=3)score+=1; }
+  if(fib!==null&&fib<100)score+=1;
+  var isDIC=score>=5, partial=score>=3&&score<5;
+  var isAPL=diag.toLowerCase().indexOf('apl')>=0||diag.toLowerCase().indexOf('m3')>=0||diag.toLowerCase().indexOf('promielosit')>=0;
+  var soap='S: Pasien '+(diag||'keganasan')+' dipantau koagulopati. Perdarahan: '+bld+'.\n\nO: ISTH DIC Score:\n- PT: '+(pt||'—')+' det | Kontrol: '+(ptc||'—')+' det | Selisih: '+(ptDiff!==null?ptDiff.toFixed(1):'—')+' det ('+(ptDiff!==null&&ptDiff>6?'+2':ptDiff!==null&&ptDiff>=3?'+1':'0')+' poin)\n- Fibrinogen: '+(fib||'—')+' mg/dL'+(fib!==null&&fib<100?' (+1 poin)':'')+'\n- D-Dimer/FDP: '+(['Normal','—','Meningkat sedang','Meningkat sangat'][dd])+' ('+dd+' poin)\n- Plt: '+(plt||'—')+' ribu ('+(plt!==null?plt<50?'+2 poin':plt<100?'+1 poin':'0 poin':'—')+')\nISTS Score: '+score+'/8\n\nA: '+(isDIC?'Overt DIC':partial?'Suspected/Non-Overt DIC':'Belum memenuhi kriteria DIC')+' pada '+(diag||'keganasan')+'.\n'+(isAPL?'⚠️ APL — DIC terkait APL: ATRA segera sesuai protokol.\n':'')+'\nP: PRIORITAS: Atasi kausa dasar\n  '+(isAPL?'• ATRA segera bila APL (M3) tersangka (verify local protocol)':diag.toLowerCase().indexOf('sepsis')>=0?'• Antibiotik dan kontrol sumber infeksi segera':'')+'\n\nTRANSFUSI (sesuai perdarahan/kondisi klinis):\n  • Plt: target >50 ribu bila perdarahan aktif; >20 ribu profilaksis (verify local protocol)\n  • FFP 10–15 mL/kg: bila perdarahan aktif / prosedur / defisiensi faktor\n  • Kriopresipitat: bila fibrinogen <100–150 mg/dL dan perdarahan/prosedur\n  • Hindari transfusi profilaksis berlebihan\n  • Heparin: hanya DIC dominasi trombosis, diskusi senior\n  • Monitor koagulasi tiap 4–6 jam';
+  document.getElementById('dic-out').innerHTML='<div class="'+(isDIC?'emg-banner':'al al-war')+'" style="margin-bottom:12px">'+(isDIC?'🚨':'⚠️')+' ISTH Score '+score+'/8 — '+(isDIC?'OVERT DIC TERKONFIRMASI':partial?'Suspected DIC':'Belum memenuhi kriteria DIC penuh')+'</div>'+
+  '<div class="panel"><div class="ph">📄 <h3>DIC SOAP</h3></div><div class="pb"><div class="soap-out" id="dic-note">'+soap+'</div>'+caveat()+'<div class="btn-row no-print"><button class="btn btn-sec btn-sm" onclick="copyText(\'dic-note\')">📋 Salin</button></div></div></div>';
+}
+
+function emgHL(){
+  return '<div class="emg-banner">🚨 Hyperleukocytosis — Risiko leukostasis! Evaluasi segera.</div>'+
+  '<div class="panel"><div class="ph">🔬 <h3>Hyperleukocytosis / Leukostasis</h3></div><div class="pb">'+
+  '<div class="fg">'+
+    '<div class="f"><label>WBC (/μL)</label><input type="number" id="hl-wbc" min="0"></div>'+
+    '<div class="f"><label>% Blast</label><input type="number" id="hl-blast" step="0.1" min="0"></div>'+
+    '<div class="f"><label>Hb (g/dL)</label><input type="number" id="hl-hb" step="0.1" min="0"></div>'+
+    '<div class="f"><label>SpO₂ (%)</label><input type="number" id="hl-spo2" min="0" max="100"></div>'+
+    '<div class="f"><label>Status Neurologis</label><select id="hl-neuro"><option>Normal</option><option>Sakit kepala</option><option>Penglihatan kabur</option><option>Penurunan kesadaran</option><option>Kejang</option></select></div>'+
+    '<div class="f"><label>Sesak</label><select id="hl-sesak"><option>Tidak ada</option><option>Ringan</option><option>Sedang</option><option>Berat</option></select></div>'+
+    '<div class="f"><label>Diagnosis</label><input type="text" id="hl-diag"></div>'+
+  '</div>'+
+  '<div class="btn-row"><button class="btn btn-dan" onclick="genHL()">🔬 Generate SOAP</button></div>'+
+  '</div></div><div id="hl-out"></div>';
+}
+function genHL(){
+  var wbc=nv('hl-wbc'), blast=nv('hl-blast'), hb=nv('hl-hb'), spo2=nv('hl-spo2');
+  var neuro=v('hl-neuro'), sesak=v('hl-sesak'), diag=v('hl-diag');
+  var leuko=neuro!=='Normal'||sesak!=='Tidak ada'||(spo2!==null&&spo2<95);
+  var soap='S: Pasien '+(diag||'leukemia')+' WBC '+(wbc?wbc.toLocaleString('id-ID'):'—')+'/μL.'+(leuko?' Gejala leukostasis: '+neuro+', sesak '+sesak+'.':'')+'\n\nO: WBC: '+(wbc?wbc.toLocaleString('id-ID'):'—')+'/μL | Blast: '+(blast||'—')+'% | SpO₂: '+(spo2||'—')+'% | Hb: '+(hb||'—')+' g/dL\nNeurologis: '+neuro+' | Sesak: '+sesak+'\n'+(leuko?'⚠️ Tanda leukostasis klinis ADA':'Belum ada tanda leukostasis klinis')+'\n\nA: Hyperleukocytosis'+(leuko?' dengan Leukostasis Klinis':'')+' pada '+(diag||'leukemia')+'.\n\nP: SEGERA:\n  • Hidrasi agresif IV TANPA kalium — monitor TLS ketat\n  • Hindari PRC rutin sebelum cytoreduction (meningkatkan viskositas); bila anemia mengancam nyawa/inadequate oxygen delivery, transfusi kecil perlahan setelah diskusi senior\n  • Profilaksis/tatalaksana TLS: elektrolit tiap 4–6 jam\n  • Cytoreduction sesuai diagnosis dan protokol lokal\n  '+(leuko?'• Leukaferesis: pertimbangkan bila leukostasis simptomatik dan fasilitas tersedia (bukan pengganti terapi definitif, tidak otomatis untuk profilaksis)\n  • KONSULTASI ICU SEGERA\n  • CT kepala bila gejala neurologis':'• Monitor neurologis dan respirasi ketat');
+  document.getElementById('hl-out').innerHTML=(leuko?'<div class="emg-banner">🚨 LEUKOSTASIS KLINIS — Cytoreduction segera, ICU!</div>':'')+
+  '<div class="panel"><div class="ph">📄 <h3>Hyperleukocytosis SOAP</h3></div><div class="pb"><div class="soap-out" id="hl-note">'+soap+'</div>'+caveat()+'<div class="btn-row no-print"><button class="btn btn-sec btn-sm" onclick="copyText(\'hl-note\')">📋 Salin</button></div></div></div>';
+}
+
+function emgSCC(){
+  return '<div class="emg-banner">🚨 Spinal Cord Compression — Emergensi neurologis! Tata laksana dalam jam pertama!</div>'+
+  '<div class="panel"><div class="ph">🦴 <h3>Spinal Cord Compression</h3></div><div class="pb">'+
+  '<div class="fg">'+
+    '<div class="f"><label>Diagnosis</label><input type="text" id="scc-diag" placeholder="Neuroblastoma, Ewing, NHL..."></div>'+
+    '<div class="f"><label>Level Vertebra</label><input type="text" id="scc-lvl"></div>'+
+    '<div class="f"><label>Nyeri Punggung</label><select id="scc-pain"><option>Tidak ada</option><option>Ringan</option><option>Sedang</option><option>Berat/nokturnal/progresif</option></select></div>'+
+    '<div class="f"><label>Defisit Motorik</label><select id="scc-mot"><option>Tidak ada</option><option>Kelemahan tungkai</option><option>Paraparesis</option><option>Paraplegia</option></select></div>'+
+    '<div class="f"><label>Defisit Sensoris</label><select id="scc-sen"><option>Tidak ada</option><option>Sensory level</option><option>Parestesia</option></select></div>'+
+    '<div class="f"><label>Kandung Kemih</label><select id="scc-bl"><option>Normal</option><option>Retensi urin</option><option>Inkontinensia</option></select></div>'+
+    '<div class="f"><label>BAB</label><select id="scc-bow"><option>Normal</option><option>Inkontinensia</option></select></div>'+
+    '<div class="f"><label>MRI Spine</label><select id="scc-mri"><option>Belum</option><option>Kompresi (+)</option><option>Kompresi (-)</option><option>Pending</option></select></div>'+
+  '</div>'+
+  '<div class="btn-row"><button class="btn btn-dan" onclick="genSCC()">🦴 Generate SCC SOAP</button></div>'+
+  '</div></div><div id="scc-out"></div>';
+}
+function genSCC(){
+  var diag=v('scc-diag'), lvl=v('scc-lvl'), pain=v('scc-pain');
+  var mot=v('scc-mot'), sen=v('scc-sen'), bl=v('scc-bl'), bow=v('scc-bow'), mri=v('scc-mri');
+  var urgent=mot!=='Tidak ada'||bl!=='Normal'||bow!=='Normal'||sen!=='Tidak ada';
+  var redFlags=[mot!=='Tidak ada'?mot:'',bl!=='Normal'?bl:'',bow!=='Normal'?bow:'',sen!=='Tidak ada'?sen:''].filter(Boolean);
+  var soap='S: Pasien '+(diag||'keganasan')+' '+(lvl?'level '+lvl:'')+'. Nyeri punggung: '+pain+'. Defisit motorik: '+mot+'. Defisit sensoris: '+sen+'. BAK: '+bl+'. BAB: '+bow+'.\n\nO: MRI Spine: '+mri+'. Defisit neurologis: '+(urgent?'ADA (URGENT)':'Belum ada/minimal')+'.\n\nA: '+(urgent?'Malignant Spinal Cord Compression — EMERGENSI NEUROLOGIS':'Risiko SCC')+' pada '+(diag||'keganasan')+'.'+(lvl?'\nLevel: '+lvl+'.':'')+'\n'+(urgent?'Urgensi: TINGGI — waktu menentukan prognosis neurologis!':'')+'\n\nP: RED FLAGS: '+(redFlags.length?redFlags.join(', '):'Tidak ada')+'\n\nSEGERA:\n  • '+(urgent?'Deksametason SEGERA sesuai protokol lokal — jangan tunda menunggu MRI bila defisit neurologis ada':'Pertimbangkan steroid bila MRI konfirmasi kompresi')+'\n  • MRI whole spine segera\n  • Konsultasi Bedah Saraf dan Onkologi Radiasi dalam 24 jam\n  • Hindari mobilisasi berlebihan bila unstable spine\nMONITORING:\n  • Dokumentasi status neurologis baseline\n  • Monitor neurologis tiap 2–4 jam\n  • Konsultasi Rehabilitasi Medik';
+  document.getElementById('scc-out').innerHTML=(urgent?'<div class="emg-banner">🚨 DEFISIT NEUROLOGIS — Steroid SEGERA, MRI, Bedah Saraf!</div>':'')+
+  '<div class="panel"><div class="ph">📄 <h3>SCC SOAP</h3><span class="risk-badge '+(urgent?'rb-h':'rb-m')+'" style="margin-left:auto">'+(urgent?'URGENT':'PERLU EVALUASI')+'</span></div>'+
+  '<div class="pb"><div class="soap-out" id="scc-note">'+soap+'</div>'+caveat()+'<div class="btn-row no-print"><button class="btn btn-sec btn-sm" onclick="copyText(\'scc-note\')">📋 Salin</button></div></div></div>';
+}
+
+function emgSepsis(){
+  return '<div class="emg-banner">🚨 Sepsis/Syok Septik — Bundle sepsis dalam 60 menit!</div>'+
+  '<div class="panel"><div class="ph">🫀 <h3>Sepsis / Syok Septik</h3></div><div class="pb">'+
+  '<div class="fg">'+
+    '<div class="f"><label>Suhu (°C)</label><input type="number" id="sep-t" step="0.1"></div>'+
+    '<div class="f"><label>TD (mmHg)</label><input type="text" id="sep-td"></div>'+
+    '<div class="f"><label>Nadi</label><input type="number" id="sep-hr"></div>'+
+    '<div class="f"><label>SpO₂ (%)</label><input type="number" id="sep-spo2"></div>'+
+    '<div class="f"><label>Kesadaran</label><select id="sep-gcs"><option>Compos mentis</option><option>Somnolen</option><option>Sopor</option><option>Koma</option></select></div>'+
+    '<div class="f"><label>Laktat (mmol/L)</label><input type="number" id="sep-lac" step="0.1"></div>'+
+    '<div class="f"><label>Diagnosis Dasar</label><input type="text" id="sep-diag"></div>'+
+  '</div>'+
+  '<div class="btn-row"><button class="btn btn-dan" onclick="genSepsis()">🫀 Generate SOAP</button></div>'+
+  '</div></div><div id="sep-out"></div>';
+}
+function genSepsis(){
+  var T=v('sep-t'), td=v('sep-td'), hr=v('sep-hr'), spo2=nv('sep-spo2'), gcs=v('sep-gcs'), lac=nv('sep-lac'), diag=v('sep-diag');
+  var shock=gcs!=='Compos mentis'||(lac!==null&&lac>2)||(spo2!==null&&spo2<92);
+  var soap='S: Pasien '+(diag||'keganasan')+' dengan tanda infeksi sistemik berat. Kesadaran: '+gcs+'.\n\nO: S '+T+'°C | TD '+td+' | N '+hr+' | SpO₂ '+(spo2||'—')+'% | GCS: '+gcs+' | Laktat: '+(lac||'—')+' mmol/L\n'+(shock?'⚠️ TANDA SYOK SEPTIK':'Belum ada tanda syok')+'\n\nA: '+(shock?'Syok Septik':'Sepsis')+' pada '+(diag||'hemato-onkologi')+'.\n\nP: BUNDLE SEPSIS (0–60 menit):\n  • Kultur darah x2 (jangan tunda antibiotik)\n  • Antibiotik empiris broad-spectrum anti-pseudomonal IV — sesuai protokol lokal\n  '+(shock?'• Resusitasi cairan: NaCl 0.9% 10–20 mL/kg, evaluasi cepat\n  • Vasopresor (Norepinefrin) bila syok tidak respons cairan\n  • KONSULTASI ICU SEGERA\n':'')+'  • Oksigenasi adekuat\n  • Kateter urin — monitor diuresis\n  • Laktat, DL, fungsi ginjal/hati, koagulasi, CRP/PCT\n  • Re-evaluasi 1–2 jam';
+  document.getElementById('sep-out').innerHTML=(shock?'<div class="emg-banner">🚨 SYOK SEPTIK — Resusitasi, antibiotik, ICU!</div>':'')+
+  '<div class="panel"><div class="ph">📄 <h3>Sepsis SOAP</h3></div><div class="pb"><div class="soap-out" id="sep-note">'+soap+'</div>'+caveat()+'<div class="btn-row no-print"><button class="btn btn-sec btn-sm" onclick="copyText(\'sep-note\')">📋 Salin</button></div></div></div>';
+}
+
+function emgTransRx(){
+  return '<div class="emg-banner">🚨 Reaksi Transfusi — Hentikan SEGERA! Pertahankan IV dengan NaCl.</div>'+
+  '<div class="panel"><div class="ph">🩸 <h3>Reaksi Transfusi</h3></div><div class="pb">'+
+  '<div class="fg">'+
+    '<div class="f"><label>Produk Darah</label><select id="tr-prod"><option>PRC</option><option>Trombosit</option><option>FFP</option><option>Kriopresipitat</option></select></div>'+
+    '<div class="f"><label>Volume Terinfus (mL)</label><input type="number" id="tr-vol"></div>'+
+    '<div class="f"><label>Suhu pra (°C)</label><input type="number" id="tr-pre" step="0.1"></div>'+
+    '<div class="f"><label>Suhu saat reaksi (°C)</label><input type="number" id="tr-t" step="0.1"></div>'+
+    '<div class="f"><label>TD saat reaksi</label><input type="text" id="tr-td"></div>'+
+    '<div class="f"><label>SpO₂ saat reaksi (%)</label><input type="number" id="tr-spo2"></div>'+
+  '</div>'+
+  '<div class="f" style="margin-bottom:10px"><label>Gejala</label><div class="cg">'+['Demam/menggigil','Urtikaria','Angioedema','Pruritus','Sesak/bronkospasme','Hipotensi','Mual/muntah','Nyeri punggung','Hemoglobinuria','Sianosis','Nyeri dada'].map(function(x){ return '<label class="ci"><input type="checkbox" value="'+x+'" name="tr-sx"> '+x+'</label>'; }).join('')+'</div></div>'+
+  '<div class="btn-row"><button class="btn btn-dan" onclick="genTransRx()">🩸 Generate SOAP</button></div>'+
+  '</div></div><div id="tr-out"></div>';
+}
+function genTransRx(){
+  var prod=v('tr-prod'), vol=v('tr-vol'), T=nv('tr-t'), td=v('tr-td'), spo2=nv('tr-spo2');
+  var sx=checked('tr-sx');
+  var severe=sx.some(function(x){ return x.indexOf('Hipotensi')>=0||x.indexOf('Sesak')>=0||x.indexOf('Sianosis')>=0||x.indexOf('Angioedema')>=0; });
+  var rxType=sx.some(function(x){ return x.indexOf('Nyeri punggung')>=0||x.indexOf('Hemoglobin')>=0; })?'Hemolitik tersangka':
+    sx.some(function(x){ return x.indexOf('Angioedema')>=0||x.indexOf('bronkospasme')>=0; })&&!sx.some(function(x){ return x.indexOf('Demam')>=0; })?'Anafilaksis tersangka':
+    sx.some(function(x){ return x.indexOf('Sesak')>=0||x.indexOf('Sianosis')>=0; })?'TRALI/TACO tersangka':
+    sx.some(function(x){ return x.indexOf('Demam')>=0; })&&!severe?'FNHTR tersangka':'Reaksi Alergi';
+  var soap='S: Pasien menerima '+prod+' '+vol+' mL, reaksi terjadi. Gejala: '+(sx.length?sx.join(', '):'—')+'.\n\nO: Suhu saat reaksi: '+T+'°C | TD: '+td+' | SpO₂: '+(spo2||'—')+'%\nKlasifikasi tersangka: '+rxType+'.\n\nA: Reaksi Transfusi – '+rxType+'. '+(severe?'BERAT — mengancam jiwa.':'Derajat sedang/ringan.')+'\n\nP: SEMUA REAKSI:\n  • HENTIKAN transfusi SEGERA\n  • Pertahankan IV dengan NaCl 0.9% — JANGAN lepas akses\n  • Hubungi dokter dan bank darah SEGERA\n  • Kirim: kantong + set + sampel darah baru + urin ke bank darah (verify local protocol)\n  '+(severe?'• Epinefrin IM bila anafilaksis (verify local protocol)\n  • Antihistamin IV, Steroid IV\n  • Oksigenasi\n  • KONSULTASI ICU\n':'• Antihistamin, Parasetamol bila FNHTR')+'  • Dokumentasi lengkap dan laporan insiden';
+  document.getElementById('tr-out').innerHTML=(severe?'<div class="emg-banner">🚨 REAKSI BERAT — '+rxType+'! Hentikan, epinefrin bila anafilaksis, ICU!</div>':'')+
+  '<div class="panel"><div class="ph">📄 <h3>Reaksi Transfusi SOAP</h3><span class="risk-badge '+(severe?'rb-h':'rb-m')+'" style="margin-left:auto">'+rxType+'</span></div>'+
+  '<div class="pb"><div class="soap-out" id="tr-note">'+soap+'</div>'+caveat()+'<div class="btn-row no-print"><button class="btn btn-sec btn-sm" onclick="copyText(\'tr-note\')">📋 Salin</button></div></div></div>';
+}
+
+function emgExtrav(){
+  return '<div class="emg-banner">🚨 Ekstravasasi — SLAP: Stop · Leave · Aspirate · Plan. Jangan flush!</div>'+
+  '<div class="panel"><div class="ph">⚠️ <h3>Ekstravasasi Kemoterapi</h3></div><div class="pb">'+
+  '<div class="fg">'+
+    '<div class="f"><label>Obat</label><select id="ex-drug">'+
+      '<option value="anthra">Doxorubicin/Daunorubicin/Epirubicin (Antrasiklin)</option>'+
+      '<option value="vinca">Vincristine/Vinblastine (Vinca Alkaloid)</option>'+
+      '<option value="vother">Mitomycin-C / Actinomycin-D (Vesicant lain)</option>'+
+      '<option value="etopo">Etoposide (Irritant)</option>'+
+      '<option value="irritant">Cisplatin/Carboplatin/Cyclophosphamide (Irritant)</option>'+
+      '<option value="neutral">Methotrexate/Cytarabine/Asparaginase (Neutral)</option>'+
+    '</select></div>'+
+    '<div class="f"><label>Volume (mL)</label><input type="number" id="ex-vol" step="0.1" min="0"></div>'+
+    '<div class="f"><label>Nyeri</label><select id="ex-pain"><option>Tidak ada</option><option>Ringan</option><option>Sedang</option><option>Berat</option></select></div>'+
+    '<div class="f"><label>Area</label><select id="ex-area"><option>Terlokalisir kecil</option><option>Luas</option><option>Dekat sendi/tendon</option></select></div>'+
+    '<div class="f"><label>Lokasi Vena</label><input type="text" id="ex-site" placeholder="Punggung tangan, ACF..."></div>'+
+  '</div>'+
+  '<div class="btn-row"><button class="btn btn-dan" onclick="genExtrav()">⚠️ Generate Ekstravasasi SOAP</button></div>'+
+  '</div></div><div id="ex-out"></div>';
+}
+function genExtrav(){
+  var dEl=document.getElementById('ex-drug');
+  var dName=dEl.options[dEl.selectedIndex].text, dCls=dEl.value;
+  var vol=v('ex-vol'), pain=v('ex-pain'), area=v('ex-area'), site=v('ex-site');
+  var clsMap={'anthra':'Vesicant (Antrasiklin)','vinca':'Vesicant (Vinca)','vother':'Vesicant (Lain)','etopo':'Irritant (Etoposide)','irritant':'Irritant','neutral':'Neutral'};
+  var compress=dCls==='vinca'||dCls==='etopo'?'HANGAT (bukan dingin)':'DINGIN';
+  var antidot={'anthra':'Dexrazoxane IV dalam 6 jam (bila tersedia, verify local protocol). Kompres DINGIN.','vinca':'Hyaluronidase intradermal (bila tersedia, verify local protocol). Kompres HANGAT.','vother':'Kompres DINGIN. Sodium thiosulfate untuk mechlorethamine (verify local protocol).','etopo':'Kompres HANGAT. Observasi ketat.','irritant':'Observasi. Kompres sesuai obat spesifik.','neutral':'Observasi. Risiko kerusakan jaringan rendah.'}[dCls];
+  var isVes=dCls==='anthra'||dCls==='vinca'||dCls==='vother';
+  var soap='S: Pasien ekstravasasi '+dName+' ('+clsMap[dCls]+') di '+(site||'lokasi insersi')+'. Vol ±'+vol+' mL. Nyeri: '+pain+'.\n\nO: Area: '+area+'. Lokasi: '+(site||'—')+'. Kelas obat: '+(clsMap[dCls]||dCls)+'.\n\nA: Ekstravasasi '+dName+' — '+(clsMap[dCls]||dCls)+'.'+(area!=='Terlokalisir kecil'?' Area luas/risiko tinggi.':'')+'\n\nP: SLAP PROTOCOL:\n  1. STOP infus SEGERA\n  2. Leave akses — aspirasi sisa obat melalui kanul\n  3. Cabut kanul setelah aspirasi\n  4. JANGAN flush\n  5. Mark area, foto dokumentasi\n\nTINDAKAN SPESIFIK:\n  • Kompres '+compress+'\n  • '+antidot+'\n\nESKALASI:\n  • Lapor dokter SEGERA\n  • '+(area!=='Terlokalisir kecil'?'Konsultasi Bedah Plastik SEGERA':'Konsultasi Bedah Plastik bila nekrosis/luas')+'\n  • Isi formulir pelaporan insiden\n  • Follow-up harian min 5–7 hari';
+  document.getElementById('ex-out').innerHTML='<div class="al '+(isVes?'al-dan':'al-war')+'" style="margin-bottom:12px"><span class="al-ic">'+(isVes?'🚨':'⚠️')+'</span><div class="al-b"><div class="al-t">'+dName+' — '+(clsMap[dCls]||dCls)+'</div><div class="al-tx">Kompres: '+compress+'.'+(isVes?' Risiko nekrosis tinggi — eskalasi segera!':'')+'</div></div></div>'+
+  '<div class="panel"><div class="ph">📄 <h3>Ekstravasasi SOAP</h3></div><div class="pb"><div class="soap-out" id="ex-note">'+soap+'</div>'+caveat()+'<div class="btn-row no-print"><button class="btn btn-sec btn-sm" onclick="copyText(\'ex-note\')">📋 Salin</button></div></div></div>';
+}
+
+function emgGeneric(e){
+  var eid=e.replace(/[^a-zA-Z]/g,'');
+  return '<div class="emg-banner">🚨 '+e+' — Evaluasi segera!</div>'+
+  '<div class="panel"><div class="ph">🚨 <h3>'+e+'</h3></div><div class="pb">'+
+  '<div class="fg"><div class="f"><label>Diagnosis Dasar</label><input type="text" id="'+eid+'-diag"></div><div class="f"><label>Status</label><select id="'+eid+'-stat"><option>Stabil</option><option>Tidak stabil</option><option>Kritis</option></select></div><div class="f"><label>Suhu</label><input type="number" id="'+eid+'-t" step="0.1"></div><div class="f"><label>TD</label><input type="text" id="'+eid+'-td"></div><div class="f"><label>SpO₂</label><input type="number" id="'+eid+'-spo2"></div></div>'+
+  '<div class="f" style="margin-bottom:10px"><label>Gejala/Temuan</label><textarea id="'+eid+'-sx" rows="3"></textarea></div>'+
+  '<div class="btn-row"><button class="btn btn-dan" onclick="genGenEmg(\''+e+'\',\''+eid+'\')">🚨 Generate SOAP</button></div>'+
+  '</div></div><div id="'+eid+'-out"></div>';
+}
+function genGenEmg(title,eid){
+  var diag=v(eid+'-diag'), stat=v(eid+'-stat'), t=v(eid+'-t'), td=v(eid+'-td'), spo2=v(eid+'-spo2'), sx=v(eid+'-sx');
+  var soap='S: Pasien '+(diag||'keganasan')+' dengan '+title.toLowerCase()+'. '+sx+'\n\nO: Status: '+stat+'. S '+t+'°C, TD '+td+', SpO₂ '+spo2+'%.\n\nA: '+title+' pada '+(diag||'hemato-onkologi')+'. Status: '+stat+'.\n\nP: Stabilisasi. Konsultasi senior. Tata laksana sesuai protokol lokal.';
+  document.getElementById(eid+'-out').innerHTML='<div class="panel"><div class="ph">📄 <h3>'+title+' SOAP</h3></div><div class="pb"><div class="soap-out" id="'+eid+'-note">'+soap+'</div>'+caveat()+'<div class="btn-row no-print"><button class="btn btn-sec btn-sm" onclick="copyText(\''+eid+'-note\')">📋 Salin</button></div></div></div>';
+}
+
+// ══════════════════════════════════════════
+// NURSING
+// ══════════════════════════════════════════
+function pgNursing(){
+  var sel=curSub||NUR_MODS[0];
+  return '<div class="pg-title">💊 Nursing SOAP</div><div class="pg-sub">Dokumentasi keperawatan onkologi anak</div>'+
+  '<div class="tabs" id="ntabs">'+NUR_MODS.map(function(m){ return '<button class="tab'+(m===sel?' active':'')+'" data-key="'+m+'" onclick="switchNur(\''+m+'\')">'+m+'</button>'; }).join('')+'</div>'+
+  '<div id="nur-area">'+nurForm(sel)+'</div>';
+}
+function switchNur(m){
+  curSub=m;
+  document.querySelectorAll('#ntabs .tab').forEach(function(t){ t.classList.toggle('active', t.dataset.key===m); });
+  document.getElementById('nur-area').innerHTML = nurForm(m);
+}
+function nurForm(m){
+  if(m==='Flebitis (VIP Scale)') return nurFlebitis();
+  if(m==='Extravasasi') return nurExtrav();
+  if(m==='Monitoring Kemoterapi') return nurKemo();
+  if(m==='Transfusion Monitoring') return nurTrans();
+  return nurGeneric(m);
+}
+function nurFlebitis(){
+  return '<div class="panel"><div class="ph">💉 <h3>Flebitis – Visual Infusion Phlebitis (VIP) Scale</h3></div><div class="pb">'+
+  '<div class="fg"><div class="f"><label>Lokasi</label><input type="text" id="fl-site"></div><div class="f"><label>Usia IV Line</label><input type="text" id="fl-age" placeholder="Hari ke-"></div></div>'+
+  '<div style="font-weight:700;font-size:.82rem;margin-bottom:8px">Pilih grade yang sesuai (tertinggi yang ada)</div>'+
+  '<div class="cg" style="flex-direction:column;align-items:flex-start">'+
+    '<label class="ci" style="width:100%"><input type="radio" name="fl-g" value="0" checked> Grade 0 — Tidak ada gejala</label>'+
+    '<label class="ci" style="width:100%"><input type="radio" name="fl-g" value="1"> Grade 1 — Nyeri ringan ATAU kemerahan ringan</label>'+
+    '<label class="ci" style="width:100%"><input type="radio" name="fl-g" value="2"> Grade 2 — Nyeri + kemerahan ± bengkak</label>'+
+    '<label class="ci" style="width:100%"><input type="radio" name="fl-g" value="3"> Grade 3 — Streak (garis merah sepanjang vena)</label>'+
+    '<label class="ci" style="width:100%"><input type="radio" name="fl-g" value="4"> Grade 4 — Tali vena teraba (palpable cord)</label>'+
+    '<label class="ci" style="width:100%"><input type="radio" name="fl-g" value="5"> Grade 5 — Pus/discharge/selulitis — INFEKSI</label>'+
+  '</div>'+
+  '<div class="btn-row"><button class="btn btn-pri" onclick="gradeVIP()">💉 Hasilkan Tindakan VIP</button></div>'+
+  '<div id="fl-out"></div></div></div>';
+}
+function gradeVIP(){
+  var gEl=document.querySelector('input[name="fl-g"]:checked');
+  var g=gEl?parseInt(gEl.value):0;
+  var site=v('fl-site'), age=v('fl-age');
+  var actions=['Tidak ada tanda flebitis. Pertahankan IV. Monitor tiap shift.',
+    'Grade 1. Kompres hangat. Pantau tiap 2 jam. Ganti lokasi bila tidak membaik 24 jam.',
+    'Grade 2. CABUT IV segera. Ganti lokasi baru. Kompres hangat 4×/hari.',
+    'Grade 3. CABUT IV SEGERA. Lapor dokter. Kompres hangat.',
+    'Grade 4. CABUT IV SEGERA. Lapor dokter. Pertimbangkan konsultasi vaskular.',
+    'Grade 5 — INFEKSI. CABUT SEGERA. Kultur pus. Lapor dokter. Antibiotik. Laporan insiden.'];
+  var cols=['var(--suc)','var(--war)','var(--acc)','#E65100','var(--dan)','#6A1A1A'];
+  var note='NURSING SOAP — FLEBITIS VIP Grade '+g+'\n\nS: Pasien '+(v('fl-site')?'di '+site:'')+' IV line hari ke-'+(age||'—')+'. '+(g>0?'Keluhan '+(['','nyeri ringan/kemerahan','nyeri+kemerahan+bengkak','streak merah','tali vena teraba','pus/discharge'][g]||'—')+'.':'Tidak ada keluhan.')+'\n\nO: VIP Scale Grade '+g+'. Lokasi: '+(site||'—')+'.\n\nA: Flebitis VIP Grade '+g+' di '+(site||'—')+'.\n\nP: '+actions[g];
+  document.getElementById('fl-out').innerHTML='<div class="grade-res" style="margin-top:14px"><div class="grade-n" style="color:'+cols[g]+'">Grade '+g+'</div><div style="font-size:.82rem;font-weight:600;color:'+cols[g]+';margin:6px 0">VIP Scale</div><div style="font-size:.78rem;max-width:420px;margin:0 auto">'+actions[g]+'</div></div>'+
+  '<div class="soap-out" id="fl-note" style="margin-top:12px">'+note+'</div>'+
+  '<div class="btn-row no-print" style="margin-top:8px"><button class="btn btn-sec btn-sm" onclick="copyText(\'fl-note\')">📋 Salin</button></div>';
+}
+function nurExtrav(){
+  return '<div class="panel"><div class="ph">⚠️ <h3>Ekstravasasi Kemoterapi (Nursing)</h3></div><div class="pb">'+
+  '<div class="al al-war"><span class="al-ic">💡</span><div class="al-b"><div class="al-t">SLAP Protocol</div><div class="al-tx">Stop • Leave akses • Aspirate • Plan. Jangan flush.</div></div></div>'+
+  '<div class="fg"><div class="f"><label>Obat</label><select id="nex-d">'+
+    '<option value="anthra">Doxorubicin/Daunorubicin (Antrasiklin)</option>'+
+    '<option value="vinca">Vincristine/Vinblastine (Vinca)</option>'+
+    '<option value="vother">Mitomycin-C / Actinomycin-D</option>'+
+    '<option value="etopo">Etoposide</option>'+
+    '<option value="irritant">Cisplatin/Carboplatin/Cyclophosphamide</option>'+
+    '<option value="neutral">Methotrexate/Cytarabine/Asparaginase</option>'+
+  '</select></div></div>'+
+  '<div class="btn-row"><button class="btn btn-dan" onclick="genNurExtrav()">⚠️ Tampilkan Tindakan</button></div>'+
+  '<div id="nex-out"></div></div></div>';
+}
+function genNurExtrav(){
+  var d=document.getElementById('nex-d');
+  var name=d.options[d.selectedIndex].text, cls=d.value;
+  var compress={'anthra':'DINGIN','vinca':'HANGAT','vother':'DINGIN','etopo':'HANGAT','irritant':'Periksa per obat','neutral':'Sesuai kenyamanan'}[cls];
+  var antidot={'anthra':'Dexrazoxane IV dalam 6 jam (verify availability & local protocol)','vinca':'Hyaluronidase intradermal (verify availability)','vother':'Sodium thiosulfate untuk mechlorethamine','etopo':'Observasi ketat','irritant':'Observasi','neutral':'Observasi'}[cls];
+  var isVes=cls==='anthra'||cls==='vinca'||cls==='vother';
+  document.getElementById('nex-out').innerHTML='<div class="al '+(isVes?'al-dan':'al-war')+'" style="margin-top:12px"><span class="al-ic">'+(isVes?'🚨':'⚠️')+'</span><div class="al-b"><div class="al-t">'+name+'</div><div class="al-tx">Kelas: '+(isVes?'VESICANT':'IRRITANT/NEUTRAL')+' | Kompres: '+compress+' | '+antidot+'</div></div></div>'+
+  '<ul class="chk" style="margin-top:12px"><li>HENTIKAN infus SEGERA</li><li>Leave akses — aspirasi sisa obat</li><li>Cabut kanul setelah aspirasi</li><li>Kompres '+compress+' 15–20 mnt, 4×/hari</li>'+(isVes?'<li>Antidot: '+antidot+'</li>':'')+'<li>Mark area, foto</li><li>Lapor dokter SEGERA</li><li>Laporan insiden</li><li>Follow-up harian</li></ul>';
+}
+function nurKemo(){
+  var preList=['Ondansetron','Deksametason','Diphenhydramine','Parasetamol','Omeprazole'];
+  return '<div class="panel"><div class="ph">💊 <h3>Monitoring Kemoterapi</h3></div><div class="pb">'+
+  '<div class="al al-inf"><span class="al-ic">✅</span><div class="al-b"><div class="al-t">6 Rights Medication Safety</div><div class="al-tx">Pasien · Obat · Dosis (verifikasi BSA/BW oleh staf berwenang) · Rute · Waktu · Dokumentasi</div></div></div>'+
+  '<div class="fg"><div class="f"><label>Obat</label><input type="text" id="km-drug"></div><div class="f"><label>Dosis (sesuai resep)</label><input type="text" id="km-dose" placeholder="mg/m² / mg/kg — verify"></div><div class="f"><label>Rute</label><select id="km-route"><option>IV</option><option>PO</option><option>IT</option><option>IM</option></select></div><div class="f"><label>Durasi</label><input type="text" id="km-dur"></div><div class="f"><label>Suhu pra-kemo</label><input type="number" id="km-t" step="0.1"></div><div class="f"><label>Patensi Akses</label><select id="km-iv"><option>Paten, tidak ada tanda flebitis</option><option>CVC paten</option><option>Perlu ganti lokasi</option></select></div></div>'+
+  '<div class="f" style="margin-bottom:10px"><label>Premedikasi</label><div class="cg">'+preList.map(function(p){ return '<label class="ci"><input type="checkbox" value="'+p+'" name="km-pre"> '+p+'</label>'; }).join('')+'</div></div>'+
+  '<div class="btn-row"><button class="btn btn-pri" onclick="genKemo()">💊 Generate Nursing Note</button></div>'+
+  '<div id="km-out"></div></div></div>';
+}
+function genKemo(){
+  var drug=v('km-drug'), dose=v('km-dose'), route=v('km-route'), dur=v('km-dur'), t=v('km-t'), iv=v('km-iv'), pre=checked('km-pre');
+  var note='NURSING SOAP — MONITORING KEMOTERAPI\n\nS: Pasien akan menerima '+drug+' '+dose+' via '+route+'. Pre-kemo tidak ada keluhan akut.\n\nO: S '+t+'°C. Akses: '+iv+'.\nPremedikasi: '+(pre.length?pre.join(', '):'Belum diberikan')+'.\nVerifikasi 6 rights: ✓\n\nA: Pasien siap kemoterapi '+drug+'.\n\nP: ✓ Verifikasi dosis BSA/BB oleh staf berwenang\n✓ TTV tiap 30 mnt selama infus\n✓ Monitor hipersensitivitas tiap 15 mnt\n✓ Monitor ekstravasasi tiap 15 mnt\n✓ Emergency kit siap (epinefrin, antihistamin, steroid, NaCl)\n✓ Durasi infus: '+(dur||'sesuai resep')+'\n✓ Dokumentasi waktu mulai & selesai\n✓ Penanganan sitostatika sesuai prosedur';
+  document.getElementById('km-out').innerHTML='<div class="soap-out" id="km-note" style="margin-top:12px">'+note+'</div>'+
+  '<div class="al al-dan" style="margin-top:10px"><span class="al-ic">🚨</span><div class="al-b"><div class="al-t">Eskalasi Segera Bila:</div><div class="al-tx">Urtikaria, angioedema, bronkospasme, hipotensi, ekstravasasi — HENTIKAN infus, lapor dokter.</div></div></div>'+
+  '<div class="btn-row no-print" style="margin-top:8px"><button class="btn btn-sec btn-sm" onclick="copyText(\'km-note\')">📋 Salin</button></div>';
+}
+function nurTrans(){
+  return '<div class="panel"><div class="ph">🩸 <h3>Transfusion Monitoring</h3></div><div class="pb">'+
+  '<div class="fg"><div class="f"><label>Produk</label><select id="tn-prod"><option>PRC</option><option>Trombosit</option><option>FFP</option><option>Kriopresipitat</option></select></div><div class="f"><label>Volume (mL)</label><input type="number" id="tn-vol"></div><div class="f"><label>S pra (°C)</label><input type="number" id="tn-t" step="0.1"></div><div class="f"><label>TD pra</label><input type="text" id="tn-td"></div><div class="f"><label>N pra</label><input type="number" id="tn-hr"></div></div>'+
+  '<div class="btn-row"><button class="btn btn-pri" onclick="genTrans()">🩸 Generate Nursing Note</button></div><div id="tn-out"></div></div></div>';
+}
+function genTrans(){
+  var prod=v('tn-prod'), vol=v('tn-vol'), t=v('tn-t'), td=v('tn-td'), hr=v('tn-hr');
+  var note='NURSING SOAP — MONITORING TRANSFUSI\n\nS: Pasien akan menerima '+prod+' '+vol+' mL. Pra-transfusi: tidak ada keluhan baru.\n\nO: S '+t+'°C | TD '+td+' | N '+hr+'\nVerifikasi crossmatch & 2 identitas: ✓\n\nA: Pasien memerlukan transfusi '+prod+'. Kondisi stabil.\n\nP: ✓ Verifikasi 2 identitas sebelum mulai\n✓ Cek kompatibilitas label & tanggal\n✓ Mulai lambat 1–2 mL/kg/jam selama 15 mnt pertama\n✓ TTV: menit 0, 15, 30, 60, akhir\n✓ Pantau tanda reaksi: demam, menggigil, urtikaria, sesak, nyeri punggung\n✓ HENTIKAN bila reaksi — pertahankan IV NaCl, lapor dokter\n✓ Kirim kantong+set+sampel+urin ke bank darah bila reaksi berat\n✓ Dokumentasi lengkap';
+  document.getElementById('tn-out').innerHTML='<div class="soap-out" id="tn-note" style="margin-top:12px">'+note+'</div>'+
+  '<div class="btn-row no-print" style="margin-top:8px"><button class="btn btn-sec btn-sm" onclick="copyText(\'tn-note\')">📋 Salin</button></div>';
+}
+function nurGeneric(m){
+  return '<div class="panel"><div class="ph">💊 <h3>'+m+'</h3></div><div class="pb">'+
+  '<div class="fg"><div class="f"><label>Suhu (°C)</label><input type="number" id="ng-t" step="0.1"></div><div class="f"><label>TD</label><input type="text" id="ng-td"></div><div class="f"><label>SpO₂ (%)</label><input type="number" id="ng-spo2"></div></div>'+
+  '<div class="f" style="margin-bottom:10px"><label>Kondisi/Temuan</label><textarea id="ng-sx" rows="3"></textarea></div>'+
+  '<div class="f" style="margin-bottom:10px"><label>Tindakan</label><textarea id="ng-act" rows="2"></textarea></div>'+
+  '<div class="btn-row"><button class="btn btn-pri" onclick="genNurGen(\''+m+'\')">📋 Generate</button></div><div id="ng-out"></div></div></div>';
+}
+function genNurGen(m){
+  var note='NURSING SOAP — '+m.toUpperCase()+'\nS: '+(v('ng-sx')||'Kondisi stabil.')+'\nO: S '+(v('ng-t')||'—')+'°C, TD '+(v('ng-td')||'—')+', SpO₂ '+(v('ng-spo2')||'—')+'%.\nA: '+m+'.\nP: '+(v('ng-act')||'Sesuai protokol.')+'\n✓ Monitor dan dokumentasi\n✓ Eskalasi bila perubahan kondisi';
+  document.getElementById('ng-out').innerHTML='<div class="soap-out" id="ng-note" style="margin-top:12px">'+note+'</div>'+
+  '<div class="btn-row no-print" style="margin-top:8px"><button class="btn btn-sec btn-sm" onclick="copyText(\'ng-note\')">📋 Salin</button></div>';
+}
+
+// ══════════════════════════════════════════
+// QUALITY CHECKER
+// ══════════════════════════════════════════
+function pgQuality(){
+  return '<div class="pg-title">✅ SOAP Quality Checker</div><div class="pg-sub">Analisis kelengkapan SOAP 0–100</div>'+
+  '<div class="panel"><div class="ph">✅ <h3>Analisis SOAP</h3></div><div class="pb">'+
+  '<div class="f" style="margin-bottom:14px"><label>Tempelkan teks SOAP:</label><textarea id="q-soap" rows="10" placeholder="S:\n...\nO:\n...\nA:\n...\nP:\n..."></textarea></div>'+
+  '<div class="btn-row"><button class="btn btn-pri" onclick="analyzeSOAP()">🔍 Analisis</button><button class="btn btn-sec" onclick="document.getElementById(\'q-soap\').value=\'\';document.getElementById(\'q-out\').innerHTML=\'\'">🗑️</button></div>'+
+  '</div></div><div id="q-out"></div>';
+}
+function analyzeSOAP(){
+  var soap=v('q-soap');
+  if(!soap){alert('Tempelkan SOAP terlebih dahulu.');return;}
+  function has(rx){return rx.test(soap);}
+  var s_s=has(/s\s*:/i)&&soap.split(/s\s*:/i)[1]&&soap.split(/s\s*:/i)[1].trim().length>20?1:0;
+  var s_ku=has(/keluhan|demam|nyeri|mual|sesak|lemas/i)?1:0;
+  var s_onset=has(/sejak|hari ke|selama|onset|jam|minggu/i)?1:0;
+  var s_oral=has(/oral|makan|minum|anoreksia|asupan/i)?1:0;
+  var subScore=Math.round((s_s+s_ku+s_onset+s_oral)/4*100);
+  var o_s=has(/o\s*:/i)?1:0;
+  var o_ttv=has(/nadi|suhu|td|tekanan|rr|spo2|saturasi/i)?1:0;
+  var o_lab=has(/hb|leukosit|anc|trombosit|plt|wbc/i)?1:0;
+  var o_bb=has(/bb|berat|kg|tb|tinggi/i)?1:0;
+  var objScore=Math.round((o_s+o_ttv+o_lab+o_bb)/4*100);
+  var a_s=has(/a\s*:/i)?1:0;
+  var a_diag=has(/leukemia|limfoma|all|aml|tumor|neuroblastoma|aplastik|hsct|car-t|osteosarkoma/i)?1:0;
+  var a_prob=has(/problem|masalah|komplikasi|febrile|neutropenia|trombositopenia/i)?1:0;
+  var assScore=Math.round((a_s+a_diag+a_prob)/3*100);
+  var p_s=has(/p\s*:/i)?1:0;
+  var p_plan=has(/rencana|terapi|monitoring|antibiotik|transfusi|konsultasi|lanjut/i)?1:0;
+  var p_mon=has(/monitor|pantau|observasi|cek|evaluasi/i)?1:0;
+  var p_esc=has(/eskalasi|senior|icu|lapor|konsultasi|bila|jika/i)?1:0;
+  var planScore=Math.round((p_s+p_plan+p_mon+p_esc)/4*100);
+  var missing=[];
+  if(!has(/suhu|\bS\b.*°C/i)) missing.push('Suhu');
+  if(!has(/td|tekanan darah/i)) missing.push('Tekanan Darah');
+  if(!has(/nadi/i)) missing.push('Nadi');
+  if(!has(/anc/i)) missing.push('ANC');
+  if(!has(/trombosit|plt/i)) missing.push('Trombosit');
+  if(!has(/hb|hemoglobin/i)) missing.push('Hb');
+  if(!has(/diagnos/i)) missing.push('Diagnosis');
+  if(!has(/p\s*:/i)) missing.push('Plan');
+  var total=Math.round((subScore+objScore+assScore+planScore)/4);
+  var sc=total>=80?'sc-g':total>=60?'sc-y':'sc-r';
+  var traffic=total>=80?'🟢 Excellent':total>=60?'🟡 Needs Improvement':'🔴 Incomplete';
+  var fbs=[];
+  if(!s_s) fbs.push({t:'b',x:'Bagian S tidak ditemukan.'});
+  else fbs.push({t:'g',x:'Bagian S ada.'});
+  if(!s_ku) fbs.push({t:'b',x:'Keluhan utama tidak teridentifikasi.'});
+  else fbs.push({t:'g',x:'Keluhan terdokumentasi.'});
+  if(!o_ttv) fbs.push({t:'b',x:'TTV tidak ditemukan — wajib ada di bagian O.'});
+  else fbs.push({t:'g',x:'TTV tercantum.'});
+  if(!o_lab) fbs.push({t:'w',x:'Lab hematologi (Hb, ANC, trombosit) tidak ditemukan — penting untuk pasien hemato-onkologi.'});
+  else fbs.push({t:'g',x:'Lab tercantum.'});
+  if(!a_diag) fbs.push({t:'b',x:'Diagnosis spesifik tidak teridentifikasi di Assessment.'});
+  else fbs.push({t:'g',x:'Diagnosis tercantum.'});
+  if(!a_prob) fbs.push({t:'w',x:'Problem list tidak ditemukan.'});
+  if(!p_plan) fbs.push({t:'b',x:'Plan tidak spesifik.'});
+  else fbs.push({t:'g',x:'Plan tercantum.'});
+  if(!p_esc) fbs.push({t:'w',x:'Tidak ada kriteria eskalasi atau kapan lapor senior.'});
+  if(missing.length) fbs.push({t:'b',x:'Data kritis tidak lengkap: '+missing.join(', ')+'.'});
+  document.getElementById('q-out').innerHTML='<div class="panel"><div class="ph">📊 <h3>Hasil Analisis</h3></div><div class="pb">'+
+  '<div style="text-align:center;margin-bottom:18px"><div class="sc-circle '+sc+'">'+total+'<div style="font-size:.6rem;font-weight:600">/100</div></div><div style="font-size:1.1rem;font-weight:700">'+traffic+'</div></div>'+
+  [['Subjective',subScore],['Objective',objScore],['Assessment',assScore],['Plan',planScore]].map(function(arr){ var l=arr[0], s=arr[1]; return '<div class="qbr"><div class="qbl">'+l+'</div><div class="qbt"><div class="qbf" style="width:'+s+'%;background:'+(s>=80?'var(--suc)':s>=60?'var(--war)':'var(--dan)')+'"></div></div><div class="qbv" style="color:'+(s>=80?'var(--suc)':s>=60?'var(--war)':'var(--dan)')+'">'+s+'%</div></div>'; }).join('')+
+  (missing.length?'<div class="al al-dan"><span class="al-ic">🚨</span><div class="al-b"><div class="al-t">Data Kritis Tidak Lengkap</div><div class="al-tx">'+missing.join(', ')+'</div></div></div>':'')+
+  '<div style="font-weight:700;font-size:.82rem;margin-bottom:9px">📝 Feedback</div>'+
+  fbs.map(function(f){ return '<div class="fbi '+f.t+'">'+(f.t==='g'?'✅':f.t==='w'?'⚠️':'❌')+' '+f.x+'</div>'; }).join('')+
+  '</div></div>';
+}
+
+// ══════════════════════════════════════════
+// TEMPLATES
+// ══════════════════════════════════════════
+var TPLS=[
+  {t:'ALL Maintenance',tag:'ALL',d:'SOAP ALL fase maintenance',c:'S: Pasien ALL B-Cell, fase maintenance, HR ke-—. Keluhan: tidak ada. Asupan oral baik.\n\nO: KU: sakit ringan. TTV: TD —, N —, S —°C, SpO₂ —%.\nHb — | WBC — | ANC — | Plt — ribu.\n\nA: ALL B-Cell fase maintenance. Status stabil.\n\nP: Lanjut 6-MP —mg/m²/hari PO + MTX —mg/m²/minggu PO (verify local protocol).\nDL minggu depan. Edukasi: segera ke UGD bila demam.'},
+  {t:'HSCT D+30',tag:'HSCT',d:'Evaluasi HSCT D+30',c:'S: Post-HSCT D+30. Engraftmen netrofil D+—, trombosit D+—. Keluhan: —.\n\nO: TTV stabil. Hb —, ANC —, Plt —. Chimerism —%.\nGVHD: kulit grade —, GI —, hati —.\n\nA: Post-HSCT D+30. Engraftmen —. GVHD grade —.\n\nP: Lanjut IS (CsA/Tacrolimus — verify local protocol).\nCek CMV/EBV. Monitor chimerism. Tapering IS sesuai jadwal.'},
+  {t:'CAR-T D+7',tag:'CAR-T',d:'Monitoring D+7 CAR-T',c:'S: Post CAR-T D+7. Keluhan: —.\n\nO: S —°C, TD —, SpO₂ —%. IL-6: —. Ferritin: —.\nNeurologis: sadar, orientasi —, ICE score —.\n\nA: Post-CAR-T D+7. CRS Grade — (ASTCT). ICANS Grade — (ASTCT).\n\nP: CRS ≥2: Tocilizumab sesuai protokol (verify local protocol).\nICANS: Deksametason sesuai protokol. Monitor neurologis ketat.'},
+  {t:'FN Protocol',tag:'Emergency',d:'Emergency FN',c:'S: Pasien — (diagnosis) demam —°C sejak —. Kemo terakhir — hari lalu.\n\nO: TD — | N — | S —°C | SpO₂ —%\nANC —/μL, CRP —, PCT —.\n\nA: Febrile Neutropenia pada —, risiko —.\n\nP: Kultur darah SEGERA (perifer ± CVC).\nAntibiotik anti-pseudomonal IV ≤60 mnt (verify local protocol).\nTTV tiap 2–4 jam. Balance cairan. Lapor senior bila tidak respons 48–72 jam.'},
+  {t:'DIC APL',tag:'AML/APL',d:'DIC pada APL',c:'S: Pasien APL baru dengan koagulopati. Perdarahan: —.\n\nO: PT —/Kontrol — det (selisih — det) | Fibrinogen — | D-Dimer — | Plt — ribu.\nISTS score: —/8.\n\nA: Overt DIC pada APL. ISTH score —.\n\nP: ATRA SEGERA sesuai protokol (verify local protocol).\nFFP/Plt/Krioppt sesuai perdarahan.\nMonitor koagulasi tiap 4–6 jam.'},
+  {t:'CAR-T CRS Grade 2',tag:'CAR-T',d:'Tata laksana CRS Grade 2',c:'S: Post-CAR-T D+—, demam —°C tanpa hipotensi/hipoksia.\n\nO: S —°C, TD —, SpO₂ —%. CRS Grade 2 (ASTCT).\n\nA: CRS Grade 2 pasca CAR-T.\n\nP: Tocilizumab sesuai protokol (verify local protocol).\nParasetamol bila demam. Monitor ketat. Siap eskalasi bila hipotensi/hipoksia.'},
+  {t:'HSCT GVHD Akut',tag:'HSCT',d:'Manajemen GVHD akut',c:'S: Post-HSCT D+—. GVHD akut. Kulit: —, GI: —, hati: —.\n\nO: Skin rash stage —. Bilirubin —. Diare —×/hari.\n\nA: GVHD Akut grade — post-HSCT D+—.\n\nP: Metilprednisolon — mg/kg/hari (verify local protocol).\nCsA/Tacrolimus level. Konsultasi GI bila diperlukan.'},
+  {t:'Aplastic Anemia IST',tag:'AA',d:'IST Aplastic Anemia',c:'S: Aplastic Anemia, IST siklus ke-—. Keluhan: —.\n\nO: Hb —, ANC —, Plt —. CsA level: —.\n\nA: Aplastic Anemia (SAA/VSAA), dalam IST. Respons: —.\n\nP: Lanjut CsA — mg/kg/hari (verify local protocol).\nMonitor CsA level. Evaluasi respons DL tiap — minggu.'},
+];
+function pgTemplates(){
+  return '<div class="pg-title">📄 Smart Templates</div><div class="pg-sub">Template SOAP siap pakai</div>'+
+  '<div class="tpl-grid">'+TPLS.map(function(t,i){ return '<div class="tc" onclick="showTpl('+i+')"><div class="tc-t">'+t.t+'</div><div class="tc-d">'+t.d+'</div><span class="tc-tag">'+t.tag+'</span></div>'; }).join('')+'</div>'+
+  '<div id="tpl-out"></div>';
+}
+function showTpl(i){
+  var t=TPLS[i];
+  document.getElementById('tpl-out').innerHTML='<div class="panel" style="margin-top:18px"><div class="ph">📄 <h3>'+t.t+'</h3><button class="btn btn-sec btn-sm no-print" style="margin-left:auto" onclick="copyText(\'tpl-txt\')">📋 Salin</button></div><div class="pb"><div class="soap-out" id="tpl-txt">'+t.c+'</div>'+caveat()+'</div></div>';
+  document.getElementById('tpl-out').scrollIntoView({behavior:'smooth'});
+}
+
+// ══════════════════════════════════════════
+// QUICK ROUND
+// ══════════════════════════════════════════
+function pgQR(){
+  return '<div class="pg-title">⚡ Quick Round Mode</div><div class="pg-sub">Input cepat untuk ward round</div>'+
+  '<div class="panel"><div class="ph">⚡ <h3>Quick Input</h3></div><div class="pb">'+
+  '<div class="fg">'+
+    '<div class="f"><label>Diagnosis</label><select id="qr-d">'+DIAGS.map(function(d){ return '<option>'+d+'</option>'; }).join('')+'</select></div>'+
+    '<div class="f"><label>Hari Rawat</label><input type="number" id="qr-hr" min="1"></div>'+
+    '<div class="f"><label>Suhu (°C)</label><input type="number" id="qr-t" step="0.1"></div>'+
+    '<div class="f"><label>TD</label><input type="text" id="qr-td"></div>'+
+    '<div class="f"><label>SpO₂ (%)</label><input type="number" id="qr-spo2"></div>'+
+    '<div class="f"><label>Hb (g/dL)</label><input type="number" id="qr-hb" step="0.1"></div>'+
+    '<div class="f"><label>ANC (/μL)</label><input type="number" id="qr-anc"></div>'+
+    '<div class="f"><label>Plt (ribu)</label><input type="number" id="qr-plt"></div>'+
+  '</div>'+
+  '<div class="f" style="margin-bottom:10px"><label>Keluhan</label><input type="text" id="qr-k" placeholder="Keluhan utama hari ini..."></div>'+
+  '<div class="f" style="margin-bottom:10px"><label>Status</label><select id="qr-stat"><option>Sakit ringan</option><option>Sakit sedang</option><option>Sakit berat</option></select></div>'+
+  '<div class="btn-row"><button class="btn btn-pri" onclick="genQR()">⚡ Generate</button><button class="btn btn-sec" onclick="document.getElementById(\'qr-out\').innerHTML=\'\'">🗑️</button></div>'+
+  '</div></div><div id="qr-out"></div>';
+}
+function genQR(){
+  var T=nv('qr-t'), ANC=nv('qr-anc'), PLT=nv('qr-plt'), HB=nv('qr-hb');
+  var alts=[];
+  if(T!==null&&T>=38.3&&ANC!==null&&ANC<500) alts.push('⚠️ Febrile Neutropenia!');
+  if(PLT!==null&&PLT<20) alts.push('⚠️ Trombositopenia Berat!');
+  if(HB!==null&&HB<7) alts.push('⚠️ Anemia Berat!');
+  var note='QUICK ROUND — '+v('qr-d')+' | HR '+v('qr-hr')+'\nS: '+(v('qr-k')||'Tidak ada keluhan bermakna.')+'\nO: S '+(T||'—')+'°C | TD '+(v('qr-td')||'—')+' | SpO₂ '+(v('qr-spo2')||'—')+'%\n   Hb '+(HB||'—')+' | ANC '+(ANC||'—')+' | Plt '+(PLT||'—')+' ribu\nA: '+v('qr-d')+', '+v('qr-stat')+'.'+(alts.length?' '+alts.join(' '):'')+'\nP: [Isi rencana terapi hari ini]';
+  document.getElementById('qr-out').innerHTML=(alts.length?'<div class="emg-banner">'+alts.join(' | ')+'</div>':'')+
+  '<div class="panel"><div class="ph">📄 <h3>Quick Note</h3><button class="btn btn-sec btn-sm no-print" style="margin-left:auto" onclick="copyText(\'qr-note\')">📋 Salin</button></div>'+
+  '<div class="pb"><div class="soap-out" id="qr-note">'+note+'</div></div></div>';
+}
+
+// ══════════════════════════════════════════
+// FAMILY COMMUNICATION
+// ══════════════════════════════════════════
+function pgFamily(){
+  var exs=[
+    {c:'Febrile neutropenia (ANC 280/μL, S 38.9°C)',a:'Anak mengalami demam saat sel darah putih pelawan infeksi sangat rendah. Ini memerlukan perhatian segera. Kami memberikan obat anti-infeksi melalui infus.'},
+    {c:'Transfusi PRC karena Hb 6.2 g/dL',a:'Kadar sel darah merah anak sangat rendah. Anak perlu tambahan sel darah merah melalui infus untuk mencegah sesak dan kelelahan.'},
+    {c:'ALL fase induksi, toleransi kemoterapi baik',a:'Anak dalam tahap awal pengobatan kanker darah, tahap paling intensif. Efek samping seperti mual atau rambut rontok bisa terjadi — ini tanda obat bekerja.'},
+    {c:'CRS Grade 2 pasca CAR-T D+5',a:'Setelah pemberian terapi sel khusus, tubuh anak bereaksi dengan melepaskan zat peradangan. Ini yang kami antisipasi dan sedang ditangani. Anak dipantau sangat ketat.'},
+  ];
+  return '<div class="pg-title">👨‍👩‍👧 Family Communication Mode</div><div class="pg-sub">Ubah bahasa klinis menjadi bahasa sederhana untuk keluarga</div>'+
+  '<div class="panel"><div class="ph">💬 <h3>Konversi Bahasa Klinis → Awam</h3></div><div class="pb">'+
+  '<div class="f" style="margin-bottom:14px"><label>Teks klinis:</label><textarea id="fam-in" rows="5" placeholder="Contoh: Pasien mengalami febrile neutropenia dengan ANC 280/μL..."></textarea></div>'+
+  '<div class="btn-row"><button class="btn btn-pri" onclick="convFam()">🔄 Konversi</button><button class="btn btn-sec" onclick="document.getElementById(\'fam-in\').value=\'\';document.getElementById(\'fam-out\').innerHTML=\'\'">🗑️</button></div>'+
+  '<div id="fam-out"></div></div></div>'+
+  '<div class="panel"><div class="ph">📖 <h3>Contoh Konversi</h3></div><div class="pb">'+
+  exs.map(function(e){ return '<div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--g200)"><div style="font-size:.72rem;font-weight:700;color:var(--pri-d);margin-bottom:3px">🏥 Klinis:</div><div style="font-size:.78rem;background:var(--g50);padding:7px 11px;border-radius:5px;margin-bottom:7px">'+e.c+'</div><div style="font-size:.72rem;font-weight:700;color:var(--suc);margin-bottom:3px">👨‍👩‍👧 Untuk Keluarga:</div><div class="fam-out" style="padding:9px 13px;font-size:.8rem">'+e.a+'</div></div>'; }).join('')+
+  '</div></div>';
+}
+function convFam(){
+  var inp=v('fam-in'); if(!inp){alert('Masukkan teks klinis.');return;}
+  var out=inp
+    .replace(/febrile neutropenia/gi,'demam saat sel darah putih pelawan infeksi sangat rendah')
+    .replace(/ANC\s*[\d,.]+\s*\/?\s*μL/gi,'jumlah sel pelawan infeksi sangat rendah')
+    .replace(/Hb\s*[\d.]+\s*g\/dL/gi,'kadar sel darah merah rendah')
+    .replace(/kemoterapi/gi,'pengobatan dengan obat anti-kanker')
+    .replace(/\bALL\b/g,'kanker darah ALL (leukemia limfoblastik akut)')
+    .replace(/\bAML\b/g,'kanker darah AML (leukemia mieloid akut)')
+    .replace(/\bHSCT\b/g,'transplantasi sel punca')
+    .replace(/CAR-T/gi,'terapi sel imun khusus (CAR-T)')
+    .replace(/\bGVHD\b/gi,'reaksi sel donor terhadap tubuh penerima')
+    .replace(/\bCRS\b/gi,'reaksi peradangan akibat aktivasi sel imun')
+    .replace(/neutropenia/gi,'penurunan sel darah putih pelawan infeksi')
+    .replace(/anemia/gi,'kadar sel darah merah rendah')
+    .replace(/trombositopenia/gi,'keping darah rendah')
+    .replace(/sepsis/gi,'infeksi berat yang menyebar ke seluruh tubuh')
+    .replace(/antibiotik/gi,'obat anti-infeksi')
+    .replace(/transfusi PRC/gi,'pemberian sel darah merah melalui infus')
+    .replace(/transfusi trombosit/gi,'pemberian keping darah melalui infus')
+    .replace(/induksi/gi,'tahap awal pengobatan intensif')
+    .replace(/maintenance/gi,'tahap pemeliharaan jangka panjang')
+    .replace(/mucositis/gi,'luka di dalam mulut akibat pengobatan');
+  document.getElementById('fam-out').innerHTML='<div class="fam-out" style="margin-top:14px"><h3 style="font-size:.88rem;margin-bottom:8px">🗣️ Untuk Keluarga:</h3><p id="fam-txt">'+out+'</p><p style="margin-top:9px;font-size:.72rem;color:var(--g600)">Jika ada pertanyaan, tanyakan kepada tim dokter dan perawat.</p><p style="margin-top:4px;font-size:.7rem;color:var(--dan)">⚠️ Bila anak demam mendadak atau ada perubahan kondisi — informasikan ke tim medis segera.</p></div>'+
+  '<div class="btn-row no-print" style="margin-top:8px"><button class="btn btn-sec btn-sm" onclick="copyText(\'fam-txt\')">📋 Salin</button></div>';
+}
+
+// ══════════════════════════════════════════
+// LIBRARY
+// ══════════════════════════════════════════
+var LIB=[
+  {t:'ALL – Acute Lymphoblastic Leukemia',c:'<strong>Definisi:</strong> Keganasan sel limfoid imatur paling sering pada anak. B-ALL (85%), T-ALL (15%).<br><strong>Red Flags:</strong><ul><li>Pucat mendadak, petekie, demam persisten</li><li>Blast &gt;20%</li></ul><strong>Monitoring:</strong> ANC, Hb, trombosit serial; MRD; toksisitas L-Asp (trombosis, pankreatitis).<br><strong>Documentation Pearl:</strong> Catat fase, hari siklus, riwayat infeksi terbaru.<br><span class="cvt">⚠️ Verify local protocol untuk semua keputusan dosis.</span>'},
+  {t:'AML / APL',c:'<strong>Red Flags APL:</strong><ul><li>Perdarahan spontan + koagulopati = ATRA SEGERA</li><li>WBC sangat tinggi = hyperleukocytosis</li></ul><strong>Tindakan:</strong> ATRA segera bila APL tersangka. FN: antibiotik dalam 60 mnt. Monitor koagulasi serial pada APL.<br><span class="cvt">⚠️ Verify local protocol.</span>'},
+  {t:'Febrile Neutropenia',c:'<strong>Definisi:</strong> S ≥38.3°C (1×) + ANC &lt;500/μL.<br><strong>HIGH RISK:</strong> ANC &lt;100, hipotensi, hipoksia, penurunan kesadaran, mucositis berat, typhlitis, pneumonia, AML/HSCT/CAR-T.<br><strong>Tindakan:</strong> Kultur darah → antibiotik anti-pseudomonal IV ≤60 mnt (jangan tunda).<br><strong>Documentation Pearl:</strong> Catat waktu onset, waktu kultur, waktu antibiotik mulai.<br><span class="cvt">⚠️ Pilihan antibiotik sesuai protokol lokal.</span>'},
+  {t:'TLS – Tumor Lysis Syndrome',c:'<strong>Cairo-Bishop (≥2/4 kriteria):</strong><ul><li>AU ≥8 mg/dL</li><li>K ≥6 mEq/L (hipokalemia BUKAN kriteria)</li><li>Fosfat ≥6.5 mg/dL (anak) / ≥4.5 (dewasa)</li><li>Ca ≤7 mg/dL</li></ul><strong>Tindakan:</strong> Hidrasi tanpa K+. Rasburicase (cek G6PD). Monitor tiap 4–6 jam. Jangan koreksi Ca rutin.<br><span class="cvt">⚠️ Rasburicase KI bila G6PD defisiensi. Verify local protocol.</span>'},
+  {t:'DIC',c:'<strong>ISTH Score (≥5 = Overt DIC):</strong><ul><li>Plt: &lt;50=2, 50–100=1</li><li>D-Dimer: tinggi=3, sedang=2</li><li>PT vs kontrol: &gt;6det=2, 3–6det=1</li><li>Fibrinogen &lt;100=1</li></ul><strong>Tindakan:</strong> Atasi kausa dasar (ATRA untuk APL). Transfusi sesuai perdarahan.<br><span class="cvt">⚠️ Verify local protocol.</span>'},
+  {t:'HSCT',c:'<strong>Komplikasi:</strong> Mukositis, FN, VOD/SOS, GVHD, Engraftment failure, CMV/EBV/Adeno, Aspergillus.<br><strong>Monitoring:</strong> DL harian, chimerism, viral load, IS level, GVHD assessment.<br><strong>Documentation Pearl:</strong> Selalu catat D+, engraftmen, IS yang berjalan.<br><span class="cvt">⚠️ Verify local protocol IS dan tapering.</span>'},
+  {t:'CAR-T Cell Therapy',c:'<strong>Komplikasi:</strong> CRS (ASTCT grading), ICANS (ASTCT/ICE score sesuai usia).<br><strong>CRS:</strong> Grade 1=suportif; Grade 2=Tocilizumab; Grade 3–4=Tocilizumab+steroid+ICU.<br><strong>ICANS:</strong> Deksametason; CT/MRI bila diperlukan.<br><strong>Documentation Pearl:</strong> Catat D+ infusi, grade CRS/ICANS, kebutuhan O₂/vasopresor.<br><span class="cvt">⚠️ Tocilizumab/steroid hanya per protokol.</span>'},
+  {t:'Ekstravasasi Kemoterapi',c:'<strong>SLAP:</strong> Stop · Leave · Aspirate · Plan. Jangan flush.<br><strong>Kompres:</strong> Antrasiklin=DINGIN; Vinca=HANGAT; Etoposide=HANGAT; Neutral=observasi.<br><strong>Antidot:</strong> Antrasiklin: Dexrazoxane. Vinca: Hyaluronidase (verify availability).<br><strong>Documentation Pearl:</strong> Volume, lokasi, waktu, foto, laporan insiden.<br><span class="cvt">⚠️ Antidot hanya per ketersediaan lokal.</span>'},
+  {t:'Reaksi Transfusi',c:'<strong>Prinsip:</strong> Hentikan SEGERA. Pertahankan IV NaCl 0.9%.<br><strong>Klasifikasi:</strong> FNHTR, Alergi, Anafilaksis, Hemolitik, TRALI, TACO.<br><strong>Anafilaksis:</strong> Epinefrin IM segera.<br><strong>Documentation Pearl:</strong> Kirim kantong+set+sampel+urin ke bank darah. Laporan insiden.<br><span class="cvt">⚠️ Verify local protocol bank darah.</span>'},
+  {t:'Supportive Care',c:'<strong>Antiemetik:</strong> Ondansetron first line.<br><strong>Nutrisi:</strong> Target kalori adekuat; enteral dini; parenteral bila indikasi.<br><strong>G-CSF:</strong> Sesuai protokol (tidak rutin semua FN).<br><strong>Mucositis:</strong> Oral care intensif, analgesik sesuai kebutuhan.<br><span class="cvt">⚠️ Verify local formularium.</span>'},
+];
+function pgLibrary(){
+  return '<div class="pg-title">📚 Pediatric Oncology Library</div><div class="pg-sub">Referensi cepat panduan klinis</div>'+
+  LIB.map(function(l,i){ return '<div class="lacc"><div class="lh" onclick="togLib('+i+')">📖 '+l.t+' <span id="la'+i+'">▼</span></div><div class="lb" id="lb'+i+'">'+l.c+'</div></div>'; }).join('');
+}
+function togLib(i){
+  var b=document.getElementById('lb'+i), a=document.getElementById('la'+i);
+  var open=b.classList.contains('open'); b.classList.toggle('open',!open); a.textContent=open?'▼':'▲';
+}
+
+// ══════════════════════════════════════════
+// RESIDENT TRAINING
+// ══════════════════════════════════════════
+var CASES=[
+  {t:'Kasus 1: FN ALL Induksi',diff:'Sedang',
+  cs:'Anak laki-laki 6 tahun, ALL B-Cell induksi hari ke-12. Demam 38.9°C sejak 4 jam. Lemas, tidak mau makan. Kemo terakhir: Vincristine + Deksametason 2 hari lalu. TD 95/60, N 125x, RR 24x, S 38.9°C, SpO₂ 98%. Hb 8.2, WBC 800, ANC 150, Plt 45 ribu.',
+  ideal:'S: Anak 6 th, ALL B-Cell induksi HR ke-12. Demam 38.9°C sejak 4 jam. Lemas, tidak mau makan. Kemo terakhir Vincristine+Dex 2 hari lalu.\n\nO: TD 95/60 | N 125x | RR 24x | S 38.9°C | SpO₂ 98%\nHb 8.2 | WBC 800/μL | ANC 150/μL | Plt 45 ribu.\n\nA: Febrile Neutropenia RISIKO TINGGI (ANC 150, hemodinamik borderline).\nProblem list: FN risiko tinggi, anemia, trombositopenia, malnutrisi.\n\nP: 0–60 menit:\n  • Kultur darah x2 SEGERA\n  • Antibiotik anti-pseudomonal IV ≤60 mnt (Pip-Tazo/Cefepime, verify local protocol)\n  • NaCl 0.9% 10 mL/kg bila TD tidak respons\n  • TTV tiap 2 jam, balance cairan\n  • Lapor senior — borderline hemodinamik\n  • Antifungal empiris bila persisten >96 jam (risiko tinggi)',
+  mistakes:['Menunda antibiotik menunggu kultur','Tidak menyebut borderline hemodinamik','Tidak ada eskalasi','Tidak mencatat waktu onset dan waktu antibiotik']},
+  {t:'Kasus 2: TLS AML M3 (APL)',diff:'Tinggi',
+  cs:'Anak perempuan 10 tahun, APL baru, WBC 85.000/μL. D+1 ATRA: lemah, mual. K 6.2, Fosfat 5.1 mg/dL, Ca 7.0, AU 11.2, Cr 1.8, UO 0.8 mL/kg/jam.',
+  ideal:'S: Anak 10 th, APL baru, WBC 85.000, D+1 ATRA. Keluhan lemah dan mual.\n\nO: K 6.2 ⚠️ | Fosfat 5.1 (threshold anak ≥6.5 — belum memenuhi kriteria fosfat) | Ca 7.0 ⚠️ | AU 11.2 ⚠️ | Cr 1.8 ⚠️ AKI | UO 0.8 ↓\nCairo-Bishop pediatrik (fosfat ≥6.5): AU↑ + K↑ + Ca↓ = 3/4 → Lab TLS. AKI → TLS Klinis.\n⚠️ Cek koagulasi — risiko DIC pada APL.\n\nA: TLS Klinis (Berat) pada APL D+1 ATRA.\n\nP: SEGERA:\n  • Hidrasi tanpa K+, 3× maintenance\n  • Rasburicase (cek G6PD dulu!)\n  • Tata laksana hiperkalemia\n  • JANGAN koreksi Ca rutin\n  • Elektrolit tiap 4 jam\n  • Cek PT/aPTT/Fibrinogen/D-Dimer (risiko DIC APL)\n  • Lanjutkan ATRA — jangan hentikan\n  • Konsultasi Nefrologi',
+  mistakes:['Menggunakan threshold fosfat dewasa (4.5)','Menghitung hipokalemia sebagai TLS','Menghentikan ATRA','Tidak memeriksa koagulasi (risiko DIC APL)','Koreksi Ca rutin tanpa gejala']},
+  {t:'Kasus 3: DIC APL',diff:'Tinggi',
+  cs:'Anak 8 tahun, APL baru, WBC 45.000. Epistaksis masif dan petekie difus. PT 28 det (kontrol 13), aPTT 55, Fibrinogen 75 mg/dL, D-Dimer sangat meningkat, Plt 28 ribu.',
+  ideal:'S: Anak 8 th APL baru. Epistaksis masif dan petekie difus.\n\nO: PT 28/kontrol 13 (selisih 15 det → +2 poin) | Fibrinogen 75 (+1) | D-Dimer sangat ↑ (+3) | Plt 28 ribu (+1).\nISTH Score: 7/8 → OVERT DIC.\n\nA: Overt DIC pada APL baru. Perdarahan aktif mayor. ISTH 7/8.\n\nP: ATRA SEGERA sesuai protokol (DIC APL membaik dengan ATRA).\nTransfusi:\n  • FFP (defisiensi faktor + perdarahan)\n  • Kriopresipitat (Fibrinogen <100)\n  • Plt target >50 ribu (perdarahan aktif)\nMonitor koagulasi tiap 4–6 jam.',
+  mistakes:['PT absolut bukan selisih vs kontrol','Tidak memberi ATRA segera','Tidak memberi kriopresipitat','Tidak monitor koagulasi serial']},
+  {t:'Kasus 4: Ekstravasasi Vincristine',diff:'Sedang',
+  cs:'Pasien 5 tahun ALL. Infus Vincristine via IV perifer punggung tangan. Tiba-tiba menangis, area bengkak dan kemerahan, infus terasa berat.',
+  ideal:'S: Ekstravasasi Vincristine (Vesicant Vinca) di IV perifer punggung tangan.\n\nO: Edema, kemerahan, resistensi infus meningkat. Kelas: Vesicant Vinca Alkaloid.\n\nA: Ekstravasasi Vincristine.\n\nP: SLAP PROTOCOL:\n  1. STOP infus SEGERA\n  2. Leave kanul — aspirasi sisa obat\n  3. Cabut setelah aspirasi\n  4. Kompres HANGAT (vincristine/vinca = HANGAT, bukan dingin!)\n  5. Hyaluronidase intradermal (bila tersedia)\n  6. JANGAN flush\n  7. Mark, foto, lapor dokter\n  8. Laporan insiden',
+  mistakes:['Kompres DINGIN untuk vincristine — SALAH (harus HANGAT)','Tidak pakai SLAP','Cabut kanul sebelum aspirasi','Tidak laporan insiden']},
+  {t:'Kasus 5: CAR-T CRS/ICANS',diff:'Tinggi',
+  cs:'Anak 12 tahun, ALL relapse, D+5 CAR-T. Demam 39.2°C, TD 85/50, SpO₂ 94% O₂ 2L nasal. Bingung, disorientasi. IL-6 1250 pg/mL, Ferritin 12.000.',
+  ideal:'S: Post-CAR-T D+5. Demam 39.2°C, hipotensi, saturasi turun, bingung/disorientasi.\n\nO: S 39.2°C | TD 85/50 (hipotensi) | SpO₂ 94% (O₂ 2L) | Disorientasi.\nIL-6 1250 ↑↑ | Ferritin 12.000 ↑↑.\n\nA: CRS Grade 3 (ASTCT): demam+hipotensi+hipoksia.\nICANS tersangka — evaluasi ICE score.\n\nP: KONSULTASI ICU SEGERA.\nCRS Grade 3:\n  • Tocilizumab (verify local protocol)\n  • Deksametason\n  • Resusitasi cairan\n  • Eskalasi O₂\nICANS:\n  • Deksametason\n  • Neurologi/ICU\n  • ICE score tiap 2–4 jam',
+  mistakes:['Tidak mengenali CRS Grade 3','Tidak menyebut ICANS','Tocilizumab tanpa steroid pada Grade 3','Tidak ICU segera','Tidak monitor ICE score']},
+  {t:'Kasus 6: FN Pasca HSCT + GVHD',diff:'Tinggi',
+  cs:'Pasien 9 tahun, ALL HR, post-allogenik HSCT D+35. Demam 38.5°C, ANC 650/μL (sudah engraftmen), CsA+MMF. Diare 5×/hari. SGPT 78. Skin rash Grade 2.',
+  ideal:'S: Post-HSCT D+35. Demam 38.5°C. Diare 5×/hari. Rash. Dalam CsA+MMF.\n\nO: S 38.5°C | ANC 650/μL (engraftmen) | SGPT 78 ↑. Diare 5×/hari. Skin rash grade 2.\n\nA: Post-HSCT D+35:\n  1. Demam pada pasien imunosupresi — evaluasi infeksi vs GVHD\n  2. GVHD Akut: kulit Grade 2 + GI (diare) + hati (SGPT ↑) → overall Grade II–III tersangka\n\nP: Evaluasi demam:\n  • Kultur darah\n  • CMV/EBV/Adenovirus viral load\n  • Foto toraks\nGVHD:\n  • Konsultasi tim HSCT\n  • CsA level\n  • Pertimbangkan steroid (diskusi senior)\n  • Monitor fungsi hati serial\n  • Balance cairan ketat',
+  mistakes:['Mengabaikan GVHD karena sudah engraftmen','Tidak cek viral load','Langsung steroid tanpa diskusi tim','Tidak identifikasi multi-organ GVHD']},
+];
+function pgTraining(){
+  var sel=typeof curSub==='number'?curSub:0;
+  return '<div class="pg-title">🎓 Resident Training Mode</div><div class="pg-sub">6 kasus simulasi klinis — buat SOAP, lihat jawaban ideal dan common mistakes</div>'+
+  '<div class="tabs" id="ctabs">'+CASES.map(function(c,i){ return '<button class="tab'+(i===sel?' active':'')+'" onclick="switchCase('+i+')">'+(c.t.split(':')[0])+'</button>'; }).join('')+'</div>'+
+  '<div id="case-area">'+renderCase(sel)+'</div>';
+}
+function switchCase(i){
+  curSub=i;
+  document.querySelectorAll('#ctabs .tab').forEach(function(t,idx){ t.classList.toggle('active',idx===i); });
+  document.getElementById('case-area').innerHTML=renderCase(i);
+}
+function renderCase(i){
+  var c=CASES[i];
+  return '<div class="panel"><div class="ph">🏥 <h3>'+c.t+'</h3><span class="risk-badge '+(c.diff==='Tinggi'?'rb-h':'rb-m')+'" style="margin-left:auto">'+c.diff+'</span></div><div class="pb">'+
+  '<div class="sim-case">'+c.cs+'</div>'+
+  '<div class="f" style="margin-bottom:12px"><label>Tulis SOAP Anda:</label><textarea id="tr-soap" rows="12" placeholder="S:\n\nO:\n\nA:\n\nP:"></textarea></div>'+
+  '<div class="btn-row"><button class="btn btn-pri" onclick="evalCase('+i+')">📊 Evaluasi & Lihat Jawaban</button><button class="btn btn-sec" onclick="document.getElementById(\'tr-soap\').value=\'\';document.getElementById(\'tr-res\').innerHTML=\'\'">🗑️</button></div>'+
+  '<div id="tr-res"></div></div></div>';
+}
+function evalCase(i){
+  var c=CASES[i], ans=v('tr-soap');
+  if(!ans){alert('Tulis SOAP Anda terlebih dahulu.');return;}
+  var score=0; var fbs=[];
+  var checks=[
+    {rx:/s\s*:/i,pts:10,g:'Bagian S ada.',b:'Bagian S tidak ada.'},
+    {rx:/o\s*:/i,pts:10,g:'Bagian O ada.',b:'Bagian O tidak ada.'},
+    {rx:/a\s*:/i,pts:10,g:'Bagian A ada.',b:'Bagian A tidak ada.'},
+    {rx:/p\s*:/i,pts:10,g:'Bagian P ada.',b:'Bagian P tidak ada.'},
+    {rx:/(anc|neutropenia)/i,pts:12,g:'ANC/neutropenia disebut.',b:'ANC tidak disebut.'},
+    {rx:/(antibiotik|kultur|rasburicase|atra|tocilizumab|ffp|slap|hangat|kompres)/i,pts:18,g:'Tata laksana spesifik ada.',b:'Tata laksana tidak spesifik.'},
+    {rx:/(monitor|pantau|serial|evaluasi)/i,pts:15,g:'Monitoring ada.',b:'Monitoring tidak disebut.'},
+    {rx:/(eskalasi|senior|icu|lapor|konsultasi)/i,pts:15,g:'Eskalasi/kapan lapor ada.',b:'Tidak ada kriteria eskalasi.'},
+  ];
+  checks.forEach(function(ch){ if(ch.rx.test(ans)){score+=ch.pts;fbs.push({t:'g',x:ch.g});}else fbs.push({t:'b',x:ch.b}); });
+  var sc=score>=80?'sc-g':score>=60?'sc-y':'sc-r';
+  document.getElementById('tr-res').innerHTML='<div style="text-align:center;margin:18px 0"><div class="sc-circle '+sc+'">'+score+'<div style="font-size:.6rem;font-weight:600">/100</div></div><div style="font-size:1rem;font-weight:700">'+(score>=80?'🟢 Sangat Baik!':score>=60?'🟡 Cukup — Tingkatkan!':'🔴 Perlu Perbaikan')+'</div></div>'+
+  '<div style="font-weight:700;font-size:.82rem;margin-bottom:8px">Feedback:</div>'+fbs.map(function(f){ return '<div class="fbi '+f.t+'">'+(f.t==='g'?'✅':'❌')+' '+f.x+'</div>'; }).join('')+
+  '<div style="margin-top:16px"><div style="font-weight:700;font-size:.88rem;color:var(--pri-d);margin-bottom:9px">📝 SOAP Ideal</div><div class="soap-out">'+c.ideal+'</div></div>'+
+  '<div style="margin-top:12px"><div style="font-weight:700;font-size:.82rem;color:var(--dan);margin-bottom:7px">⚠️ Common Mistakes</div>'+c.mistakes.map(function(m){ return '<div class="fbi b">❌ '+m+'</div>'; }).join('')+'</div>';
+}
+
+// ══════════════════════════════════════════
+// VALIDATION & SAFETY
+// ══════════════════════════════════════════
+function pgSafety(){
+  return '<div class="pg-title">🛡️ Validation &amp; Safety</div><div class="pg-sub">Panduan keamanan klinis, privasi, dan validasi dokumentasi</div>'+
+  '<div class="vcard pur"><div class="vc-t">📋 Clinical Support Only</div><div class="vc-b">Tool ini adalah alat bantu dokumentasi dan edukasi. Tidak menggantikan: pemeriksaan langsung, protokol lokal, farmasi klinik, konsultan (ICU/bedah/anestesi/bank darah), atau keputusan klinis dokter. <strong>Semua output harus diverifikasi.</strong></div></div>'+
+  '<div class="vcard dan"><div class="vc-t">🔒 Patient Privacy</div><div class="vc-b"><ul><li>Gunakan <strong>inisial atau kode</strong> — bukan nama lengkap</li><li>Jangan masukkan: nomor RM, tanggal lahir lengkap, alamat, foto wajah</li><li>Tool tidak menyimpan data — pengguna bertanggung jawab</li><li>Jangan share output yang mengandung identitas pasien</li></ul></div></div>'+
+  '<div class="vcard war"><div class="vc-t">🌡️ FN Safety</div><div class="vc-b"><ul><li>Antibiotik ≤60 mnt — <strong>jangan tunda menunggu kultur</strong></li><li>Kultur diambil sebelum antibiotik, tapi tidak boleh menunda antibiotik</li><li>Pilihan antibiotik sesuai <strong>protokol lokal dan pola resistensi</strong></li><li>Syok: antibiotik &lt;30 mnt, resusitasi cairan, ICU</li></ul></div></div>'+
+  '<div class="vcard war"><div class="vc-t">⚗️ TLS Safety</div><div class="vc-b"><ul><li>Fosfat threshold anak: <strong>≥6.5 mg/dL</strong> (bukan 4.5)</li><li><strong>Hipokalemia BUKAN kriteria TLS</strong></li><li>Rasburicase: <strong>KI pada G6PD defisiensi</strong></li><li>Jangan koreksi Ca rutin — hanya bila simptomatik/EKG abnormal</li><li>Konsultasi Nefrologi bila AKI refrakter</li></ul></div></div>'+
+  '<div class="vcard war"><div class="vc-t">🩸 DIC Safety</div><div class="vc-b"><ul><li>ISTH: <strong>PT prolongation vs kontrol</strong>, bukan nilai absolut</li><li>Prioritas: <strong>atasi kausa dasar</strong> (ATRA untuk APL)</li><li>APL: ATRA sesegera mungkin</li><li>Jangan transfusi profilaksis berlebihan</li></ul></div></div>'+
+  '<div class="vcard war"><div class="vc-t">🔬 Hyperleukocytosis Safety</div><div class="vc-b"><ul><li>Hindari PRC rutin sebelum cytoreduction (meningkatkan viskositas)</li><li>Bila anemia mengancam nyawa: transfusi kecil perlahan setelah diskusi senior</li><li>Leukaferesis: bila leukostasis simptomatik dan fasilitas tersedia — bukan terapi definitif</li></ul></div></div>'+
+  '<div class="vcard war"><div class="vc-t">🎯 CRS/ICANS Safety (CAR-T)</div><div class="vc-b"><ul><li>Grading: <strong>ASTCT 2019</strong></li><li>Tocilizumab/steroid hanya per protokol</li><li>Grade 3–4: ICU konsultasi segera</li><li>ICANS: ICE score sesuai usia</li></ul></div></div>'+
+  '<div class="vcard war"><div class="vc-t">⚠️ Ekstravasasi Safety</div><div class="vc-b"><ul><li><strong>SLAP: Stop · Leave · Aspirate · Plan</strong></li><li>Jangan flush</li><li>Antrasiklin: DINGIN; Vinca: HANGAT; Etoposide: HANGAT</li><li>Antidot hanya per ketersediaan lokal (Dexrazoxane, Hyaluronidase)</li><li>Foto, mark area, laporan insiden wajib</li></ul></div></div>'+
+  '<div class="vcard war"><div class="vc-t">🩸 Transfusi Safety</div><div class="vc-b"><ul><li>Verifikasi 2 identitas sebelum transfusi</li><li>Mulai lambat 1–2 mL/kg/jam, observasi 15 mnt pertama</li><li>Hentikan SEGERA bila reaksi — pertahankan IV NaCl</li><li>Anafilaksis: epinefrin IM segera</li><li>Kirim kantong+set+sampel+urin ke bank darah</li></ul></div></div>'+
+  '<div class="vcard suc"><div class="vc-t">✅ Validation Checklist Sebelum Finalisasi SOAP</div><div class="vc-b"><ul>'+
+    ['Identitas pasien: inisial/kode (bukan nama lengkap)',
+     'TTV lengkap (TD, N, RR, S, SpO₂)',
+     'ANC, Hb, Trombosit tercatat',
+     'Diagnosis dan fase terapi jelas',
+     'Problem list aktif tercantum',
+     'Plan spesifik: terapi, monitoring, konsultasi',
+     'Kriteria eskalasi / kapan lapor senior',
+     'Edukasi keluarga bila relevan',
+     'Dosis/terapi diverifikasi protokol lokal',
+     'SOAP dapat disalin/dicetak bersih'].map(function(x){ return '<li>☐ '+x+'</li>'; }).join('')+
+  '</ul></div></div>';
+}
+
+// ══════════════════════════════════════════
+// INIT — dipanggil terakhir setelah semua fungsi didefinisikan
+// ══════════════════════════════════════════
+window.onload = function(){ go('dashboard'); };
+</script>
+</body>
+</html>

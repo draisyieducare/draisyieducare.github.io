@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAR-T Lymphodepletion Scheduler v2 | drAisyiEduCare</title>
+<style>
+:root{--pri:#1a3a5c;--acc:#e8703a;--teal:#0e7c7b;--light:#f4f7fb;--bdr:#d0dbe8;--red:#c0392b;--red-bg:#fdf2f0;--grn:#1a7a4a;--grn-bg:#edfaf3;--ylw:#8a6400;--ylw-bg:#fffbe6;--card:#fff;--txt:#1c2b3a;--mut:#6b7f96;--r:10px;--sh:0 2px 12px rgba(26,58,92,.10)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:var(--light);color:var(--txt);font-size:14px}
+/* HEADER */
+.hdr{background:linear-gradient(135deg,var(--pri) 0%,#264d7e 100%);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px}
+.hdr-ico{background:var(--acc);border-radius:50%;width:46px;height:46px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.hdr-t{font-size:17px;font-weight:700}.hdr-s{font-size:11px;opacity:.8;margin-top:2px}
+.brand{margin-left:auto;background:rgba(255,255,255,.15);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;white-space:nowrap}
+.ver{font-size:10px;opacity:.6;margin-top:2px}
+/* SAFETY BANNER */
+.sfb{background:#0d2137;border-left:4px solid var(--acc);color:#b8d4f0;padding:9px 18px;font-size:12px;display:flex;align-items:flex-start;gap:8px}
+.sfb b{color:#ffcc80}
+/* TABS */
+.tabs{display:flex;background:var(--pri);padding:0 14px;gap:1px;overflow-x:auto}
+.tab{padding:10px 14px;font-size:12px;font-weight:600;color:rgba(255,255,255,.55);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;user-select:none}
+.tab.active{color:#fff;border-bottom-color:var(--acc)}
+.tab:hover:not(.active){color:rgba(255,255,255,.85)}
+/* HOLD OVERLAY */
+.hold-banner{background:#fdf2f0;border:2px solid var(--red);border-radius:var(--r);padding:18px 20px;text-align:center;margin-bottom:16px}
+.hold-title{font-size:18px;font-weight:800;color:var(--red);margin-bottom:8px}
+.hold-sub{font-size:13px;color:#7a1010;line-height:1.6}
+/* MAIN */
+.main{padding:16px;max-width:1100px;margin:0 auto}
+.page{display:none}.page.active{display:block}
+/* CARD */
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:16px 18px;margin-bottom:14px;border:1px solid var(--bdr)}
+.card-t{font-size:12px;font-weight:700;color:var(--pri);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+@media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}}
+/* FORM */
+label{display:block;font-size:11px;font-weight:700;color:var(--mut);margin-bottom:3px;text-transform:uppercase;letter-spacing:.3px}
+input,select,textarea{width:100%;padding:7px 10px;border:1.5px solid var(--bdr);border-radius:6px;font-size:13px;color:var(--txt);background:#fff;transition:border .2s}
+input:focus,select:focus{outline:none;border-color:var(--teal)}
+input[readonly]{background:#f5f5f5;color:#888}
+.iu{position:relative}.iu span{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--mut);font-weight:700;pointer-events:none}
+.fld{margin-bottom:10px}
+.tip{font-size:11px;color:var(--mut);margin-top:3px}
+/* REQUIRED */
+.req::after{content:' *';color:var(--red);font-size:12px}
+/* BSA BOX */
+.bsa-box{background:linear-gradient(135deg,var(--teal),#0a9396);color:#fff;border-radius:8px;padding:10px 14px;text-align:center}
+.bsa-v{font-size:26px;font-weight:800}.bsa-u{font-size:12px;opacity:.8}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:7px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-pri{background:var(--pri);color:#fff}.btn-pri:hover{background:#264d7e}
+.btn-acc{background:var(--acc);color:#fff}.btn-acc:hover{background:#cf5e2b}
+.btn-teal{background:var(--teal);color:#fff}.btn-teal:hover{background:#0a5f5e}
+.btn-out{background:#fff;color:var(--pri);border:1.5px solid var(--bdr)}.btn-out:hover{border-color:var(--pri)}
+.btn-red{background:var(--red);color:#fff}
+.btn-sm{padding:4px 11px;font-size:11px}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+/* ALERTS */
+.al{border-radius:7px;padding:9px 13px;margin-bottom:8px;font-size:12.5px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.al-red{background:var(--red-bg);border:1px solid #f0a9a4;color:var(--red)}
+.al-grn{background:var(--grn-bg);border:1px solid #a4d8b8;color:var(--grn)}
+.al-ylw{background:var(--ylw-bg);border:1px solid #e6c86a;color:var(--ylw)}
+.al-inf{background:#eef5ff;border:1px solid #b8d0f0;color:var(--pri)}
+/* GATE CHECKLIST */
+.gate-list{list-style:none}
+.gate-list li{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--bdr);font-size:13px}
+.gate-list li:last-child{border:none}
+.gate-list input[type=checkbox]{width:16px;height:16px;flex-shrink:0;margin-top:1px;accent-color:var(--teal)}
+.gate-list select{width:auto;padding:3px 6px;font-size:12px}
+/* SCHEDULE TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{background:var(--pri);color:#fff;padding:7px 10px;text-align:left;font-size:11px}
+.tbl td{padding:7px 10px;border-bottom:1px solid var(--bdr);vertical-align:top}
+.tbl tr:nth-child(even) td{background:#f8fafc}
+.tbl tr.d0 td{background:#fff8ee;font-weight:600}
+.day-b{display:inline-block;background:var(--pri);color:#fff;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:700}
+.day-b.d0{background:var(--acc)}
+.dose-hold{color:var(--red);font-weight:700;font-size:12px}
+/* PROTOCOL EDITOR */
+.proto-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.lk-badge{padding:3px 10px;border-radius:5px;font-size:11px;font-weight:700}
+.lk{background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7}
+.ulk{background:var(--ylw-bg);color:var(--ylw);border:1px solid #e6c86a}
+.proto-row{display:grid;grid-template-columns:90px 1fr 80px 90px 90px 1fr;gap:6px;align-items:center;margin-bottom:6px;font-size:12px}
+.proto-row-hdr{font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase}
+.audit-box{background:#f0f4f8;border:1px solid var(--bdr);border-radius:6px;padding:10px 14px;font-size:12px;line-height:1.7}
+.audit-box b{color:var(--pri)}
+/* CHECKLIST */
+.cl{list-style:none}
+.cl li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--bdr);font-size:12.5px}
+.cl li:last-child{border:none}
+.cl input[type=checkbox]{width:15px;height:15px;flex-shrink:0;margin-top:1px;accent-color:var(--teal)}
+/* SECTION BAR */
+.sbar{background:var(--pri);color:#fff;padding:5px 13px;border-radius:6px;font-size:12px;font-weight:700;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.sep{border:none;border-top:1px dashed var(--bdr);margin:12px 0}
+/* PILL */
+.pill{display:inline-block;border-radius:12px;padding:2px 9px;font-size:11px;font-weight:700}
+.p-grn{background:#d4edda;color:#155724}
+.p-red{background:#f8d7da;color:#721c24}
+.p-ylw{background:#fff3cd;color:#856404}
+.p-blu{background:#cce5ff;color:#004085}
+/* PRINT */
+@media print{
+  .no-print{display:none!important}
+  .tabs{display:none}
+  body{background:#fff}
+  .page{display:none!important}
+  #print-only{display:block!important}
+  .card{box-shadow:none;border:1px solid #ccc;page-break-inside:avoid}
+}
+#print-only{display:none}
+/* GATE STATUS */
+.gate-status{font-size:13px;font-weight:700;padding:10px 14px;border-radius:7px;text-align:center;margin-bottom:10px}
+.gs-pass{background:var(--grn-bg);color:var(--grn);border:1px solid #a4d8b8}
+.gs-fail{background:var(--red-bg);color:var(--red);border:1px solid #f0a9a4}
+.gs-warn{background:var(--ylw-bg);color:var(--ylw);border:1px solid #e6c86a}
+/* PROGRESS STEPPER */
+.stepper{display:flex;gap:0;margin-bottom:16px;overflow-x:auto}
+.step{flex:1;text-align:center;font-size:11px;font-weight:600;padding:8px 4px;background:#e8edf4;color:var(--mut);border-right:2px solid var(--light);cursor:pointer;transition:.2s;min-width:80px}
+.step.done{background:#d4edda;color:#155724}
+.step.active{background:var(--pri);color:#fff}
+.step.blocked{background:#f8d7da;color:#721c24}
+.step:last-child{border:none}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-ico">💉</div>
+  <div>
+    <div class="hdr-t">CAR-T Lymphodepletion Scheduler</div>
+    <div class="hdr-s">Penjadwalan & Safety Gate regimen kondisioning pra-infus CAR-T</div>
+    <div class="ver">v2.0 · drAisyiEduCare · Edisi Klinis</div>
+  </div>
+  <div class="brand">drAisyiEduCare</div>
+</div>
+
+<!-- SAFETY BANNER -->
+<div class="sfb">⚠️ <span><b>PERINGATAN KLINIS:</b> Tool ini <b>tidak menggantikan keputusan medis</b>. Dosis berasal dari template protokol product-specific yang dikunci dan <b>wajib diverifikasi</b> oleh DPJP, farmasi klinis, dan apoteker sebelum order. Jangan gunakan output sebagai instruksi final tanpa review multidisiplin.</span></div>
+
+<!-- TABS -->
+<div class="tabs no-print">
+  <div class="tab active" data-tab="pasien">① Data Pasien</div>
+  <div class="tab" data-tab="produk">② Produk & Indikasi</div>
+  <div class="tab" data-tab="organ">③ Fungsi Organ & Infeksi</div>
+  <div class="tab" data-tab="gate">④ Safety Gate</div>
+  <div class="tab" data-tab="protokol">⑤ Template Protokol</div>
+  <div class="tab" data-tab="output">⑥ Output & Jadwal</div>
+</div>
+
+<div class="main">
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- TAB 1: DATA PASIEN -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="page active" id="page-pasien">
+  <div class="card">
+    <div class="card-t">⚖️ Identitas & Antropometri</div>
+    <div class="g3">
+      <div class="fld"><label class="req">Usia</label><div class="iu"><input type="number" id="usia" placeholder="0" min="0" max="30" step="0.1"><span>tahun</span></div></div>
+      <div class="fld"><label class="req">Jenis Kelamin</label>
+        <select id="jk"><option value="">— Pilih —</option><option value="L">Laki-laki</option><option value="P">Perempuan</option></select></div>
+      <div class="fld"><label>Status Pubertas</label>
+        <select id="puberty"><option value="">— Pilih —</option><option value="pre">Prapubertas</option><option value="peri">Periputas</option><option value="post">Pascapubertas</option><option value="na">Tidak relevan (dewasa)</option></select></div>
+    </div>
+    <div class="g3">
+      <div class="fld"><label class="req">Berat Badan (BB)</label><div class="iu"><input type="number" id="bb" placeholder="0.0" step="0.1" min="1" max="200"><span>kg</span></div></div>
+      <div class="fld"><label class="req">Tinggi Badan (TB)</label><div class="iu"><input type="number" id="tb" placeholder="0" step="0.5" min="30" max="220"><span>cm</span></div></div>
+      <div class="fld"><label>BSA Aktual (Mosteller)</label><div class="bsa-box"><div class="bsa-v" id="bsa-display">—</div><div class="bsa-u">m²</div></div></div>
+    </div>
+    <div class="g3">
+      <div class="fld"><label>BB Ideal (otomatis)</label><div class="iu"><input type="number" id="bbi" placeholder="—" step="0.1" readonly style="background:#f0f4f8;"><span>kg</span></div><div class="tip" id="bbi-formula">Dihitung otomatis setelah usia, TB, jenis kelamin diisi</div></div>
+      <div class="fld"><label>BSA untuk Dosis</label>
+        <select id="bsa-basis"><option value="aktual">BSA Aktual</option><option value="ideal">BSA dari BB Ideal</option><option value="capped">BSA Aktual, max 2.0 m²</option></select></div>
+      <div class="fld"><label>BSA yang Digunakan</label><div class="bsa-box" style="background:linear-gradient(135deg,#555,#333)"><div class="bsa-v" id="bsa-used">—</div><div class="bsa-u">m² (untuk dosis)</div></div></div>
+    </div>
+    <div id="bsa-warning" style="margin-top:8px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">📋 Riwayat Medis Relevan</div>
+    <div class="g2">
+      <div class="fld"><label>Alergi Obat</label><input type="text" id="alergi" placeholder="Tuliskan alergi atau 'Tidak ada'"></div>
+      <div class="fld"><label>Riwayat Kejang / Neurotoksisitas</label>
+        <select id="rw-kejang"><option value="">— Pilih —</option><option value="no">Tidak ada</option><option value="yes">Ada riwayat kejang</option><option value="neuro">Riwayat neurotoksisitas kemoterapi</option></select></div>
+      <div class="fld"><label>Riwayat Cystitis Hemoragik</label>
+        <select id="rw-cystitis"><option value="">— Pilih —</option><option value="no">Tidak ada</option><option value="yes">Ada riwayat</option></select></div>
+      <div id="preg-container" class="fld" style="display:none"><label>Pregnancy Test (Perempuan Pra/Periputas)</label>
+        <select id="pregnancy"><option value="">— Pilih —</option><option value="neg">Negatif</option><option value="pos">POSITIF ⛔</option><option value="nd">Belum dilakukan</option></select></div>
+    </div>
+    <div class="fld"><label>Catatan Klinis Tambahan</label><textarea id="catatan" rows="2" placeholder="Riwayat penting lain, status ECOG/Lansky, prior therapies..."></textarea></div>
+  </div>
+
+  <div class="btn-row no-print">
+    <button class="btn btn-acc" onclick="goTab('produk')">Lanjut → Produk & Indikasi</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- TAB 2: PRODUK & INDIKASI -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="page" id="page-produk">
+  <div class="card">
+    <div class="card-t">💊 Produk CAR-T & Indikasi</div>
+    <div class="g2">
+      <div class="fld"><label class="req">Produk CAR-T</label>
+        <select id="cart-product" onchange="updateProtoOptions()">
+          <option value="">— Pilih produk —</option>
+          <option value="tisa_ball">Tisagenlecleucel – B-ALL Pediatrik/YA</option>
+          <option value="tisa_dlbcl">Tisagenlecleucel – DLBCL / FL Dewasa</option>
+          <option value="axi">Axicabtagene ciloleucel (Axi-cel)</option>
+          <option value="liso">Lisocabtagene maraleucel (Liso-cel)</option>
+          <option value="brexu">Brexucabtagene autoleucel (Brexu-cel)</option>
+          <option value="bcma">BCMA-targeted CAR-T (Ide-cel / Cilta-cel)</option>
+          <option value="invest">Investigational Product</option>
+          <option value="local">Produk Lokal / Protokol Institusi</option>
+          <option value="local2">Produk Lokal 2 / Protokol Institusi 2</option>
+          <optgroup label="── Protokol Standar/Umum (Referensi) ──">
+            <option value="flucy_gen">FluCy Umum – Flu 25 + Cy 500 mg/m² × 3hr</option>
+            <option value="flucy_30_500">FluCy – Flu 30 + Cy 500 mg/m² × 3hr</option>
+            <option value="flu_only">Fludarabine Saja – 30 mg/m² × 3hr (tanpa Cy)</option>
+            <option value="ben_flu">Bendamustin + Fludarabine (Ben-Flu)</option>
+            <option value="cy_only_ped">Cyclophosphamide Saja – 1000 mg/m² (Pediatrik)</option>
+          </optgroup>
+        </select></div>
+      <div class="fld"><label class="req">Indikasi</label>
+        <select id="indikasi"><option value="">— Pilih —</option><option value="ball">B-ALL relaps/refrakter</option><option value="dlbcl">DLBCL relaps/refrakter</option><option value="fl">Follicular Lymphoma</option><option value="mm">Multiple Myeloma</option><option value="mcl">Mantle Cell Lymphoma</option><option value="other">Lainnya</option></select></div>
+    </div>
+    <div id="product-info" class="al al-inf" style="display:none;margin-top:8px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">📦 Ketersediaan Produk CAR-T <span style="color:var(--red);font-size:13px;">HARD GATE</span></div>
+    <div class="al al-red" style="margin-bottom:12px;">⛔ Lymphodepletion <b>TIDAK BOLEH</b> dimulai bila ketersediaan produk belum terkonfirmasi. Pasien akan menjadi imunosupresif/aplastik tanpa kepastian infus.</div>
+    <ul class="gate-list" id="product-gate">
+      <li><input type="checkbox" id="pg1"><label for="pg1">Produk CAR-T sudah diterima di fasilitas / dalam perjalanan dengan ETA terkonfirmasi</label></li>
+      <li><input type="checkbox" id="pg2"><label for="pg2">Certificate of Release / QC report tersedia</label></li>
+      <li><input type="checkbox" id="pg3"><label for="pg3">Identitas produk sudah diverifikasi sesuai identitas pasien (nama, ID, tanggal lahir)</label></li>
+      <li><input type="checkbox" id="pg4"><label for="pg4">Cold chain terjaga — status suhu dalam spesifikasi</label></li>
+      <li><input type="checkbox" id="pg5"><label for="pg5">Tanggal infus Day 0 terkonfirmasi dengan tim</label></li>
+      <li><input type="checkbox" id="pg6"><label for="pg6">Backup plan tersedia bila pengiriman terlambat</label></li>
+    </ul>
+    <div id="pg-status" style="margin-top:10px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">📅 Target Infus</div>
+    <div class="g2">
+      <div class="fld"><label class="req">Tanggal Infus CAR-T (Day 0)</label><input type="date" id="day0date"></div>
+      <div class="fld"><label>Protokol Lymphodepletion</label>
+        <select id="proto-select"><option value="">— Pilih produk terlebih dahulu —</option></select></div>
+    </div>
+    <div id="proto-src" class="tip" style="margin-top:4px;"></div>
+  </div>
+
+  <div class="btn-row no-print">
+    <button class="btn btn-out btn-sm" onclick="goTab('pasien')">← Kembali</button>
+    <button class="btn btn-acc" onclick="goTab('organ')">Lanjut → Fungsi Organ</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- TAB 3: FUNGSI ORGAN & INFEKSI -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="page" id="page-organ">
+  <div class="card">
+    <div class="card-t">🔬 Fungsi Ginjal</div>
+    <div class="g3">
+      <div class="fld"><label>Kreatinin Serum</label><div class="iu"><input type="number" id="cr" placeholder="mis. 60" step="1"><span>µmol/L</span></div></div>
+      <div class="fld"><label class="req">eGFR / ClCr (diisi manual)</label><div class="iu"><input type="number" id="egfr" placeholder="mis. 90" step="1"><span>ml/min</span></div><div class="tip">Hitung dengan kalkulator eksternal (CKiD, Schwartz, CG) sesuai usia; masukkan hasil di sini</div></div>
+      <div class="fld"><label class="req">Kategori Fungsi Ginjal</label>
+        <select id="renal"><option value="">— Pilih —</option><option value="normal">Normal (eGFR ≥ 60)</option><option value="mild">Ringan (eGFR 45–59)</option><option value="moderate">Sedang (eGFR 30–44)</option><option value="severe">Berat (eGFR &lt; 30) ⛔</option></select></div>
+    </div>
+    <div id="renal-warn"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">🏥 Fungsi Hati</div>
+    <div class="g4">
+      <div class="fld"><label>Bilirubin Total</label><div class="iu"><input type="number" id="bili" placeholder="mis. 12" step="0.1"><span>µmol/L</span></div></div>
+      <div class="fld"><label>ALT/SGPT</label><div class="iu"><input type="number" id="alt" placeholder="mis. 30" step="1"><span>U/L</span></div></div>
+      <div class="fld"><label>AST/SGOT</label><div class="iu"><input type="number" id="ast" placeholder="mis. 30" step="1"><span>U/L</span></div></div>
+      <div class="fld"><label class="req">Kategori Fungsi Hati</label>
+        <select id="hepatic"><option value="">— Pilih —</option><option value="normal">Normal</option><option value="mild">Ringan (Bil 1–1.5× ULN)</option><option value="moderate">Sedang (Bil 1.5–3× ULN)</option><option value="severe">Berat (Bil &gt; 3× ULN) ⛔</option></select></div>
+    </div>
+    <div id="hepatic-warn"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">🦠 Status Infeksi & Virologis</div>
+    <div class="g2">
+      <div class="fld"><label class="req">Status Infeksi Aktif</label>
+        <select id="infection"><option value="">— Pilih —</option><option value="none">Tidak ada infeksi aktif</option><option value="controlled">Ada, terkontrol dengan antibiotik</option><option value="active">Infeksi aktif TIDAK TERKONTROL ⛔</option><option value="fungal">Infeksi jamur invasif ⛔</option></select></div>
+      <div class="fld"><label class="req">Status CMV</label>
+        <select id="cmv"><option value="">— Pilih —</option><option value="neg">Negatif</option><option value="pos">Positif / Reaktivasi</option><option value="unknown">Belum diperiksa</option></select></div>
+      <div class="fld"><label>CMV PCR (kuantitatif)</label><div class="iu"><input type="number" id="cmv-pcr" placeholder="mis. 500" step="1"><span>IU/mL</span></div></div>
+      <div class="fld"><label>EBV / HHV-6 Status</label>
+        <select id="ebv"><option value="">— Pilih —</option><option value="neg">Negatif</option><option value="pos">Positif</option><option value="nd">Tidak diperiksa</option></select></div>
+    </div>
+    <div id="infeksi-warn"></div>
+  </div>
+
+  <div class="btn-row no-print">
+    <button class="btn btn-out btn-sm" onclick="goTab('produk')">← Kembali</button>
+    <button class="btn btn-acc" onclick="goTab('gate')">Lanjut → Safety Gate</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- TAB 4: SAFETY GATE -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="page" id="page-gate">
+  <div class="card">
+    <div class="card-t">🚦 Pre-Lymphodepletion Safety Gate</div>
+    <div id="gate-blocker-list" style="margin-bottom:12px;"></div>
+    <div id="gate-overall-status" class="gate-status gs-warn">Lengkapi checklist untuk menilai status gate</div>
+
+    <div class="sbar" style="margin-top:14px;">Konfirmasi Status Klinis</div>
+    <ul class="gate-list">
+      <li><input type="checkbox" id="g1"><label for="g1">Fungsi organ terkini sudah diverifikasi (CBC, BMP, LFT, koagulasi tersedia)</label></li>
+      <li><input type="checkbox" id="g2"><label for="g2">Tidak ada clinical deterioration signifikan dalam 72 jam terakhir</label></li>
+      <li><input type="checkbox" id="g3"><label for="g3">Bridging therapy sudah selesai dan washout adekuat</label></li>
+      <li><input type="checkbox" id="g4"><label for="g4">Consent final (infused CAR-T) sudah ditandatangani dan terdokumentasi</label></li>
+      <li><input type="checkbox" id="g5"><label for="g5">Steroid terakhir: tanggal & dosis tercatat — tidak ada steroid aktif kecuali disetujui protokol</label></li>
+    </ul>
+
+    <div class="sbar" style="margin-top:14px;">Kesiapan Tim & Fasilitas</div>
+    <ul class="gate-list">
+      <li><input type="checkbox" id="g6"><label for="g6">Protokol CRS/ICANS tersedia di unit dan seluruh tim sudah briefing</label></li>
+      <li><input type="checkbox" id="g7"><label for="g7">Tocilizumab (atau siltuximab) tersedia di formularium unit</label></li>
+      <li><input type="checkbox" id="g8"><label for="g8">Kortikosteroid emergensi tersedia sesuai protokol CRS</label></li>
+      <li><input type="checkbox" id="g9"><label for="g9">Pathway eskalasi ICU/PICU sudah diaktifkan dan terkonfirmasi</label></li>
+      <li><input type="checkbox" id="g10"><label for="g10">Apoteker klinis sudah review order lymphodepletion</label></li>
+      <li><input type="checkbox" id="g11"><label for="g11">DPJP sudah sign-off dan tersedia selama periode lymphodepletion</label></li>
+    </ul>
+
+    <div class="sbar" style="margin-top:14px;">Kesiapan Produk (konfirmasi ulang)</div>
+    <ul class="gate-list">
+      <li><input type="checkbox" id="g12"><label for="g12">Produk CAR-T tersedia / ETA terkonfirmasi sebelum Day 0</label></li>
+      <li><input type="checkbox" id="g13"><label for="g13">Certificate of release tersedia dan diverifikasi</label></li>
+      <li><input type="checkbox" id="g14"><label for="g14">Identitas produk sudah dicocokkan dengan identitas pasien</label></li>
+    </ul>
+  </div>
+
+  <div id="gate-final" class="al al-inf">Setelah semua item dicentang dan tidak ada blocker, Anda dapat melanjutkan ke template protokol.</div>
+
+  <div class="btn-row no-print">
+    <button class="btn btn-out btn-sm" onclick="goTab('organ')">← Kembali</button>
+    <button class="btn btn-acc" onclick="goTab('protokol')">Lanjut → Template Protokol</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- TAB 5: TEMPLATE PROTOKOL -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="page" id="page-protokol">
+  <div class="card">
+    <div class="proto-header">
+      <div class="card-t" style="margin:0;">⚙️ Template Protokol Product-Specific</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span id="lock-badge" class="lk-badge lk">🔒 TERKUNCI</span>
+        <button class="btn btn-sm btn-out no-print" id="btn-toggle-lock">Buka Kunci (Demo)</button>
+      </div>
+    </div>
+    <div class="al al-red">⛔ Template ini hanya untuk demonstrasi edukasi. Dosis yang tersimpan di sini <b>harus diverifikasi dan disetujui</b> oleh tim farmasi klinis dan DPJP sebelum digunakan. Editor hanya boleh dibuka oleh koordinator program dengan otoritas tertulis.</div>
+
+    <div id="proto-audit" class="audit-box" style="margin-top:10px;margin-bottom:12px;"></div>
+
+    <div id="proto-editor-content"></div>
+
+    <div class="btn-row no-print" style="margin-top:12px;">
+      <button class="btn btn-teal" id="btn-save-proto">💾 Simpan & Kunci (Sesi Ini)</button>
+      <button class="btn btn-out" id="btn-export-proto">📤 Export JSON Protokol</button>
+      <button class="btn btn-out" id="btn-import-proto">📥 Import JSON Protokol</button>
+    </div>
+    <div id="proto-save-msg" style="margin-top:8px;"></div>
+    <div class="al al-ylw" style="margin-top:10px;">⚠️ Penyimpanan di sesi ini tidak permanen. Gunakan Export JSON untuk menyimpan perubahan dan Import saat dibutuhkan.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">📖 Catatan Klinis Protokol</div>
+    <div id="proto-notes" style="font-size:13px;line-height:1.8;"></div>
+  </div>
+
+  <div class="btn-row no-print">
+    <button class="btn btn-out btn-sm" onclick="goTab('gate')">← Kembali</button>
+    <button class="btn btn-acc" id="btn-generate">🚀 Generate Jadwal & Output</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- TAB 6: OUTPUT -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="page" id="page-output">
+  <div id="out-placeholder" class="al al-inf">ℹ️ Klik <b>Generate Jadwal</b> di tab Protokol untuk melihat output.</div>
+  <div id="out-hold" class="hold-banner" style="display:none;">
+    <div class="hold-title">⛔ LYMPHODEPLETION HOLD</div>
+    <div class="hold-sub" id="out-hold-reasons"></div>
+    <div style="margin-top:10px;font-size:12px;color:#7a1010;">Selesaikan semua blocker sebelum dapat generate jadwal lymphodepletion.</div>
+  </div>
+  <div id="out-content" style="display:none;">
+    <!-- Summary -->
+    <div class="card"><div class="card-t">👤 Ringkasan Pasien & Parameter</div><div id="out-summary" class="g4"></div></div>
+    <!-- Adjustments -->
+    <div id="out-adj" style="margin-bottom:12px;"></div>
+    <!-- Schedule -->
+    <div class="card">
+      <div class="card-t">📅 Jadwal Lymphodepletion</div>
+      <div style="overflow-x:auto;"><table class="tbl" id="out-tbl"><thead><tr><th>Hari</th><th>Tanggal</th><th>Obat / Tindakan</th><th>Dosis Terhitung</th><th>Rute / Durasi</th><th>Catatan</th></tr></thead><tbody id="out-tbody"></tbody></table></div>
+      <div class="al al-red" style="margin-top:10px;font-size:12px;">🔒 Semua dosis berasal dari template protokol product-specific. Wajib diverifikasi apoteker + DPJP sebelum dispensing. Dosis ditahan bila ada penyesuaian organ yang diperlukan.</div>
+    </div>
+    <!-- Supportive care -->
+    <div class="card">
+      <div class="card-t">✅ Checklist Terapi Suportif</div>
+      <div class="g2">
+        <div><div class="sbar" style="margin-bottom:8px;">HIDRASI & UROSUPPORTIF</div><ul class="cl" id="cl-hydra"></ul></div>
+        <div><div class="sbar" style="margin-bottom:8px;">ANTIEMETIK (Non-Steroid)</div><ul class="cl" id="cl-anti"></ul></div>
+      </div>
+      <hr class="sep">
+      <div class="sbar" style="margin-bottom:8px;">MONITORING & PROFILAKSIS</div>
+      <ul class="cl" id="cl-mon"></ul>
+    </div>
+    <!-- Verification -->
+    <div class="card" style="border:2px solid var(--acc);">
+      <div class="card-t">✍️ Verifikasi & Sign-Off Klinis</div>
+      <div class="g2">
+        <div class="fld"><label>DPJP (nama & tanda tangan)</label><input type="text" id="v-dpjp" placeholder="Nama DPJP"></div>
+        <div class="fld"><label>Tanggal Verifikasi</label><input type="date" id="v-date"></div>
+        <div class="fld"><label>Apoteker Klinis</label><input type="text" id="v-apt" placeholder="Nama Apoteker"></div>
+        <div class="fld"><label>Catatan Penyesuaian Dosis</label><input type="text" id="v-note" placeholder="Penyesuaian khusus bila ada"></div>
+      </div>
+    </div>
+    <div class="btn-row no-print">
+      <button class="btn btn-pri" onclick="doPrint()">🖨️ Cetak Output</button>
+      <button class="btn btn-teal" id="btn-copy">📋 Salin Ringkasan</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<!-- PRINT ONLY -->
+<div id="print-only"></div>
+
+<div style="text-align:center;padding:14px;font-size:11px;color:var(--mut);border-top:1px solid var(--bdr);margin-top:8px;" class="no-print">
+  <b>drAisyiEduCare</b> · CAR-T Lymphodepletion Scheduler v2.0 · Alat edukasi klinis — bukan pengganti keputusan medis · Verifikasi wajib sebelum digunakan
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA: PRODUCT-SPECIFIC PROTOCOL TEMPLATES
+// ═══════════════════════════════════════════════════════════
+var PROTOS = {
+  tisa_ball: {
+    label: 'Tisagenlecleucel – B-ALL (Fludarabine 4hr + Cy 2hr)',
+    source: 'Kymriah PI / FDA label B-ALL; EMA SmPC',
+    version: '2024-01',
+    notes: 'Fludarabine 30 mg/m²/hari × 4 hari (D-5 sampai D-2). Cyclophosphamide 500 mg/m²/hari × 2 hari (D-5 sampai D-4). Tidak ada kemo D-3 s/d D-1. Verifikasi dengan PI produk terbaru sebelum order.',
+    rows: [
+      {day:-5,drug:'Fludarabine',basis:'BSA',dose:30,route:'IV 30 menit',notes:'Encerkan NaCl 0.9%; berikan sebelum Cy'},
+      {day:-5,drug:'Cyclophosphamide',basis:'BSA',dose:500,route:'IV 1–2 jam',notes:'Setelah Fludarabine; Mesna + hidrasi wajib'},
+      {day:-4,drug:'Fludarabine',basis:'BSA',dose:30,route:'IV 30 menit',notes:''},
+      {day:-4,drug:'Cyclophosphamide',basis:'BSA',dose:500,route:'IV 1–2 jam',notes:''},
+      {day:-3,drug:'Fludarabine',basis:'BSA',dose:30,route:'IV 30 menit',notes:''},
+      {day:-2,drug:'Fludarabine',basis:'BSA',dose:30,route:'IV 30 menit',notes:'Fludarabine saja pada D-2'},
+      {day:-1,drug:'REST',basis:'-',dose:0,route:'-',notes:'Tidak ada kemo – persiapan D0'},
+      {day:0,drug:'Infus CAR-T',basis:'-',dose:0,route:'IV sentral',notes:'⭐ DAY 0'}
+    ]
+  },
+  tisa_dlbcl: {
+    label: 'Tisagenlecleucel – DLBCL / FL (FluCy 3hr)',
+    source: 'EMA SmPC Kymriah DLBCL/FL; tisa-cel PI',
+    version: '2024-01',
+    notes: 'Fludarabine 25 mg/m²/hari × 3 hari. Cyclophosphamide 250 mg/m²/hari × 3 hari. D-5 sampai D-3. D-2, D-1 REST. Verifikasi dosis dengan SmPC terbaru.',
+    rows: [
+      {day:-5,drug:'Fludarabine',basis:'BSA',dose:25,route:'IV 30 menit',notes:''},
+      {day:-5,drug:'Cyclophosphamide',basis:'BSA',dose:250,route:'IV 1–2 jam',notes:'Mesna + hidrasi'},
+      {day:-4,drug:'Fludarabine',basis:'BSA',dose:25,route:'IV 30 menit',notes:''},
+      {day:-4,drug:'Cyclophosphamide',basis:'BSA',dose:250,route:'IV 1–2 jam',notes:''},
+      {day:-3,drug:'Fludarabine',basis:'BSA',dose:25,route:'IV 30 menit',notes:''},
+      {day:-3,drug:'Cyclophosphamide',basis:'BSA',dose:250,route:'IV 1–2 jam',notes:''},
+      {day:-2,drug:'REST',basis:'-',dose:0,route:'-',notes:'Tidak ada kemo'},
+      {day:-1,drug:'REST',basis:'-',dose:0,route:'-',notes:'Persiapan D0'},
+      {day:0,drug:'Infus CAR-T',basis:'-',dose:0,route:'IV sentral',notes:'⭐ DAY 0'}
+    ]
+  },
+  axi: {
+    label: 'Axicabtagene ciloleucel – FluCy',
+    source: 'ZUMA-1; Yescarta PI',
+    version: '2024-01',
+    notes: 'Fludarabine 30 mg/m²/hari × 3 hari. Cyclophosphamide 500 mg/m²/hari × 3 hari. D-5 sampai D-3. Verifikasi dosis dengan PI terbaru.',
+    rows: [
+      {day:-5,drug:'Fludarabine',basis:'BSA',dose:30,route:'IV 30 menit',notes:''},
+      {day:-5,drug:'Cyclophosphamide',basis:'BSA',dose:500,route:'IV 1–2 jam',notes:'Mesna wajib'},
+      {day:-4,drug:'Fludarabine',basis:'BSA',dose:30,route:'IV 30 menit',notes:''},
+      {day:-4,drug:'Cyclophosphamide',basis:'BSA',dose:500,route:'IV 1–2 jam',notes:''},
+      {day:-3,drug:'Fludarabine',basis:'BSA',dose:30,route:'IV 30 menit',notes:''},
+      {day:-3,drug:'Cyclophosphamide',basis:'BSA',dose:500,route:'IV 1–2 jam',notes:''},
+      {day:-2,drug:'REST',basis:'-',dose:0,route:'-',notes:''},
+      {day:-1,drug:'REST',basis:'-',dose:0,route:'-',notes:''},
+      {day:0,drug:'Infus CAR-T',basis:'-',dose:0,route:'IV sentral',notes:'⭐ DAY 0'}
+    ]
+  },
+  liso: {
+    label: 'Lisocabtagene maraleucel – FluCy',
+    source: 'TRANSCEND; Breyanzi PI',
+    version: '2024-01',
+    notes: 'Fludarabine 30 mg/m²/hari × 3 hari. Cyclophosphamide 300 mg/m²/hari × 3 hari. D-5 sampai D-3. Catatan: dosis Cy lebih rendah dari Axi-cel.',
+    rows: [
+      {day:-5,drug:'Fludarabine',basis:'BSA',dose:30,route:'IV 30 menit',notes:''},
+      {day:-5,drug:'Cyclophosphamide',basis:'BSA',dose:300,route:'IV 1–2 jam',notes:'Mesna bila protokol lokal mewajibkan'},
+      {day:-4,drug:'Fludarabine',basis:'BSA',dose:30,route:'IV 30 menit',notes:''},
+      {day:-4,drug:'Cyclophosphamide',basis:'BSA',dose:300,route:'IV 1–2 jam',notes:''},
+      {day:-3,drug:'Fludarabine',basis:'BSA',dose:30,route:'IV 30 menit',notes:''},
+      {day:-3,drug:'Cyclophosphamide',basis:'BSA',dose:300,route:'IV 1–2 jam',notes:''},
+      {day:-2,drug:'REST',basis:'-',dose:0,route:'-',notes:''},
+      {day:-1,drug:'REST',basis:'-',dose:0,route:'-',notes:''},
+      {day:0,drug:'Infus CAR-T',basis:'-',dose:0,route:'IV sentral',notes:'⭐ DAY 0'}
+    ]
+  },
+  brexu: {
+    label: 'Brexucabtagene autoleucel – FluCy',
+    source: 'ZUMA-2; Tecartus PI',
+    version: '2024-01',
+    notes: 'Fludarabine 30 mg/m²/hari × 3 hari. Cyclophosphamide 500 mg/m²/hari × 3 hari. Verifikasi PI Tecartus terbaru.',
+    rows: [
+      {day:-5,drug:'Fludarabine',basis:'BSA',dose:30,route:'IV 30 menit',notes:''},
+      {day:-5,drug:'Cyclophosphamide',basis:'BSA',dose:500,route:'IV 1–2 jam',notes:'Mesna wajib'},
+      {day:-4,drug:'Fludarabine',basis:'BSA',dose:30,route:'IV 30 menit',notes:''},
+      {day:-4,drug:'Cyclophosphamide',basis:'BSA',dose:500,route:'IV 1–2 jam',notes:''},
+      {day:-3,drug:'Fludarabine',basis:'BSA',dose:30,route:'IV 30 menit',notes:''},
+      {day:-3,drug:'Cyclophosphamide',basis:'BSA',dose:500,route:'IV 1–2 jam',notes:''},
+      {day:-2,drug:'REST',basis:'-',dose:0,route:'-',notes:''},
+      {day:-1,drug:'REST',basis:'-',dose:0,route:'-',notes:''},
+      {day:0,drug:'Infus CAR-T',basis:'-',dose:0,route:'IV sentral',notes:'⭐ DAY 0'}
+    ]
+  },
+  bcma: {
+    label: 'BCMA CAR-T (Ide-cel / Cilta-cel) – FluCy',
+    source: 'KarMMa / CARTITUDE PI',
+    version: '2024-01',
+    notes: 'Ide-cel: Flu 30 mg/m² × 3hr + Cy 300 mg/m² × 3hr (D-5 s/d D-3). Cilta-cel: Flu 30 mg/m² × 3hr + Cy 300 mg/m² × 3hr. Konfirmasi dengan PI spesifik produk.',
+    rows: [
+      {day:-5,drug:'Fludarabine',basis:'BSA',dose:30,route:'IV 30 menit',notes:''},
+      {day:-5,drug:'Cyclophosphamide',basis:'BSA',dose:300,route:'IV 1–2 jam',notes:''},
+      {day:-4,drug:'Fludarabine',basis:'BSA',dose:30,route:'IV 30 menit',notes:''},
+      {day:-4,drug:'Cyclophosphamide',basis:'BSA',dose:300,route:'IV 1–2 jam',notes:''},
+      {day:-3,drug:'Fludarabine',basis:'BSA',dose:30,route:'IV 30 menit',notes:''},
+      {day:-3,drug:'Cyclophosphamide',basis:'BSA',dose:300,route:'IV 1–2 jam',notes:''},
+      {day:-2,drug:'REST',basis:'-',dose:0,route:'-',notes:''},
+      {day:-1,drug:'REST',basis:'-',dose:0,route:'-',notes:''},
+      {day:0,drug:'Infus CAR-T',basis:'-',dose:0,route:'IV sentral',notes:'⭐ DAY 0'}
+    ]
+  },
+  invest: {
+    label: 'Investigational Product – Template Kosong',
+    source: 'Isi sumber protokol uji klinis',
+    version: 'DRAFT',
+    notes: 'Template untuk produk investigasional. SELURUH dosis harus diisi oleh PI/farmasi dan dikunci sebelum digunakan.',
+    rows: [
+      {day:-5,drug:'',basis:'BSA',dose:0,route:'IV',notes:'Isi dari protokol IND'},
+      {day:-4,drug:'',basis:'BSA',dose:0,route:'IV',notes:''},
+      {day:-3,drug:'',basis:'BSA',dose:0,route:'IV',notes:''},
+      {day:-2,drug:'REST',basis:'-',dose:0,route:'-',notes:''},
+      {day:-1,drug:'REST',basis:'-',dose:0,route:'-',notes:''},
+      {day:0,drug:'Infus CAR-T',basis:'-',dose:0,route:'IV sentral',notes:'⭐ DAY 0'}
+    ]
+  },
+  local: {
+    label: 'Protokol Lokal / Institusi',
+    source: 'Isi sumber / nomor dokumen protokol lokal',
+    version: 'DRAFT',
+    notes: 'Isi seluruh kolom sesuai protokol lokal yang telah disetujui oleh komite farmasi dan terapi.',
+    rows: [
+      {day:-5,drug:'',basis:'BSA',dose:0,route:'IV',notes:'Isi sesuai protokol lokal'},
+      {day:-4,drug:'',basis:'BSA',dose:0,route:'IV',notes:''},
+      {day:-3,drug:'',basis:'BSA',dose:0,route:'IV',notes:''},
+      {day:-2,drug:'REST',basis:'-',dose:0,route:'-',notes:''},
+      {day:-1,drug:'REST',basis:'-',dose:0,route:'-',notes:''},
+      {day:0,drug:'Infus CAR-T',basis:'-',dose:0,route:'IV sentral',notes:'⭐ DAY 0'}
+    ]
+  }
+};
+
+// Deep clone to allow editing
+var activeProto = null;
+var protoLocked = true;
+
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+function goTab(name) {
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  var tabEl = document.querySelector('[data-tab="'+name+'"]');
+  if (tabEl) tabEl.classList.add('active');
+  var pg = document.getElementById('page-'+name);
+  if (pg) pg.classList.add('active');
+}
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click', function(){ goTab(t.dataset.tab); });
+});
+
+function addDays(ds, n) {
+  var d = new Date(ds); d.setDate(d.getDate()+n); return d;
+}
+function fmtDate(d) {
+  var days=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+  return days[d.getDay()]+' '+d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
+}
+function al(cls,msg){ return '<div class="al '+cls+'">'+msg+'</div>'; }
+function chk(txt){ return '<li><input type="checkbox"><span>'+txt+'</span></li>'; }
+
+// ═══════════════════════════════════════════════════════════
+// BSA CALCULATION
+// ═══════════════════════════════════════════════════════════
+function calcIBW() {
+  var tb = parseFloat(document.getElementById('tb').value)||0;
+  var usia = parseFloat(document.getElementById('usia').value)||0;
+  var jk = document.getElementById('jk').value;
+  var bbiEl = document.getElementById('bbi');
+  var tipEl = document.getElementById('bbi-formula');
+  if (!tb || !jk) { bbiEl.value=''; tipEl.textContent='Dihitung otomatis setelah usia, TB, jenis kelamin diisi'; return; }
+
+  var ibw = null, method = '';
+  if (usia > 0 && usia < 18) {
+    // Pediatric: IBW Traub-Johnson (anak >1 thn, TB ≥74 cm)
+    // IBW (kg) = (TB² × 1.65) / 1000   [Traub & Johnson 1980]
+    if (tb >= 74) { ibw = (tb * tb * 1.65) / 1000; method = 'Traub-Johnson (pediatrik, TB²×1.65/1000)'; }
+    else { bbiEl.value=''; tipEl.textContent='TB <74 cm: gunakan tabel BB/TB usia'; return; }
+  } else {
+    // Dewasa: Devine formula
+    // L: 50 + 2.3×(TB_inch − 60)  |  P: 45.5 + 2.3×(TB_inch − 60)
+    var tb_inch = tb / 2.54;
+    if (tb_inch < 60) {
+      // Untuk TB <152 cm dewasa, IBW ≈ BB ideal berbasis TB
+      ibw = jk==='L' ? 50 - 2.3*(60 - tb_inch) : 45.5 - 2.3*(60 - tb_inch);
+    } else {
+      ibw = jk==='L' ? 50 + 2.3*(tb_inch - 60) : 45.5 + 2.3*(tb_inch - 60);
+    }
+    ibw = Math.max(ibw, 1);
+    method = 'Devine ('+(jk==='L'?'L: 50':'P: 45.5')+' + 2.3×(TB_inch−60))';
+  }
+  if (ibw !== null) {
+    ibw = Math.round(ibw * 10) / 10;
+    bbiEl.value = ibw;
+    tipEl.textContent = 'Formula: ' + method;
+    calcBSA();
+  }
+}
+
+function calcBSA() {
+  var bb = parseFloat(document.getElementById('bb').value)||0;
+  var tb = parseFloat(document.getElementById('tb').value)||0;
+  var bbi = parseFloat(document.getElementById('bbi').value)||0;
+  var bsaWarn = document.getElementById('bsa-warning');
+  if (bb>0 && tb>0) {
+    var bsa = Math.sqrt(bb*tb/3600);
+    document.getElementById('bsa-display').textContent = bsa.toFixed(2);
+    var basis = document.getElementById('bsa-basis').value;
+    var used = bsa;
+    if (basis==='ideal' && bbi>0) used = Math.sqrt(bbi*tb/3600);
+    else if (basis==='capped') used = Math.min(bsa, 2.0);
+    document.getElementById('bsa-used').textContent = used.toFixed(2);
+    bsaWarn.innerHTML = '';
+    if (bsa > 2.5) bsaWarn.innerHTML = al('al-ylw','⚠️ BSA >2.5 m²: pastikan basis dosis (aktual/ideal/capped) sesuai protokol dan diverifikasi farmasi.');
+    if (bsa < 0.3) bsaWarn.innerHTML = al('al-ylw','⚠️ BSA <0.3 m²: verifikasi dosis sangat penting — pasien ukuran sangat kecil.');
+    return used;
+  }
+  document.getElementById('bsa-display').textContent='—';
+  document.getElementById('bsa-used').textContent='—';
+  return 0;
+}
+['bb','tb','bsa-basis'].forEach(function(id){
+  var el = document.getElementById(id);
+  if (el) el.addEventListener('input', calcBSA);
+  if (el) el.addEventListener('change', calcBSA);
+});
+['usia','tb','jk'].forEach(function(id){
+  var el = document.getElementById(id);
+  if (el) el.addEventListener('change', calcIBW);
+  if (el) el.addEventListener('input', calcIBW);
+});
+
+// ═══════════════════════════════════════════════════════════
+// PREGNANCY TOGGLE
+// ═══════════════════════════════════════════════════════════
+function togglePreg() {
+  var jk = document.getElementById('jk').value;
+  var pub = document.getElementById('puberty').value;
+  var show = jk==='P' && (pub==='peri'||pub==='post');
+  document.getElementById('preg-container').style.display = show ? 'block':'none';
+}
+['jk','puberty'].forEach(function(id){
+  document.getElementById(id).addEventListener('change', togglePreg);
+});
+
+// ═══════════════════════════════════════════════════════════
+// PRODUCT → PROTOCOL OPTIONS
+// ═══════════════════════════════════════════════════════════
+function updateProtoOptions() {
+  var prod = document.getElementById('cart-product').value;
+  var sel = document.getElementById('proto-select');
+  sel.innerHTML = '';
+  if (!prod) { sel.innerHTML = '<option value="">— Pilih produk terlebih dahulu —</option>'; return; }
+
+  // Primary protocol for the selected product
+  var opt = document.createElement('option');
+  opt.value = prod;
+  opt.textContent = PROTOS[prod] ? PROTOS[prod].label : prod;
+  sel.appendChild(opt);
+
+  // Always append general/local alternatives in a second group
+  var altGroup = document.createElement('optgroup');
+  altGroup.label = '── Pilihan Protokol Alternatif ──';
+  var alts = [
+    {value:'flucy_gen',   label:'FluCy Umum – Flu 25 + Cy 500 mg/m² × 3hr'},
+    {value:'flucy_30_500',label:'FluCy – Flu 30 + Cy 500 mg/m² × 3hr'},
+    {value:'flu_only',    label:'Fludarabine Saja – 30 mg/m² × 3hr'},
+    {value:'ben_flu',     label:'Bendamustin + Fludarabine (Ben-Flu)'},
+    {value:'cy_only_ped', label:'Cyclophosphamide Saja – 1000 mg/m² (Pediatrik)'},
+    {value:'local',       label:'Protokol Lokal / Institusi 1'},
+    {value:'local2',      label:'Protokol Lokal / Institusi 2'},
+    {value:'invest',      label:'Investigational Product'}
+  ];
+  alts.forEach(function(a){
+    if (a.value === prod) return; // skip if already shown as primary
+    var o = document.createElement('option');
+    o.value = a.value; o.textContent = a.label;
+    altGroup.appendChild(o);
+  });
+  sel.appendChild(altGroup);
+  // Load proto
+  if (PROTOS[prod]) {
+    activeProto = JSON.parse(JSON.stringify(PROTOS[prod]));
+    document.getElementById('product-info').style.display='flex';
+    document.getElementById('product-info').innerHTML = '📌 Protokol dipilih: <b>'+PROTOS[prod].label+'</b> · Sumber: '+PROTOS[prod].source;
+    document.getElementById('proto-src').textContent = '📖 Sumber: '+PROTOS[prod].source+' | Versi: '+PROTOS[prod].version;
+    renderProtoEditor();
+    renderProtoNotes();
+    updateAuditBox();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// PRODUCT GATE STATUS
+// ═══════════════════════════════════════════════════════════
+function checkProductGate() {
+  var all = true;
+  for (var i=1;i<=6;i++) { if (!document.getElementById('pg'+i).checked) { all=false; break; } }
+  document.getElementById('pg-status').innerHTML = all
+    ? al('al-grn','✅ Semua item ketersediaan produk terkonfirmasi.')
+    : al('al-ylw','⚠️ Lengkapi semua item ketersediaan produk sebelum melanjutkan.');
+}
+// Product gate listeners
+for (var _pgi=1;_pgi<=6;_pgi++){
+  (function(i){ var el=document.getElementById('pg'+i); if(el) el.addEventListener('change', function(){ checkProductGate(); evalGate(); }); })(_pgi);
+}
+
+// ═══════════════════════════════════════════════════════════
+// ORGAN WARNING
+// ═══════════════════════════════════════════════════════════
+document.getElementById('renal').addEventListener('change', function(){
+  var v = this.value;
+  var el = document.getElementById('renal-warn');
+  if (v==='severe') el.innerHTML = al('al-red','⛔ BLOCKER: Gangguan ginjal berat (eGFR <30) — Fludarabine tidak direkomendasikan tanpa penyesuaian signifikan. Lymphodepletion ditahan.');
+  else if (v==='moderate') el.innerHTML = al('al-ylw','⚠️ Gangguan ginjal sedang: pertimbangkan reduksi Fludarabine 20–25%. Konsultasi farmasi klinis wajib. Dosis terhitung akan DITAHAN di output.');
+  else if (v==='mild') el.innerHTML = al('al-inf','ℹ️ Gangguan ginjal ringan: pantau kreatinin harian; fludarabine umumnya dapat diberikan dengan monitoring ketat.');
+  else el.innerHTML = '';
+});
+document.getElementById('hepatic').addEventListener('change', function(){
+  var v = this.value;
+  var el = document.getElementById('hepatic-warn');
+  if (v==='severe') el.innerHTML = al('al-red','⛔ BLOCKER: Gangguan hati berat (Bil >3× ULN) — pertimbangan penundaan wajib; konsultasi hepatologi.');
+  else if (v==='moderate') el.innerHTML = al('al-ylw','⚠️ Gangguan hati sedang: pertimbangkan reduksi Cy 25%. Dosis terhitung akan DITAHAN di output.');
+  else el.innerHTML = '';
+});
+document.getElementById('infection').addEventListener('change', function(){
+  var v = this.value;
+  var el = document.getElementById('infeksi-warn');
+  if (v==='active') el.innerHTML = al('al-red','⛔ BLOCKER: Infeksi aktif tidak terkontrol — lymphodepletion TIDAK BOLEH dimulai.');
+  else if (v==='fungal') el.innerHTML = al('al-red','⛔ BLOCKER: Infeksi jamur invasif — konsultasi tim infeksi dan tunda lymphodepletion.');
+  else if (v==='controlled') el.innerHTML = al('al-ylw','⚠️ Infeksi terkontrol: pastikan antibiotik adekuat minimal 48 jam sebelum memulai; monitor ketat.');
+  else el.innerHTML = '';
+});
+
+// ═══════════════════════════════════════════════════════════
+// SAFETY GATE EVALUATION
+// ═══════════════════════════════════════════════════════════
+// Re-evaluate gate whenever any relevant field changes
+['bb','tb','usia','jk','puberty','pregnancy','renal','hepatic','infection','day0date','cart-product'].forEach(function(id){
+  var el = document.getElementById(id);
+  if (el) { el.addEventListener('change', evalGate); el.addEventListener('input', evalGate); }
+});
+for (var _gi=1;_gi<=6;_gi++){
+  (function(i){ var el=document.getElementById('pg'+i); if(el) el.addEventListener('change', evalGate); })(_gi);
+}
+
+function getBlockers() {
+  var blockers = [];
+  var renal = document.getElementById('renal').value;
+  var hepatic = document.getElementById('hepatic').value;
+  var inf = document.getElementById('infection').value;
+  var prod = document.getElementById('cart-product').value;
+  var jk = document.getElementById('jk').value;
+  var preg = document.getElementById('pregnancy').value;
+  var day0 = document.getElementById('day0date').value;
+  var usia = parseFloat(document.getElementById('usia').value)||0;
+  var bb = parseFloat(document.getElementById('bb').value)||0;
+  var tb = parseFloat(document.getElementById('tb').value)||0;
+
+  if (!bb || !tb) blockers.push('BB dan TB belum diisi — BSA tidak dapat dihitung');
+  if (!usia) blockers.push('Usia pasien belum diisi');
+  if (!document.getElementById('jk').value) blockers.push('Jenis kelamin belum dipilih');
+  if (!prod) blockers.push('Produk CAR-T belum dipilih');
+  if (!day0) blockers.push('Tanggal Day 0 belum ditentukan');
+  if (inf==='active') blockers.push('⛔ Infeksi aktif tidak terkontrol — HARD STOP');
+  if (inf==='fungal') blockers.push('⛔ Infeksi jamur invasif — HARD STOP');
+  if (renal==='severe') blockers.push('⛔ Gangguan ginjal berat (eGFR <30) — dosis Fludarabine perlu penyesuaian klinis');
+  if (hepatic==='severe') blockers.push('⛔ Gangguan hati berat (Bil >3× ULN) — tunda & konsultasi hepatologi');
+  if (jk==='P' && preg==='pos') blockers.push('⛔ Pregnancy test POSITIF — lymphodepletion tidak dapat dimulai');
+  if (jk==='P' && preg==='nd' && document.getElementById('puberty').value==='post') blockers.push('⚠️ Pregnancy test belum dilakukan pada perempuan pascapubertas');
+
+  // Product gate
+  var pgAll = true;
+  for (var i=1;i<=6;i++) { if (!document.getElementById('pg'+i).checked) { pgAll=false; break; } }
+  if (!pgAll) blockers.push('Konfirmasi ketersediaan produk CAR-T belum lengkap');
+
+  return blockers;
+}
+
+function getAdjustFlags() {
+  var flags = [];
+  var renal = document.getElementById('renal').value;
+  var hepatic = document.getElementById('hepatic').value;
+  var cmv = document.getElementById('cmv').value;
+  var inf = document.getElementById('infection').value;
+  if (renal==='moderate') flags.push({type:'renal', msg:'GANGGUAN GINJAL SEDANG: Dosis Fludarabine DITAHAN — konsultasi farmasi klinis untuk reduksi 20–25%.'});
+  if (hepatic==='moderate') flags.push({type:'hepatic', msg:'GANGGUAN HATI SEDANG: Dosis Cyclophosphamide DITAHAN — pertimbangkan reduksi 25%.'});
+  if (cmv==='pos') flags.push({type:'info', msg:'CMV POSITIF: Monitor viral load 2× seminggu; siapkan protokol preemptive ganciclovir/valganciclovir.'});
+  if (inf==='controlled') flags.push({type:'info', msg:'Infeksi terkontrol: verifikasi antibiotik adekuat ≥48 jam sebelum mulai.'});
+  var rw = document.getElementById('rw-cystitis').value;
+  if (rw==='yes') flags.push({type:'info', msg:'Riwayat cystitis hemoragik: pertimbangkan intensifikasi Mesna dan monitoring urin lebih ketat.'});
+  var rk = document.getElementById('rw-kejang').value;
+  if (rk==='yes'||rk==='neuro') flags.push({type:'info', msg:'Riwayat kejang/neurotoksisitas: koordinasi dengan neurologi; hindari obat yang meningkatkan risiko neurotoksisitas.'});
+  return flags;
+}
+
+function shouldHoldDose(drug, flags) {
+  var drug_l = drug.toLowerCase();
+  for (var i=0;i<flags.length;i++) {
+    if (flags[i].type==='renal' && drug_l.indexOf('fluda')>-1) return true;
+    if (flags[i].type==='hepatic' && drug_l.indexOf('cyclo')>-1) return true;
+  }
+  return false;
+}
+
+// Gate checklist live check
+for (var _gj=1;_gj<=14;_gj++){
+  (function(j){ var el=document.getElementById('g'+j); if(el) el.addEventListener('change', evalGate); })(_gj);
+}
+
+function evalGate() {
+  var blockers = getBlockers();
+  var el = document.getElementById('gate-blocker-list');
+  el.innerHTML = '';
+  blockers.forEach(function(b){ el.innerHTML += al('al-red','⛔ '+b); });
+
+  // count gate checkboxes
+  var total=14, checked=0;
+  for (var j=1;j<=14;j++) { var e=document.getElementById('g'+j); if(e&&e.checked) checked++; }
+
+  var ov = document.getElementById('gate-overall-status');
+  var gf = document.getElementById('gate-final');
+  if (blockers.length>0) {
+    ov.className='gate-status gs-fail'; ov.textContent='⛔ GATE GAGAL — '+blockers.length+' blocker teridentifikasi. Lymphodepletion tidak dapat dimulai.';
+    gf.className='al al-red'; gf.innerHTML='⛔ Selesaikan semua blocker sebelum dapat melanjutkan ke protokol.';
+  } else if (checked < total) {
+    ov.className='gate-status gs-warn'; ov.textContent='⚠️ '+(total-checked)+' item safety gate belum dicentang.';
+    gf.className='al al-ylw'; gf.innerHTML='⚠️ Lengkapi semua '+total+' item safety gate sebelum generate jadwal. ('+checked+'/'+total+' selesai)';
+  } else {
+    ov.className='gate-status gs-pass'; ov.textContent='✅ GATE LULUS — Semua item safety terkonfirmasi. Lanjutkan ke protokol.';
+    gf.className='al al-grn'; gf.innerHTML='✅ Safety gate lulus. Anda dapat melanjutkan ke Template Protokol.';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROTOCOL EDITOR
+// ═══════════════════════════════════════════════════════════
+function updateAuditBox() {
+  if (!activeProto) return;
+  var now = new Date();
+  var box = document.getElementById('proto-audit');
+  box.innerHTML = '<b>Protokol:</b> '+activeProto.label+
+    ' &nbsp;|&nbsp; <b>Versi:</b> '+activeProto.version+
+    ' &nbsp;|&nbsp; <b>Sumber:</b> '+activeProto.source+
+    ' &nbsp;|&nbsp; <b>Dimuat:</b> '+now.toLocaleDateString('id-ID')+' '+now.toLocaleTimeString('id-ID')+
+    '<br><span style="color:var(--red);font-size:11px;">Perubahan dosis: catat nama pengubah, tanggal, alasan, dan verifikasi oleh farmasi klinis sebelum penggunaan klinis.</span>';
+}
+
+function renderProtoEditor() {
+  if (!activeProto) { document.getElementById('proto-editor-content').innerHTML='<div class="al al-inf">Pilih produk CAR-T di tab Produk & Indikasi untuk memuat template.</div>'; return; }
+  var html = '<div class="proto-row proto-row-hdr"><div>Hari</div><div>Obat</div><div>Basis</div><div>Dosis</div><div>Rute</div><div>Catatan</div></div>';
+  activeProto.rows.forEach(function(row, idx){
+    var dis = protoLocked ? 'readonly disabled' : '';
+    var bg = protoLocked ? 'style="background:#f5f5f5;"' : '';
+    html += '<div class="proto-row">'+
+      '<div style="font-weight:700;font-size:11px;color:var(--pri);">Day '+(row.day===0?'0':row.day)+'</div>'+
+      '<div><input type="text" data-idx="'+idx+'" data-f="drug" value="'+row.drug+'" '+dis+' '+bg+'></div>'+
+      '<div><select data-idx="'+idx+'" data-f="basis" '+dis+' '+bg+'>'+
+        '<option value="BSA" '+(row.basis==='BSA'?'selected':'')+'>BSA (m²)</option>'+
+        '<option value="BB" '+(row.basis==='BB'?'selected':'')+'>BB (kg)</option>'+
+        '<option value="-" '+(row.basis==='-'?'selected':'')+'>N/A</option>'+
+      '</select></div>'+
+      '<div><input type="number" data-idx="'+idx+'" data-f="dose" value="'+row.dose+'" step="0.1" '+dis+' '+bg+'></div>'+
+      '<div><input type="text" data-idx="'+idx+'" data-f="route" value="'+row.route+'" '+dis+' '+bg+'></div>'+
+      '<div><input type="text" data-idx="'+idx+'" data-f="notes" value="'+row.notes+'" '+dis+' '+bg+'></div>'+
+    '</div>';
+  });
+  document.getElementById('proto-editor-content').innerHTML = html;
+  // attach listeners
+  document.querySelectorAll('[data-idx][data-f]').forEach(function(el){
+    el.addEventListener('change', function(){
+      var i = parseInt(el.dataset.idx), f = el.dataset.f;
+      if (f==='dose') activeProto.rows[i][f] = parseFloat(el.value)||0;
+      else activeProto.rows[i][f] = el.value;
+    });
+  });
+}
+
+function renderProtoNotes() {
+  if (!activeProto) return;
+  document.getElementById('proto-notes').innerHTML = '<b>Catatan Klinis:</b><br>'+activeProto.notes+'<br><br><span style="color:var(--red);font-size:12px;"><b>Peringatan:</b> Semua dosis wajib diverifikasi ulang dengan prescribing information/SmPC produk terbaru sebelum digunakan secara klinis.</span>';
+}
+
+// LOCK/UNLOCK (demo mode — no real PIN security for browser tool)
+document.getElementById('btn-toggle-lock').addEventListener('click', function(){
+  if (protoLocked) {
+    var c = confirm('Mode DEMO: Membuka kunci untuk tujuan edukasi. Dalam lingkungan klinis nyata, editor protokol harus dikelola di server/admin, bukan di browser.\n\nLanjutkan?');
+    if (!c) return;
+    protoLocked = false;
+    document.getElementById('lock-badge').className='lk-badge ulk';
+    document.getElementById('lock-badge').textContent='🔓 TERBUKA (DEMO)';
+    this.textContent='Kunci Kembali';
+    renderProtoEditor();
+  } else {
+    protoLocked = true;
+    document.getElementById('lock-badge').className='lk-badge lk';
+    document.getElementById('lock-badge').textContent='🔒 TERKUNCI';
+    this.textContent='Buka Kunci (Demo)';
+    renderProtoEditor();
+  }
+});
+
+document.getElementById('btn-save-proto').addEventListener('click', function(){
+  protoLocked = true;
+  document.getElementById('lock-badge').className='lk-badge lk';
+  document.getElementById('lock-badge').textContent='🔒 TERKUNCI';
+  document.getElementById('btn-toggle-lock').textContent='Buka Kunci (Demo)';
+  renderProtoEditor();
+  var msg = document.getElementById('proto-save-msg');
+  msg.innerHTML = al('al-grn','✅ Protokol dikunci untuk sesi ini. Export JSON untuk menyimpan permanen.');
+  setTimeout(function(){ msg.innerHTML=''; }, 4000);
+  // Save to localStorage with versioning
+  try {
+    var key = 'proto_'+document.getElementById('cart-product').value;
+    var save = { proto: activeProto, savedAt: new Date().toISOString() };
+    localStorage.setItem(key, JSON.stringify(save));
+  } catch(e) {}
+});
+
+document.getElementById('btn-export-proto').addEventListener('click', function(){
+  if (!activeProto) { alert('Pilih produk terlebih dahulu.'); return; }
+  var data = JSON.stringify({ meta: { exportedAt: new Date().toISOString(), tool: 'drAisyiEduCare CAR-T v2' }, protocol: activeProto }, null, 2);
+  var a = document.createElement('a');
+  a.href = 'data:application/json;charset=utf-8,'+encodeURIComponent(data);
+  a.download = 'protokol_carT_'+activeProto.version+'_'+Date.now()+'.json';
+  a.click();
+});
+
+document.getElementById('btn-import-proto').addEventListener('click', function(){
+  var inp = document.createElement('input'); inp.type='file'; inp.accept='.json';
+  inp.onchange = function(e){
+    var f = e.target.files[0]; if(!f) return;
+    var r = new FileReader();
+    r.onload = function(ev){
+      try {
+        var obj = JSON.parse(ev.target.result);
+        activeProto = obj.protocol || obj;
+        renderProtoEditor(); renderProtoNotes(); updateAuditBox();
+        alert('Protokol berhasil diimpor: '+activeProto.label);
+      } catch(ex) { alert('File JSON tidak valid.'); }
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+});
+
+// ═══════════════════════════════════════════════════════════
+// GENERATE OUTPUT
+// ═══════════════════════════════════════════════════════════
+document.getElementById('btn-generate').addEventListener('click', function(){
+  var blockers = getBlockers();
+  var adjFlags = getAdjustFlags();
+
+  // Hide/show sections
+  document.getElementById('out-placeholder').style.display='none';
+
+  if (blockers.length > 0) {
+    document.getElementById('out-hold').style.display='block';
+    document.getElementById('out-content').style.display='none';
+    var reasons = '<ul style="text-align:left;margin:10px auto;max-width:500px;line-height:1.8;">';
+    blockers.forEach(function(b){ reasons+='<li>'+b+'</li>'; });
+    reasons+='</ul>';
+    document.getElementById('out-hold-reasons').innerHTML = reasons;
+    goTab('output'); return;
+  }
+
+  document.getElementById('out-hold').style.display='none';
+  document.getElementById('out-content').style.display='block';
+
+  var bb = parseFloat(document.getElementById('bb').value)||0;
+  var tb = parseFloat(document.getElementById('tb').value)||0;
+  var bsaActual = Math.sqrt(bb*tb/3600);
+  var bsaBasis = document.getElementById('bsa-basis').value;
+  var bbi = parseFloat(document.getElementById('bbi').value)||0;
+  var bsaForDose;
+  if (bsaBasis==='ideal' && bbi>0) bsaForDose = Math.sqrt(bbi*tb/3600);
+  else if (bsaBasis==='capped') bsaForDose = Math.min(bsaActual, 2.0);
+  else bsaForDose = bsaActual;
+  var day0str = document.getElementById('day0date').value;
+  var renal = document.getElementById('renal').value;
+  var hepatic = document.getElementById('hepatic').value;
+  var cmv = document.getElementById('cmv').value;
+  var usia = document.getElementById('usia').value||'—';
+  var jk = document.getElementById('jk').value==='L'?'Laki-laki':'Perempuan';
+  var proto = activeProto;
+
+  // Summary
+  function sp(label, val){ return '<div style="margin-bottom:8px;"><div style="font-size:10px;color:var(--mut);font-weight:700;text-transform:uppercase;">'+label+'</div><div style="font-size:14px;font-weight:800;color:var(--pri);">'+val+'</div></div>'; }
+  document.getElementById('out-summary').innerHTML =
+    sp('Usia',usia+' thn')+sp('Jenis Kelamin',jk)+sp('BB',bb+' kg')+sp('TB',tb+' cm')+
+    sp('BSA Aktual',bsaActual.toFixed(2)+' m²')+sp('BSA untuk Dosis',bsaForDose.toFixed(2)+' m²')+
+    sp('Ginjal',{normal:'Normal',mild:'Ringan',moderate:'Sedang',severe:'BERAT'}[renal]||'—')+
+    sp('Hati',{normal:'Normal',mild:'Ringan',moderate:'Sedang',severe:'BERAT'}[hepatic]||'—')+
+    sp('CMV',{neg:'Negatif',pos:'Positif',unknown:'Belum diperiksa'}[cmv]||'—')+
+    sp('Produk',proto?proto.label:'—');
+
+  // Adjustments
+  var adjEl = document.getElementById('out-adj');
+  adjEl.innerHTML = '';
+  if (adjFlags.length===0) adjEl.innerHTML = al('al-grn','✅ Tidak ada penyesuaian organ khusus. Verifikasi tetap wajib oleh DPJP dan farmasi.');
+  adjFlags.forEach(function(f){
+    var cls = f.type==='renal'||f.type==='hepatic' ? 'al-ylw' : 'al-inf';
+    adjEl.innerHTML += al(cls,'⚠️ '+f.msg);
+  });
+
+  // Schedule
+  var tbody = document.getElementById('out-tbody');
+  tbody.innerHTML = '';
+  if (!proto) { tbody.innerHTML='<tr><td colspan="6">Protokol tidak dimuat.</td></tr>'; return; }
+  proto.rows.forEach(function(row){
+    var date = addDays(day0str, row.day);
+    var dayBadge = row.day===0
+      ? '<span class="day-b d0">Day 0</span>'
+      : '<span class="day-b">Day '+row.day+'</span>';
+    var doseCell = '—';
+    if (row.drug==='REST' || row.drug==='Infus CAR-T' || row.basis==='-') {
+      doseCell = row.drug==='Infus CAR-T' ? '<b>INFUS CAR-T</b>' : '—';
+    } else if (row.dose===0) {
+      doseCell = '<span class="dose-hold">⚠️ Dosis belum diisi di template</span>';
+    } else if (shouldHoldDose(row.drug, adjFlags)) {
+      doseCell = '<span class="dose-hold">🔒 DITAHAN — perlu verifikasi farmasi klinis</span>';
+    } else {
+      var calc, basis_label;
+      if (row.basis==='BSA') { calc=(row.dose*bsaForDose).toFixed(1); basis_label=row.dose+' mg/m² × '+bsaForDose.toFixed(2)+' m²'; }
+      else { calc=(row.dose*bb).toFixed(1); basis_label=row.dose+' mg/kg × '+bb+' kg'; }
+      // rounding
+      var rounded = Math.round(parseFloat(calc));
+      doseCell = '<b>'+rounded+' mg</b> <span style="font-size:10px;color:var(--mut);">('+basis_label+')</span>';
+    }
+    var tr = document.createElement('tr');
+    if (row.day===0) tr.className='d0';
+    tr.innerHTML = '<td>'+dayBadge+'</td><td style="font-size:11px;white-space:nowrap;">'+fmtDate(date)+'</td><td><b>'+row.drug+'</b></td><td>'+doseCell+'</td><td style="font-size:11px;">'+row.route+'</td><td style="font-size:10px;color:var(--mut);">'+row.notes+'</td>';
+    tbody.appendChild(tr);
+  });
+
+  // Checklists
+  var hasCy = proto.rows.some(function(r){ return r.drug.toLowerCase().indexOf('cyclo')>-1 && r.dose>0; });
+  var isPed = parseFloat(document.getElementById('usia').value||0) < 18;
+
+  var hydra = document.getElementById('cl-hydra');
+  hydra.innerHTML =
+    chk('Hidrasi IV pre-kemo: NaCl 0.9% mulai 4–6 jam sebelum Cyclophosphamide') +
+    (isPed
+      ? chk('Target output urin: ≥3 mL/kg/jam selama Cy (anak) — sesuaikan protokol lokal')
+      : chk('Target output urin: ≥100 mL/jam selama Cy (dewasa) — sesuaikan protokol lokal')) +
+    (hasCy ? chk('Mesna: dosis dan jadwal sesuai protokol lokal (umumnya 60–100% dosis Cy; berikan pre, +4hr, +8hr post-Cy)') : '') +
+    chk('Monitor berat badan dan balans cairan harian') +
+    chk('Monitor elektrolit (K, Na, Mg, PO4) harian') +
+    chk('Urine dipstick untuk hematuria setiap shift') +
+    chk('Hindari NSAID, aminoglikosida, dan nefrotoksin selama periode lymphodepletion');
+
+  var anti = document.getElementById('cl-anti');
+  anti.innerHTML =
+    chk('Ondansetron: '+( isPed ? 'dosis sesuai BB/BSA dan protokol antiemetik pediatrik (bukan dosis fixed adult)' : '8 mg IV atau sesuai protokol')+' sebelum kemoterapi') +
+    chk('Aprepitant atau olanzapine: pertimbangkan sebagai antiemetik non-steroid tambahan sesuai protokol') +
+    chk('Metoklopramid PRN untuk breakthrough nausea') +
+    chk('CATATAN: Kortikosteroid sebagai antiemetik TIDAK direkomendasikan rutin — dapat memengaruhi ekspansi CAR-T. Gunakan hanya bila disetujui DPJP dengan protokol khusus.') +
+    chk('Steroid terakhir: tanggal dan dosis tercatat; washout adekuat sebelum infus CAR-T');
+
+  var mon = document.getElementById('cl-mon');
+  mon.innerHTML =
+    chk('CBC dengan hitung jenis: harian selama lymphodepletion') +
+    chk('Elektrolit (Na, K, Cl, Bikarbonat), Kreatinin, Ureum: minimal tiap 2 hari pada pasien stabil; HARIAN bila menggunakan Cyclophosphamide dosis tinggi, gangguan ginjal, atau hidrasi agresif') +
+    chk('LFT (bilirubin, ALT, AST): tiap 2 hari atau sesuai indikasi') +
+    chk('Koagulasi (PT, APTT, fibrinogen): sesuai indikasi klinis') +
+    (cmv==='pos' ? chk('CMV PCR kuantitatif: 2× seminggu — pasien CMV positif') : chk('CMV PCR baseline sebelum Day 0')) +
+    chk('Tanda vital + suhu setiap shift; monitor ketat bila ada demam') +
+    chk('Konfirmasi ulang ketersediaan produk CAR-T dan jadwal transport H-1 sebelum Day 0') +
+    chk('Briefing tim CRS/ICANS: semua staf yang terlibat sudah mengikuti briefing') +
+    chk('Profilaksis anti-jamur sesuai protokol lokal (flukonazol atau sesuai risiko)') +
+    chk('Profilaksis PCP: kotrimoksazol — pertimbangkan timing penghentian sebelum infus CAR-T sesuai protokol') +
+    chk('Profilaksis antivirus (asiklovir) bila indikasi');
+
+  // Verif date default
+  if (!document.getElementById('v-date').value) {
+    document.getElementById('v-date').value = new Date().toISOString().split('T')[0];
+  }
+  goTab('output');
+});
+
+// ═══════════════════════════════════════════════════════════
+// PRINT & COPY
+// ═══════════════════════════════════════════════════════════
+function doPrint() {
+  var po = document.getElementById('print-only');
+  po.innerHTML = document.getElementById('out-content').innerHTML;
+  window.print();
+  setTimeout(function(){ po.innerHTML=''; }, 2000);
+}
+document.getElementById('btn-copy').addEventListener('click', function(){
+  var txt = 'CAR-T Lymphodepletion Scheduler — drAisyiEduCare v2\n';
+  txt += '='.repeat(50)+'\n';
+  var rows = document.querySelectorAll('#out-tbody tr');
+  rows.forEach(function(r){
+    var c = r.querySelectorAll('td');
+    if (c.length) txt += [c[0].textContent.trim(),c[1].textContent.trim(),c[2].textContent.trim(),c[3].textContent.trim()].join(' | ')+'\n';
+  });
+  txt += '\n⚠️ Wajib diverifikasi DPJP & Apoteker Klinis sebelum digunakan.';
+  navigator.clipboard.writeText(txt).then(function(){ alert('Ringkasan berhasil disalin.'); }).catch(function(){ alert('Gagal menyalin. Gunakan tombol cetak.'); });
+});
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+window.addEventListener('load', function(){
+  // Don't pre-evaluate gate on load — only evaluate after user interacts
+  document.getElementById('gate-overall-status').className='gate-status gs-warn';
+  document.getElementById('gate-overall-status').textContent='Lengkapi data pasien dan centang semua item untuk menilai status gate';
+  document.getElementById('gate-final').className='al al-inf';
+  document.getElementById('gate-final').innerHTML='ℹ️ Isi data pasien, produk, dan fungsi organ terlebih dahulu, lalu centang semua item safety gate.';
+});
+</script>
+</body>
+</html>

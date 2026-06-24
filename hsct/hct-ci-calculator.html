@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pediatric HCT-CI Calculator — drAisyi EduCare</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#2563EB;--blue-light:#EFF6FF;--blue-mid:#BFDBFE;
+  --green:#16A34A;--green-light:#F0FDF4;--green-mid:#BBF7D0;
+  --yellow:#D97706;--yellow-light:#FFFBEB;--yellow-mid:#FDE68A;
+  --orange:#EA580C;--orange-light:#FFF7ED;--orange-mid:#FED7AA;
+  --red:#DC2626;--red-light:#FEF2F2;--red-mid:#FECACA;
+  --gray:#374151;--gray-light:#F9FAFB;--gray-mid:#E5E7EB;
+  --text:#111827;--text2:#6B7280;--text3:#9CA3AF;
+  --white:#FFFFFF;--border:#E5E7EB;
+  --radius:8px;--radius-lg:12px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F3F4F6;color:var(--text);font-size:14px;line-height:1.5}
+
+/* STICKY HEADER */
+.sticky-header{position:sticky;top:0;z-index:100;background:linear-gradient(135deg,#1E3A8A,#2563EB);color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{width:36px;height:36px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.brand-name{font-size:16px;font-weight:700;letter-spacing:.3px}
+.brand-sub{font-size:11px;opacity:.8;margin-top:1px}
+.score-badge-header{background:rgba(255,255,255,.2);border-radius:20px;padding:6px 14px;text-align:center}
+.score-badge-header .num{font-size:22px;font-weight:800}
+.score-badge-header .lbl{font-size:10px;opacity:.8}
+
+/* MAIN LAYOUT */
+.container{max-width:1000px;margin:0 auto;padding:16px}
+.layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:768px){.layout{grid-template-columns:1fr}}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.card-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;font-weight:600;font-size:13px;background:var(--gray-light)}
+.card-header .icon{font-size:16px}
+.card-body{padding:14px 16px}
+
+/* ALERT BANNER */
+.alert-container{margin-bottom:12px}
+.alert{border-radius:var(--radius);padding:10px 14px;font-size:13px;display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;border-left:4px solid}
+.alert-red{background:var(--red-light);border-color:var(--red);color:#7F1D1D}
+.alert-orange{background:var(--orange-light);border-color:var(--orange);color:#7C2D12}
+.alert-blue{background:var(--blue-light);border-color:var(--blue);color:#1E3A8A}
+.alert-icon{flex-shrink:0;font-size:16px;margin-top:1px}
+
+/* FORM ELEMENTS */
+.form-group{margin-bottom:12px}
+.form-label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px;display:block;text-transform:uppercase;letter-spacing:.3px}
+.form-input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;background:var(--white);color:var(--text)}
+.form-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-light)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* DOMAIN ACCORDION */
+.domain{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden}
+.domain-header{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--gray-light);transition:background .15s;user-select:none}
+.domain-header:hover{background:var(--blue-light)}
+.domain-header.active{background:var(--blue-light);border-bottom:1px solid var(--blue-mid)}
+.domain-title{font-weight:600;font-size:13px;display:flex;align-items:center;gap:8px}
+.domain-score-pill{background:var(--blue);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;min-width:24px;text-align:center}
+.domain-score-pill.zero{background:var(--gray-mid);color:var(--text2)}
+.domain-body{padding:12px 14px;background:#fff}
+.domain-chevron{transition:transform .2s;color:var(--text3);font-size:12px}
+.domain-chevron.open{transform:rotate(180deg)}
+
+/* CHECKLIST */
+.check-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;position:relative}
+.check-item label{cursor:pointer;font-size:13px;color:var(--text);flex:1;display:flex;align-items:flex-start;gap:8px}
+.check-item input[type=checkbox]{width:15px;height:15px;flex-shrink:0;margin-top:1px;accent-color:var(--blue);cursor:pointer}
+.check-score{font-size:11px;color:var(--blue);font-weight:600;white-space:nowrap;margin-top:2px}
+.tooltip-btn{width:16px;height:16px;border-radius:50%;background:var(--gray-mid);border:none;cursor:pointer;font-size:10px;font-weight:700;color:var(--text2);flex-shrink:0;margin-top:1px;position:relative;display:flex;align-items:center;justify-content:center}
+.tooltip-popup{display:none;position:absolute;left:22px;top:0;width:200px;background:var(--text);color:#fff;border-radius:var(--radius);padding:8px 10px;font-size:11px;z-index:50;line-height:1.5}
+.tooltip-btn:hover .tooltip-popup{display:block}
+
+/* DROPDOWN RADIO */
+.radio-group{display:flex;flex-direction:column;gap:6px}
+.radio-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .15s}
+.radio-item:hover{background:var(--blue-light);border-color:var(--blue-mid)}
+.radio-item.selected{background:var(--blue-light);border-color:var(--blue);color:var(--blue)}
+.radio-item input{accent-color:var(--blue)}
+
+/* OUTPUT SECTION */
+.results-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:600px){.results-grid{grid-template-columns:1fr}}
+
+.score-display{text-align:center;padding:20px;background:linear-gradient(135deg,var(--blue-light),#fff);border:2px solid var(--blue-mid);border-radius:var(--radius-lg)}
+.score-number{font-size:56px;font-weight:800;color:var(--blue);line-height:1}
+.score-label{font-size:12px;color:var(--text2);margin-top:4px}
+
+.risk-badge{text-align:center;padding:20px;border-radius:var(--radius-lg);border:2px solid}
+.risk-badge .risk-label{font-size:13px;font-weight:600;margin-bottom:4px}
+.risk-badge .risk-cat{font-size:22px;font-weight:800}
+.risk-green{background:var(--green-light);border-color:var(--green-mid);color:var(--green)}
+.risk-blue{background:var(--blue-light);border-color:var(--blue-mid);color:var(--blue)}
+.risk-orange{background:var(--orange-light);border-color:var(--orange-mid);color:var(--orange)}
+.risk-red{background:var(--red-light);border-color:var(--red-mid);color:var(--red)}
+
+/* RISK METER */
+.risk-meter{margin:12px 0}
+.meter-track{height:16px;border-radius:8px;background:linear-gradient(to right,var(--green),var(--blue),var(--orange),var(--red));position:relative}
+.meter-indicator{position:absolute;top:-4px;width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid var(--text);transition:left .4s;transform:translateX(-50%)}
+.meter-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-top:6px}
+
+/* CONTRIBUTORS */
+.contrib-list{display:flex;flex-wrap:wrap;gap:6px}
+.contrib-tag{background:var(--red-light);color:#7F1D1D;border:1px solid var(--red-mid);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:500}
+.contrib-tag-orange{background:var(--orange-light);color:#7C2D12;border-color:var(--orange-mid)}
+
+/* OPTIMIZATION LIST */
+.opt-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
+.opt-item:last-child{border-bottom:none}
+.opt-dot{width:8px;height:8px;border-radius:50%;background:var(--orange);margin-top:5px;flex-shrink:0}
+
+/* PEARLS */
+.pearl-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
+.pearl-item:last-child{border-bottom:none}
+.pearl-num{width:20px;height:20px;border-radius:50%;background:var(--blue-light);color:var(--blue);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+
+/* NARASI */
+.narasi-box{background:var(--blue-light);border:1px solid var(--blue-mid);border-radius:var(--radius);padding:12px;font-size:13px;line-height:1.6;color:#1E3A8A;font-style:italic}
+
+/* DISCLAIMER */
+.disclaimer{background:#FFFBEB;border:1px solid #FDE68A;border-radius:var(--radius);padding:12px 14px;font-size:12px;color:#92400E;margin-top:12px}
+
+/* BUTTONS */
+.btn{padding:9px 18px;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#1D4ED8}
+.btn-outline{background:transparent;color:var(--blue);border:1px solid var(--blue)}
+.btn-outline:hover{background:var(--blue-light)}
+.btn-danger{background:var(--red-light);color:var(--red);border:1px solid var(--red-mid)}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+/* PROGRESS BAR */
+.prog-bar{height:8px;border-radius:4px;background:var(--gray-mid);margin:6px 0}
+.prog-fill{height:100%;border-radius:4px;background:var(--blue);transition:width .4s}
+
+/* PRINT */
+@media print{
+  .no-print{display:none!important}
+  .sticky-header{position:static}
+  body{background:#fff}
+  .card{break-inside:avoid;border:1px solid #ccc;margin-bottom:12px}
+}
+.print-section{display:none}
+@media print{.print-section{display:block}.main-section{display:none}}
+
+/* SECTION TITLE */
+.section-title{font-size:15px;font-weight:700;margin:16px 0 10px;display:flex;align-items:center;gap:8px;color:var(--text)}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* STATUS CHIP */
+.status-chip{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.chip-red{background:var(--red-light);color:var(--red)}
+.chip-orange{background:var(--orange-light);color:var(--orange)}
+.chip-green{background:var(--green-light);color:var(--green)}
+</style>
+</head>
+<body>
+
+<div class="sticky-header no-print">
+  <div class="brand">
+    <div class="brand-icon">🩺</div>
+    <div>
+      <div class="brand-name">drAisyi EduCare</div>
+      <div class="brand-sub">Pediatric HCT-CI Calculator</div>
+    </div>
+  </div>
+  <div class="score-badge-header">
+    <div class="num" id="header-score">0</div>
+    <div class="lbl">HCT-CI Score</div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ALERT CONTAINER -->
+<div class="alert-container" id="alert-container"></div>
+
+<!-- BANNER -->
+<div class="alert alert-blue no-print" style="margin-bottom:12px">
+  <span class="alert-icon">💡</span>
+  <span>Optimasi komorbiditas sebelum HSCT dapat menurunkan risiko komplikasi transplantasi. Toolkit ini adalah alat bantu edukasi — bukan pengganti evaluasi klinis komprehensif.</span>
+</div>
+
+<div class="layout">
+<!-- LEFT: INPUT -->
+<div>
+  <div class="card">
+    <div class="card-header"><span class="icon">👤</span> Data Pasien</div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nama/Inisial</label>
+          <input class="form-input" id="p-nama" placeholder="Inisial pasien" type="text">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Umur (tahun)</label>
+          <input class="form-input" id="p-umur" placeholder="cth: 8" type="number" min="0" max="18">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Berat Badan (kg)</label>
+          <input class="form-input" id="p-bb" placeholder="cth: 25" type="number">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tanggal Evaluasi</label>
+          <input class="form-input" id="p-tanggal" type="date">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Diagnosis Utama</label>
+        <select class="form-input" id="p-diagnosis">
+          <option value="">-- Pilih Diagnosis --</option>
+          <option>ALL</option><option>AML</option><option>MDS/JMML</option>
+          <option>Limfoma</option><option>Neuroblastoma risiko tinggi</option>
+          <option>Aplastic anemia</option><option>Thalassemia mayor</option>
+          <option>Sickle cell disease</option><option>SCID</option>
+          <option>CGD</option><option>HLH</option><option>Fanconi anemia</option>
+          <option>Lainnya</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title no-print">📋 Penilaian Komorbiditas</div>
+
+  <!-- DOMAIN 1: INFEKSI -->
+  <div class="domain" id="dom-infeksi">
+    <div class="domain-header" onclick="toggleDomain('infeksi')">
+      <div class="domain-title">
+        <span>🦠</span> 1. Infeksi
+        <span class="domain-score-pill zero" id="pill-infeksi">0</span>
+      </div>
+      <span class="domain-chevron" id="chev-infeksi">▼</span>
+    </div>
+    <div class="domain-body" id="body-infeksi" style="display:none">
+      <div id="checks-infeksi"></div>
+    </div>
+  </div>
+
+  <!-- DOMAIN 2: JANTUNG -->
+  <div class="domain" id="dom-jantung">
+    <div class="domain-header" onclick="toggleDomain('jantung')">
+      <div class="domain-title">
+        <span>❤️</span> 2. Jantung
+        <span class="domain-score-pill zero" id="pill-jantung">0</span>
+      </div>
+      <span class="domain-chevron" id="chev-jantung">▼</span>
+    </div>
+    <div class="domain-body" id="body-jantung" style="display:none">
+      <div id="checks-jantung"></div>
+    </div>
+  </div>
+
+  <!-- DOMAIN 3: PARU -->
+  <div class="domain" id="dom-paru">
+    <div class="domain-header" onclick="toggleDomain('paru')">
+      <div class="domain-title">
+        <span>🫁</span> 3. Paru
+        <span class="domain-score-pill zero" id="pill-paru">0</span>
+      </div>
+      <span class="domain-chevron" id="chev-paru">▼</span>
+    </div>
+    <div class="domain-body" id="body-paru" style="display:none">
+      <div id="checks-paru"></div>
+    </div>
+  </div>
+
+  <!-- DOMAIN 4: GINJAL -->
+  <div class="domain" id="dom-ginjal">
+    <div class="domain-header" onclick="toggleDomain('ginjal')">
+      <div class="domain-title">
+        <span>🫘</span> 4. Ginjal
+        <span class="domain-score-pill zero" id="pill-ginjal">0</span>
+      </div>
+      <span class="domain-chevron" id="chev-ginjal">▼</span>
+    </div>
+    <div class="domain-body" id="body-ginjal" style="display:none">
+      <div id="checks-ginjal"></div>
+    </div>
+  </div>
+
+  <!-- DOMAIN 5: HATI -->
+  <div class="domain" id="dom-hati">
+    <div class="domain-header" onclick="toggleDomain('hati')">
+      <div class="domain-title">
+        <span>🫀</span> 5. Hati
+        <span class="domain-score-pill zero" id="pill-hati">0</span>
+      </div>
+      <span class="domain-chevron" id="chev-hati">▼</span>
+    </div>
+    <div class="domain-body" id="body-hati" style="display:none">
+      <div id="checks-hati"></div>
+    </div>
+  </div>
+
+  <!-- DOMAIN 6: GI -->
+  <div class="domain">
+    <div class="domain-header" onclick="toggleDomain('gi')">
+      <div class="domain-title">
+        <span>🔬</span> 6. Gastrointestinal
+        <span class="domain-score-pill zero" id="pill-gi">0</span>
+      </div>
+      <span class="domain-chevron" id="chev-gi">▼</span>
+    </div>
+    <div class="domain-body" id="body-gi" style="display:none">
+      <div id="checks-gi"></div>
+    </div>
+  </div>
+
+  <!-- DOMAIN 7: NEUROLOGIS -->
+  <div class="domain">
+    <div class="domain-header" onclick="toggleDomain('neuro')">
+      <div class="domain-title">
+        <span>🧠</span> 7. Neurologis
+        <span class="domain-score-pill zero" id="pill-neuro">0</span>
+      </div>
+      <span class="domain-chevron" id="chev-neuro">▼</span>
+    </div>
+    <div class="domain-body" id="body-neuro" style="display:none">
+      <div id="checks-neuro"></div>
+    </div>
+  </div>
+
+  <!-- DOMAIN 8: PSIKIATRI -->
+  <div class="domain">
+    <div class="domain-header" onclick="toggleDomain('psiko')">
+      <div class="domain-title">
+        <span>🧩</span> 8. Psikiatri / Perilaku
+        <span class="domain-score-pill zero" id="pill-psiko">0</span>
+      </div>
+      <span class="domain-chevron" id="chev-psiko">▼</span>
+    </div>
+    <div class="domain-body" id="body-psiko" style="display:none">
+      <div id="checks-psiko"></div>
+    </div>
+  </div>
+
+  <!-- DOMAIN 9: NUTRISI -->
+  <div class="domain">
+    <div class="domain-header" onclick="toggleDomain('nutrisi')">
+      <div class="domain-title">
+        <span>🥗</span> 9. Nutrisi
+        <span class="domain-score-pill zero" id="pill-nutrisi">0</span>
+      </div>
+      <span class="domain-chevron" id="chev-nutrisi">▼</span>
+    </div>
+    <div class="domain-body" id="body-nutrisi" style="display:none">
+      <div id="checks-nutrisi"></div>
+    </div>
+  </div>
+
+  <!-- DOMAIN 10: PERFORMA -->
+  <div class="domain">
+    <div class="card-header" onclick="toggleDomain('performa')" style="cursor:pointer">
+      <span class="domain-title">
+        <span>💪</span> 10. Status Performa Klinis
+        <span class="domain-score-pill zero" id="pill-performa">0</span>
+      </span>
+      <span class="domain-chevron" id="chev-performa">▼</span>
+    </div>
+    <div class="domain-body" id="body-performa" style="display:none">
+      <div class="radio-group" id="radio-performa"></div>
+    </div>
+  </div>
+
+  <!-- DOMAIN 11: RIWAYAT TERAPI -->
+  <div class="domain">
+    <div class="domain-header" onclick="toggleDomain('terapi')">
+      <div class="domain-title">
+        <span>💊</span> 11. Riwayat Terapi Sebelumnya
+        <span class="domain-score-pill zero" id="pill-terapi">0</span>
+      </div>
+      <span class="domain-chevron" id="chev-terapi">▼</span>
+    </div>
+    <div class="domain-body" id="body-terapi" style="display:none">
+      <div id="checks-terapi"></div>
+    </div>
+  </div>
+
+  <!-- DOMAIN 12: KOMORBID TAMBAHAN -->
+  <div class="domain">
+    <div class="domain-header" onclick="toggleDomain('tambahan')">
+      <div class="domain-title">
+        <span>➕</span> 12. Komorbid Tambahan
+        <span class="domain-score-pill zero" id="pill-tambahan">0</span>
+      </div>
+      <span class="domain-chevron" id="chev-tambahan">▼</span>
+    </div>
+    <div class="domain-body" id="body-tambahan" style="display:none">
+      <div id="checks-tambahan"></div>
+    </div>
+  </div>
+
+  <div class="btn-group no-print">
+    <button class="btn btn-primary" onclick="calculate()">🔍 Hitung & Analisis</button>
+    <button class="btn btn-danger" onclick="resetAll()">🔄 Reset</button>
+  </div>
+</div>
+
+<!-- RIGHT: OUTPUT -->
+<div id="output-panel">
+  <div id="output-placeholder" class="card" style="text-align:center;padding:40px 20px;color:var(--text2)">
+    <div style="font-size:40px;margin-bottom:12px">📊</div>
+    <div style="font-size:14px;font-weight:600;margin-bottom:6px">Hasil Perhitungan</div>
+    <div style="font-size:12px">Isi data pasien dan checklist komorbiditas, lalu klik <strong>Hitung & Analisis</strong></div>
+  </div>
+
+  <div id="output-results" style="display:none">
+    <!-- SCORE + RISK -->
+    <div class="results-grid">
+      <div class="score-display">
+        <div class="score-number" id="res-score">0</div>
+        <div class="score-label">HCT-CI Pediatric Adapted Score</div>
+        <div style="margin-top:8px">
+          <div class="prog-bar"><div class="prog-fill" id="prog-score" style="width:0%"></div></div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">Skala 0 – 15+</div>
+        </div>
+      </div>
+      <div class="risk-badge" id="risk-badge">
+        <div class="risk-label">Kategori Risiko</div>
+        <div class="risk-cat" id="risk-cat-text">—</div>
+        <div style="font-size:11px;margin-top:4px" id="risk-range-text">—</div>
+      </div>
+    </div>
+
+    <!-- RISK METER -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-header"><span class="icon">📈</span> Risk Meter</div>
+      <div class="card-body">
+        <div class="risk-meter">
+          <div class="meter-track">
+            <div class="meter-indicator" id="meter-ind" style="left:5%"></div>
+          </div>
+          <div class="meter-labels">
+            <span>Rendah</span><span>Ringan</span><span>Sedang</span><span>Tinggi</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREDIKSI KLINIS -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-header"><span class="icon">🩺</span> Prediksi Risiko Klinis</div>
+      <div class="card-body">
+        <div id="res-prediksi" style="font-size:13px;line-height:1.7"></div>
+      </div>
+    </div>
+
+    <!-- KONTRIBUTOR -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-header"><span class="icon">⚠️</span> Kontributor Skor Terbesar</div>
+      <div class="card-body">
+        <div class="contrib-list" id="res-contributors">—</div>
+      </div>
+    </div>
+
+    <!-- AREA OPTIMASI -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-header"><span class="icon">🎯</span> Area yang Perlu Dioptimasi Sebelum HSCT</div>
+      <div class="card-body">
+        <div id="res-optimasi"></div>
+      </div>
+    </div>
+
+    <!-- REKOMENDASI TIM -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-header"><span class="icon">💬</span> Rekomendasi Diskusi Tim HSCT</div>
+      <div class="card-body">
+        <div class="narasi-box" id="res-narasi"></div>
+      </div>
+    </div>
+
+    <!-- CLINICAL PEARLS -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-header"><span class="icon">💎</span> Clinical Pearls</div>
+      <div class="card-body" id="res-pearls"></div>
+    </div>
+
+    <!-- DISCLAIMER -->
+    <div class="disclaimer">
+      <strong>⚠️ Disclaimer:</strong> Toolkit ini merupakan alat bantu edukasi dan clinical decision support. HCT-CI pada anak harus diinterpretasikan secara hati-hati dan tidak boleh digunakan sebagai satu-satunya dasar keputusan HSCT. Skor ini bersifat estimasi edukatif dan perlu dikontekstualisasi dengan kondisi klinis, diagnosis, status penyakit, donor, regimen conditioning, dan faktor lainnya.
+    </div>
+
+    <div class="btn-group no-print" style="margin-top:12px">
+      <button class="btn btn-outline" onclick="printSummary()">🖨️ Cetak Ringkasan</button>
+    </div>
+  </div>
+</div>
+</div><!-- end layout -->
+</div><!-- end container -->
+
+<!-- PRINT AREA -->
+<div class="print-section" id="print-area"></div>
+
+<script>
+var DOMAINS = {
+  infeksi:{
+    label:'Infeksi',
+    items:[
+      {id:'inf1',label:'Infeksi aktif saat evaluasi transplantasi',score:3,tip:'Infeksi aktif (bakteri, virus, jamur) yang belum terkontrol saat evaluasi merupakan faktor risiko utama.'},
+      {id:'inf2',label:'Riwayat infeksi invasif jamur',score:2,tip:'Riwayat IFI (Aspergillus, Candida invasif, dll) yang sebelumnya pernah dialami pasien.'},
+      {id:'inf3',label:'Infeksi virus aktif bermakna (CMV, EBV, Adeno, dsb)',score:2,tip:'Viremia aktif yang memerlukan terapi antiviral dan dapat memengaruhi outcome HSCT.'},
+      {id:'inf4',label:'Riwayat infeksi bakteri berat/rekuren',score:1,tip:'Infeksi bakteri rekuren atau sepsis berat dalam riwayat penyakit.'}
+    ]
+  },
+  jantung:{
+    label:'Jantung',
+    items:[
+      {id:'jan1',label:'Riwayat gagal jantung',score:3,tip:'Gagal jantung yang memerlukan terapi farmakologis atau pernah terjadi episode dekompensasi.'},
+      {id:'jan2',label:'Fraksi ejeksi menurun (<50%)',score:3,tip:'Penurunan fungsi sistolik ventrikel kiri yang bermakna dari hasil ekokardiografi.'},
+      {id:'jan3',label:'Kardiomiopati',score:2,tip:'Kardiomiopati dilatasi, restriktif, atau hipertrofik yang terkonfirmasi.'},
+      {id:'jan4',label:'Aritmia signifikan',score:1,tip:'Aritmia yang memerlukan terapi atau memiliki potensi mengancam jiwa.'},
+      {id:'jan5',label:'Riwayat paparan anthracycline dosis tinggi (≥300 mg/m²)',score:2,tip:'Kumulatif dosis anthracycline tinggi meningkatkan risiko kardiomiopati kemoterapi.'}
+    ]
+  },
+  paru:{
+    label:'Paru',
+    items:[
+      {id:'par1',label:'Gangguan fungsi paru ringan (FEV1 60–79%)',score:1,tip:'Penurunan ringan kapasitas paru yang terkonfirmasi dari spirometri.'},
+      {id:'par2',label:'Gangguan fungsi paru sedang/berat (FEV1 <60%)',score:3,tip:'Penurunan sedang-berat kapasitas paru; meningkatkan risiko komplikasi paru post-HSCT secara bermakna.'},
+      {id:'par3',label:'Kebutuhan oksigen saat evaluasi',score:3,tip:'Ketergantungan oksigen merupakan indikator insufisiensi paru bermakna.'},
+      {id:'par4',label:'Riwayat ventilasi mekanik',score:2,tip:'Riwayat ventilasi mekanik akibat gagal napas menandakan kapasitas paru yang terbatas.'},
+      {id:'par5',label:'Penyakit paru kronik (bronkiektasis, fibrosis, dll)',score:2,tip:'Penyakit paru struktural kronik yang dapat memengaruhi toleransi conditioning.'}
+    ]
+  },
+  ginjal:{
+    label:'Ginjal',
+    items:[
+      {id:'gin1',label:'eGFR menurun ringan (60–89 mL/min/1.73m²)',score:1,tip:'Penurunan ringan GFR; perlu monitoring dosis obat nefrotoksik perihal clearance.'},
+      {id:'gin2',label:'eGFR menurun sedang/berat (<60 mL/min/1.73m²)',score:3,tip:'Penurunan bermakna GFR; meningkatkan risiko toksisitas conditioning dan AKI post-HSCT.'},
+      {id:'gin3',label:'Riwayat AKI berat yang memerlukan RRT',score:2,tip:'Riwayat AKI berat mengindikasikan kerentanan ginjal terhadap insult selanjutnya.'},
+      {id:'gin4',label:'Proteinuria signifikan (>1 g/hari)',score:1,tip:'Proteinuria persisten menandakan kerusakan glomeruler yang mungkin bertambah berat post-HSCT.'},
+      {id:'gin5',label:'Dialisis aktif',score:3,tip:'Dialisis aktif merupakan faktor risiko tinggi dan memerlukan pertimbangan khusus.'}
+    ]
+  },
+  hati:{
+    label:'Hati',
+    items:[
+      {id:'hat1',label:'Transaminitis persisten (>2x ULN)',score:1,tip:'Peningkatan AST/ALT persisten yang belum terjelaskan atau belum teratasi.'},
+      {id:'hat2',label:'Hiperbilirubinemia bermakna (>2x ULN)',score:2,tip:'Bilirubin meningkat bermakna dapat menandakan gangguan fungsi hati atau kolestasis.'},
+      {id:'hat3',label:'Fibrosis hepatik / Sirosis',score:3,tip:'Fibrosis/sirosis meningkatkan risiko VOD/SOS post-conditioning secara bermakna.'},
+      {id:'hat4',label:'Riwayat SOS/VOD hepatik',score:3,tip:'Riwayat SOS/VOD sebelumnya merupakan faktor risiko kuat untuk rekurensi post-HSCT.'},
+      {id:'hat5',label:'Hepatitis aktif (viral/autoimun)',score:2,tip:'Hepatitis aktif dapat mengalami flare atau progresi selama imunosupresi post-HSCT.'}
+    ]
+  },
+  gi:{
+    label:'Gastrointestinal',
+    items:[
+      {id:'gi1',label:'Penyakit inflamasi usus aktif',score:2,tip:'IBD aktif dapat memperburuk outcome GvHD intestinal post-HSCT.'},
+      {id:'gi2',label:'Diare kronik / malabsorpsi bermakna',score:2,tip:'Malabsorpsi kronik memengaruhi absorpsi obat imunosupresan dan nutrisi.'},
+      {id:'gi3',label:'Riwayat perdarahan GI signifikan',score:1,tip:'Riwayat perdarahan GI meningkatkan risiko komplikasi hemoragik perihal trombositopenia post-HSCT.'}
+    ]
+  },
+  neuro:{
+    label:'Neurologis',
+    items:[
+      {id:'ne1',label:'Riwayat kejang/epilepsi aktif',score:1,tip:'Kejang aktif atau epilepsi yang memerlukan antiepilepsi dapat berinteraksi dengan regimen conditioning.'},
+      {id:'ne2',label:'Riwayat stroke atau lesi iskemik serebral',score:2,tip:'Riwayat stroke meningkatkan risiko komplikasi neurologis perihal trombosis perihal HSCT.'},
+      {id:'ne3',label:'PRES (Posterior Reversible Encephalopathy Syndrome)',score:2,tip:'Riwayat PRES mengindikasikan kerentanan vaskuler serebral terhadap obat-obatan HSCT.'},
+      {id:'ne4',label:'Defisit neurologis bermakna',score:2,tip:'Defisit neurologis permanen yang memengaruhi fungsionalitas dan kualitas hidup.'},
+      {id:'ne5',label:'Neuropati perifer berat',score:1,tip:'Neuropati berat dapat diperburuk oleh obat-obatan conditioning atau GvHD kronis.'}
+    ]
+  },
+  psiko:{
+    label:'Psikiatri/Perilaku',
+    items:[
+      {id:'ps1',label:'Gangguan psikiatri yang mempengaruhi kepatuhan terapi',score:1,tip:'Gangguan psikiatri bermakna (depresi berat, skizofrenia) yang mengganggu kepatuhan pengobatan intensif.'},
+      {id:'ps2',label:'Hambatan perkembangan/behavioral berat',score:1,tip:'Disabilitas perkembangan berat yang memengaruhi kemampuan kooperasi dengan prosedur HSCT.'}
+    ]
+  },
+  nutrisi:{
+    label:'Nutrisi',
+    items:[
+      {id:'nu1',label:'Malnutrisi sedang (Z-score BB/TB -2 s/d -3 SD)',score:1,tip:'Malnutrisi sedang memengaruhi toleransi conditioning dan pemulihan hematopoietik.'},
+      {id:'nu2',label:'Malnutrisi berat (Z-score BB/TB <-3 SD)',score:2,tip:'Malnutrisi berat secara bermakna meningkatkan risiko toksisitas, infeksi, dan mortalitas non-relaps.'},
+      {id:'nu3',label:'Obesitas berat (BMI >35 atau >2 SD di atas usia)',score:1,tip:'Obesitas memengaruhi farmakokinetik obat conditioning dan meningkatkan risiko toksisitas.'},
+      {id:'nu4',label:'Penurunan berat badan bermakna (>10% dalam 3 bulan)',score:1,tip:'Kehilangan massa tubuh bermakna menandakan status nutrisi yang memburuk secara aktif.'}
+    ]
+  },
+  terapi:{
+    label:'Riwayat Terapi',
+    items:[
+      {id:'te1',label:'Kemoterapi intensif multipel (≥3 lini)',score:2,tip:'Kemoterapi multipel lini mengakumulasi toksisitas organ dan dapat membatasi toleransi conditioning.'},
+      {id:'te2',label:'Radioterapi sebelumnya (terutama area kritis)',score:2,tip:'Radioterapi prior, terutama mediastinal, thoraks, atau abdomen, meningkatkan risiko komplikasi organ.'},
+      {id:'te3',label:'HSCT sebelumnya',score:3,tip:'HSCT kedua memiliki risiko komplikasi dan mortalitas lebih tinggi dibanding HSCT pertama.'},
+      {id:'te4',label:'CAR-T sebelumnya',score:1,tip:'CAR-T sebelumnya dapat berkontribusi pada toksisitas organ kumulatif dan profil infeksi yang lebih kompleks.'},
+      {id:'te5',label:'Paparan TBI sebelumnya',score:2,tip:'TBI prior membatasi pilihan conditioning dan meningkatkan risiko toksisitas paru dan lainnya.'}
+    ]
+  },
+  tambahan:{
+    label:'Komorbid Tambahan',
+    items:[
+      {id:'ta1',label:'Diabetes mellitus',score:1,tip:'DM meningkatkan risiko infeksi dan memengaruhi penyembuhan mukosa.'},
+      {id:'ta2',label:'Penyakit autoimun aktif',score:2,tip:'Autoimun aktif dapat flare selama imunosupresi atau imunomodulasi post-HSCT.'},
+      {id:'ta3',label:'Tromboemboli vena/arteri',score:2,tip:'Riwayat tromboemboli meningkatkan risiko komplikasi vaskular post-HSCT.'},
+      {id:'ta4',label:'Hipertensi tidak terkontrol',score:1,tip:'HT tidak terkontrol meningkatkan risiko PRES dan komplikasi kardiovaskular.'},
+      {id:'ta5',label:'Komplikasi perdarahan signifikan',score:1,tip:'Riwayat perdarahan bermakna meningkatkan kompleksitas manajemen trombositopenia post-HSCT.'}
+    ]
+  }
+};
+
+var PERFORMA_OPTIONS = [
+  {val:0,label:'Baik / Aktif',desc:'Lanlan, mampu aktivitas normal tanpa keterbatasan'},
+  {val:1,label:'Terbatas Ringan',desc:'Aktivitas terbatas ringan, dapat mandiri namun tidak mampu aktivitas berat'},
+  {val:2,label:'Terbatas Sedang',desc:'Aktivitas terbatas sedang, memerlukan bantuan sebagian'},
+  {val:3,label:'Terbatas Berat / Bedbound',desc:'Tidak mampu aktivitas, bedbound atau sangat tergantung bantuan'}
+];
+
+var selectedPerforma = 0;
+var domainOpen = {};
+
+function buildChecklist(domId, items) {
+  var cont = document.getElementById('checks-' + domId);
+  if (!cont) return;
+  var html = '';
+  items.forEach(function(it) {
+    html += '<div class="check-item"><label>';
+    html += '<input type="checkbox" id="' + it.id + '" onchange="updateDomainScore(\'' + domId + '\')">';
+    html += '<span>' + it.label + '</span>';
+    html += '</label>';
+    html += '<span class="check-score">+' + it.score + '</span>';
+    html += '<button class="tooltip-btn" tabindex="-1">?<span class="tooltip-popup">' + it.tip + '</span></button>';
+    html += '</div>';
+  });
+  cont.innerHTML = html;
+}
+
+function buildPerforma() {
+  var cont = document.getElementById('radio-performa');
+  var html = '';
+  PERFORMA_OPTIONS.forEach(function(op) {
+    html += '<div class="radio-item' + (op.val===0?' selected':'') + '" id="radio-' + op.val + '" onclick="selectPerforma(' + op.val + ')">';
+    html += '<input type="radio" name="performa" value="' + op.val + '"' + (op.val===0?' checked':'') + '>';
+    html += '<div><div style="font-weight:600;font-size:13px">' + op.label + '</div><div style="font-size:11px;color:var(--text2)">' + op.desc + '</div></div>';
+    html += '<span class="check-score">' + (op.val>0?'+':'+') + op.val + '</span>';
+    html += '</div>';
+  });
+  cont.innerHTML = html;
+}
+
+function selectPerforma(val) {
+  selectedPerforma = val;
+  PERFORMA_OPTIONS.forEach(function(op) {
+    var el = document.getElementById('radio-' + op.val);
+    if (el) el.className = 'radio-item' + (op.val===val?' selected':'');
+  });
+  var pill = document.getElementById('pill-performa');
+  if (pill) { pill.textContent = val; pill.className = 'domain-score-pill' + (val>0?'':' zero'); }
+}
+
+function getDomainScore(domId) {
+  var total = 0;
+  var items = DOMAINS[domId] ? DOMAINS[domId].items : [];
+  items.forEach(function(it) {
+    var el = document.getElementById(it.id);
+    if (el && el.checked) total += it.score;
+  });
+  return total;
+}
+
+function updateDomainScore(domId) {
+  var score = getDomainScore(domId);
+  var pill = document.getElementById('pill-' + domId);
+  if (pill) { pill.textContent = score; pill.className = 'domain-score-pill' + (score>0?'':' zero'); }
+}
+
+function toggleDomain(id) {
+  var body = document.getElementById('body-' + id);
+  var chev = document.getElementById('chev-' + id);
+  var header = body ? body.previousElementSibling : null;
+  if (!body) return;
+  var isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  if (chev) chev.className = 'domain-chevron' + (isOpen?'':' open');
+  if (header) header.className = 'domain-header' + (isOpen?'':' active');
+}
+
+function getTotalScore() {
+  var total = 0;
+  Object.keys(DOMAINS).forEach(function(dk) {
+    total += getDomainScore(dk);
+  });
+  total += selectedPerforma;
+  return total;
+}
+
+function getRiskCategory(score) {
+  if (score === 0) return {cat:'Risiko Rendah',cls:'risk-green',range:'Skor 0',level:0};
+  if (score <= 2) return {cat:'Risiko Ringan',cls:'risk-blue',range:'Skor 1–2',level:1};
+  if (score <= 4) return {cat:'Risiko Sedang',cls:'risk-orange',range:'Skor 3–4',level:2};
+  return {cat:'Risiko Tinggi',cls:'risk-red',range:'Skor ≥5',level:3};
+}
+
+function getCheckedItems() {
+  var result = [];
+  Object.keys(DOMAINS).forEach(function(dk) {
+    DOMAINS[dk].items.forEach(function(it) {
+      var el = document.getElementById(it.id);
+      if (el && el.checked) result.push({domain:DOMAINS[dk].label, label:it.label, score:it.score});
+    });
+  });
+  if (selectedPerforma > 0) {
+    var pOpt = PERFORMA_OPTIONS.find(function(o){return o.val===selectedPerforma;});
+    if (pOpt) result.push({domain:'Performa Klinis', label:pOpt.label, score:selectedPerforma});
+  }
+  return result;
+}
+
+function getSafetyAlerts(items) {
+  var alerts = [];
+  var itemLabels = items.map(function(i){return i.label.toLowerCase();});
+  var domMap = {};
+  items.forEach(function(i){domMap[i.domain]=true;});
+
+  if (items.some(function(i){return i.domain==='Infeksi' && i.score>=2;})) alerts.push({type:'red',msg:'⚠️ PERINGATAN: Infeksi aktif bermakna terdeteksi — evaluasi kontrol infeksi sebelum conditioning HSCT.'});
+  if (items.some(function(i){return i.domain==='Jantung' && i.score>=2;})) alerts.push({type:'orange',msg:'🫀 Disfungsi jantung sedang/berat — konsultasi kardiologi anak dan evaluasi ekokardiografi diperlukan.'});
+  if (items.some(function(i){return i.domain==='Paru' && i.score>=3;})) alerts.push({type:'orange',msg:'🫁 Disfungsi paru sedang/berat — evaluasi fungsi paru lengkap dan konsultasi pulmonologi anak.'});
+  if (items.some(function(i){return i.domain==='Hati' && i.score>=3;})) alerts.push({type:'red',msg:'🫀 Disfungsi hati berat / riwayat SOS — risiko VOD/SOS tinggi; pertimbangkan profilaksis dan pilihan conditioning yang lebih ringan.'});
+  if (items.some(function(i){return i.domain==='Ginjal' && i.score>=3;})) alerts.push({type:'orange',msg:'🫘 Disfungsi ginjal berat — penyesuaian dosis conditioning dan monitoring ketat ginjal perihal transplantasi.'});
+  if (items.some(function(i){return i.label.includes('berat') && i.domain==='Nutrisi';})) alerts.push({type:'orange',msg:'🥗 Malnutrisi berat terdeteksi — optimasi nutrisi agresif (termasuk PN/EN) direkomendasikan sebelum conditioning.'});
+  if (selectedPerforma >= 3) alerts.push({type:'red',msg:'💪 Status performa klinis sangat terbatas/bedbound — diskusi tim multidisiplin wajib sebelum keputusan HSCT.'});
+  return alerts;
+}
+
+function getPrediksi(score, items) {
+  var level = getRiskCategory(score).level;
+  var lines = [];
+  if (level === 0) {
+    lines.push('Beban komorbiditas <strong>rendah</strong>. Risiko komplikasi transplantasi secara keseluruhan relatif minimal.');
+    lines.push('Risiko non-relapse mortality relatif dapat diterima berdasarkan penilaian komorbiditas ini.');
+  } else if (level === 1) {
+    lines.push('Beban komorbiditas <strong>ringan</strong>. Risiko komplikasi transplantasi meningkat moderat dibanding pasien tanpa komorbiditas.');
+    lines.push('Optimasi faktor risiko yang teridentifikasi tetap dianjurkan sebelum conditioning.');
+  } else if (level === 2) {
+    lines.push('Beban komorbiditas <strong>sedang</strong>. Risiko non-relapse mortality dan komplikasi organ post-HSCT meningkat bermakna.');
+    lines.push('Optimasi intensif komorbiditas mayor diperlukan. Diskusi tim mengenai pilihan regimen conditioning dengan toksisitas lebih rendah sangat dianjurkan.');
+    lines.push('Evaluasi organ fungsi lengkap dan konsultasi spesialis terkait harus dilakukan sebelum HSCT.');
+  } else {
+    lines.push('Beban komorbiditas <strong>tinggi</strong>. Risiko komplikasi post-HSCT dan mortalitas non-relaps meningkat secara bermakna.');
+    lines.push('Skor tinggi ini <em>tidak otomatis</em> menjadi kontraindikasi HSCT, tetapi menandakan perlunya optimasi komorbiditas yang sangat intensif dan pertimbangan manfaat-risiko yang hati-hati.');
+    lines.push('Diskusi tim multidisiplin — melibatkan intensivis anak, spesialis organ terkait, dan tim HSCT — sangat dianjurkan sebelum keputusan final.');
+  }
+  return lines.join('<br><br>');
+}
+
+function getOptimasi(items) {
+  var opts = [];
+  var domains = {};
+  items.forEach(function(i){domains[i.domain]=true;});
+
+  if (domains['Infeksi']) opts.push('Kontrol dan eradikasi infeksi aktif sebelum conditioning');
+  if (domains['Jantung']) opts.push('Evaluasi ekokardiografi dan konsultasi kardiologi anak; optimasi fungsi jantung');
+  if (domains['Paru']) opts.push('Pemeriksaan fungsi paru lengkap (spirometri, DLCO bila memungkinkan); konsultasi pulmonologi');
+  if (domains['Ginjal']) opts.push('Evaluasi eGFR serial; hindari agen nefrotoksik; konsultasi nefrologi anak');
+  if (domains['Hati']) opts.push('Evaluasi hepatobilier lengkap; pertimbangkan profilaksis VOD/SOS (Defibrotide/UDCA); konsultasi hepatologi');
+  if (domains['Gastrointestinal']) opts.push('Optimasi status GI; evaluasi absorpsi obat; pertimbangkan rute nutrisi alternatif');
+  if (domains['Neurologis']) opts.push('Evaluasi neurologi; stabilisasi kondisi neurologis; cegah interaksi obat antiepilepsi');
+  if (domains['Psikiatri/Perilaku']) opts.push('Dukungan psikiatri/psikologi; persiapan kepatuhan regimen HSCT');
+  if (domains['Nutrisi']) opts.push('Intervensi nutrisi agresif: PN/EN pre-transplant; target BB dan massa otot optimal');
+  if (domains['Riwayat Terapi']) opts.push('Review toksisitas kumulatif; pertimbangkan regimen conditioning dengan intensitas yang disesuaikan (RIC/MAC)');
+  if (domains['Performa Klinis'] || selectedPerforma >= 2) opts.push('Fisioterapi dan rehabilitasi untuk optimasi status performa klinis');
+  if (domains['Komorbid Tambahan']) opts.push('Manajemen komorbid sistemik (DM, HT, autoimun) sebelum transplantasi');
+
+  if (opts.length === 0) opts.push('Tidak ada area optimasi spesifik yang teridentifikasi. Pemantauan rutin dan evaluasi pre-HSCT standar tetap direkomendasikan.');
+  return opts;
+}
+
+function getNarasi(score, items, diagnosa) {
+  var risk = getRiskCategory(score);
+  var pat = document.getElementById('p-nama').value || 'Pasien';
+  var dx = diagnosa || 'diagnosis tidak tercantum';
+  var topItems = items.sort(function(a,b){return b.score-a.score;}).slice(0,3).map(function(i){return i.label.toLowerCase();});
+
+  var txt = 'Pasien dengan diagnosis ' + dx + ' memiliki HCT-CI Pediatric Adapted Score sebesar ' + score + ', yang masuk dalam kategori ' + risk.cat + '.';
+
+  if (items.length > 0) {
+    txt += ' Komorbiditas utama yang teridentifikasi meliputi: ' + topItems.join(', ') + '.';
+  }
+
+  if (risk.level >= 2) {
+    txt += ' Sebelum conditioning HSCT, sangat dianjurkan optimasi intensif pada area-area komorbiditas yang teridentifikasi.';
+  }
+  if (risk.level >= 3) {
+    txt += ' Diskusi tim multidisiplin — mencakup hematologi-onkologi, intensivis, spesialis organ terkait, dan koordinator transplantasi — perlu dilaksanakan untuk menentukan strategi terbaik dan mempertimbangkan risiko-manfaat HSCT secara menyeluruh.';
+  } else if (risk.level === 2) {
+    txt += ' Konsultasi spesialis organ terkait, pemilihan regimen conditioning yang tepat, dan rencana monitoring perihal transplantasi perlu didiskusikan dalam rapat tim HSCT.';
+  } else {
+    txt += ' Evaluasi pre-HSCT standar dan monitoring ketat selama proses transplantasi tetap direkomendasikan.';
+  }
+  txt += ' Catatan: Skor ini bersifat estimasi edukatif dan harus selalu diintegrasikan dengan evaluasi klinis komprehensif, status penyakit, pilihan donor, dan tujuan terapi.';
+  return txt;
+}
+
+function getPearls(score, items) {
+  var pearls = [
+    'HCT-CI membantu menilai beban komorbiditas, tetapi tidak menggantikan evaluasi klinis komprehensif dan diskusi tim HSCT.',
+    'Pada populasi anak, interpretasi HCT-CI harus lebih kontekstual dibanding populasi dewasa — banyak data validasi berasal dari studi dewasa.',
+    'Skor tinggi tidak otomatis menjadi kontraindikasi HSCT, tetapi menjadi sinyal penting untuk optimasi pra-transplantasi yang intensif.'
+  ];
+  var domains = {};
+  items.forEach(function(i){domains[i.domain]=true;});
+  if (domains['Infeksi']) pearls.push('Infeksi aktif sering menjadi alasan penundaan sementara HSCT — kontrol infeksi adalah prioritas utama pra-transplantasi.');
+  if (domains['Hati']) pearls.push('Riwayat SOS/VOD atau fibrosis hati merupakan faktor risiko kuat VOD post-conditioning; pertimbangkan profilaksis Defibrotide atau UDCA.');
+  if (domains['Nutrisi']) pearls.push('Status nutrisi yang buruk berkorelasi dengan pemulihan hematopoietik yang lebih lambat dan risiko komplikasi yang lebih tinggi — intervensi nutrisi aktif harus dimulai segera.');
+  if (domains['Riwayat Terapi'] && items.some(function(i){return i.label.includes('HSCT');})) pearls.push('HSCT kedua memiliki profil risiko yang lebih tinggi; diskusi manfaat-risiko yang sangat hati-hati diperlukan bersama keluarga pasien.');
+  return pearls.slice(0,5);
+}
+
+function calculate() {
+  var score = getTotalScore();
+  var items = getCheckedItems();
+  var risk = getRiskCategory(score);
+  var diagnosa = document.getElementById('p-diagnosis').value;
+  var alerts = getSafetyAlerts(items);
+
+  // Header score
+  document.getElementById('header-score').textContent = score;
+
+  // Alerts
+  var alertCont = document.getElementById('alert-container');
+  if (alerts.length > 0) {
+    var aHtml = '';
+    alerts.forEach(function(a) {
+      aHtml += '<div class="alert alert-' + a.type + '"><span class="alert-icon">🚨</span><span>' + a.msg + '</span></div>';
+    });
+    alertCont.innerHTML = aHtml;
+  } else {
+    alertCont.innerHTML = '<div class="alert alert-blue"><span class="alert-icon">✅</span><span>Tidak ada peringatan keselamatan kritikal yang terdeteksi saat ini.</span></div>';
+  }
+
+  // Score display
+  document.getElementById('res-score').textContent = score;
+  var progPct = Math.min(100, Math.round(score / 15 * 100));
+  document.getElementById('prog-score').style.width = progPct + '%';
+
+  // Risk badge
+  var rb = document.getElementById('risk-badge');
+  rb.className = 'risk-badge ' + risk.cls;
+  document.getElementById('risk-cat-text').textContent = risk.cat;
+  document.getElementById('risk-range-text').textContent = risk.range;
+
+  // Risk meter
+  var meterPct = [5, 30, 60, 88][risk.level];
+  document.getElementById('meter-ind').style.left = meterPct + '%';
+
+  // Prediksi
+  document.getElementById('res-prediksi').innerHTML = getPrediksi(score, items);
+
+  // Contributors
+  var sorted = items.sort(function(a,b){return b.score-a.score;});
+  var contEl = document.getElementById('res-contributors');
+  if (sorted.length === 0) {
+    contEl.innerHTML = '<span style="color:var(--text3);font-size:13px">Tidak ada komorbiditas yang dipilih.</span>';
+  } else {
+    var cHtml = '';
+    sorted.slice(0,8).forEach(function(it) {
+      var cls = it.score >= 3 ? 'contrib-tag' : 'contrib-tag contrib-tag-orange';
+      cHtml += '<span class="' + cls + '">✓ ' + it.label + ' <strong>(+' + it.score + ')</strong></span>';
+    });
+    contEl.innerHTML = cHtml;
+  }
+
+  // Optimasi
+  var opts = getOptimasi(items);
+  var oHtml = '';
+  opts.forEach(function(o) {
+    oHtml += '<div class="opt-item"><div class="opt-dot"></div><div style="font-size:13px">' + o + '</div></div>';
+  });
+  document.getElementById('res-optimasi').innerHTML = oHtml;
+
+  // Narasi
+  document.getElementById('res-narasi').textContent = getNarasi(score, items, diagnosa);
+
+  // Pearls
+  var pearls = getPearls(score, items);
+  var pHtml = '';
+  pearls.forEach(function(p,i) {
+    pHtml += '<div class="pearl-item"><div class="pearl-num">' + (i+1) + '</div><div style="font-size:13px">' + p + '</div></div>';
+  });
+  document.getElementById('res-pearls').innerHTML = pHtml;
+
+  // Show
+  document.getElementById('output-placeholder').style.display = 'none';
+  document.getElementById('output-results').style.display = 'block';
+
+  // Scroll to results on mobile
+  if (window.innerWidth < 769) {
+    document.getElementById('output-results').scrollIntoView({behavior:'smooth'});
+  }
+}
+
+function resetAll() {
+  Object.keys(DOMAINS).forEach(function(dk) {
+    DOMAINS[dk].items.forEach(function(it) {
+      var el = document.getElementById(it.id);
+      if (el) el.checked = false;
+    });
+    updateDomainScore(dk);
+  });
+  selectPerforma(0);
+  document.getElementById('p-nama').value = '';
+  document.getElementById('p-umur').value = '';
+  document.getElementById('p-bb').value = '';
+  document.getElementById('p-diagnosis').value = '';
+  document.getElementById('p-tanggal').value = '';
+  document.getElementById('header-score').textContent = '0';
+  document.getElementById('alert-container').innerHTML = '';
+  document.getElementById('output-placeholder').style.display = 'block';
+  document.getElementById('output-results').style.display = 'none';
+}
+
+function printSummary() {
+  var score = getTotalScore();
+  var items = getCheckedItems();
+  var risk = getRiskCategory(score);
+  var diagnosa = document.getElementById('p-diagnosis').value || '—';
+  var nama = document.getElementById('p-nama').value || '—';
+  var umur = document.getElementById('p-umur').value || '—';
+  var bb = document.getElementById('p-bb').value || '—';
+  var tanggal = document.getElementById('p-tanggal').value || new Date().toLocaleDateString('id-ID');
+
+  var opts = getOptimasi(items);
+  var narasi = getNarasi(score, items, diagnosa);
+  var contribs = items.sort(function(a,b){return b.score-a.score;}).slice(0,8);
+
+  var printWin = window.open('','_blank','width=800,height=900');
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>HCT-CI Summary</title>';
+  html += '<style>body{font-family:Arial,sans-serif;font-size:13px;padding:24px;color:#111}.header{text-align:center;margin-bottom:20px;border-bottom:2px solid #2563EB;padding-bottom:12px}.brand{font-size:18px;font-weight:bold;color:#2563EB}.subtitle{font-size:12px;color:#666}.section{margin:14px 0}.section-title{font-weight:bold;font-size:13px;background:#EFF6FF;padding:6px 10px;border-left:3px solid #2563EB;margin-bottom:8px}.data-row{display:flex;gap:16px;flex-wrap:wrap}.data-item{margin:4px 0;flex:1;min-width:150px}.data-label{font-size:11px;color:#666;text-transform:uppercase}.data-val{font-weight:bold;font-size:14px}.score-box{text-align:center;padding:16px;border:2px solid #2563EB;border-radius:8px;margin:12px 0}.score-num{font-size:48px;font-weight:800;color:#2563EB}.risk-box{text-align:center;padding:10px;border-radius:8px;margin:8px 0;font-weight:bold;font-size:16px}.risk-0{background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0}.risk-1{background:#EFF6FF;color:#2563EB;border:1px solid #BFDBFE}.risk-2{background:#FFF7ED;color:#EA580C;border:1px solid #FED7AA}.risk-3{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA}.contrib-list{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.contrib-tag{background:#FEF2F2;color:#7F1D1D;border:1px solid #FECACA;border-radius:12px;padding:2px 8px;font-size:11px}.opt-item{padding:4px 0;border-bottom:1px solid #eee;font-size:12px}.disclaimer{background:#FFFBEB;border:1px solid #FDE68A;border-radius:6px;padding:10px;font-size:11px;color:#92400E;margin-top:16px}.narasi{background:#EFF6FF;border-radius:6px;padding:10px;font-size:12px;color:#1E3A8A;font-style:italic;line-height:1.6}</style></head><body>';
+  html += '<div class="header"><div class="brand">drAisyi EduCare</div><div class="subtitle">Pediatric HCT-CI Calculator — Ringkasan Evaluasi Pre-Transplantasi</div></div>';
+
+  html += '<div class="section"><div class="section-title">Data Pasien</div>';
+  html += '<div class="data-row">';
+  html += '<div class="data-item"><div class="data-label">Nama/Inisial</div><div class="data-val">' + nama + '</div></div>';
+  html += '<div class="data-item"><div class="data-label">Umur</div><div class="data-val">' + umur + ' tahun</div></div>';
+  html += '<div class="data-item"><div class="data-label">BB</div><div class="data-val">' + bb + ' kg</div></div>';
+  html += '<div class="data-item"><div class="data-label">Diagnosis</div><div class="data-val">' + diagnosa + '</div></div>';
+  html += '<div class="data-item"><div class="data-label">Tanggal Evaluasi</div><div class="data-val">' + tanggal + '</div></div>';
+  html += '</div></div>';
+
+  html += '<div class="score-box"><div class="score-num">' + score + '</div><div>HCT-CI Pediatric Adapted Score</div></div>';
+  html += '<div class="risk-box risk-' + risk.level + '">' + risk.cat + ' (' + risk.range + ')</div>';
+
+  html += '<div class="section"><div class="section-title">Komorbiditas Teridentifikasi</div>';
+  if (contribs.length > 0) {
+    html += '<div class="contrib-list">';
+    contribs.forEach(function(c){html += '<span class="contrib-tag">✓ ' + c.label + ' (+' + c.score + ')</span>';});
+    html += '</div>';
+  } else {
+    html += '<p style="color:#666;font-size:12px">Tidak ada komorbiditas yang dipilih.</p>';
+  }
+  html += '</div>';
+
+  html += '<div class="section"><div class="section-title">Area Optimasi Sebelum HSCT</div>';
+  opts.forEach(function(o){html += '<div class="opt-item">• ' + o + '</div>';});
+  html += '</div>';
+
+  html += '<div class="section"><div class="section-title">Rekomendasi Diskusi Tim HSCT</div>';
+  html += '<div class="narasi">' + narasi + '</div></div>';
+
+  html += '<div class="disclaimer"><strong>⚠️ Disclaimer:</strong> Toolkit ini merupakan alat bantu edukasi dan clinical decision support. HCT-CI pada anak harus diinterpretasikan secara hati-hati dan tidak boleh digunakan sebagai satu-satunya dasar keputusan HSCT. Skor ini bersifat estimasi edukatif dan perlu dikontekstualisasi dengan kondisi klinis pasien secara menyeluruh.</div>';
+
+  html += '<div style="text-align:center;font-size:10px;color:#999;margin-top:16px">Dicetak dari drAisyi EduCare — Pediatric HCT-CI Calculator | ' + new Date().toLocaleDateString('id-ID') + '</div>';
+  html += '</body></html>';
+
+  printWin.document.write(html);
+  printWin.document.close();
+  setTimeout(function(){printWin.print();}, 500);
+}
+
+// INIT
+window.addEventListener('load', function() {
+  Object.keys(DOMAINS).forEach(function(dk) {
+    if (DOMAINS[dk].items) buildChecklist(dk, DOMAINS[dk].items);
+  });
+  buildPerforma();
+  // Set today's date
+  var today = new Date();
+  var yyyy = today.getFullYear();
+  var mm = String(today.getMonth()+1).padStart(2,'0');
+  var dd = String(today.getDate()).padStart(2,'0');
+  document.getElementById('p-tanggal').value = yyyy + '-' + mm + '-' + dd;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>drAisyiEduCare — Pediatric Chemotherapy Preparation Assistant</title>
+<style>
+:root{
+  --blue:#1565C0;--blue2:#1976D2;--blue3:#E3F2FD;--blue4:#0D47A1;
+  --green:#2E7D32;--green2:#43A047;--green3:#E8F5E9;
+  --amber:#E65100;--amber2:#F57F17;--amber3:#FFF8E1;
+  --red:#B71C1C;--red2:#E53935;--red3:#FFEBEE;
+  --gray:#F5F7FA;--gray2:#E8ECEF;--gray3:#90A4AE;--gray4:#546E7A;
+  --white:#fff;--text:#1A2332;--text2:#37474F;
+  --sidebar:230px;--r:10px;--sh:0 2px 12px rgba(0,0,0,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gray);color:var(--text);display:flex;flex-direction:column;min-height:100vh}
+/* LAYOUT */
+#app{display:flex;flex:1}
+#sidebar{width:var(--sidebar);background:var(--blue4);min-height:100vh;position:fixed;top:0;left:0;z-index:200;display:flex;flex-direction:column;transition:.3s;overflow-y:auto}
+#sidebar .brand{padding:16px 14px 10px;border-bottom:1px solid rgba(255,255,255,.12);flex-shrink:0}
+#sidebar .brand h1{color:#fff;font-size:14.5px;font-weight:800;letter-spacing:.2px}
+#sidebar .brand p{color:rgba(255,255,255,.55);font-size:9.5px;margin-top:3px;line-height:1.4}
+#sidebar nav{flex:1;padding:8px 0}
+#sidebar nav .nav-section{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);padding:10px 16px 4px}
+#sidebar nav a{display:flex;align-items:center;gap:8px;padding:9px 16px;color:rgba(255,255,255,.75);text-decoration:none;font-size:12px;transition:.18s;border-left:3px solid transparent;cursor:pointer;user-select:none}
+#sidebar nav a:hover,#sidebar nav a.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:#64B5F6}
+#sidebar nav a .ic{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+#sidebar .sb-foot{padding:10px 12px;background:rgba(255,193,7,.12);border-top:1px solid rgba(255,255,255,.08);font-size:9.5px;color:rgba(255,255,255,.6);line-height:1.5;flex-shrink:0}
+/* MAIN */
+#main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.safety-banner{background:linear-gradient(135deg,#B71C1C,#C62828);color:#fff;padding:9px 20px;font-size:11px;line-height:1.6;text-align:center}
+.topbar{background:var(--white);padding:11px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--blue3);position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.topbar h2{font-size:15px;font-weight:700;color:var(--blue4)}
+.topbar .tb-right{display:flex;align-items:center;gap:10px}
+.badge-pill{padding:3px 10px;border-radius:20px;font-size:10.5px;font-weight:600}
+.badge-green{background:var(--green3);color:var(--green)}
+.hamburger{display:none;background:var(--blue);border:none;color:#fff;font-size:20px;padding:5px 10px;border-radius:6px;cursor:pointer}
+.page{display:none;padding:20px 22px;flex:1}
+.page.active{display:block}
+/* CARD */
+.card{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);padding:18px;margin-bottom:16px}
+.card-title{font-size:13.5px;font-weight:700;color:var(--blue4);margin-bottom:12px;display:flex;align-items:center;gap:7px;border-bottom:2px solid var(--blue3);padding-bottom:7px}
+.card-title .ic{font-size:17px}
+/* ALERTS */
+.alert{border-radius:8px;padding:11px 14px;margin-bottom:10px;font-size:12.5px;font-weight:500;display:flex;align-items:flex-start;gap:9px;line-height:1.6}
+.alert-red{background:var(--red3);border-left:4px solid var(--red);color:var(--red)}
+.alert-amber{background:var(--amber3);border-left:4px solid var(--amber2);color:#5D2E00}
+.alert-green{background:var(--green3);border-left:4px solid var(--green);color:var(--green)}
+.alert-blue{background:var(--blue3);border-left:4px solid var(--blue);color:var(--blue4)}
+/* GRID */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:18px}
+.dc{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);padding:15px;cursor:pointer;transition:.2s;border-top:4px solid var(--blue)}
+.dc:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.13)}
+.dc .di{font-size:26px;margin-bottom:7px}
+.dc .dt{font-size:12.5px;font-weight:700;color:var(--blue4);margin-bottom:3px}
+.dc .ds{font-size:10.5px;color:var(--gray3)}
+.dc.g{border-top-color:var(--green)}.dc.a{border-top-color:var(--amber2)}.dc.r{border-top-color:var(--red)}
+/* FORMS */
+.form-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:11px;margin-bottom:13px}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:11.5px;font-weight:600;color:var(--text2)}
+.fg input,.fg select,.fg textarea{padding:8px 11px;border:1.5px solid var(--gray2);border-radius:7px;font-size:12.5px;color:var(--text);transition:.18s;background:var(--white);font-family:inherit}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--blue2);box-shadow:0 0 0 3px rgba(25,118,210,.1)}
+.btn{padding:9px 18px;border:none;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;transition:.18s}
+.btn-p{background:var(--blue);color:#fff}.btn-p:hover{background:var(--blue4)}
+.btn-g{background:var(--green);color:#fff}.btn-g:hover{background:#1B5E20}
+.btn-r{background:var(--red);color:#fff}
+.btn-o{background:transparent;border:2px solid var(--blue);color:var(--blue)}
+.btn-sm{padding:5px 12px;font-size:11.5px}
+/* RESULTS */
+.res-row{display:flex;gap:11px;flex-wrap:wrap;margin-top:13px}
+.res-box{background:var(--blue3);border:2px solid #90CAF9;border-radius:8px;padding:12px;flex:1;min-width:130px}
+.res-box .rl{font-size:10px;color:var(--blue4);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.res-box .rv{font-size:20px;font-weight:700;color:var(--blue4);margin:3px 0}
+.res-box .rd{font-size:11px;color:var(--gray4)}
+/* TABS */
+.tabs{display:flex;gap:3px;margin-bottom:14px;flex-wrap:wrap;border-bottom:2px solid var(--gray2)}
+.tab-btn{padding:7px 14px;border:none;background:transparent;font-size:12.5px;font-weight:600;color:var(--gray3);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:.18s}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tc{display:none}.tc.active{display:block}
+/* TABLES */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:var(--blue4);color:#fff;padding:8px 11px;text-align:left;font-size:11.5px;white-space:nowrap}
+td{padding:7px 11px;border-bottom:1px solid var(--gray2);vertical-align:top}
+tr:hover td{background:var(--blue3)}
+/* TAGS */
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700}
+.t-safe{background:var(--green3);color:var(--green)}
+.t-warn{background:var(--amber3);color:var(--amber)}
+.t-danger{background:var(--red3);color:var(--red)}
+.t-blue{background:var(--blue3);color:var(--blue4)}
+/* DRUG CARDS */
+.drug-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:13px}
+.dcard{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);padding:15px;border-top:4px solid var(--blue)}
+.dcard.vesicant{border-top-color:var(--red)}.dcard.irritant{border-top-color:var(--amber2)}
+.dcard .dn{font-size:14px;font-weight:700;color:var(--blue4);margin-bottom:5px}
+.dcard .db{display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700;margin:2px}
+.db-ha{background:var(--red3);color:var(--red)}.db-vs{background:#FFCDD2;color:#B71C1C}
+.db-ir{background:var(--amber3);color:var(--amber)}.db-nt{background:var(--green3);color:var(--green)}
+.ds{margin-top:9px;padding-top:7px;border-top:1px solid var(--gray2)}
+.ds h4{font-size:10.5px;font-weight:700;color:var(--gray4);text-transform:uppercase;margin-bottom:4px}
+.ds p{font-size:12px;color:var(--text2);line-height:1.6}
+/* CHECKLIST */
+.cl-item{display:flex;align-items:flex-start;gap:11px;padding:10px 14px;border-radius:8px;background:var(--gray);margin-bottom:7px;transition:.2s}
+.cl-item:hover{background:var(--gray2)}
+.cl-item input[type=checkbox]{width:17px;height:17px;accent-color:var(--green);cursor:pointer;flex-shrink:0;margin-top:2px}
+.cl-item label{font-size:13px;cursor:pointer;flex:1;line-height:1.5}
+.cl-item.critical label::after{content:" ★ KRITIS";font-size:9px;color:var(--red);font-weight:700}
+.cl-item.done{background:var(--green3)}
+/* SEARCH */
+.search-wrap{position:relative;margin-bottom:14px}
+.search-wrap input{width:100%;padding:9px 14px 9px 38px;border:2px solid var(--gray2);border-radius:8px;font-size:12.5px}
+.search-wrap::before{content:'🔍';position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px}
+/* QUIZ */
+.quiz-prog{height:6px;background:var(--gray2);border-radius:3px;overflow:hidden;margin-bottom:14px}
+.quiz-bar{height:100%;background:var(--blue);transition:.4s}
+.quiz-opt{display:block;padding:10px 14px;border:2px solid var(--gray2);border-radius:8px;margin-bottom:7px;cursor:pointer;font-size:12.5px;transition:.18s}
+.quiz-opt:hover{border-color:var(--blue2);background:var(--blue3)}
+.quiz-opt.correct{border-color:var(--green);background:var(--green3);color:var(--green)}
+.quiz-opt.wrong{border-color:var(--red);background:var(--red3);color:var(--red)}
+/* QUAL */
+.qual-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+.qc{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);padding:16px;text-align:center}
+.qc .circle{width:60px;height:60px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff}
+.qc .qs{font-size:22px;font-weight:700;color:var(--blue4)}
+.qc .ql{font-size:11px;color:var(--gray3);margin-top:3px}
+/* EDU */
+.edu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.edu-card{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);padding:16px;border-left:5px solid var(--blue);cursor:pointer;transition:.2s}
+.edu-card:hover{transform:translateX(3px)}
+.edu-card h3{font-size:13px;font-weight:700;color:var(--blue4);margin-bottom:5px}
+.edu-card p{font-size:11.5px;color:var(--gray3)}
+/* SECTION HDR */
+.sec-hdr{font-size:12.5px;font-weight:700;color:var(--text);margin:15px 0 9px;padding-bottom:5px;border-bottom:2px solid var(--gray2)}
+/* VINCRISTINE RED BOX */
+.vcr-box{background:var(--red);color:#fff;border-radius:var(--r);padding:16px;margin-bottom:16px;text-align:center}
+.vcr-box .vcr-title{font-size:18px;font-weight:800;letter-spacing:1px;margin-bottom:6px}
+.vcr-box .vcr-sub{font-size:12px;opacity:.92;line-height:1.7}
+/* ROLE STRIP */
+.role-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.role-btn{padding:7px 16px;border-radius:20px;border:2px solid var(--gray2);font-size:12px;font-weight:600;cursor:pointer;background:var(--white);transition:.18s}
+.role-btn:hover,.role-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* PRINT */
+@media print{
+  #sidebar,.topbar,.safety-banner,.hamburger,.no-print,.btn{display:none!important}
+  #main{margin-left:0}
+  .page.active{display:block}
+  body{background:#fff}
+}
+/* MOBILE */
+@media(max-width:768px){
+  #sidebar{transform:translateX(-100%)}
+  #sidebar.open{transform:translateX(0)}
+  #main{margin-left:0}
+  .hamburger{display:block}
+  .dash-grid{grid-template-columns:1fr 1fr}
+  .drug-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .dash-grid,.res-row,.qual-grid{grid-template-columns:1fr}
+  .role-strip{flex-direction:column}
+}
+/* STANDARDS PAGE */
+.std-section{margin-bottom:20px}
+.std-section h3{font-size:14px;font-weight:700;color:var(--blue4);margin-bottom:8px;padding-bottom:5px;border-bottom:2px solid var(--blue3)}
+.std-section p,.std-section li{font-size:12.5px;color:var(--text2);line-height:1.8}
+.std-section ul{padding-left:18px}
+.std-section .val-item{display:flex;align-items:center;gap:9px;padding:7px 12px;background:var(--gray);border-radius:7px;margin-bottom:5px;font-size:12.5px}
+.val-ok{color:var(--green);font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="brand">
+    <h1>🧬 drAisyiEduCare</h1>
+    <p>Pediatric Chemotherapy<br>Preparation Assistant</p>
+  </div>
+  <nav>
+    <div class="nav-section">Utama</div>
+    <a onclick="nav('dashboard')" class="active"><span class="ic">🏠</span>Dashboard</a>
+    <div class="nav-section">Pasien & Klinis</div>
+    <a onclick="nav('pasien')"><span class="ic">👤</span>Data Pasien & BSA</a>
+    <a onclick="nav('regimen')"><span class="ic">📋</span>Regimen Selector</a>
+    <a onclick="nav('dosing')"><span class="ic">⚗️</span>Dosing Engine</a>
+    <div class="nav-section">Persiapan & Pemberian</div>
+    <a onclick="nav('prep')"><span class="ic">💊</span>Persiapan Obat</a>
+    <a onclick="nav('vcr')"><span class="ic">🚨</span>Vincristine Safety</a>
+    <a onclick="nav('infus')"><span class="ic">🩺</span>Panduan Infus</a>
+    <a onclick="nav('stabilitas')"><span class="ic">🧪</span>Stabilitas & Kompatibilitas</a>
+    <div class="nav-section">Keselamatan</div>
+    <a onclick="nav('checklist')"><span class="ic">✅</span>Safety Checklist</a>
+    <a onclick="nav('ekstra')"><span class="ic">⚠️</span>Ekstravasasi</a>
+    <a onclick="nav('monitoring')"><span class="ic">📊</span>Monitoring Toolkit</a>
+    <div class="nav-section">Referensi & Edukasi</div>
+    <a onclick="nav('quickref')"><span class="ic">⚡</span>Quick Reference</a>
+    <a onclick="nav('edukasi')"><span class="ic">📚</span>Edukasi</a>
+    <a onclick="nav('kuis')"><span class="ic">🎯</span>Kuis Kasus</a>
+    <div class="nav-section">Dokumentasi & Audit</div>
+    <a onclick="nav('worksheet')"><span class="ic">🖨️</span>Worksheet & Cetak</a>
+    <a onclick="nav('standards')"><span class="ic">📌</span>Standards & Safety</a>
+    <a onclick="nav('quality')"><span class="ic">📈</span>Quality Dashboard</a>
+  </nav>
+  <div class="sb-foot">⚠️ Alat bantu edukasi. Verifikasi selalu dengan protokol institusi & farmasi klinik.</div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+<div class="safety-banner">
+  ⚠️ <strong>DISCLAIMER KLINIS:</strong> Tool ini adalah alat bantu edukasi dan persiapan. Dosis, pengenceran, rute, dan tata laksana <strong>WAJIB diverifikasi</strong> dengan protokol lokal, referensi farmasi resmi, rekam medis, dan tenaga kesehatan yang kompeten. Tool ini <strong>TIDAK</strong> menggantikan chemotherapy order, farmasi klinik, atau keputusan dokter.
+</div>
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:11px">
+    <button class="hamburger" onclick="toggleSB()">☰</button>
+    <h2 id="page-title">Dashboard Utama</h2>
+  </div>
+  <div class="tb-right">
+    <span class="badge-pill badge-green">🟢 Clinical Support Tool</span>
+  </div>
+</div>
+
+<!-- ==================== PAGES ==================== -->
+
+<!-- DASHBOARD -->
+<div id="page-dashboard" class="page active">
+  <div class="alert alert-blue" style="margin-bottom:14px">
+    🧬 <strong>drAisyiEduCare — Pediatric Chemotherapy Preparation Assistant</strong><br>
+    Toolkit interaktif untuk perhitungan, persiapan, verifikasi, dan referensi kemoterapi anak. Untuk perawat, farmasi, dokter umum, SpA, residen, dan konsultan.
+  </div>
+  <div class="alert alert-amber">🔒 <strong>Privasi:</strong> Gunakan inisial/kode pasien saja. Hindari nama lengkap, nomor rekam medis asli, alamat, atau tanggal lahir lengkap pada versi publik/demo ini.</div>
+
+  <div class="sec-hdr">Pilih Peran Anda</div>
+  <div class="role-strip">
+    <button class="role-btn" onclick="setRole(this,'Perawat')">👩‍⚕️ Perawat</button>
+    <button class="role-btn" onclick="setRole(this,'Farmasi/TTK')">💊 Farmasi / TTK</button>
+    <button class="role-btn" onclick="setRole(this,'Dokter Umum/SpA')">🩺 Dokter Umum / SpA</button>
+    <button class="role-btn" onclick="setRole(this,'Konsultan')">🎓 Konsultan / Supervisor</button>
+  </div>
+  <div id="role-info" style="margin-bottom:14px"></div>
+
+  <div class="sec-hdr">Akses Cepat</div>
+  <div class="dash-grid">
+    <div class="dc" onclick="nav('pasien')"><div class="di">👤</div><div class="dt">Data Pasien & BSA</div><div class="ds">Kalkulator BSA Mosteller</div></div>
+    <div class="dc" onclick="nav('regimen')"><div class="di">📋</div><div class="dt">Regimen Selector</div><div class="ds">ALL, AML, NHL, HSCT, dll.</div></div>
+    <div class="dc" onclick="nav('dosing')"><div class="di">⚗️</div><div class="dt">Dosing Engine</div><div class="ds">mg/m², mg/kg, IU, AUC</div></div>
+    <div class="dc g" onclick="nav('prep')"><div class="di">💊</div><div class="dt">Persiapan Obat</div><div class="ds">Rekonstitusi & pengenceran</div></div>
+    <div class="dc r" onclick="nav('vcr')"><div class="di">🚨</div><div class="dt">Vincristine Safety</div><div class="ds">IV ONLY — Never Intrathecal</div></div>
+    <div class="dc g" onclick="nav('infus')"><div class="di">🩺</div><div class="dt">Panduan Infus</div><div class="ds">Waktu, rute, monitoring</div></div>
+    <div class="dc" onclick="nav('stabilitas')"><div class="di">🧪</div><div class="dt">Stabilitas & Kompatibilitas</div><div class="ds">Pelarut, suhu, waktu simpan</div></div>
+    <div class="dc g" onclick="nav('checklist')"><div class="di">✅</div><div class="dt">Safety Checklist</div><div class="ds">Independent double-check</div></div>
+    <div class="dc r" onclick="nav('ekstra')"><div class="di">⚠️</div><div class="dt">Ekstravasasi</div><div class="ds">Antidot & tata laksana</div></div>
+    <div class="dc a" onclick="nav('monitoring')"><div class="di">📊</div><div class="dt">Monitoring Toolkit</div><div class="ds">Pre / saat / pasca infus</div></div>
+    <div class="dc" onclick="nav('quickref')"><div class="di">⚡</div><div class="dt">Quick Reference</div><div class="ds">Satu layar semua info</div></div>
+    <div class="dc g" onclick="nav('edukasi')"><div class="di">📚</div><div class="dt">Edukasi</div><div class="ds">Modul interaktif</div></div>
+    <div class="dc a" onclick="nav('kuis')"><div class="di">🎯</div><div class="dt">Kuis Kasus</div><div class="ds">10 kasus simulasi</div></div>
+    <div class="dc" onclick="nav('worksheet')"><div class="di">🖨️</div><div class="dt">Worksheet & Cetak</div><div class="ds">Generate & print</div></div>
+    <div class="dc" onclick="nav('standards')"><div class="di">📌</div><div class="dt">Standards & Safety</div><div class="ds">Panduan & validasi</div></div>
+    <div class="dc g" onclick="nav('quality')"><div class="di">📈</div><div class="dt">Quality Dashboard</div><div class="ds">Audit & safety score</div></div>
+  </div>
+
+  <div class="sec-hdr">⚠️ High-Alert Drug Reminder</div>
+  <div class="alert alert-red">🚨 <strong>VINCRISTINE:</strong> FATAL bila intratekal. Label "FOR IV USE ONLY". Dispensing sebagai minibag IV. Independent double-check rute wajib.</div>
+  <div class="alert alert-red">🚨 <strong>METHOTREXATE DOSIS TINGGI:</strong> Wajib hidrasi + alkalisasi urin + leucovorin rescue + monitoring level MTX.</div>
+  <div class="alert alert-red">🚨 <strong>CYCLOPHOSPHAMIDE / IFOSFAMIDE:</strong> Mesna wajib. Hidrasi intensif. Monitor output urin dan hematuria.</div>
+  <div class="alert alert-red">🚨 <strong>ANTRASIKLINS (Doxorubicin/Daunorubicin/Idarubicin):</strong> VESICANT berat. IV Sentral wajib. Monitor dosis kumulatif. ECHO periodik.</div>
+  <div class="alert alert-red">🚨 <strong>CISPLATIN / CARBOPLATIN:</strong> Cisplatin: NaCl 0.9% wajib, JANGAN D5%. Carboplatin: D5%, JANGAN aluminium. Hidrasi intensif. Monitor elektrolit & fungsi ginjal.</div>
+  <div class="alert alert-red">🚨 <strong>ASPARAGINASE / PEG-ASP:</strong> Risiko anafilaksis. Siapkan epinefrin. Observasi 1 jam post-pemberian. Monitor koagulasi dan fungsi pankreas.</div>
+  <div class="alert alert-red">🚨 <strong>BUSULFAN:</strong> Antikonvulsan profilaksis WAJIB. Monitor SOS/VOD. IV Sentral.</div>
+  <div class="alert alert-red">🚨 <strong>MELPHALAN:</strong> Stabilitas sangat pendek (60 menit). Siapkan dan berikan segera.</div>
+</div>
+
+<!-- DATA PASIEN -->
+<div id="page-pasien" class="page">
+  <div class="alert alert-amber">🔒 Gunakan inisial atau kode internal saja. Jangan masukkan nama lengkap atau nomor rekam medis asli.</div>
+  <div class="card">
+    <div class="card-title"><span class="ic">👤</span>Data Pasien (De-identifikasi)</div>
+    <div class="form-row">
+      <div class="fg"><label>Inisial / Kode Pasien</label><input id="pt-init" type="text" placeholder="contoh: A.B. / P-001"></div>
+      <div class="fg"><label>Kode Internal (Opsional)</label><input id="pt-code" type="text" placeholder="Kode sesi, bukan No.RM asli"></div>
+      <div class="fg"><label>Usia (tahun)</label><input id="pt-age" type="number" placeholder="0–18" min="0" max="25" step="0.5"></div>
+      <div class="fg"><label>Jenis Kelamin</label><select id="pt-sex"><option value="">— Pilih —</option><option>Laki-laki</option><option>Perempuan</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Berat Badan (kg)</label><input id="pt-bb" type="number" placeholder="kg" step="0.1"></div>
+      <div class="fg"><label>Tinggi Badan (cm)</label><input id="pt-tb" type="number" placeholder="cm" step="0.5"></div>
+      <div class="fg"><label>Tanggal Perhitungan</label><input id="pt-date" type="date"></div>
+      <div class="fg"><label>Kondisi Khusus</label><select id="pt-cond"><option value="">Tidak ada</option><option>Edema / Ascites</option><option>Obesitas</option><option>Malnutrisi Berat</option><option>Gangguan Fungsi Ginjal</option><option>Gangguan Fungsi Hati</option></select></div>
+    </div>
+    <button class="btn btn-p" onclick="hitungBSA()">🔢 Hitung BSA & Parameter</button>
+    <div id="bsa-result" style="display:none;margin-top:14px">
+      <div class="res-row">
+        <div class="res-box"><div class="rl">BSA (Mosteller)</div><div class="rv" id="bsa-v">—</div><div class="rd">m²</div></div>
+        <div class="res-box"><div class="rl">BMI</div><div class="rv" id="bmi-v">—</div><div class="rd">kg/m²</div></div>
+        <div class="res-box"><div class="rl">Kategori BMI</div><div class="rv" id="bmi-cat" style="font-size:14px">—</div><div class="rd" id="bmi-note"></div></div>
+      </div>
+      <div class="alert alert-blue" style="margin-top:12px;font-size:11.5px">📐 <strong>Rumus Mosteller:</strong> BSA = √[(BB kg × TB cm) / 3600]. BB = <span id="bb-s">—</span> kg · TB = <span id="tb-s">—</span> cm</div>
+      <div id="cond-warn"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="ic">📋</span>Ringkasan Pasien Sesi Ini</div>
+    <div id="pt-summary" class="alert alert-amber">Belum ada data. Isi form di atas lalu klik Hitung.</div>
+    <div class="alert alert-amber" style="margin-top:8px;font-size:11.5px">⚠️ <strong>Catatan klinis:</strong> BB/TB harus diukur aktual hari kemoterapi. Pada edema/ascites/obesitas/malnutrisi berat, gunakan pendekatan dry weight atau adjusted sesuai protokol lokal. Verifikasi BSA manual oleh dua petugas sebelum kemoterapi.</div>
+  </div>
+</div>
+
+<!-- REGIMEN SELECTOR -->
+<div id="page-regimen" class="page">
+  <div class="card">
+    <div class="card-title"><span class="ic">📋</span>Regimen Selector</div>
+    <div class="alert alert-amber">⚠️ Tampilan ini bersifat informatif umum. Regimen final harus mengikuti protokol lokal yang berlaku, diverifikasi oleh dokter penanggung jawab dan farmasi klinik.</div>
+    <div class="form-row">
+      <div class="fg"><label>Diagnosa / Protokol</label>
+        <select id="sel-reg" onchange="showRegimen()">
+          <option value="">— Pilih Diagnosa —</option>
+          <option value="ALL">ALL (Acute Lymphoblastic Leukemia)</option>
+          <option value="AML">AML (Acute Myeloid Leukemia)</option>
+          <option value="HL">Hodgkin Lymphoma</option>
+          <option value="NHL">Non-Hodgkin Lymphoma</option>
+          <option value="NB">Neuroblastoma</option>
+          <option value="WT">Wilms Tumor</option>
+          <option value="HB">Hepatoblastoma</option>
+          <option value="OS">Osteosarcoma</option>
+          <option value="ES">Ewing Sarcoma</option>
+          <option value="RB">Retinoblastoma</option>
+          <option value="MB">Medulloblastoma</option>
+          <option value="HSCT">HSCT Conditioning</option>
+          <option value="Custom">Custom / Lainnya</option>
+        </select>
+      </div>
+      <div class="fg"><label>Fase / Siklus</label>
+        <select id="sel-fase"><option>Induksi</option><option>Konsolidasi</option><option>Pemeliharaan</option><option>Re-induksi</option><option>Siklus 1</option><option>Siklus 2</option><option>Siklus 3+</option><option>Kondisioning</option><option>Lainnya</option></select>
+      </div>
+    </div>
+    <div id="reg-detail"></div>
+  </div>
+</div>
+
+<!-- DOSING ENGINE -->
+<div id="page-dosing" class="page">
+  <div class="card">
+    <div class="card-title"><span class="ic">⚗️</span>Dosing Engine</div>
+    <div class="alert alert-amber">⚠️ Output ini adalah kalkulasi awal. Dosis akhir wajib diverifikasi terhadap protokol lokal, rekam medis, kondisi klinis, fungsi organ, dan dilakukan independent double-check oleh farmasi dan dokter.</div>
+    <div class="form-row">
+      <div class="fg"><label>Nama Obat</label>
+        <select id="dos-drug" onchange="loadDrugAlert()">
+          <option value="">— Pilih —</option>
+          <option>Vincristine</option><option>Vinblastine</option><option>Cyclophosphamide</option><option>Ifosfamide</option>
+          <option>Etoposide</option><option>Methotrexate</option><option>Cytarabine</option><option>Doxorubicin</option>
+          <option>Daunorubicin</option><option>Idarubicin</option><option>Carboplatin</option><option>Cisplatin</option>
+          <option>Mercaptopurine</option><option>Thioguanine</option><option>Asparaginase E. coli</option>
+          <option>PEG-Asparaginase</option><option>Bleomycin</option><option>Busulfan</option><option>Melphalan</option>
+        </select>
+      </div>
+      <div class="fg"><label>Dosis Protokol</label><input id="dos-dose" type="number" placeholder="Angka dosis" step="any"></div>
+      <div class="fg"><label>Satuan</label>
+        <select id="dos-unit">
+          <option value="mgm2">mg/m²</option><option value="mgkg">mg/kg</option>
+          <option value="ium2">IU/m²</option><option value="iukg">IU/kg</option>
+          <option value="flat">mg (flat dose)</option><option value="auc">mg (AUC — Carboplatin Calvert)</option>
+        </select>
+      </div>
+      <div class="fg"><label>BSA (m²)</label><input id="dos-bsa" type="number" placeholder="dari kalkulator BSA" step="0.001"></div>
+      <div class="fg"><label>BB (kg)</label><input id="dos-bb" type="number" placeholder="berat badan" step="0.1"></div>
+      <div class="fg"><label>GFR (ml/mnt) — untuk AUC</label><input id="dos-gfr" type="number" placeholder="Carboplatin Calvert" step="1"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Fungsi Ginjal</label><select id="dos-renal"><option>Normal</option><option>Ringan (GFR 60-89)</option><option>Sedang (GFR 30-59)</option><option>Berat (GFR &lt;30)</option></select></div>
+      <div class="fg"><label>Fungsi Hati</label><select id="dos-liver"><option>Normal</option><option>Gangguan Ringan</option><option>Gangguan Sedang-Berat</option></select></div>
+      <div class="fg"><label>Fase Terapi</label><select id="dos-phase"><option>Induksi</option><option>Konsolidasi</option><option>Pemeliharaan</option><option>Re-induksi</option><option>Kondisioning</option></select></div>
+    </div>
+    <div id="drug-alert-area"></div>
+    <button class="btn btn-p" onclick="hitungDosis()">🔢 Hitung Dosis Individual</button>
+    <div id="dos-result" style="display:none;margin-top:14px">
+      <div class="res-row">
+        <div class="res-box"><div class="rl">Dosis Individual</div><div class="rv" id="d-ind">—</div><div class="rd" id="d-unit">mg</div></div>
+        <div class="res-box"><div class="rl">Perhitungan Detail</div><div class="rv" id="d-detail" style="font-size:13px">—</div><div class="rd">kalkulasi</div></div>
+        <div class="res-box"><div class="rl">Dosis Dibulatkan</div><div class="rv" id="d-round">—</div><div class="rd">pembulatan klinis</div></div>
+      </div>
+      <div id="d-warning" style="margin-top:10px"></div>
+      <div class="alert alert-amber" style="margin-top:8px;font-size:11.5px">⚠️ Verifikasi dosis ini terhadap protokol lokal, batas maksimal, kondisi klinis pasien, fungsi organ, dan lakukan independent double-check sebelum dispensing.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PERSIAPAN OBAT -->
+<div id="page-prep" class="page">
+  <div class="alert alert-amber">⚠️ Data stabilitas dan kompatibilitas bersifat edukatif. Farmasi wajib memverifikasi dengan referensi resmi, label produk, dan protokol lokal sebelum dispensing.</div>
+  <div class="search-wrap"><input id="prep-search" type="text" placeholder="Cari obat kemoterapi..." oninput="filterPrep()"></div>
+  <div id="prep-cards" class="drug-grid"></div>
+</div>
+
+<!-- VINCRISTINE SAFETY -->
+<div id="page-vcr" class="page">
+  <div class="vcr-box">
+    <div class="vcr-title">🚨 VINCRISTINE — IV ONLY — NEVER INTRATHECAL 🚨</div>
+    <div class="vcr-sub">Pemberian intratekal Vincristine SELALU FATAL. Tidak ada terapi efektif untuk kesalahan ini. Tidak ada pengecualian.</div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="ic">📌</span>Aturan Keselamatan Vincristine (Wajib Diikuti)</div>
+    <div class="alert alert-red">⛔ <strong>Vincristine HANYA IV.</strong> Fatal bila diberikan intratekal. Tidak ada antidot. Tidak ada pengecualian.</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:12px">
+      <div class="card" style="border-left:5px solid var(--red);margin-bottom:0">
+        <h4 style="color:var(--red);margin-bottom:8px">🔴 Dispensing Safety</h4>
+        <ul style="font-size:12.5px;color:var(--text2);padding-left:16px;line-height:1.9">
+          <li>Siapkan dalam minibag IV (bukan syringe tunggal)</li>
+          <li>Label besar: <strong>"FOR IV USE ONLY — FATAL IF GIVEN INTRATHECALLY"</strong></li>
+          <li>Jangan simpan berdekatan dengan obat intratekal</li>
+          <li>Jangan dispensing bersamaan dengan Methotrexate intratekal di waktu yang sama</li>
+          <li>Gunakan warna label/kemasan yang berbeda dari obat intratekal</li>
+        </ul>
+      </div>
+      <div class="card" style="border-left:5px solid var(--amber2);margin-bottom:0">
+        <h4 style="color:var(--amber2);margin-bottom:8px">🟡 Verification Process</h4>
+        <ul style="font-size:12.5px;color:var(--text2);padding-left:16px;line-height:1.9">
+          <li>Independent double-check rute pemberian oleh 2 petugas berbeda</li>
+          <li>Konfirmasi verbal: "Ini Vincristine, diberikan secara IV"</li>
+          <li>Perawat verifikasi ulang label sebelum connecting ke line</li>
+          <li>Dokter konfirmasi order tidak mencantumkan "IT" atau "intratekal"</li>
+          <li>Dokumentasi double-check rute di rekam medis</li>
+        </ul>
+      </div>
+      <div class="card" style="border-left:5px solid var(--blue);margin-bottom:0">
+        <h4 style="color:var(--blue4);margin-bottom:8px">🔵 Pemberian Klinis</h4>
+        <ul style="font-size:12.5px;color:var(--text2);padding-left:16px;line-height:1.9">
+          <li>Rute: IV push perlahan melalui tubing infus mengalir (1–2 menit)</li>
+          <li>Atau minibag IV 10–20 ml NaCl 0.9% infus 1–5 menit</li>
+          <li>Dosis maks anak >10 tahun / BB >30 kg: verifikasi protokol (umumnya 2 mg)</li>
+          <li>Monitor: nyeri tungkai, neuropati, konstipasi</li>
+          <li>Jika ada keraguan rute → STOP dan verifikasi ulang</li>
+        </ul>
+      </div>
+      <div class="card" style="border-left:5px solid var(--green);margin-bottom:0">
+        <h4 style="color:var(--green);margin-bottom:8px">🟢 Safe Handling</h4>
+        <ul style="font-size:12.5px;color:var(--text2);padding-left:16px;line-height:1.9">
+          <li>PPE: sarung tangan ganda sitostatika, gaun pelindung</li>
+          <li>Siapkan di Biological Safety Cabinet (BSC)</li>
+          <li>Hindari tekanan berlebih saat preparasi (risiko aerosolisasi)</li>
+          <li>Jika tumpah: spill kit sitostatika, buang sebagai limbah sitotoksik</li>
+          <li>Cuci mata/kulit segera dengan air mengalir jika kontak</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="ic">📋</span>Worksheet Cek Vincristine (Sebelum Pemberian)</div>
+    <div id="vcr-checklist">
+      <div class="cl-item critical" id="vcr-c1"><input type="checkbox" id="vc1" onchange="clItem('vcr-c1','vc1')"><label for="vc1">Label obat terbaca jelas: "FOR IV USE ONLY — FATAL IF GIVEN INTRATHECALLY"</label></div>
+      <div class="cl-item critical" id="vcr-c2"><input type="checkbox" id="vc2" onchange="clItem('vcr-c2','vc2')"><label for="vc2">Rute pemberian terverifikasi: IV (bukan IT/intratekal)</label></div>
+      <div class="cl-item critical" id="vcr-c3"><input type="checkbox" id="vc3" onchange="clItem('vcr-c3','vc3')"><label for="vc3">Independent double-check rute sudah dilakukan oleh 2 petugas berbeda</label></div>
+      <div class="cl-item" id="vcr-c4"><input type="checkbox" id="vc4" onchange="clItem('vcr-c4','vc4')"><label for="vc4">Obat disiapkan sebagai minibag IV (bukan syringe tunggal tanpa label)</label></div>
+      <div class="cl-item" id="vcr-c5"><input type="checkbox" id="vc5" onchange="clItem('vcr-c5','vc5')"><label for="vc5">Tidak ada obat intratekal dipersiapkan/diberikan pada waktu bersamaan</label></div>
+      <div class="cl-item" id="vcr-c6"><input type="checkbox" id="vc6" onchange="clItem('vcr-c6','vc6')"><label for="vc6">Dosis sesuai protokol (verifikasi batas maksimal bila perlu)</label></div>
+      <div class="cl-item" id="vcr-c7"><input type="checkbox" id="vc7" onchange="clItem('vcr-c7','vc7')"><label for="vc7">Akses IV paten. Siap memberikan melalui tubing infus yang mengalir.</label></div>
+    </div>
+    <button class="btn btn-g" onclick="checkVCR()" style="margin-top:12px">✅ Verifikasi Vincristine Safety</button>
+    <div id="vcr-result" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- PANDUAN INFUS -->
+<div id="page-infus" class="page">
+  <div class="card">
+    <div class="card-title"><span class="ic">🩺</span>Panduan Infus Kemoterapi</div>
+    <div id="infus-cards" class="drug-grid"></div>
+  </div>
+</div>
+
+<!-- STABILITAS -->
+<div id="page-stabilitas" class="page">
+  <div class="alert alert-amber">⚠️ Jangan gunakan tabel ini sebagai satu-satunya sumber stabilitas. Selalu verifikasi dengan referensi farmasi resmi, label produk, dan kebijakan lokal.</div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'tc-stab')">🧪 Stabilitas</button>
+    <button class="tab-btn" onclick="switchTab(this,'tc-compat')">🔗 Kompatibilitas</button>
+  </div>
+  <div class="tc active" id="tc-stab">
+    <div class="card"><div class="card-title">Referensi Stabilitas Obat</div>
+    <div class="tbl-wrap"><table><thead><tr><th>Obat</th><th>Setelah Rekonstitusi</th><th>Setelah Pengenceran</th><th>Suhu</th><th>Lindungi Cahaya</th><th>Catatan Kritis</th></tr></thead><tbody id="stab-body"></tbody></table></div></div>
+  </div>
+  <div class="tc" id="tc-compat">
+    <div class="card"><div class="card-title">Kompatibilitas Pelarut</div>
+    <div class="tbl-wrap"><table><thead><tr><th>Obat</th><th>NaCl 0.9%</th><th>D5%</th><th>D10%</th><th>RL</th><th>Inkompatibilitas Utama</th></tr></thead><tbody id="compat-body"></tbody></table></div></div>
+  </div>
+</div>
+
+<!-- SAFETY CHECKLIST -->
+<div id="page-checklist" class="page">
+  <div class="alert alert-red">🔴 Checklist ini harus dilakukan oleh <strong>dua tenaga kesehatan berbeda (independent double-check)</strong>. Item bertanda ★ adalah KRITIS — jangan lanjutkan kemoterapi bila belum terverifikasi.</div>
+  <div class="card">
+    <div class="card-title"><span class="ic">✅</span>A. Identifikasi Pasien</div>
+    <div id="cl-a"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="ic">💊</span>B. Verifikasi Obat</div>
+    <div id="cl-b"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="ic">🩺</span>C. Persiapan Klinis</div>
+    <div id="cl-c"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="ic">📄</span>D. Dokumentasi</div>
+    <div id="cl-d"></div>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px" class="no-print">
+    <button class="btn btn-g" onclick="submitCL()">✅ Hitung Skor Checklist</button>
+    <button class="btn btn-o" onclick="resetCL()">🔄 Reset</button>
+  </div>
+  <div id="cl-result" style="margin-top:12px"></div>
+</div>
+
+<!-- EKSTRAVASASI -->
+<div id="page-ekstra" class="page">
+  <div class="vcr-box" style="background:var(--red2)">
+    <div class="vcr-title">⚠️ EKSTRAVASASI — KEGAWATDARURATAN ONKOLOGI</div>
+    <div class="vcr-sub">Hentikan infus SEGERA. Jangan cabut kanul/akses. Jangan flush. Hubungi dokter/farmasi/senior.</div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="ic">🚨</span>Langkah Umum Tata Laksana Ekstravasasi</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">
+      <div class="alert alert-red"><strong>1.</strong> STOP infus SEGERA</div>
+      <div class="alert alert-red"><strong>2.</strong> JANGAN cabut kanul/central access</div>
+      <div class="alert alert-red"><strong>3.</strong> JANGAN flush dengan cairan</div>
+      <div class="alert alert-amber"><strong>4.</strong> Aspirasi sisa obat melalui kanul (bila memungkinkan)</div>
+      <div class="alert alert-amber"><strong>5.</strong> Tandai area ekstravasasi dengan spidol</div>
+      <div class="alert alert-amber"><strong>6.</strong> Foto dan dokumentasi area</div>
+      <div class="alert alert-blue"><strong>7.</strong> Identifikasi obat spesifik</div>
+      <div class="alert alert-blue"><strong>8.</strong> Berikan kompres/antidot sesuai jenis obat</div>
+      <div class="alert alert-green"><strong>9.</strong> Eskalasi ke senior onkologi/farmasi/bedah plastik bila diperlukan</div>
+      <div class="alert alert-green"><strong>10.</strong> Dokumentasi lengkap di rekam medis. Isi adverse event form.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="ic">💊</span>Manajemen Spesifik Per Obat</div>
+    <div id="extra-cards" class="drug-grid"></div>
+    <div class="alert alert-amber" style="margin-top:12px">⚠️ Manajemen ekstravasasi harus mengikuti protokol lokal dan ketersediaan antidot di institusi Anda.</div>
+  </div>
+</div>
+
+<!-- MONITORING -->
+<div id="page-monitoring" class="page">
+  <div class="card">
+    <div class="card-title"><span class="ic">📊</span>Monitoring Toolkit</div>
+    <div id="monitor-cards" class="drug-grid"></div>
+  </div>
+</div>
+
+<!-- QUICK REFERENCE -->
+<div id="page-quickref" class="page">
+  <div class="card">
+    <div class="card-title"><span class="ic">⚡</span>Quick Reference — Satu Layar</div>
+    <div class="search-wrap"><input id="qr-search" type="text" placeholder="Cari obat..." oninput="filterQR()"></div>
+    <div class="tbl-wrap">
+      <table><thead><tr><th>Obat</th><th>Dosis Lazim</th><th>Pelarut</th><th>Konsentrasi</th><th>Waktu Infus</th><th>Stabilitas (setelah encerkan)</th><th>Monitor Utama</th><th>Flag</th></tr></thead>
+      <tbody id="qr-body"></tbody></table>
+    </div>
+    <div class="alert alert-amber" style="margin-top:10px;font-size:11px">⚠️ Tabel ini bersifat edukatif. Verifikasi dengan protokol lokal dan referensi farmasi resmi.</div>
+  </div>
+</div>
+
+<!-- EDUKASI -->
+<div id="page-edukasi" class="page">
+  <div id="edu-grid-wrap">
+    <div class="card"><div class="card-title"><span class="ic">📚</span>Modul Edukasi Interaktif</div>
+    <div class="edu-grid" id="edu-grid"></div></div>
+  </div>
+  <div id="edu-content" style="display:none">
+    <div class="card">
+      <div class="card-title"><span class="ic">📖</span><span id="edu-title-text"></span></div>
+      <div id="edu-body" style="line-height:1.9;font-size:13px;color:var(--text2)"></div>
+      <button class="btn btn-o" style="margin-top:14px" onclick="closeEdu()">← Kembali ke Daftar Modul</button>
+    </div>
+  </div>
+</div>
+
+<!-- KUIS -->
+<div id="page-kuis" class="page">
+  <div class="card">
+    <div class="card-title"><span class="ic">🎯</span>Kuis Kasus Klinis Kemoterapi Anak</div>
+    <div id="quiz-start">
+      <div class="alert alert-blue">Terdapat <strong>10 kasus simulasi klinis</strong>. Uji pemahaman tentang keselamatan kemoterapi anak — keselamatan rute, ekstravasasi, monitoring toksisitas, dan checklist.</div>
+      <button class="btn btn-p" onclick="startQuiz()" style="margin-top:12px">🚀 Mulai Kuis</button>
+    </div>
+    <div id="quiz-area" style="display:none">
+      <div class="quiz-prog"><div class="quiz-bar" id="qbar"></div></div>
+      <div id="q-num" style="font-size:11px;color:var(--gray3);margin-bottom:7px"></div>
+      <div id="q-case" style="background:var(--blue3);padding:12px;border-radius:8px;margin-bottom:12px;font-size:12.5px;line-height:1.7"></div>
+      <div id="q-question" style="font-size:13.5px;font-weight:700;margin-bottom:11px;color:var(--text)"></div>
+      <div id="q-options"></div>
+      <div id="q-feedback" style="display:none;margin-top:11px"></div>
+      <button id="q-next" class="btn btn-p" style="display:none;margin-top:11px" onclick="nextQ()">Soal Berikutnya →</button>
+      <div id="q-final" style="display:none;text-align:center;padding:20px">
+        <div style="font-size:38px;margin-bottom:10px">🏆</div>
+        <div style="font-size:20px;font-weight:700;color:var(--blue4)" id="q-final-score"></div>
+        <div style="font-size:12.5px;color:var(--gray3);margin:7px 0" id="q-final-msg"></div>
+        <button class="btn btn-p" onclick="startQuiz()" style="margin-top:11px">🔄 Ulang Kuis</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WORKSHEET -->
+<div id="page-worksheet" class="page">
+  <div class="card no-print">
+    <div class="card-title"><span class="ic">🖨️</span>Generate Worksheet Kemoterapi</div>
+    <div class="alert alert-amber">🔒 Gunakan inisial/kode internal. Jangan masukkan nama lengkap atau No. Rekam Medis asli.</div>
+    <div class="form-row">
+      <div class="fg"><label>Inisial / Kode Pasien</label><input id="ws-init" type="text" placeholder="contoh: A.B."></div>
+      <div class="fg"><label>Kode Internal</label><input id="ws-code" type="text" placeholder="Bukan No. RM asli"></div>
+      <div class="fg"><label>Tanggal</label><input id="ws-date" type="date"></div>
+      <div class="fg"><label>Regimen</label><input id="ws-reg" type="text" placeholder="contoh: ALL BFM Induksi"></div>
+      <div class="fg"><label>BSA (m²)</label><input id="ws-bsa" type="number" step="0.001"></div>
+      <div class="fg"><label>BB (kg)</label><input id="ws-bb" type="number" step="0.1"></div>
+    </div>
+    <div class="fg" style="margin-bottom:12px">
+      <label>Daftar Obat (format: NamaObat | Dosis | Volume/Pelarut | Waktu Infus — satu per baris)</label>
+      <textarea id="ws-drugs" rows="5" placeholder="Vincristine | 1.27 mg | 10 ml NaCl 0.9% | IV Push 1-2 menit&#10;Etoposide | 110 mg | 275 ml NaCl 0.9% | 120 menit&#10;Methotrexate | 5000 mg | 1000 ml NaCl 0.9% | 24 jam (HD-MTX)"></textarea>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-p" onclick="generateWS()">📄 Generate Worksheet</button>
+      <button class="btn btn-g" onclick="window.print()">🖨️ Cetak / PDF</button>
+    </div>
+  </div>
+  <div id="ws-output" style="margin-top:14px"></div>
+</div>
+
+<!-- STANDARDS & SAFETY -->
+<div id="page-standards" class="page">
+  <div class="card">
+    <div class="card-title"><span class="ic">📌</span>Standards & Safety Notes</div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'tc-cs')">Core Safety</button>
+      <button class="tab-btn" onclick="switchTab(this,'tc-vcrs')">Vincristine</button>
+      <button class="tab-btn" onclick="switchTab(this,'tc-extrs')">Ekstravasasi</button>
+      <button class="tab-btn" onclick="switchTab(this,'tc-hdmtx')">HD-MTX</button>
+      <button class="tab-btn" onclick="switchTab(this,'tc-hdlg')">Hazardous Drug</button>
+      <button class="tab-btn" onclick="switchTab(this,'tc-priv')">Privasi</button>
+      <button class="tab-btn" onclick="switchTab(this,'tc-val')">Validasi Tool</button>
+    </div>
+    <div class="tc active" id="tc-cs">
+      <div class="std-section">
+        <h3>1. Core Chemotherapy Safety</h3>
+        <ul>
+          <li>Chemotherapy adalah obat high-alert yang memerlukan sistem keselamatan berlapis.</li>
+          <li>Independent double-check wajib untuk semua obat kemoterapi sebelum dispensing dan pemberian.</li>
+          <li>Peresepan/order harus mencantumkan: nama obat lengkap, dosis, satuan, rute, pelarut, volume, waktu infus, tanggal, fase terapi, siklus, dan nama/tanda tangan dokter yang berwenang.</li>
+          <li>Farmasi klinik melakukan verifikasi order sebelum dispensing.</li>
+          <li>Perawat melakukan final check sebelum connecting ke pasien.</li>
+          <li>Pasien/orang tua berhak mendapat penjelasan dan informed consent sebelum kemoterapi.</li>
+          <li>Adverse event terkait kemoterapi wajib dilaporkan melalui sistem pelaporan insiden institusi.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tc" id="tc-vcrs">
+      <div class="std-section">
+        <h3>2. Vincristine Safety</h3>
+        <ul>
+          <li>Vincristine intratekal SELALU FATAL. Tidak ada terapi yang efektif.</li>
+          <li>WHO, ISMP, dan regulasi internasional mewajibkan vincristine dispensed dalam minibag IV, bukan syringe.</li>
+          <li>Label wajib: "FOR IV USE ONLY — FATAL IF GIVEN INTRATHECALLY".</li>
+          <li>Jangan menyimpan atau menyiapkan vincristine berdekatan dengan obat intratekal (MTX IT, cytarabine IT).</li>
+          <li>Independent double-check rute pemberian oleh minimal 2 petugas berbeda.</li>
+          <li>Jika ada keraguan apapun tentang rute → STOP dan eskalasi ke supervisor.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tc" id="tc-extrs">
+      <div class="std-section">
+        <h3>3. Extravasation Safety</h3>
+        <ul>
+          <li>Obat vesicant (vincristine, vinca alkaloid, antrasiklin) WAJIB diberikan melalui akses vena sentral yang berfungsi baik.</li>
+          <li>Setiap institusi wajib memiliki protokol ekstravasasi tertulis dan antidot yang tersedia.</li>
+          <li>Extravasation kit harus ready di semua unit onkologi dan dicheck secara periodik.</li>
+          <li>Petugas wajib mengetahui lokasi kit dan langkah penanganan ekstravasasi.</li>
+          <li>Dokumentasi ekstravasasi harus segera dilakukan dan dilaporkan sebagai adverse event.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tc" id="tc-hdmtx">
+      <div class="std-section">
+        <h3>4. HD-MTX Safety</h3>
+        <ul>
+          <li>Hidrasi intensif (≥3 L/m²/hari) WAJIB dimulai sebelum infus MTX.</li>
+          <li>Alkalisasi urin: pH urin ≥7 harus dicapai sebelum memulai MTX.</li>
+          <li>Leucovorin rescue dimulai 24 jam setelah MULAI infus MTX (bukan selesai infus).</li>
+          <li>Level MTX dipantau pada 24, 48, 72 jam post-infus.</li>
+          <li>Hindari NSAID, penisilin, proton pump inhibitor — menghambat ekskresi MTX.</li>
+          <li>Fungsi ginjal wajib diperiksa sebelum HD-MTX. GFR rendah merupakan kontraindikasi relatif.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tc" id="tc-hdlg">
+      <div class="std-section">
+        <h3>5. Hazardous Drug Handling</h3>
+        <ul>
+          <li>Sitostatika adalah hazardous drug yang bersifat karsinogenik, mutagenik, dan/atau teratogenik.</li>
+          <li>PPE wajib: sarung tangan ganda sitostatika (bukan sarung tangan biasa), gaun pelindung tahan cairan, kacamata/face shield, masker N95 untuk serbuk.</li>
+          <li>Preparasi wajib dalam Biological Safety Cabinet (BSC) kelas II atau Isolator.</li>
+          <li>Gunakan Closed System Drug Transfer Device (CSTD) untuk mengurangi paparan.</li>
+          <li>Spill kit sitostatika wajib tersedia di area preparasi dan pemberian.</li>
+          <li>Limbah sitostatika dibuang sebagai limbah B3 sesuai regulasi yang berlaku.</li>
+          <li>Petugas hamil, menyusui, atau imunokompromais tidak boleh menangani sitostatika.</li>
+          <li>Paparan sitostatika wajib dilaporkan dan dipantau secara berkala (biomonitoring).</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tc" id="tc-priv">
+      <div class="std-section">
+        <h3>6. Privasi & De-identifikasi</h3>
+        <ul>
+          <li>Tool ini adalah versi publik/demo. Jangan masukkan identitas pasien yang dapat mengidentifikasi individu.</li>
+          <li>Gunakan inisial, kode pasien, atau identifier fiktif.</li>
+          <li>Tidak ada data yang disimpan atau dikirim oleh tool ini (self-contained HTML).</li>
+          <li>Untuk penggunaan di lingkungan klinis nyata, pastikan sesuai dengan kebijakan keamanan data institusi.</li>
+          <li>Jangan mengambil screenshot atau print yang memuat identitas pasien asli dari tool ini.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tc" id="tc-val">
+      <div class="std-section">
+        <h3>7. Validation Checklist Tool Ini</h3>
+        <div class="val-item"><span class="val-ok">✅</span> Tidak ada nama pribadi atau identitas pasien</div>
+        <div class="val-item"><span class="val-ok">✅</span> Tidak ada nama institusi atau afiliasi organisasi</div>
+        <div class="val-item"><span class="val-ok">✅</span> Tidak ada dependensi CDN atau internet eksternal</div>
+        <div class="val-item"><span class="val-ok">✅</span> Vincristine minibag IV-only warning tersedia dan menonjol</div>
+        <div class="val-item"><span class="val-ok">✅</span> Etoposide warm compress tercantum di modul ekstravasasi</div>
+        <div class="val-item"><span class="val-ok">✅</span> Semua output dosis disertai verification caveat</div>
+        <div class="val-item"><span class="val-ok">✅</span> Worksheet menggunakan inisial/kode internal, bukan No. RM asli</div>
+        <div class="val-item"><span class="val-ok">✅</span> Mode cetak (print) tersedia</div>
+        <div class="val-item"><span class="val-ok">✅</span> Layout mobile-responsive</div>
+        <div class="val-item"><span class="val-ok">✅</span> Tidak ada duplikasi HTML ID</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUALITY DASHBOARD -->
+<div id="page-quality" class="page">
+  <div class="card">
+    <div class="card-title"><span class="ic">📈</span>Quality & Audit Dashboard</div>
+    <div class="qual-grid" id="qual-grid"></div>
+    <div class="sec-hdr">Indikator Keselamatan</div>
+    <div id="qual-indicators"></div>
+    <div class="sec-hdr">Riwayat Checklist Sesi Ini</div>
+    <div id="qual-history"></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ==================== DATA ====================
+const DRUGS = {
+  "Vincristine":{cat:"Vinka Alkaloid",ha:true,vs:"vesicant",
+    recon:{s:"NaCl 0.9%",v:"1-2 ml per mg",c:"1 mg/ml"},
+    dil:{s:"NaCl 0.9%",v:"10-20 ml (minibag IV)",c:"0.01–0.1 mg/ml"},
+    stab:{rc:"72 jam RT / 14 hari 4°C",dil:"24 jam RT",t:"4°C",l:"Ya",n:"HANYA IV — FATAL BILA INTRATEKAL"},
+    compat:{nacl:"✅",d5:"⚠️",d10:"❌",rl:"⚠️",ic:"Heparin, Furosemide"},
+    infus:{r:"IV Push 1–2 mnt via tubing / Minibag IV 10-20 ml",t:"1–5 menit",line:"IV Sentral atau Perifer paten",mon:"Ekstravasasi, nyeri tungkai, neuropati",rf:["Nyeri lokal","Bengkak di area infus","Tanda ekstravasasi"]},
+    extra:{cl:"VESICANT",ant:"Hyaluronidase 150 IU/ml lokal",comp:"Kompres HANGAT",note:"Nekrosis jaringan berat dapat terjadi"},
+    mon:{pre:"Neuropati baseline, CBC, LFT, akses IV paten",dur:"Ekstravasasi setiap 5 menit, nyeri",post:"Neuropati perifer, konstipasi, nyeri tungkai",lab:"CBC, LFT",tox:"Neuropati, konstipasi, SIADH, alopesia",stop:"Ekstravasasi, reaksi berat",senior:"Tanda neurotoksisitas progresif"},
+    alerts:["⛔ HANYA IV — FATAL BILA INTRATEKAL","⚠️ Dosis maks: verifikasi protokol (umumnya 2 mg untuk anak)","⚠️ Hati-hati gangguan hati — dose modification diperlukan"],
+    dose:"1.5 mg/m² (verifikasi protokol)",unit:"mg/m²"},
+
+  "Vinblastine":{cat:"Vinka Alkaloid",ha:true,vs:"vesicant",
+    recon:{s:"NaCl 0.9%",v:"10 ml per 10 mg",c:"1 mg/ml"},
+    dil:{s:"NaCl 0.9%",v:"10-50 ml",c:"sesuai"},
+    stab:{rc:"14 hari 4°C",dil:"24 jam RT",t:"4°C",l:"Ya",n:"HANYA IV — FATAL BILA INTRATEKAL (sama dengan Vincristine)"},
+    compat:{nacl:"✅",d5:"⚠️",d10:"❌",rl:"❌",ic:"Heparin, Furosemide"},
+    infus:{r:"IV Push pelan atau 15–30 mnt",t:"15–30 menit",line:"IV Sentral atau Perifer paten",mon:"Ekstravasasi, neuropati",rf:["Nyeri lokal","Tanda ekstravasasi"]},
+    extra:{cl:"VESICANT",ant:"Hyaluronidase 150 IU/ml lokal",comp:"Kompres HANGAT",note:"Sama dengan vincristine"},
+    mon:{pre:"CBC, neuropati baseline",dur:"Ekstravasasi",post:"Neuropati, mielosupresi",lab:"CBC",tox:"Mielosupresi, neuropati, mukositis",stop:"Ekstravasasi",senior:"Neuropati progresif"},
+    alerts:["⛔ HANYA IV — FATAL BILA INTRATEKAL","⚠️ Vesicant berat"],
+    dose:"3-6 mg/m²",unit:"mg/m²"},
+
+  "Cyclophosphamide":{cat:"Alkylating Agent",ha:true,vs:"neutral",
+    recon:{s:"Air untuk injeksi / NaCl 0.9%",v:"5 ml per 100 mg",c:"20 mg/ml"},
+    dil:{s:"NaCl 0.9% atau D5%",v:"100-500 ml",c:"<20 mg/ml"},
+    stab:{rc:"24 jam RT / 6 hari 4°C",dil:"24 jam RT",t:"15-30°C",l:"Tidak perlu",n:"Monitor urin — pertimbangkan Mesna"},
+    compat:{nacl:"✅",d5:"✅",d10:"✅",rl:"✅",ic:"Amfoterisin B"},
+    infus:{r:"IV Sentral/Perifer",t:"30-60 mnt (hingga 4 jam dosis tinggi)",line:"IV Sentral dianjurkan dosis tinggi",mon:"Output urin, BP, hematuria",rf:["Hematuria","Penurunan output urin","Hipotensi"]},
+    extra:{cl:"NEUTRAL",ant:"Tidak ada antidot spesifik",comp:"Kompres dingin",note:"Jarang menyebabkan ekstravasasi berat"},
+    mon:{pre:"Kreatinin, elektrolit, output urin, BB, UA",dur:"Output urin tiap jam, BP",post:"Hematuria (sistitis hemoragik), mielosupresi",lab:"CBC, kreatinin, urinalisis",tox:"Sistitis hemoragik, mielosupresi, nausea",stop:"Hematuria, oliguria",senior:"Sistitis hemoragik atau AKI"},
+    alerts:["⚠️ Mesna profilaksis wajib dipertimbangkan","⚠️ Hidrasi intensif sebelum dan sesudah","⚠️ Target output urin >3 ml/kg/jam"],
+    dose:"200–1800 mg/m²",unit:"mg/m²"},
+
+  "Ifosfamide":{cat:"Alkylating Agent",ha:true,vs:"neutral",
+    recon:{s:"Air untuk injeksi",v:"25 ml per 1 g",c:"40 mg/ml"},
+    dil:{s:"NaCl 0.9% atau D5%",v:"500-1000 ml",c:"<60 mg/ml"},
+    stab:{rc:"24 jam RT / 3 minggu 4°C",dil:"1 minggu 4°C",t:"4-25°C",l:"Tidak perlu",n:"Mesna WAJIB"},
+    compat:{nacl:"✅",d5:"✅",d10:"⚠️",rl:"✅",ic:"Perhatikan kompatibilitas Mesna"},
+    infus:{r:"IV Sentral",t:"1-24 jam sesuai protokol",line:"IV Sentral wajib dosis tinggi",mon:"Output urin/jam, status neurologi, hematuria",rf:["Hematuria","Ensefalopati","Agitasi","Kebingungan"]},
+    extra:{cl:"NEUTRAL",ant:"Tidak ada",comp:"Kompres dingin",note:"Minimal risiko ekstravasasi"},
+    mon:{pre:"Kreatinin, GFR, elektrolit, CBC, status neurologi, UA",dur:"Output urin/jam, hematuria, status mental",post:"Ensefalopati ifosfamide, nefrotoksisitas, sistitis hemoragik",lab:"CBC, kreatinin, elektrolit, UA",tox:"Ensefalopati, sistitis hemoragik, nefrotoksisitas Fanconi",stop:"Ensefalopati, hematuria berat",senior:"Ensefalopati atau AKI"},
+    alerts:["⚠️ Mesna WAJIB — 60% dari dosis ifosfamide","⚠️ Risiko ensefalopati — monitor status mental","⚠️ Hidrasi intensif, target urin >3 ml/kg/jam","⚠️ Monitor elektrolit — risiko Fanconi syndrome"],
+    dose:"1200–3000 mg/m²",unit:"mg/m²"},
+
+  "Etoposide":{cat:"Topoisomerase II Inhibitor",ha:true,vs:"irritant",
+    recon:{s:"NaCl 0.9% atau D5%",v:"Tersedia dalam larutan 20 mg/ml",c:"20 mg/ml"},
+    dil:{s:"NaCl 0.9% (JANGAN D5% konsentrasi tinggi)",v:"≥250 ml",c:"≤0.4 mg/ml (risiko presipitasi bila lebih pekat)"},
+    stab:{rc:"24 jam RT",dil:"48 jam RT (≤0.2 mg/ml) / 24 jam (0.4 mg/ml)",t:"15–25°C",l:"Ya",n:"Periksa presipitasi sebelum pemberian. Konsentrasi >0.4 mg/ml berisiko presipitasi."},
+    compat:{nacl:"✅",d5:"⚠️ (konsentrasi rendah saja)",d10:"❌",rl:"❌",ic:"Larutan basa, NaHCO3, D10%, Furosemide"},
+    infus:{r:"IV Sentral dianjurkan",t:"60–120 menit (MINIMAL 60 menit)",line:"IV Sentral",mon:"BP tiap 15 mnt, reaksi anafilaksis",rf:["Hipotensi","Sesak nafas","Bronkospasme","Urtikaria","Presipitasi pada tubing"]},
+    extra:{cl:"IRRITANT",ant:"Tidak ada antidot spesifik",comp:"Kompres HANGAT",note:"Monitor inflamasi lokal"},
+    mon:{pre:"BP, nadi, CBC, LFT, akses IV",dur:"BP tiap 15 mnt, tanda anafilaksis, presipitasi",post:"Mielosupresi (nadir hari 10-14), alopesia",lab:"CBC, LFT",tox:"Mielosupresi, hipotensi, hipersensitivitas, alopesia",stop:"Hipotensi, anafilaksis",senior:"Hipotensi berat atau anafilaksis"},
+    alerts:["⚠️ Infus MINIMAL 60 menit — hipotensi bila terlalu cepat","⚠️ Konsentrasi MAKS 0.4 mg/ml — presipitasi bila lebih pekat","⚠️ Monitor BP selama infus","⚠️ Siapkan epinefrin — risiko anafilaksis"],
+    dose:"75–200 mg/m²",unit:"mg/m²"},
+
+  "Methotrexate":{cat:"Antimetabolit (Antifolat)",ha:true,vs:"neutral",
+    recon:{s:"Air untuk injeksi",v:"Sesuai konsentrasi target",c:"1–25 mg/ml"},
+    dil:{s:"NaCl 0.9% atau D5%",v:"100–1000 ml (HD: 1L)",c:"Sesuai dosis"},
+    stab:{rc:"24 jam RT / 3 bulan 4°C",dil:"24 jam RT",t:"15-25°C",l:"Ya (lindungi dari cahaya langsung)",n:"HD-MTX: monitoring level wajib. Leucovorin rescue dimulai 24 jam post-infus."},
+    compat:{nacl:"✅",d5:"✅",d10:"⚠️",rl:"⚠️",ic:"Larutan kalsium, Amoksisilin, Oksasilin"},
+    infus:{r:"IT (dosis rendah) / IV Sentral (HD-MTX wajib sentral)",t:"24-36 jam (HD) / 4-6 jam (intermediat) / push (dosis rendah)",line:"IV Sentral WAJIB untuk dosis tinggi",mon:"Level MTX, kreatinin, pH urin, input-output",rf:["pH urin <7","Oliguria","Kreatinin naik","Level MTX di atas target"]},
+    extra:{cl:"NEUTRAL",ant:"Tidak ada antidot ekstravasasi spesifik",comp:"Kompres dingin",note:"Reaksi lokal minimal"},
+    mon:{pre:"Kreatinin, GFR, LFT, pH urin target ≥7, hidrasi, bicarbonate",dur:"Output urin, pH urin, BP, level MTX mulai 24 jam",post:"Level MTX (24, 48, 72 jam), kreatinin, mukositis, Leucovorin rescue",lab:"Level MTX, kreatinin, GFR, urinalisis, LFT",tox:"Nefrotoksisitas, mukositis berat, supresi sumsum tulang, neurotoksisitas",stop:"GFR turun signifikan, level MTX jauh di atas target",senior:"Level MTX tinggi persisten atau AKI"},
+    alerts:["🚨 HD-MTX: Hidrasi intensif + Alkalisasi urin pH≥7 WAJIB sebelum infus","⚠️ Leucovorin rescue dimulai 24 jam setelah MULAI infus MTX","⚠️ Monitor level MTX 24, 48, 72 jam","⚠️ Hindari NSAID, Penisilin, Proton Pump Inhibitor"],
+    dose:"12-33.6 mg/m² (IT) / 1000–5000 mg/m² (HD)",unit:"mg/m²"},
+
+  "Cytarabine":{cat:"Antimetabolit (Pirimidin)",ha:false,vs:"neutral",
+    recon:{s:"Air untuk injeksi atau NaCl 0.9%",v:"5-20 ml",c:"20 mg/ml atau 100 mg/ml"},
+    dil:{s:"NaCl 0.9% atau D5%",v:"100-500 ml",c:"0.5–5 mg/ml"},
+    stab:{rc:"48 jam RT / 7 hari 4°C",dil:"8 hari RT",t:"15-30°C",l:"Tidak perlu",n:"HD-AraC: monitor serebelar"},
+    compat:{nacl:"✅",d5:"✅",d10:"✅",rl:"✅",ic:"Heparin (dosis tinggi), Methylprednisolon"},
+    infus:{r:"IV Sentral atau Perifer / IT",t:"1-3 jam (standar) / 2-3 jam (HD-AraC)",line:"IV Sentral dianjurkan untuk HD",mon:"Status neurologis (HD-AraC), konjungtivitis, BP",rf:["Tanda neurotoksisitas serebelar","Ataksia","Disartria"]},
+    extra:{cl:"NEUTRAL",ant:"Tidak ada",comp:"Kompres dingin",note:"Reaksi lokal minimal"},
+    mon:{pre:"CBC, LFT, kreatinin, status neurologis (HD)",dur:"Tanda neurotoksisitas (HD)",post:"Mielosupresi, konjungtivitis (HD), neurotoksisitas serebelar",lab:"CBC, LFT, kreatinin",tox:"Mielosupresi, konjungtivitis (HD), neurotoksisitas",stop:"Tanda neurotoksisitas serebelar (HD-AraC)",senior:"Neurotoksisitas serebelar"},
+    alerts:["⚠️ HD-AraC: Tetes mata steroid profilaksis WAJIB selama terapi","⚠️ HD-AraC: Periksa fungsi serebelar sebelum setiap dosis","⚠️ Hentikan bila ada ataksia/disartria"],
+    dose:"75-3000 mg/m²",unit:"mg/m²"},
+
+  "Doxorubicin":{cat:"Antrasiklin",ha:true,vs:"vesicant",
+    recon:{s:"NaCl 0.9%",v:"5 ml per 10 mg",c:"2 mg/ml"},
+    dil:{s:"NaCl 0.9% atau D5%",v:"50-250 ml",c:"0.2-2 mg/ml"},
+    stab:{rc:"7 hari 4°C / 48 jam RT",dil:"24 jam RT",t:"4°C",l:"Ya — ketat",n:"Dosis kumulatif maks 300-450 mg/m². ECHO periodik wajib."},
+    compat:{nacl:"✅",d5:"✅",d10:"⚠️",rl:"⚠️",ic:"Heparin, Furosemide, Deksametason, pH basa"},
+    infus:{r:"IV Sentral WAJIB",t:"3-15 mnt (bolus/push) atau 1-6 jam",line:"IV Sentral WAJIB — vesicant berat",mon:"Tanda ekstravasasi, urin merah (normal), EKG",rf:["Nyeri","Bengkak lokal","Ekstravasasi","Aritmia"]},
+    extra:{cl:"VESICANT BERAT",ant:"Dexrazoxane IV dalam 6 jam pertama; DMSO topikal sesuai protokol",comp:"Kompres DINGIN",note:"Nekrosis berat, konsul bedah plastik bila perlu"},
+    mon:{pre:"ECHO (EF>50%), EKG, CBC, LFT, dosis kumulatif",dur:"Ekstravasasi setiap saat, urin merah (normal), tanda kardiotoksisitas",post:"Kardiotoksisitas, mielosupresi (nadir 10-14), mukositis, alopesia",lab:"CBC, LFT, dosis kumulatif, ECHO periodik",tox:"Kardiotoksisitas (kumulatif), mielosupresi, mukositis, ekstravasasi",stop:"Ekstravasasi, tanda kardiotoksisitas akut",senior:"Ekstravasasi, aritmia, EF turun"},
+    alerts:["🚨 VESICANT BERAT — IV Sentral paten WAJIB","⚠️ ECHO sebelum memulai dan setiap 100-150 mg/m² kumulatif","⚠️ Dosis kumulatif MAKS: 300-450 mg/m²","⚠️ Dexrazoxane siapkan untuk ekstravasasi — berikan dalam 6 jam"],
+    dose:"25-75 mg/m²",unit:"mg/m²"},
+
+  "Daunorubicin":{cat:"Antrasiklin",ha:true,vs:"vesicant",
+    recon:{s:"Air untuk injeksi",v:"4 ml per 20 mg",c:"5 mg/ml"},
+    dil:{s:"NaCl 0.9%",v:"50-100 ml",c:"1-5 mg/ml"},
+    stab:{rc:"24 jam RT / 48 jam 4°C",dil:"24 jam RT",t:"4°C",l:"Ya",n:"Pantau dosis kumulatif"},
+    compat:{nacl:"✅",d5:"✅",d10:"❌",rl:"❌",ic:"Heparin, Deksametason, Furosemide"},
+    infus:{r:"IV Sentral WAJIB",t:"30-45 menit atau IV Push pelan",line:"IV Sentral",mon:"EKG, ekstravasasi, fungsi jantung",rf:["Ekstravasasi","Aritmia"]},
+    extra:{cl:"VESICANT",ant:"Dexrazoxane dalam 6 jam, DMSO topikal",comp:"Kompres DINGIN",note:"Pantau nekrosis"},
+    mon:{pre:"ECHO, EKG, CBC, LFT",dur:"Ekstravasasi, urin merah (normal)",post:"Kardiotoksisitas, mielosupresi",lab:"CBC, LFT, dosis kumulatif",tox:"Kardiotoksisitas, mielosupresi",stop:"Ekstravasasi",senior:"Ekstravasasi atau aritmia"},
+    alerts:["🚨 VESICANT — IV Sentral wajib","⚠️ Monitor dosis kumulatif (maks 300-500 mg/m²)"],
+    dose:"25-60 mg/m²",unit:"mg/m²"},
+
+  "Idarubicin":{cat:"Antrasiklin",ha:true,vs:"vesicant",
+    recon:{s:"NaCl 0.9%",v:"5-10 ml",c:"1 mg/ml"},
+    dil:{s:"NaCl 0.9%",v:"50-100 ml",c:"0.1-1 mg/ml"},
+    stab:{rc:"72 jam RT",dil:"48 jam RT",t:"4-25°C",l:"Ya",n:"Lebih lipofilik dari doxorubicin"},
+    compat:{nacl:"✅",d5:"✅",d10:"❌",rl:"❌",ic:"Heparin, pH basa"},
+    infus:{r:"IV Sentral WAJIB",t:"10-15 mnt push / 15-30 mnt infus",line:"IV Sentral",mon:"Ekstravasasi, EKG",rf:["Ekstravasasi","Aritmia"]},
+    extra:{cl:"VESICANT",ant:"Dexrazoxane",comp:"Kompres DINGIN",note:"Nekrosis"},
+    mon:{pre:"ECHO, CBC, LFT",dur:"Ekstravasasi",post:"Kardiotoksisitas, mielosupresi",lab:"CBC, LFT, dosis kumulatif",tox:"Kardiotoksisitas, mielosupresi",stop:"Ekstravasasi",senior:"Ekstravasasi atau aritmia"},
+    alerts:["🚨 VESICANT — IV Sentral wajib","⚠️ Dosis kumulatif maks ~150 mg/m²"],
+    dose:"10-12 mg/m²",unit:"mg/m²"},
+
+  "Carboplatin":{cat:"Platinum Compound",ha:true,vs:"neutral",
+    recon:{s:"Air untuk injeksi atau D5%",v:"5 ml per 50 mg",c:"10 mg/ml"},
+    dil:{s:"D5% (DIANJURKAN) atau NaCl 0.9%",v:"250-500 ml",c:"0.5-2 mg/ml"},
+    stab:{rc:"8 jam RT",dil:"8 jam RT",t:"15-25°C (jangan beku)",l:"Ya",n:"JANGAN gunakan jarum/set aluminum. NaCl mempercepat degradasi — gunakan D5%."},
+    compat:{nacl:"⚠️ (mempercepat degradasi)",d5:"✅ (pelarut pilihan)",d10:"⚠️",rl:"❌",ic:"Aluminium (degradasi), Fluorourasil"},
+    infus:{r:"IV Sentral atau Perifer",t:"15-60 menit",line:"IV Sentral dianjurkan",mon:"Reaksi hipersensitivitas, fungsi ginjal, trombosit",rf:["Anafilaksis","Hipotensi mendadak","Urtikaria"]},
+    extra:{cl:"NEUTRAL/IRRITANT RINGAN",ant:"Sodium thiosulfate lokal (kontroversial)",comp:"Kompres dingin",note:"Reaksi lokal jarang"},
+    mon:{pre:"Kreatinin, GFR, CBC, Mg, platelet, riwayat alergi",dur:"Reaksi hipersensitivitas (risiko naik siklus 6+)",post:"Trombositopenia (nadir hari 21), neuropati, nefrotoksisitas",lab:"CBC, kreatinin, elektrolit (Mg, K, Ca)",tox:"Trombositopenia, nefrotoksisitas, neuropati, ototoksisitas",stop:"Anafilaksis",senior:"Anafilaksis atau nefrotoksisitas berat"},
+    alerts:["⚠️ Gunakan D5% — NaCl mempercepat degradasi","⚠️ JANGAN gunakan jarum/set aluminum","⚠️ Risiko anafilaksis meningkat siklus 6+","⚠️ Dosis AUC: Calvert = AUC × (GFR + 25)"],
+    dose:"AUC 4-6 (Calvert) atau 400-560 mg/m²",unit:"mg/m²"},
+
+  "Cisplatin":{cat:"Platinum Compound",ha:true,vs:"irritant",
+    recon:{s:"NaCl 0.9% WAJIB (bukan air untuk injeksi)",v:"10 ml per 10 mg",c:"1 mg/ml"},
+    dil:{s:"NaCl 0.9% WAJIB — JANGAN D5%",v:"250-1000 ml",c:"0.1-0.5 mg/ml"},
+    stab:{rc:"Gunakan segera atau 24 jam RT",dil:"24 jam RT",t:"15-25°C — JANGAN didinginkan atau dibekukan",l:"Ya",n:"Suhu 4°C menyebabkan PRESIPITASI. JANGAN simpan di kulkas."},
+    compat:{nacl:"✅ WAJIB",d5:"❌ JANGAN",d10:"❌",rl:"❌",ic:"D5%, NaHCO3, aluminium, larutan basa"},
+    infus:{r:"IV Sentral",t:"1-24 jam sesuai protokol",line:"IV Sentral wajib",mon:"Output urin/jam, BP, tanda nefrotoksisitas",rf:["Oliguria","Kreatinin naik","Hipomagnesemia berat","Ototoksisitas akut"]},
+    extra:{cl:"IRRITANT",ant:"Sodium thiosulfate IV (kontroversi, sesuai protokol)",comp:"Kompres dingin",note:"Tanda nefrotoksisitas"},
+    mon:{pre:"Kreatinin, GFR, Mg, K, Ca, Na, audiometri, hidrasi pre 2-3 jam",dur:"Output urin tiap jam (target >3 ml/kg/jam), BP, tanda nefrotoksisitas",post:"Nefrotoksisitas, hipomagnesemia, ototoksisitas, neuropati perifer",lab:"Kreatinin, GFR, Mg, K, Ca, audiometri pre dan post",tox:"Nefrotoksisitas, ototoksisitas, hipoelektrolit, neuropati",stop:"Oliguria, kreatinin naik signifikan, GFR turun",senior:"AKI atau ototoksisitas progresif"},
+    alerts:["🚨 GUNAKAN NaCl 0.9% — JANGAN D5%","⚠️ JANGAN simpan di 4°C — presipitasi","⚠️ Hidrasi intensif sebelum & sesudah (pre-hydration min 2-3 jam)","⚠️ Audiometri sebelum dan sesudah setiap siklus","⚠️ Monitor Mg, K, Ca ketat"],
+    dose:"20-100 mg/m²",unit:"mg/m²"},
+
+  "Mercaptopurine":{cat:"Antimetabolit (Tiopurin)",ha:false,vs:"neutral",
+    recon:{s:"Sediaan oral (tablet 50 mg)",v:"—",c:"—"},
+    dil:{s:"Sediaan oral",v:"—",c:"—"},
+    stab:{rc:"Suspensi: 2 minggu RT",dil:"—",t:"15-25°C",l:"Ya",n:"Berikan malam hari — tanpa susu"},
+    compat:{nacl:"—",d5:"—",d10:"—",rl:"—",ic:"Allopurinol — tingkatkan toksisitas, kurangi dosis 50-75%"},
+    infus:{r:"Oral",t:"Oral, malam hari",line:"—",mon:"CBC, LFT",rf:["Mielosupresi berat","Hepatotoksisitas"]},
+    extra:{cl:"NEUTRAL",ant:"—",comp:"—",note:"—"},
+    mon:{pre:"CBC, LFT, status TPMT bila tersedia",dur:"CBC mingguan",post:"Mielosupresi, hepatotoksisitas",lab:"CBC, LFT",tox:"Mielosupresi, hepatotoksisitas, mukositis",stop:"Mielosupresi berat, hepatotoksisitas",senior:"Mielosupresi Grade 4 atau hepatotoksisitas berat"},
+    alerts:["⚠️ Allopurinol: kurangi dosis 6-MP sebesar 50-75%","⚠️ Berikan malam hari, 1 jam sebelum atau 2 jam setelah makan","⚠️ JANGAN berikan dengan susu"],
+    dose:"50-75 mg/m²",unit:"mg/m²"},
+
+  "Thioguanine":{cat:"Antimetabolit (Tiopurin)",ha:false,vs:"neutral",
+    recon:{s:"Sediaan oral (tablet 40 mg)",v:"—",c:"—"},
+    dil:{s:"Sediaan oral",v:"—",c:"—"},
+    stab:{rc:"—",dil:"—",t:"15-25°C",l:"Ya",n:"Tidak perlu penyesuaian dosis dengan allopurinol"},
+    compat:{nacl:"—",d5:"—",d10:"—",rl:"—",ic:"—"},
+    infus:{r:"Oral",t:"Oral",line:"—",mon:"CBC, LFT",rf:["Mielosupresi berat"]},
+    extra:{cl:"NEUTRAL",ant:"—",comp:"—",note:"—"},
+    mon:{pre:"CBC, LFT, status TPMT",dur:"CBC mingguan",post:"Mielosupresi, hepatotoksisitas nodular",lab:"CBC, LFT",tox:"Mielosupresi, hepatotoksisitas NRH",stop:"Mielosupresi berat",senior:"Hepatotoksisitas berat"},
+    alerts:["⚠️ Berbeda dari 6-MP: tidak perlu kurangi dosis dengan Allopurinol","⚠️ Monitor LFT — risiko NRH (Nodular Regenerative Hyperplasia)"],
+    dose:"40-60 mg/m²",unit:"mg/m²"},
+
+  "Asparaginase E. coli":{cat:"Enzim",ha:true,vs:"neutral",
+    recon:{s:"NaCl 0.9% atau Air untuk injeksi",v:"2-5 ml",c:"2000-10000 IU/ml"},
+    dil:{s:"NaCl 0.9% atau D5%",v:"50-100 ml",c:"1000-2000 IU/ml"},
+    stab:{rc:"8 jam RT / 48-72 jam 4°C",dil:"8 jam RT",t:"4°C",l:"Ya",n:"Test dose sebelum dosis penuh bila dipertimbangkan sesuai protokol"},
+    compat:{nacl:"✅",d5:"✅",d10:"⚠️",rl:"⚠️",ic:"Perhatikan kompatibilitas"},
+    infus:{r:"IM (pilihan) atau IV infus 1-2 jam",t:"1-2 jam IV atau IM",line:"Perifer (IM) / IV dengan akses emergensi",mon:"Vital signs tiap 15 mnt, tanda anafilaksis",rf:["Urtikaria","Sesak","Hipotensi","Angioedema","Anafilaksis"]},
+    extra:{cl:"NEUTRAL",ant:"Epinefrin untuk anafilaksis",comp:"—",note:"Observasi pasca pemberian min 1 jam"},
+    mon:{pre:"Koagulasi (Fibrinogen, PT, APTT, AT-III), amilase, lipase, glukosa, LFT",dur:"Vital signs tiap 15 mnt, tanda anafilaksis KETAT",post:"Koagulasi (DIC, trombosis), pankreatitis, hiperglikemia, neurotoksisitas",lab:"Fibrinogen, AT-III, PT, APTT, amilase, lipase, glukosa, LFT",tox:"Anafilaksis, trombosis/perdarahan, pankreatitis, hiperglikemia",stop:"Anafilaksis, tanda pankreatitis berat",senior:"Anafilaksis atau pankreatitis akut"},
+    alerts:["🚨 RISIKO ANAFILAKSIS — Epinefrin, antihistamin, steroid HARUS siap","⚠️ Observasi minimal 1 jam post-infus di area dengan fasilitas resusitasi","⚠️ Monitor fibrinogen, AT-III — risiko trombosis dan perdarahan","⚠️ Monitor amilase/lipase — risiko pankreatitis akut"],
+    dose:"6000-25000 IU/m²",unit:"IU/m²"},
+
+  "PEG-Asparaginase":{cat:"Enzim (PEGylated)",ha:true,vs:"neutral",
+    recon:{s:"Tidak perlu (larutan jadi 750 IU/0.5 ml)",v:"—",c:"750 IU/0.5 ml"},
+    dil:{s:"NaCl 0.9% atau D5% (bila IV)",v:"100 ml",c:"—"},
+    stab:{rc:"Setelah dibuka: 48 jam 4°C",dil:"Gunakan segera",t:"4°C (JANGAN BEKU, JANGAN KOCOK)",l:"Ya",n:"JANGAN dikocok (denaturasi). JANGAN dibekukan. Masa kerja ~2 minggu."},
+    compat:{nacl:"✅",d5:"✅",d10:"⚠️",rl:"⚠️",ic:"Jangan campur dengan obat lain"},
+    infus:{r:"IM (pilihan) atau IV 1-2 jam",t:"1-2 jam IV atau IM",line:"Perifer (IM) / IV dengan akses emergensi",mon:"Vital signs, tanda anafilaksis, koagulasi",rf:["Urtikaria","Sesak","Hipotensi","Anafilaksis"]},
+    extra:{cl:"NEUTRAL",ant:"Epinefrin untuk anafilaksis",comp:"—",note:"Observasi pasca pemberian"},
+    mon:{pre:"Fibrinogen, AT-III, amilase, lipase, glukosa, LFT",dur:"Vital signs, tanda anafilaksis",post:"Koagulasi, pankreatitis, hiperglikemia, hepatotoksisitas",lab:"Fibrinogen, AT-III, amilase, lipase, glukosa, LFT",tox:"Anafilaksis, trombosis/perdarahan, pankreatitis, hiperglikemia",stop:"Anafilaksis",senior:"Anafilaksis atau pankreatitis"},
+    alerts:["🚨 JANGAN kocok vial — denaturasi protein","🚨 JANGAN bekukan — tidak dapat digunakan","⚠️ Risiko anafilaksis, koagulasi abnormal, pankreatitis","⚠️ Interval pemberian sesuai protokol (masa kerja ~2 minggu)"],
+    dose:"2500 IU/m² (maks 3750 IU/dosis)",unit:"IU/m²"},
+
+  "Bleomycin":{cat:"Antibiotik Antitumor",ha:false,vs:"neutral",
+    recon:{s:"NaCl 0.9% atau Air untuk injeksi",v:"5-10 ml",c:"1.5-10 mg/ml (15 unit=15 mg)"},
+    dil:{s:"NaCl 0.9%",v:"50-100 ml",c:"0.5-1.5 unit/ml"},
+    stab:{rc:"24 jam RT / 14 hari 4°C",dil:"24 jam RT",t:"4°C",l:"Ya",n:"Test dose 1-2 unit pada limfoma sebelum dosis penuh"},
+    compat:{nacl:"✅",d5:"⚠️",d10:"❌",rl:"⚠️",ic:"Tembaga, Peroksida, banyak antibiotik"},
+    infus:{r:"IV, IM, atau SC",t:"10-60 menit atau IV push pelan",line:"Perifer",mon:"Demam/menggigil 4-12 jam post, tanda toksisitas paru",rf:["Demam tinggi","Sesak nafas","Reaksi hipersensitivitas"]},
+    extra:{cl:"NEUTRAL",ant:"Tidak ada",comp:"Kompres dingin",note:"Reaksi lokal minimal"},
+    mon:{pre:"LFT, fungsi paru (DLCO/spirometri), test dose pada limfoma",dur:"Demam, menggigil, tanda hipersensitivitas",post:"Fibrosis paru (kumulatif), toksisitas kulit",lab:"LFT, DLCO periodik",tox:"Fibrosis paru (kumulatif), toksisitas kulit, demam",stop:"Tanda toksisitas paru akut",senior:"Toksisitas paru"},
+    alerts:["⚠️ Toksisitas paru kumulatif — dosis total maks ~400 unit seumur hidup","⚠️ Test dose 1-2 unit pada limfoma sebelum dosis penuh","⚠️ HINDARI FiO2 tinggi perioperatif — memperburuk toksisitas paru"],
+    dose:"10-15 unit/m²",unit:"unit/m²"},
+
+  "Busulfan":{cat:"Alkylating Agent (HSCT Conditioning)",ha:true,vs:"neutral",
+    recon:{s:"Campurkan dengan DMA/DMF sesuai kit",v:"Sesuai dosis",c:"0.5 mg/ml"},
+    dil:{s:"NaCl 0.9% atau D5%",v:"≥10x volume busulfan",c:"0.5 mg/ml"},
+    stab:{rc:"12 jam RT termasuk waktu infus",dil:"12 jam RT termasuk waktu infus",t:"15-25°C",l:"Tidak perlu",n:"TDM (therapeutic drug monitoring) sangat dianjurkan. Antikonvulsan WAJIB."},
+    compat:{nacl:"✅",d5:"✅",d10:"⚠️",rl:"❌",ic:"Jangan campur dengan obat lain"},
+    infus:{r:"IV Sentral WAJIB",t:"2-3 jam setiap 6 jam × 16 dosis (Bu/16)",line:"IV Sentral WAJIB",mon:"Level busulfan (TDM), status neurologis, LFT, antikonvulsan",rf:["Kejang","Bingung","Ikterus","Edema","Kenaikan BB cepat"]},
+    extra:{cl:"NEUTRAL",ant:"Tidak ada",comp:"—",note:"—"},
+    mon:{pre:"LFT, fungsi paru, profil koagulasi, BB baseline",dur:"Antikonvulsan profilaksis, level busulfan (TDM), LFT",post:"SOS/VOD (LFT, BB, edema, asites), kejang, mielosupresi aplastik",lab:"LFT, BB harian, level busulfan, profil koagulasi",tox:"SOS/VOD, kejang, mielosupresi total (diharapkan di HSCT)",stop:"Kejang breakthrough, LFT sangat tinggi",senior:"Kejang atau tanda VOD/SOS"},
+    alerts:["🚨 Antikonvulsan profilaksis WAJIB dimulai 12 jam sebelum busulfan","⚠️ Risiko tinggi SOS/VOD — pantau LFT, BB, edema SETIAP HARI","⚠️ TDM (Therapeutic Drug Monitoring) sangat dianjurkan","⚠️ IV Sentral WAJIB"],
+    dose:"0.8-1.1 mg/kg/dosis setiap 6 jam × 16 dosis",unit:"mg/kg"},
+
+  "Melphalan":{cat:"Alkylating Agent (HSCT Conditioning)",ha:true,vs:"irritant",
+    recon:{s:"Diluent khusus yang disediakan bersama produk",v:"10 ml per 50 mg",c:"5 mg/ml"},
+    dil:{s:"NaCl 0.9% (segera encerkan)",v:"Sesuai dosis",c:"<0.45 mg/ml"},
+    stab:{rc:"GUNAKAN DALAM 60 MENIT",dil:"GUNAKAN DALAM 60 MENIT setelah pengenceran",t:"15-25°C (JANGAN di kulkas)",l:"Tidak perlu",n:"⚠️ STABILITAS SANGAT PENDEK — siapkan dan berikan sesegera mungkin"},
+    compat:{nacl:"✅ (terbatas waktu)",d5:"❌",d10:"❌",rl:"❌",ic:"D5%, larutan lain, asam"},
+    infus:{r:"IV Sentral WAJIB",t:"15-30 menit (segera setelah diencerkan)",line:"IV Sentral WAJIB",mon:"Mielosupresi, mukositis, reaksi hipersensitivitas",rf:["Anafilaksis","Hipotensi","Bronkospasme"]},
+    extra:{cl:"IRRITANT",ant:"Tidak ada",comp:"Kompres dingin",note:"Tanda inflamasi"},
+    mon:{pre:"CBC, kreatinin, LFT, mukosa oral, BB",dur:"Reaksi hipersensitivitas, ekstravasasi",post:"Mielosupresi berat (aplasia diinginkan di HSCT), mukositis berat",lab:"CBC, kreatinin, LFT",tox:"Mielosupresi total, mukositis berat, nausea",stop:"Anafilaksis",senior:"Anafilaksis atau ekstravasasi"},
+    alerts:["🚨 STABILITAS SANGAT PENDEK — siapkan dan berikan dalam 60 menit","⚠️ Digunakan dalam HSCT conditioning — aplasia total diharapkan","⚠️ Mukositis berat — pertimbangkan cryotherapy oral","⚠️ JANGAN gunakan D5%"],
+    dose:"100-200 mg/m² (HD HSCT)",unit:"mg/m²"}
+};
+
+const REGS = {
+  ALL:{obat:"Prednisolon · Vincristine · Daunorubicin · Asparaginase/PEG-Asp · Methotrexate (IT/IV) · Cytarabine · 6-Mercaptopurine · Cyclophosphamide",
+    key:"Vincristine HANYA IV. HD-MTX: hidrasi + alkalisasi + leucovorin. Asparaginase: waspadai anafilaksis, koagulopati.",
+    lab:"CBC, LFT, kreatinin, koagulasi (sebelum asparaginase), level MTX (bila HD-MTX)",
+    supp:"Antiemetik, antiinfeksi profilaksis (Kotrimoksazol), antifungal profilaksis (sesuai protokol), G-CSF bila diperlukan"},
+  AML:{obat:"Cytarabine · Idarubicin · Etoposide · Daunorubicin · HD-Cytarabine · Mitoxantrone",
+    key:"Antrasiklin: IV Sentral, monitor kardiotoksisitas kumulatif. HD-AraC: monitor serebelar, tetes mata steroid profilaksis.",
+    lab:"CBC, LFT, kreatinin, ECHO (sebelum antrasiklin), fungsi ginjal",
+    supp:"Antiemetik kuat, antifungal profilaksis, antibakteria profilaksis, G-CSF"},
+  HL:{obat:"Vincristine · Etoposide · Prednison · Doxorubicin (OEPA) | Cyclophosphamide · Vincristine · Prednison · Procarbazine (COPP) | Doxorubicin · Bleomycin · Vinblastine · Dacarbazine (ABVD)",
+    key:"Bleomycin: test dose, monitor toksisitas paru, hindari FiO2 tinggi. Vincristine: hanya IV.",
+    lab:"CBC, LFT, DLCO (bila bleomycin), ECHO (bila doxorubicin)",
+    supp:"Antiemetik, G-CSF bila diperlukan"},
+  NHL:{obat:"Cyclophosphamide · HD-Methotrexate · Vincristine · Doxorubicin · Cytarabine (B-NHL: BFM)",
+    key:"HD-MTX: hidrasi + alkalisasi + leucovorin rescue wajib. Vincristine: hanya IV.",
+    lab:"CBC, LFT, kreatinin, level MTX (bila HD-MTX), pH urin",
+    supp:"Antiemetik, profilaksis infeksi, hidrasi intensif untuk HD-MTX"},
+  NB:{obat:"Carboplatin · Etoposide · Cyclophosphamide · Doxorubicin · Vincristine",
+    key:"Carboplatin: gunakan D5%, JANGAN aluminium. Monitor trombositopenia. Doxorubicin: ECHO periodik.",
+    lab:"CBC, kreatinin, ECHO, LFT",
+    supp:"Antiemetik, G-CSF, suportif nutrisi"},
+  WT:{obat:"Actinomycin-D · Vincristine ± Doxorubicin (SIOP/COG)",
+    key:"Vincristine: hanya IV. Doxorubicin: monitor kardiotoksisitas kumulatif.",
+    lab:"CBC, LFT, ECHO (bila doxorubicin)",
+    supp:"Antiemetik"},
+  HB:{obat:"Cisplatin · Doxorubicin (PLADO/SIOPEL)",
+    key:"Cisplatin: NaCl 0.9% WAJIB, JANGAN D5%, hidrasi intensif, monitor ginjal + audiometri. Doxorubicin: ECHO.",
+    lab:"Kreatinin, GFR, Mg, K, Ca, audiometri, ECHO, AFP",
+    supp:"Hidrasi intensif, antiemetik kuat, suportif nutrisi"},
+  OS:{obat:"HD-Methotrexate · Doxorubicin · Cisplatin · Ifosfamide · Etoposide (MAP/MAPIE)",
+    key:"HD-MTX: hidrasi + alkalisasi + leucovorin rescue. Cisplatin: NaCl 0.9%, hidrasi, audiometri. Ifosfamide: Mesna wajib.",
+    lab:"Level MTX, kreatinin, GFR, Mg, audiometri, ECHO, CBC",
+    supp:"Hidrasi intensif, Mesna (ifosfamide), antiemetik kuat, G-CSF"},
+  ES:{obat:"Vincristine · Ifosfamide · Doxorubicin · Etoposide (VIDE) | Vincristine · Actinomycin-D · Cyclophosphamide (VAC)",
+    key:"Ifosfamide: Mesna wajib, monitor ensefalopati. Doxorubicin: monitor kardiotoksisitas. Vincristine: hanya IV.",
+    lab:"CBC, LFT, kreatinin, ECHO, urinalisis",
+    supp:"Mesna (ifosfamide), antiemetik, G-CSF"},
+  RB:{obat:"Carboplatin · Vincristine · Etoposide (VEC / kemoreduksi)",
+    key:"Carboplatin: D5%, jangan aluminium. Vincristine: hanya IV.",
+    lab:"CBC, kreatinin, LFT",
+    supp:"Antiemetik"},
+  MB:{obat:"Cisplatin · CCNU · Vincristine (pasca radioterapi) | HD-MTX · Carboplatin · Cyclophosphamide · Etoposide (anak <3 th tanpa RT)",
+    key:"Cisplatin: NaCl 0.9%, hidrasi, audiometri. HD-MTX: hidrasi + alkalisasi + leucovorin. Vincristine: hanya IV.",
+    lab:"Kreatinin, GFR, audiometri, level MTX (bila HD-MTX), CBC",
+    supp:"Hidrasi intensif, antiemetik, G-CSF"},
+  HSCT:{obat:"Busulfan · Cyclophosphamide (Bu/Cy) | TBI · Cyclophosphamide | Fludarabine · Melphalan (Flu/Mel RIC) | HD-AraC · Etoposide",
+    key:"Busulfan: antikonvulsan profilaksis WAJIB, TDM dianjurkan, monitor SOS/VOD. Melphalan: stabilitas 60 mnt. Cyclophosphamide: Mesna wajib.",
+    lab:"LFT, kreatinin, CBC, koagulasi, level busulfan, BB harian (SOS/VOD monitor)",
+    supp:"Antikonvulsan (busulfan), Mesna (cyclophosphamide), suportif HSCT lengkap"},
+  Custom:{obat:"—",key:"Masukkan detail obat pada modul Dosing Engine dan Persiapan Obat.",lab:"Sesuai obat yang digunakan",supp:"Sesuai protokol lokal"}
+};
+
+const CL = {
+  a:[
+    {id:"cla1",t:"Inisial/kode pasien terverifikasi (cocok dengan order)",c:true},
+    {id:"cla2",t:"BB dan TB terukur aktual hari ini",c:true},
+    {id:"cla3",t:"BSA terhitung dan terverifikasi oleh 2 petugas",c:true},
+    {id:"cla4",t:"Diagnosis dan fase terapi benar sesuai order",c:true},
+    {id:"cla5",t:"Riwayat alergi dan reaksi kemoterapi sebelumnya telah dicek",c:true},
+    {id:"cla6",t:"Informed consent tersedia dan ditandatangani",c:false}
+  ],
+  b:[
+    {id:"clb1",t:"Nama obat benar sesuai order",c:true},
+    {id:"clb2",t:"Protokol/regimen benar",c:true},
+    {id:"clb3",t:"Dosis benar (berdasarkan BSA/BB terbaru)",c:true},
+    {id:"clb4",t:"Rute pemberian benar",c:true},
+    {id:"clb5",t:"Hari dan siklus benar sesuai jadwal protokol",c:true},
+    {id:"clb6",t:"Pelarut benar sesuai standar",c:true},
+    {id:"clb7",t:"Volume pengenceran benar",c:true},
+    {id:"clb8",t:"Konsentrasi akhir dalam batas aman",c:true},
+    {id:"clb9",t:"Waktu infus sesuai standar",c:true},
+    {id:"clb10",t:"Label high-alert terpasang pada kemasan",c:false},
+    {id:"clb11",t:"Expiry date dan stabilitas OK",c:false}
+  ],
+  c:[
+    {id:"clc1",t:"CBC memenuhi syarat protokol (atau ada keputusan klinis)",c:true},
+    {id:"clc2",t:"Fungsi ginjal diperiksa dan memenuhi syarat",c:true},
+    {id:"clc3",t:"Fungsi hati diperiksa dan memenuhi syarat",c:true},
+    {id:"clc4",t:"Elektrolit diperiksa (terutama untuk cisplatin, HD-MTX)",c:false},
+    {id:"clc5",t:"Hidrasi/premedikasi/antiemetik sudah diberikan",c:true},
+    {id:"clc6",t:"Rescue/antidot tersedia bila perlu (leucovorin, epinefrin, dll.)",c:false},
+    {id:"clc7",t:"Akses IV/CVC paten dan berfungsi baik (flush test OK)",c:true}
+  ],
+  d:[
+    {id:"cld1",t:"Order kemoterapi tervalidasi oleh dokter yang berwenang",c:true},
+    {id:"cld2",t:"Farmasi telah melakukan verifikasi order (farmasi check)",c:true},
+    {id:"cld3",t:"Perawat verifikator 1 (double-check selesai)",c:true},
+    {id:"cld4",t:"Perawat/farmasi verifikator 2 (independent double-check selesai)",c:true},
+    {id:"cld5",t:"Dokumentasi rekam medis lengkap",c:false}
+  ]
+};
+
+const QUIZ_Q = [
+  {case:"Seorang perawat onkologi menerima 2 kantong obat dari farmasi: Vincristine 2 mg dalam NaCl 0.9% 10 ml (label: IV) dan Methotrexate 12 mg/ml (untuk pemberian intratekal oleh dokter). Keduanya tiba bersamaan dan ditempatkan di meja persiapan yang sama.",
+   q:"Apa tindakan paling tepat yang harus segera dilakukan?",
+   opts:["Pisahkan kedua obat SEGERA. Tempatkan di area/wadah berbeda. Konfirmasi label rute masing-masing sebelum pemberian apapun. Hubungi dokter untuk konfirmasi jadwal pemberian.",
+         "Berikan kedua obat bersamaan untuk efisiensi waktu",
+         "Cukup pastikan label obat sudah benar, tidak perlu memisahkan",
+         "Tanyakan ke pasien apakah obatnya sudah benar"],
+   ans:0,exp:"Vincristine dan obat intratekal TIDAK BOLEH ditempatkan bersamaan. Pemisahan fisik, label jelas, dan konfirmasi ganda rute adalah protokol keselamatan wajib. Vincristine intratekal SELALU FATAL."},
+  {case:"Etoposide 100 mg/m² akan diberikan kepada pasien dengan BSA 1.1 m². Etoposide tersedia 20 mg/ml. Perawat berencana mengencerkan 5.5 ml etoposide (110 mg) ke dalam 250 ml NaCl 0.9%.",
+   q:"Berapa konsentrasi akhir etoposide dalam larutan tersebut? Dan apakah aman?",
+   opts:["110 mg / 255.5 ml ≈ 0.43 mg/ml. TIDAK aman — melebihi batas maksimal 0.4 mg/ml. Diperlukan volume pelarut minimal 275 ml.",
+         "0.44 mg/ml — aman karena sudah mendekati batas",
+         "Konsentrasi tidak perlu dihitung, asal sudah diencerkan cukup",
+         "Encerkan ke 100 ml saja untuk lebih praktis"],
+   ans:0,exp:"Konsentrasi maksimal etoposide adalah 0.4 mg/ml untuk mencegah presipitasi. Dosis 110 mg dibagi 0.4 mg/ml = minimal 275 ml pelarut. Presipitasi dapat menyumbat tubing dan menyebabkan emboli."},
+  {case:"Pasien mendapat etoposide 200 mg dalam NaCl 0.9% 500 ml. Infus dimulai dan dalam 20 menit pasien mengeluh pusing dan tekanan darah turun dari 110/70 menjadi 80/50 mmHg.",
+   q:"Apa penyebab paling mungkin dan tindakan yang harus dilakukan?",
+   opts:["Hipotensi akibat infus etoposide terlalu cepat. Hentikan infus segera, posisi Trendelenburg, beri bolus cairan. Setelah stabil, restart dengan kecepatan lebih lambat (minimal 60 menit) atau hubungi dokter.",
+         "Ini normal, lanjutkan infus",
+         "Berikan antihipertensi untuk mengembalikan tekanan darah",
+         "Ganti pelarut ke D5%"],
+   ans:0,exp:"Etoposide wajib diinfus MINIMAL 60 menit. Infus terlalu cepat menyebabkan hipotensi akibat efek vasodilator dari komponen pelarut (Polysorbate 80). Tindakan: stop infus, stabilisasi, restart lambat, konfirmasi dengan dokter."},
+  {case:"Pasien dengan ALL mendapat HD-MTX 3000 mg/m². Infus 24 jam selesai. Level MTX jam ke-24: 32 μmol/L (target <10 μmol/L untuk clearance). pH urin saat ini 6.5. Kreatinin naik 15% dari baseline.",
+   q:"Apa tindakan yang paling tepat?",
+   opts:["Tingkatkan hidrasi dan alkalinisasi urin (target pH ≥7). Lanjutkan leucovorin rescue dengan dosis yang mungkin perlu ditingkatkan. Pantau level MTX 24, 48, 72 jam. Konsultasi farmasi dan dokter. Hindari NSAID.",
+         "Hentikan leucovorin karena MTX sudah tinggi",
+         "Tunggu 48 jam dan cek ulang tanpa intervensi",
+         "Berikan dosis MTX berikutnya sesuai jadwal"],
+   ans:0,exp:"MTX delayed clearance adalah kedaruratan. pH urin <7 menghambat ekskresi MTX. Alkalinisasi wajib. Leucovorin rescue harus DILANJUTKAN (bukan dihentikan) dan dosisnya mungkin perlu ditingkatkan. Pantau ketat level MTX dan fungsi ginjal."},
+  {case:"Pasien mendapat Doxorubicin 60 mg/m² melalui jalur perifer (IV line). Saat infus berlangsung, pasien mengeluh nyeri di area infus. Tampak kemerahan dan indurasi di sekitar lokasi insersi kanula.",
+   q:"Apa tindakan paling awal yang harus dilakukan?",
+   opts:["STOP infus SEGERA. JANGAN cabut kanula. JANGAN flush. Aspirasi sisa obat melalui kanula bila memungkinkan. Tandai area. Hubungi dokter dan farmasi segera. Siapkan Dexrazoxane (dalam 6 jam pertama).",
+         "Cabut kanula segera dan kompres hangat",
+         "Percepat infus agar obat tidak menumpuk di area tersebut",
+         "Flush dengan NaCl 0.9% untuk membersihkan obat di area ekstravasasi"],
+   ans:0,exp:"Doxorubicin adalah VESICANT BERAT. Ekstravasasi menyebabkan nekrosis jaringan berat. STOP infus, JANGAN cabut kanula (untuk aspirasi), JANGAN flush. Dexrazoxane harus diberikan dalam 6 jam. Kompres DINGIN. Dokumen dan foto area. Konsul bedah plastik bila diperlukan."},
+  {case:"Pasien akan mendapat Cisplatin 80 mg/m² (BSA 1.2 m² = 96 mg). Farmasi menyiapkan cisplatin dalam larutan Dextrose 5% 500 ml.",
+   q:"Apa masalah dengan persiapan ini dan apa tindakan yang benar?",
+   opts:["SALAH PELARUT. Cisplatin WAJIB dalam NaCl 0.9%, bukan D5%. D5% menyebabkan degradasi cisplatin dan pembentukan produk toksik. Ganti larutan dengan NaCl 0.9% sebelum pemberian.",
+         "Tidak masalah, D5% adalah pelarut yang ekuivalen",
+         "Cukup tambahkan NaCl ke dalam larutan D5% yang sudah ada",
+         "Berikan saja karena sudah terlambat"],
+   ans:0,exp:"Cisplatin WAJIB menggunakan NaCl 0.9% sebagai pelarut. D5% menyebabkan konversi cisplatin menjadi produk carboplatin-like dan produk degradasi yang kurang efektif dan potensial toksik. Larutan yang salah harus diganti sebelum pemberian."},
+  {case:"Pasien mendapat PEG-Asparaginase 2500 IU/m² secara IM. Sekitar 20 menit setelah pemberian, pasien mengalami urtikaria difus, sesak nafas, dan saturasi O2 turun ke 90%.",
+   q:"Apa tindakan segera yang harus dilakukan?",
+   opts:["Anafilaksis — berikan Epinefrin 0.01 mg/kg IM (maks 0.5 mg) segera, posisi berbaring kaki ditinggikan, O2 tinggi, panggil bantuan, siapkan antihistamin dan steroid IV, monitor ketat vital signs. Hubungi dokter segera.",
+         "Berikan antihistamin oral dan tunggu respons",
+         "Lanjutkan observasi dan ulangi cek vital sign 30 menit lagi",
+         "Berikan bronkodilator inhaler saja"],
+   ans:0,exp:"Anafilaksis adalah kedaruratan. EPINEFRIN adalah terapi lini pertama, bukan antihistamin. Berikan segera IM. Akses IV, O2, posisi, dan panggil tim. Antihistamin dan steroid hanya sebagai terapi ajuvan, bukan pengganti epinefrin."},
+  {case:"Pasien mendapat Ifosfamide 3000 mg/m² sesuai protokol dengan Mesna. Pada hari ke-2, pasien mulai terlihat bingung, agitasi, dan bicara tidak koheren. Hematuria tidak ditemukan.",
+   q:"Apa yang terjadi dan bagaimana penanganannya?",
+   opts:["Ensefalopati ifosfamide. Hentikan ifosfamide. Berikan Methylene Blue IV (bila tersedia dan sesuai protokol) atau ganti ke Methylene Blue. Konsultasi dokter segera. Monitor status mental. Hentikan Mesna bila ifosfamide dihentikan.",
+         "Ini efek samping biasa, lanjutkan saja ifosfamide",
+         "Tambahkan dosis Mesna untuk mengatasi gejala",
+         "Ini tanda infeksi, mulai antibiotik"],
+   ans:0,exp:"Ensefalopati ifosfamide adalah komplikasi neurologis serius akibat metabolit klorasetoaldehid. Gejala: bingung, agitasi, halusinasi, kejang. HENTIKAN ifosfamide. Methylene Blue IV adalah antidot (bila tersedia dan sesuai protokol lokal). Supportive care dan monitoring ketat."},
+  {case:"Pasien anak (BB 28 kg) akan mendapat Carboplatin. Protokol: AUC 5. GFR yang terukur: 80 ml/mnt. Formula Calvert: Dosis = AUC × (GFR + 25).",
+   q:"Berapakah dosis Carboplatin yang tepat?",
+   opts:["Dosis = 5 × (80 + 25) = 5 × 105 = 525 mg","Dosis = 5 × 80 = 400 mg","Dosis = AUC × BB = 5 × 28 = 140 mg","Dosis = 5 × 25 = 125 mg"],
+   ans:0,exp:"Formula Calvert: Dosis (mg) = Target AUC × (GFR + 25). Dosis = 5 × (80 + 25) = 5 × 105 = 525 mg. Formula ini menghitung dosis berdasarkan fungsi ginjal, bukan BSA, karena carboplatin eliminasi 90% melalui ginjal."},
+  {case:"Tim sedang melakukan safety checklist sebelum pemberian kemoterapi. Verifikator 1 (perawat A) telah menyelesaikan semua item. Verifikator 2 (perawat B) belum tersedia karena sedang merawat pasien lain. Dokter meminta kemoterapi segera dimulai.",
+   q:"Apa tindakan yang paling tepat?",
+   opts:["Tunda pemberian kemoterapi sampai independent double-check selesai dilakukan oleh 2 petugas berbeda. Hubungi supervisor bila diperlukan. Independent double-check adalah komponen wajib keselamatan kemoterapi yang tidak bisa dilewati.",
+         "Lanjutkan pemberian karena dokter sudah meminta",
+         "Perawat A bisa menjadi verifikator 1 sekaligus verifikator 2 untuk efisiensi",
+         "Minta keluarga pasien menjadi verifikator kedua"],
+   ans:0,exp:"Independent double-check oleh 2 orang berbeda adalah komponen WAJIB keselamatan kemoterapi dan tidak dapat disubstitusi. Tunda pemberian sampai verifikator kedua tersedia. Jika ada tekanan untuk melewati proses ini, eskalasi ke supervisor atau kepala unit. Ini bukan hambatan pelayanan — ini adalah perlindungan pasien."}
+];
+
+const EDU_M = [
+  {ic:"📐",t:"BSA & Prinsip Dosis Kemoterapi",sub:"Mosteller, BMI, caveat klinis",
+   body:`<h3>Body Surface Area (BSA)</h3><p>BSA adalah estimasi luas permukaan tubuh yang digunakan untuk menghitung dosis kemoterapi anak agar lebih akurat daripada hanya berdasarkan berat badan.</p>
+   <h4 style="margin:12px 0 6px;color:var(--blue4)">Rumus Mosteller</h4>
+   <div style="background:var(--blue3);padding:11px;border-radius:7px;font-family:monospace;font-size:15px;font-weight:700;margin:7px 0">BSA (m²) = √ [ (BB kg × TB cm) / 3600 ]</div>
+   <p><strong>Contoh:</strong> BB 22 kg, TB 118 cm → BSA = √(22×118/3600) = √0.721 = <strong>0.849 m²</strong></p>
+   <h4 style="margin:12px 0 6px;color:var(--blue4)">Catatan Klinis Penting</h4>
+   <ul style="padding-left:18px;margin-top:6px">
+   <li>Timbang BB dan ukur TB aktual pada hari kemoterapi</li>
+   <li>Pada obesitas: pertimbangkan IBW atau adjusted approach sesuai protokol</li>
+   <li>Pada edema/ascites: gunakan dry weight atau BB pre-edema</li>
+   <li>Beberapa protokol menetapkan BSA cap (misal max 2.0 m²) — verifikasi protokol lokal</li>
+   <li>Selalu lakukan double-check kalkulasi BSA oleh 2 petugas berbeda</li>
+   </ul>`},
+  {ic:"🚨",t:"High-Alert Chemotherapy",sub:"Vincristine, HD-MTX, antrasiklins, cisplatin",
+   body:`<h3>High-Alert Drugs dalam Kemoterapi Anak</h3>
+   <p><strong style="color:var(--red)">1. Vincristine:</strong> Fatal bila intratekal. Selalu IV. Minibag IV. Label wajib. Double-check rute.</p>
+   <p><strong style="color:var(--red)">2. Methotrexate Dosis Tinggi:</strong> Wajib hidrasi + alkalisasi urin (pH≥7) + leucovorin rescue + monitoring level MTX. Hindari NSAID.</p>
+   <p><strong style="color:var(--red)">3. Antrasiklin (Doxorubicin/Daunorubicin/Idarubicin):</strong> VESICANT BERAT. IV Sentral wajib. ECHO periodik. Monitor dosis kumulatif.</p>
+   <p><strong style="color:var(--red)">4. Cisplatin:</strong> NaCl 0.9% WAJIB. JANGAN D5%. JANGAN simpan di 4°C. Hidrasi intensif. Audiometri. Monitor elektrolit.</p>
+   <p><strong style="color:var(--red)">5. Asparaginase/PEG-Asp:</strong> Risiko anafilaksis. Epinefrin siap. Observasi 1 jam. Monitor koagulasi.</p>
+   <p><strong style="color:var(--red)">6. Busulfan:</strong> Antikonvulsan profilaksis wajib. Monitor SOS/VOD.</p>`},
+  {ic:"⛔",t:"Vincristine Safety — Mencegah Fatal Error",sub:"IV only, never IT, minibag, double-check",
+   body:`<h3>Vincristine Safety</h3>
+   <div style="background:var(--red);color:#fff;padding:12px;border-radius:8px;margin-bottom:12px;font-weight:700">Vincristine intratekal SELALU FATAL. Tidak ada antidot. Tidak ada pengecualian.</div>
+   <p><strong>Mengapa bisa terjadi kesalahan?</strong></p>
+   <ul style="padding-left:18px;margin:8px 0">
+   <li>Obat disiapkan dalam syringe yang sama dengan obat IT lainnya</li>
+   <li>Label yang tidak jelas atau tertukar</li>
+   <li>Obat IV dan IT disiapkan/diantar bersamaan</li>
+   <li>Proses double-check yang tidak independen</li>
+   </ul>
+   <p><strong>Strategi pencegahan:</strong></p>
+   <ul style="padding-left:18px;margin:8px 0">
+   <li>Dispensing SELALU sebagai minibag IV (bukan syringe tunggal)</li>
+   <li>Label wajib: "FOR IV USE ONLY — FATAL IF GIVEN INTRATHECALLY"</li>
+   <li>Pisahkan secara fisik dari obat intratekal (waktu, tempat, wadah)</li>
+   <li>Independent double-check rute oleh 2 petugas berbeda</li>
+   <li>Tidak ada pengecualian terhadap aturan ini</li>
+   </ul>`},
+  {ic:"🛡️",t:"Safe Handling Sitostatika",sub:"PPE, BSC, spill kit, limbah B3",
+   body:`<h3>Safe Handling Sitostatika</h3>
+   <p>Sitostatika adalah hazardous drug yang bersifat karsinogenik, mutagenik, dan teratogenik. Paparan kronis berisiko bagi petugas kesehatan.</p>
+   <h4 style="margin:12px 0 6px;color:var(--blue4)">PPE Wajib</h4>
+   <ul style="padding-left:18px">
+   <li>Sarung tangan ganda sitostatika yang tersertifikasi (bukan sarung tangan bedah biasa)</li>
+   <li>Gaun pelindung bertangan panjang yang tahan cairan (lengan menutup pergelangan)</li>
+   <li>Kacamata/face shield (bila risiko percikan)</li>
+   <li>Masker N95 (untuk serbuk), masker surgical untuk cairan</li>
+   </ul>
+   <h4 style="margin:12px 0 6px;color:var(--blue4)">Preparasi</h4>
+   <ul style="padding-left:18px">
+   <li>Siapkan dalam Biological Safety Cabinet (BSC) kelas II tipe B2 atau isolator</li>
+   <li>Gunakan Closed System Drug Transfer Device (CSTD)</li>
+   <li>Tidak diperbolehkan: preparasi di meja terbuka, di ruangan biasa, tanpa BSC</li>
+   </ul>
+   <h4 style="margin:12px 0 6px;color:var(--blue4)">Spill Management</h4>
+   <ul style="padding-left:18px">
+   <li>Siapkan spill kit sitostatika di area preparasi dan pemberian</li>
+   <li>Evakuasi area, isolasi tumpahan, gunakan absorben khusus</li>
+   <li>Jangan usap dengan kain biasa (risiko menyebarkan paparan)</li>
+   <li>Buang sebagai limbah B3 sitotoksik</li>
+   <li>Laporkan insiden paparan segera</li>
+   </ul>`},
+  {ic:"⚠️",t:"Extravasation — Respon Pertama",sub:"Identifikasi, stop, aspirasi, kompres, antidot",
+   body:`<h3>Extravasation — Respon Pertama</h3>
+   <p>Ekstravasasi adalah bocornya obat kemoterapi ke jaringan sekitar vena. Obat vesicant dapat menyebabkan nekrosis jaringan permanen.</p>
+   <h4 style="margin:12px 0 6px;color:var(--red)">Langkah Segera (dalam urutan)</h4>
+   <ol style="padding-left:18px;margin:8px 0">
+   <li><strong>STOP infus segera</strong></li>
+   <li><strong>JANGAN cabut kanul</strong> — akan digunakan untuk aspirasi</li>
+   <li><strong>JANGAN flush</strong> — tidak membersihkan, justru menyebarkan obat</li>
+   <li><strong>Aspirasi</strong> sisa obat melalui kanul (bila memungkinkan)</li>
+   <li><strong>Tandai area</strong> dengan spidol, foto dan dokumentasi</li>
+   <li><strong>Identifikasi obat</strong> dan cari tata laksana spesifik</li>
+   <li><strong>Berikan kompres/antidot</strong> sesuai jenis obat</li>
+   <li><strong>Hubungi dokter, farmasi, senior</strong> segera</li>
+   </ol>
+   <h4 style="margin:12px 0 6px;color:var(--blue4)">Kompres Spesifik</h4>
+   <p><strong>Kompres HANGAT:</strong> Vinca alkaloid (Vincristine, Vinblastine) + Hyaluronidase lokal</p>
+   <p><strong>Kompres DINGIN:</strong> Antrasiklin + Dexrazoxane (dalam 6 jam) / DMSO topikal</p>
+   <p><strong>Kompres HANGAT:</strong> Etoposide</p>
+   <p><strong>Observasi:</strong> MTX, Cytarabine, Asparaginase, Cyclophosphamide</p>`},
+  {ic:"💊",t:"HD-MTX Safety",sub:"Hidrasi, alkalisasi, leucovorin rescue, level monitoring",
+   body:`<h3>HD-MTX (High-Dose Methotrexate) Safety</h3>
+   <p>HD-MTX adalah terapi dengan risiko toksisitas tinggi bila tidak dikelola dengan benar. Kematian akibat delayed clearance telah dilaporkan.</p>
+   <h4 style="margin:12px 0 6px;color:var(--blue4)">Protocol Wajib</h4>
+   <ol style="padding-left:18px;margin:8px 0">
+   <li><strong>Hidrasi intensif</strong> ≥3 L/m²/24 jam dimulai sebelum infus MTX</li>
+   <li><strong>Alkalisasi urin</strong> — pH urin HARUS ≥7 sebelum memulai infus MTX</li>
+   <li><strong>Monitor pH urin</strong> setiap 4-8 jam selama dan setelah MTX</li>
+   <li><strong>Leucovorin rescue</strong> dimulai 24 jam setelah MULAI infus MTX</li>
+   <li><strong>Level MTX</strong> diperiksa 24, 48, 72 jam post-infus</li>
+   <li><strong>Kreatinin</strong> diperiksa sebelum, selama, dan setelah infus</li>
+   </ol>
+   <h4 style="margin:12px 0 6px;color:var(--red)">Hindari Obat yang Menghambat Ekskresi MTX</h4>
+   <p>NSAID · Penisilin · Ciprofloksasin · Proton Pump Inhibitor (Omeprazol, dll.)</p>`},
+  {ic:"🐝",t:"Asparaginase Hypersensitivity",sub:"Anafilaksis, respon, epinefrin, substitusi",
+   body:`<h3>Asparaginase — Risiko Hipersensitivitas</h3>
+   <p>Asparaginase E. coli dan PEG-Asparaginase dapat menyebabkan reaksi hipersensitivitas mulai dari urtikaria ringan hingga anafilaksis berat.</p>
+   <h4 style="margin:12px 0 6px;color:var(--blue4)">Sebelum Pemberian</h4>
+   <ul style="padding-left:18px">
+   <li>Siapkan kit emergensi: Epinefrin 1:1000 IM, antihistamin IV, kortikosteroid IV, akses vena, O2, monitor</li>
+   <li>Observasi area dengan fasilitas resusitasi</li>
+   </ul>
+   <h4 style="margin:12px 0 6px;color:var(--red)">Tanda Anafilaksis</h4>
+   <p>Urtikaria difus · Angioedema · Sesak nafas · Hipotensi · Bradikardia/takikardia · Sinkop</p>
+   <h4 style="margin:12px 0 6px;color:var(--blue4)">Tata Laksana Anafilaksis</h4>
+   <ol style="padding-left:18px">
+   <li>Epinefrin 0.01 mg/kg IM (maks 0.5 mg) — LINI PERTAMA</li>
+   <li>O2 aliran tinggi</li>
+   <li>Antihistamin IV (diphenhydramine atau chlorpheniramine)</li>
+   <li>Kortikosteroid IV (hidrokortison atau methylprednisolon)</li>
+   <li>Bolus cairan bila hipotensi</li>
+   <li>Panggil tim dan eskalasi ke ICU bila diperlukan</li>
+   </ol>`},
+  {ic:"🧪",t:"Cisplatin — Nefro & Ototoksisitas",sub:"Pelarut, hidrasi, audiometri, elektrolit",
+   body:`<h3>Cisplatin — Nefrotoksisitas & Ototoksisitas</h3>
+   <h4 style="margin:12px 0 6px;color:var(--red)">Pelarut Wajib: NaCl 0.9%</h4>
+   <p>Cisplatin HARUS dalam NaCl 0.9%. D5% menyebabkan degradasi cisplatin. JANGAN gunakan RL atau larutan basa. JANGAN simpan di 4°C (presipitasi).</p>
+   <h4 style="margin:12px 0 6px;color:var(--blue4)">Manajemen Nefrotoksisitas</h4>
+   <ul style="padding-left:18px">
+   <li>Pre-hidrasi minimal 2-3 jam sebelum cisplatin (NaCl 0.9% ± KCl ± MgSO4)</li>
+   <li>Post-hidrasi minimal 2-4 jam setelah cisplatin</li>
+   <li>Target output urin >3 ml/kg/jam selama hidrasi</li>
+   <li>Monitor kreatinin, GFR, Mg, K, Ca, Na sebelum dan sesudah tiap siklus</li>
+   <li>Suplementasi Mg profilaksis</li>
+   </ul>
+   <h4 style="margin:12px 0 6px;color:var(--blue4)">Ototoksisitas</h4>
+   <p>Audiometri WAJIB sebelum memulai terapi dan setelah tiap siklus. Ototoksisitas cisplatin bersifat kumulatif dan dapat permanen.</p>`},
+  {ic:"🎯",t:"Double-Check Culture",sub:"Mengapa penting, bagaimana melakukannya",
+   body:`<h3>Independent Double-Check — Budaya Keselamatan</h3>
+   <p>Independent double-check adalah verifikasi oleh 2 orang BERBEDA yang melakukan pengecekan secara independen (tidak saling melihat jawaban yang lain) sebelum mencocokkan hasil.</p>
+   <h4 style="margin:12px 0 6px;color:var(--blue4)">Mengapa Penting?</h4>
+   <ul style="padding-left:18px">
+   <li>Manusia membuat kesalahan — sistem berlapis mengurangi kemungkinan error lolos</li>
+   <li>Error kemoterapi bisa menyebabkan kematian atau kecacatan permanen</li>
+   <li>Double-check terbukti mengurangi medication error signifikan</li>
+   </ul>
+   <h4 style="margin:12px 0 6px;color:var(--blue4)">Yang Harus Dicek Secara Independen</h4>
+   <ul style="padding-left:18px">
+   <li>Identitas pasien (inisial, kode, BB, TB, BSA)</li>
+   <li>Nama obat, dosis, satuan</li>
+   <li><strong>Rute pemberian</strong> (kritis untuk vincristine)</li>
+   <li>Pelarut, volume, konsentrasi</li>
+   <li>Waktu infus</li>
+   <li>Label dan kemasan</li>
+   </ul>
+   <h4 style="margin:12px 0 6px;color:var(--red)">Yang BUKAN Independent Double-Check</h4>
+   <ul style="padding-left:18px">
+   <li>Satu orang mengecek ulang pekerjaannya sendiri</li>
+   <li>Dua orang mengecek bersama-sama (bukan independen)</li>
+   <li>Verifikator 2 hanya "menyetujui" tanpa mengecek mandiri</li>
+   </ul>`}
+];
+
+// ==================== STATE ====================
+let ptData={}, checkHistory=[], qualData={checklist:0,safety:0,doc:0,quiz:0,ha_ack:0,ws_done:0};
+let quizIdx=0, quizScore=0, quizAnswered=false;
+
+// ==================== NAV ====================
+const PAGE_TITLES={dashboard:"Dashboard Utama",pasien:"Data Pasien & BSA",regimen:"Regimen Selector",dosing:"Dosing Engine",prep:"Persiapan Obat",vcr:"Vincristine Safety",infus:"Panduan Infus",stabilitas:"Stabilitas & Kompatibilitas",checklist:"Safety Checklist",ekstra:"Ekstravasasi",monitoring:"Monitoring Toolkit",quickref:"Quick Reference",edukasi:"Edukasi",kuis:"Kuis Kasus",worksheet:"Worksheet & Cetak",standards:"Standards & Safety",quality:"Quality Dashboard"};
+
+function nav(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('#sidebar nav a').forEach(x=>x.classList.remove('active'));
+  const pg=document.getElementById('page-'+p);
+  if(pg) pg.classList.add('active');
+  document.getElementById('page-title').textContent=PAGE_TITLES[p]||p;
+  document.querySelectorAll('#sidebar nav a').forEach(a=>{
+    const oc=a.getAttribute('onclick')||'';
+    if(oc.includes("'"+p+"'")) a.classList.add('active');
+  });
+  if(p==='prep') renderPrepCards('');
+  if(p==='infus') renderInfusCards();
+  if(p==='stabilitas') renderStabilitas();
+  if(p==='ekstra') renderEkstra();
+  if(p==='monitoring') renderMonitoring();
+  if(p==='quickref') renderQR('');
+  if(p==='edukasi') renderEdu();
+  if(p==='checklist') renderCL();
+  if(p==='quality') renderQuality();
+  if(window.innerWidth<=768) document.getElementById('sidebar').classList.remove('open');
+}
+function toggleSB(){document.getElementById('sidebar').classList.toggle('open');}
+
+function switchTab(btn,id){
+  const parent=btn.closest('.card,.page');
+  if(parent){
+    parent.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    parent.querySelectorAll('.tc').forEach(t=>t.classList.remove('active'));
+  } else {
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tc').forEach(t=>t.classList.remove('active'));
+  }
+  btn.classList.add('active');
+  const tc=document.getElementById(id);
+  if(tc) tc.classList.add('active');
+}
+
+// ==================== ROLES ====================
+const ROLE_INFO={
+  "Perawat":`<div class="alert alert-blue">👩‍⚕️ <strong>Perawat:</strong> Fokus pada Safety Checklist (double-check), Panduan Infus (waktu & monitoring), Ekstravasasi (tanda & respon awal), dan Red Flags selama pemberian kemoterapi.</div>`,
+  "Farmasi/TTK":`<div class="alert alert-blue">💊 <strong>Farmasi/TTK:</strong> Fokus pada Persiapan Obat (rekonstitusi, pelarut, volume), Stabilitas & Kompatibilitas, Dosing Engine (verifikasi dosis), dan label High Alert.</div>`,
+  "Dokter Umum/SpA":`<div class="alert alert-blue">🩺 <strong>Dokter Umum/SpA:</strong> Fokus pada Monitoring Toolkit (tanda komplikasi & kapan eskalasi), High-Alert Warnings, Ekstravasasi, dan Red Flags yang memerlukan tindakan segera.</div>`,
+  "Konsultan":`<div class="alert alert-blue">🎓 <strong>Konsultan/Supervisor:</strong> Fokus pada Dosing Engine (validasi), Quality Dashboard (audit), Standards & Safety, dan validasi keputusan klinis kompleks.</div>`
+};
+function setRole(btn,role){
+  document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('role-info').innerHTML=ROLE_INFO[role]||'';
+}
+
+// ==================== BSA ====================
+function hitungBSA(){
+  const bb=parseFloat(document.getElementById('pt-bb').value);
+  const tb=parseFloat(document.getElementById('pt-tb').value);
+  if(!bb||!tb||bb<=0||tb<=0){alert('Masukkan berat badan dan tinggi badan yang valid.');return;}
+  const bsa=Math.sqrt((bb*tb)/3600);
+  const bmi=bb/((tb/100)**2);
+  let cat='',note='';
+  if(bmi<12){cat='Gizi Buruk Berat';note='Perlu evaluasi gizi dan dose modification spesifik';}
+  else if(bmi<14.5){cat='Gizi Buruk';note='Pertimbangkan adjusted weight sesuai protokol'}
+  else if(bmi<18.5){cat='Gizi Kurang';note='Di bawah normal — pantau nutrisi'}
+  else if(bmi<25){cat='Normal';note='Berat badan ideal'}
+  else if(bmi<30){cat='Gizi Lebih';note='Pertimbangkan IBW atau adjusted approach sesuai protokol'}
+  else{cat='Obesitas';note='Konsultasi protokol dosis pada obesitas — jangan gunakan actual weight tanpa pertimbangan'}
+  document.getElementById('bsa-v').textContent=bsa.toFixed(3);
+  document.getElementById('bmi-v').textContent=bmi.toFixed(1);
+  document.getElementById('bmi-cat').textContent=cat;
+  document.getElementById('bmi-note').textContent=note;
+  document.getElementById('bb-s').textContent=bb;
+  document.getElementById('tb-s').textContent=tb;
+  document.getElementById('bsa-result').style.display='block';
+  const cond=document.getElementById('pt-cond').value;
+  let condWarn='';
+  if(cond==='Edema / Ascites') condWarn=`<div class="alert alert-red" style="margin-top:8px">⚠️ EDEMA/ASCITES: Gunakan dry weight atau BB pre-edema untuk kalkulasi BSA. Verifikasi dengan dokter penanggung jawab.</div>`;
+  else if(cond==='Obesitas') condWarn=`<div class="alert alert-amber" style="margin-top:8px">⚠️ OBESITAS: Pertimbangkan IBW atau adjusted approach sesuai protokol lokal. Tidak semua protokol menggunakan actual weight pada obesitas.</div>`;
+  else if(cond==='Malnutrisi Berat') condWarn=`<div class="alert alert-red" style="margin-top:8px">⚠️ MALNUTRISI BERAT: Dose modification mungkin diperlukan. Konsultasi protokol dan ahli gizi.</div>`;
+  else if(cond==='Gangguan Fungsi Ginjal') condWarn=`<div class="alert alert-amber" style="margin-top:8px">⚠️ GANGGUAN GINJAL: Dose modification diperlukan untuk obat yang eliminasinya bergantung ginjal (Carboplatin AUC, Methotrexate, Cisplatin, Etoposide). Hitung GFR dan konsultasi dokter.</div>`;
+  else if(cond==='Gangguan Fungsi Hati') condWarn=`<div class="alert alert-amber" style="margin-top:8px">⚠️ GANGGUAN HATI: Dose modification diperlukan untuk Vincristine, Vinka alkaloid, Antrasiklin, Etoposide. Konsultasi dokter.</div>`;
+  document.getElementById('cond-warn').innerHTML=condWarn;
+  ptData={init:document.getElementById('pt-init').value||'—',code:document.getElementById('pt-code').value||'—',age:document.getElementById('pt-age').value||'—',sex:document.getElementById('pt-sex').value||'—',bb,tb,bsa:bsa.toFixed(3),bmi:bmi.toFixed(1),bmiCat:cat};
+  document.getElementById('pt-summary').innerHTML=`<strong>Kode:</strong> ${ptData.init} | ${ptData.age} tahun | ${ptData.sex}<br><strong>BB:</strong> ${bb} kg · <strong>TB:</strong> ${tb} cm · <strong>BSA:</strong> <span style="color:var(--blue4);font-weight:700">${bsa.toFixed(3)} m²</span> · <strong>BMI:</strong> ${bmi.toFixed(1)} (${cat})`;
+  document.getElementById('pt-summary').className='alert alert-green';
+  document.getElementById('dos-bsa').value=bsa.toFixed(3);
+  document.getElementById('dos-bb').value=bb;
+  document.getElementById('ws-bsa').value=bsa.toFixed(3);
+  document.getElementById('ws-bb').value=bb;
+  if(ptData.init!=='—') document.getElementById('ws-init').value=ptData.init;
+}
+
+// ==================== REGIMEN ====================
+function showRegimen(){
+  const v=document.getElementById('sel-reg').value;
+  const r=REGS[v];
+  if(!r){document.getElementById('reg-detail').innerHTML='';return;}
+  document.getElementById('reg-detail').innerHTML=`
+  <div class="alert alert-amber" style="margin-top:12px">⚠️ Ini adalah gambaran umum informatif. Regimen final mengikuti protokol lokal yang berlaku, diverifikasi oleh dokter dan farmasi klinik. Tidak berlaku universal.</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:11px;margin-top:12px">
+    <div class="card" style="margin-bottom:0"><h4 style="color:var(--blue4);margin-bottom:7px">💊 Obat Utama</h4><p style="font-size:12.5px;color:var(--text2);line-height:1.7">${r.obat}</p></div>
+    <div class="card" style="margin-bottom:0;border-left:4px solid var(--red)"><h4 style="color:var(--red);margin-bottom:7px">⚠️ Key Safety Issues</h4><p style="font-size:12.5px;color:var(--text2);line-height:1.7">${r.key}</p></div>
+    <div class="card" style="margin-bottom:0"><h4 style="color:var(--blue4);margin-bottom:7px">🔬 Lab Prerequisite</h4><p style="font-size:12.5px;color:var(--text2);line-height:1.7">${r.lab}</p></div>
+    <div class="card" style="margin-bottom:0;border-left:4px solid var(--green)"><h4 style="color:var(--green);margin-bottom:7px">🛡️ Supportive Care Umum</h4><p style="font-size:12.5px;color:var(--text2);line-height:1.7">${r.supp}</p></div>
+  </div>`;
+}
+
+// ==================== DOSING ====================
+const DALERTS={
+  "Vincristine":"⛔ FATAL BILA INTRATEKAL · Dosis maks umumnya 2 mg (verifikasi protokol) · Hati-hati gangguan hati",
+  "Cyclophosphamide":"⚠️ Mesna profilaksis · Hidrasi intensif · Target urin >3 ml/kg/jam",
+  "Ifosfamide":"⚠️ Mesna WAJIB (60% dari dosis ifosfamide) · Monitor ensefalopati · Hidrasi intensif",
+  "Etoposide":"⚠️ Infus min 60 mnt · Konsentrasi maks 0.4 mg/ml · Monitor BP · Siapkan epinefrin",
+  "Methotrexate":"⚠️ HD-MTX: hidrasi + alkalisasi pH urin≥7 + leucovorin rescue + monitoring level MTX",
+  "Doxorubicin":"🚨 VESICANT BERAT · IV Sentral wajib · ECHO periodik · Dosis kumulatif maks 300-450 mg/m²",
+  "Daunorubicin":"🚨 VESICANT · IV Sentral wajib · Dosis kumulatif maks 300-500 mg/m²",
+  "Idarubicin":"🚨 VESICANT · IV Sentral wajib · Dosis kumulatif maks ~150 mg/m²",
+  "Carboplatin":"⚠️ Gunakan D5% · Jangan aluminium · Dosis AUC: Calvert = AUC × (GFR + 25) · Monitor trombosit",
+  "Cisplatin":"🚨 NaCl 0.9% WAJIB · JANGAN D5% · JANGAN simpan 4°C · Hidrasi intensif · Audiometri",
+  "Asparaginase E. coli":"🚨 Risiko anafilaksis · Siapkan epinefrin · Observasi 1 jam · Monitor koagulasi & pankreas",
+  "PEG-Asparaginase":"🚨 JANGAN kocok/bekukan · Risiko anafilaksis · Monitor koagulasi & pankreas",
+  "Busulfan":"🚨 Antikonvulsan profilaksis WAJIB 12 jam sebelum · TDM dianjurkan · Monitor SOS/VOD",
+  "Melphalan":"🚨 Stabilitas 60 menit — siapkan dan berikan SEGERA · JANGAN D5%",
+  "Bleomycin":"⚠️ Test dose (limfoma) · Monitor toksisitas paru · HINDARI FiO2 tinggi perioperatif",
+  "Mercaptopurine":"⚠️ Allopurinol: kurangi dosis 50-75% · Berikan malam hari tanpa susu",
+  "Vinblastine":"⛔ FATAL BILA INTRATEKAL · VESICANT berat"
+};
+function loadDrugAlert(){
+  const d=document.getElementById('dos-drug').value;
+  const box=document.getElementById('drug-alert-area');
+  if(d&&DALERTS[d]){box.innerHTML=`<div class="alert alert-red" style="margin-bottom:11px">🚨 <strong>${d}:</strong> ${DALERTS[d]}</div>`;}
+  else box.innerHTML='';
+}
+function hitungDosis(){
+  const drug=document.getElementById('dos-drug').value;
+  const dose=parseFloat(document.getElementById('dos-dose').value);
+  const unit=document.getElementById('dos-unit').value;
+  const bsa=parseFloat(document.getElementById('dos-bsa').value);
+  const bb=parseFloat(document.getElementById('dos-bb').value);
+  const gfr=parseFloat(document.getElementById('dos-gfr').value)||0;
+  if(!drug||!dose||isNaN(dose)){alert('Pilih obat dan masukkan dosis protokol.');return;}
+  let doseInd=NaN,detail='',unitLabel='mg',noteText='';
+  if(unit==='mgm2'){if(!bsa||isNaN(bsa)){alert('Masukkan BSA.');return;}doseInd=dose*bsa;detail=`${dose} mg/m² × ${bsa} m² = ${doseInd.toFixed(3)} mg`;}
+  else if(unit==='mgkg'){if(!bb||isNaN(bb)){alert('Masukkan BB.');return;}doseInd=dose*bb;detail=`${dose} mg/kg × ${bb} kg = ${doseInd.toFixed(3)} mg`;}
+  else if(unit==='ium2'){if(!bsa||isNaN(bsa)){alert('Masukkan BSA.');return;}doseInd=dose*bsa;detail=`${dose} IU/m² × ${bsa} m²`;unitLabel='IU';}
+  else if(unit==='iukg'){if(!bb||isNaN(bb)){alert('Masukkan BB.');return;}doseInd=dose*bb;detail=`${dose} IU/kg × ${bb} kg`;unitLabel='IU';}
+  else if(unit==='flat'){doseInd=dose;detail=`Flat dose: ${dose} mg`;}
+  else if(unit==='auc'){if(!gfr||isNaN(gfr)||gfr<=0){alert('Masukkan GFR untuk kalkulasi AUC Calvert.');return;}doseInd=dose*(gfr+25);detail=`Calvert: AUC ${dose} × (GFR ${gfr} + 25) = ${doseInd.toFixed(1)} mg`;noteText='Formula Calvert digunakan untuk Carboplatin. Pastikan GFR yang digunakan adalah nilai yang terukur atau terkalkulasi dengan benar.';}
+  if(isNaN(doseInd)){alert('Kalkulasi gagal. Periksa input.');return;}
+  const rounded=Math.round(doseInd/0.5)*0.5;
+  document.getElementById('d-ind').textContent=doseInd.toFixed(unit.includes('iu')?0:2)+' '+(unit.includes('iu')?'IU':'mg');
+  document.getElementById('d-detail').textContent=detail;
+  document.getElementById('d-unit').textContent=unit.includes('iu')?'IU':'mg';
+  document.getElementById('d-round').textContent=rounded.toFixed(1)+' '+(unit.includes('iu')?'IU':'mg');
+  let warn='';
+  if(drug==='Vincristine'&&doseInd>2) warn=`<div class="alert alert-red">🚨 PERHATIAN: Dosis individual Vincristine melebihi 2 mg (${doseInd.toFixed(2)} mg). Verifikasi batas maksimal sesuai protokol lokal dan usia pasien sebelum dispensing.</div>`;
+  if(noteText) warn+=`<div class="alert alert-blue">${noteText}</div>`;
+  document.getElementById('d-warning').innerHTML=warn;
+  document.getElementById('dos-result').style.display='block';
+  qualData.ha_ack++;
+}
+
+// ==================== PREP CARDS ====================
+function renderPrepCards(filter){
+  const c=document.getElementById('prep-cards');
+  const keys=Object.keys(DRUGS).filter(k=>k.toLowerCase().includes(filter.toLowerCase()));
+  if(!keys.length){c.innerHTML='<div class="alert alert-amber">Obat tidak ditemukan.</div>';return;}
+  c.innerHTML=keys.map(name=>{
+    const d=DRUGS[name];
+    return `<div class="dcard ${d.vs}">
+      <div class="dn">${name}</div>
+      ${d.ha?'<span class="db db-ha">⚠️ HIGH ALERT</span>':''}
+      <span class="db ${d.vs==='vesicant'?'db-vs':d.vs==='irritant'?'db-ir':'db-nt'}">${d.vs==='vesicant'?'🔴 VESICANT':d.vs==='irritant'?'🟡 IRRITANT':'🟢 NEUTRAL'}</span>
+      <span class="db db-nt" style="background:var(--blue3);color:var(--blue4)">${d.cat}</span>
+      <div class="ds"><h4>Rekonstitusi</h4><p>Pelarut: ${d.recon.s}<br>Volume: ${d.recon.v}<br>Konsentrasi: ${d.recon.c}</p></div>
+      <div class="ds"><h4>Pengenceran</h4><p>Pelarut: ${d.dil.s}<br>Volume: ${d.dil.v}<br>Konsentrasi: ${d.dil.c}</p></div>
+      <div class="ds"><h4>Stabilitas & Penyimpanan</h4><p>Suhu: ${d.stab.t}<br>Lindungi cahaya: ${d.stab.l}<br>${d.stab.n}</p></div>
+      <div class="ds"><h4>Dosis Lazim Anak</h4><p>${d.dose} (${d.unit})</p></div>
+      ${d.alerts.map(a=>`<div class="alert alert-red" style="margin-top:6px;font-size:11px;padding:6px 10px">${a}</div>`).join('')}
+    </div>`;
+  }).join('');
+}
+function filterPrep(){renderPrepCards(document.getElementById('prep-search').value);}
+
+// ==================== INFUS CARDS ====================
+function renderInfusCards(){
+  const c=document.getElementById('infus-cards');
+  c.innerHTML=Object.keys(DRUGS).map(name=>{
+    const d=DRUGS[name];
+    return `<div class="dcard ${d.vs}">
+      <div class="dn">${name}</div>
+      <span class="db ${d.vs==='vesicant'?'db-vs':d.vs==='irritant'?'db-ir':'db-nt'}">${d.vs==='vesicant'?'🔴 VESICANT':d.vs==='irritant'?'🟡 IRRITANT':'🟢 NEUTRAL'}</span>
+      <div class="ds"><h4>Rute</h4><p>${d.infus.r}</p></div>
+      <div class="ds"><h4>Waktu / Durasi Minimal</h4><p>${d.infus.t}</p></div>
+      <div class="ds"><h4>Rekomendasi Line</h4><p>${d.infus.line}</p></div>
+      <div class="ds"><h4>Monitoring Selama Infus</h4><p>${d.infus.mon}</p></div>
+      ${d.infus.rf.length?`<div class="ds"><h4 style="color:var(--red)">🚨 Red Flags — Stop Infus</h4><ul style="padding-left:14px;font-size:12px;color:var(--red)">${d.infus.rf.map(r=>`<li>${r}</li>`).join('')}</ul></div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ==================== STABILITAS ====================
+function renderStabilitas(){
+  document.getElementById('stab-body').innerHTML=Object.keys(DRUGS).map(name=>{
+    const s=DRUGS[name].stab;
+    return `<tr><td><strong>${name}</strong></td><td>${s.rc}</td><td>${s.dil}</td><td>${s.t}</td><td>${s.l.includes('Ya')?'<span class="tag t-warn">⚠️ Ya</span>':'<span class="tag t-safe">Tidak perlu</span>'}</td><td style="font-size:11px">${s.n}</td></tr>`;
+  }).join('');
+  document.getElementById('compat-body').innerHTML=Object.keys(DRUGS).map(name=>{
+    const c=DRUGS[name].compat;
+    return `<tr><td><strong>${name}</strong></td><td>${c.nacl}</td><td>${c.d5}</td><td>${c.d10}</td><td>${c.rl}</td><td style="font-size:11px;color:var(--red)">${c.ic}</td></tr>`;
+  }).join('');
+}
+
+// ==================== EKSTRAVASASI ====================
+function renderEkstra(){
+  document.getElementById('extra-cards').innerHTML=Object.keys(DRUGS).map(name=>{
+    const e=DRUGS[name].extra;
+    const cls=e.cl.includes('VESICANT')?'vesicant':e.cl.includes('IRRITANT')?'irritant':'';
+    return `<div class="dcard ${cls}">
+      <div class="dn">${name}</div>
+      <span class="db ${cls==='vesicant'?'db-vs':cls==='irritant'?'db-ir':'db-nt'}">${e.cl}</span>
+      <div class="ds"><h4>💊 Antidot</h4><p>${e.ant}</p></div>
+      <div class="ds"><h4>🧊/🔥 Kompres</h4><p>${e.comp}</p></div>
+      <div class="ds"><h4>👁 Monitoring</h4><p>${e.note}</p></div>
+    </div>`;
+  }).join('');
+}
+
+// ==================== MONITORING ====================
+function renderMonitoring(){
+  document.getElementById('monitor-cards').innerHTML=Object.keys(DRUGS).map(name=>{
+    const m=DRUGS[name].mon;
+    return `<div class="dcard">
+      <div class="dn">${name}</div>
+      <div class="ds"><h4>🔵 Sebelum Pemberian</h4><p>${m.pre}</p></div>
+      <div class="ds"><h4>🟡 Selama Pemberian</h4><p>${m.dur}</p></div>
+      <div class="ds"><h4>🟢 Setelah Pemberian</h4><p>${m.post}</p></div>
+      <div class="ds"><h4>🔬 Lab Monitoring</h4><p>${m.lab}</p></div>
+      <div class="ds"><h4 style="color:var(--red)">🚨 Kapan Stop / Lapor Senior</h4><p><strong>Stop:</strong> ${m.stop}<br><strong>Lapor senior:</strong> ${m.senior}</p></div>
+    </div>`;
+  }).join('');
+}
+
+// ==================== QUICK REF ====================
+function renderQR(filter){
+  const keys=Object.keys(DRUGS).filter(k=>k.toLowerCase().includes(filter.toLowerCase()));
+  document.getElementById('qr-body').innerHTML=keys.map(name=>{
+    const d=DRUGS[name];
+    return `<tr>
+      <td><strong>${name}</strong>${d.ha?'<span class="tag t-danger" style="margin-left:4px">HA</span>':''}</td>
+      <td>${d.dose}</td><td>${d.dil.s}</td><td>${d.dil.c}</td>
+      <td>${d.infus.t}</td><td style="font-size:11px">${d.stab.dil}</td>
+      <td style="font-size:11px">${d.mon.dur}</td>
+      <td>${d.vs==='vesicant'?'<span class="tag t-danger">VS</span>':d.vs==='irritant'?'<span class="tag t-warn">IR</span>':'<span class="tag t-safe">NT</span>'}</td>
+    </tr>`;
+  }).join('');
+}
+function filterQR(){renderQR(document.getElementById('qr-search').value);}
+
+// ==================== CHECKLIST ====================
+function renderCL(){
+  ['a','b','c','d'].forEach(s=>{
+    const div=document.getElementById('cl-'+s);
+    div.innerHTML=CL[s].map(item=>`
+      <div class="cl-item${item.c?' critical':''}" id="wrap-${item.id}">
+        <input type="checkbox" id="${item.id}" onchange="clItem('wrap-${item.id}','${item.id}')">
+        <label for="${item.id}">${item.t}</label>
+      </div>`).join('');
+  });
+}
+function clItem(wrapId,cbId){
+  const el=document.getElementById(cbId);
+  const wrap=document.getElementById(wrapId);
+  if(wrap) wrap.classList.toggle('done',el.checked);
+}
+function submitCL(){
+  const all=[...CL.a,...CL.b,...CL.c,...CL.d];
+  const checked=all.filter(i=>document.getElementById(i.id)?.checked).length;
+  const critical=all.filter(i=>i.c);
+  const uncritical=critical.filter(i=>!document.getElementById(i.id)?.checked);
+  const pct=Math.round((checked/all.length)*100);
+  let html='';
+  if(uncritical.length>0){
+    html=`<div class="alert alert-red">🚨 <strong>STOP — ${uncritical.length} item KRITIS belum dicentang:</strong><ul style="padding-left:16px;margin-top:6px">${uncritical.map(i=>`<li>${i.t}</li>`).join('')}</ul>Jangan berikan kemoterapi sebelum semua item kritis terverifikasi.</div>`;
+  } else if(pct===100){
+    html=`<div class="alert alert-green">✅ <strong>Checklist LENGKAP (${pct}%).</strong> Semua item terverifikasi. Kemoterapi dapat dilanjutkan.</div>`;
+  } else {
+    html=`<div class="alert alert-amber">⚠️ <strong>Skor: ${pct}% (${checked}/${all.length})</strong>. Semua item kritis tercentang. Lengkapi item non-kritis sebelum pemberian.</div>`;
+  }
+  document.getElementById('cl-result').innerHTML=html;
+  qualData.checklist=pct;
+  qualData.safety=uncritical.length===0?100:Math.round(((critical.length-uncritical.length)/critical.length)*100);
+  qualData.doc=checked>=all.length-3?100:Math.round((checked/all.length)*100);
+  checkHistory.push({time:new Date().toLocaleString('id-ID'),score:pct,checked,total:all.length,ok:uncritical.length===0});
+}
+function resetCL(){
+  [...CL.a,...CL.b,...CL.c,...CL.d].forEach(i=>{
+    const el=document.getElementById(i.id);if(el)el.checked=false;
+    const w=document.getElementById('wrap-'+i.id);if(w)w.classList.remove('done');
+  });
+  document.getElementById('cl-result').innerHTML='';
+}
+
+// ==================== VCR CHECKLIST ====================
+function clItem(wrapId,cbId){
+  const el=document.getElementById(cbId);
+  const wrap=document.getElementById(wrapId);
+  if(wrap) wrap.classList.toggle('done',el.checked);
+}
+function checkVCR(){
+  const ids=['vc1','vc2','vc3','vc4','vc5','vc6','vc7'];
+  const critical=['vc1','vc2','vc3'];
+  const uncheckedCrit=critical.filter(id=>!document.getElementById(id)?.checked);
+  let html='';
+  if(uncheckedCrit.length>0){
+    html=`<div class="alert alert-red">🚨 <strong>STOP — Item kritis Vincristine belum diverifikasi. JANGAN berikan Vincristine sebelum semua item kritis ✓.</strong></div>`;
+  } else {
+    const all=ids.filter(id=>document.getElementById(id)?.checked).length;
+    html=`<div class="alert alert-green">✅ <strong>Vincristine Safety Checklist: ${all}/${ids.length} item.</strong> Semua item kritis terverifikasi. Siap memberikan Vincristine secara IV.</div>`;
+  }
+  document.getElementById('vcr-result').innerHTML=html;
+}
+
+// ==================== EDUKASI ====================
+function renderEdu(){
+  document.getElementById('edu-grid').innerHTML=EDU_M.map((m,i)=>`
+    <div class="edu-card" onclick="showEdu(${i})">
+      <div style="font-size:26px;margin-bottom:7px">${m.ic}</div>
+      <h3>${m.t}</h3><p>${m.sub}</p>
+    </div>`).join('');
+}
+function showEdu(i){
+  document.getElementById('edu-grid-wrap').style.display='none';
+  document.getElementById('edu-content').style.display='block';
+  document.getElementById('edu-title-text').textContent=EDU_M[i].t;
+  document.getElementById('edu-body').innerHTML=EDU_M[i].body;
+}
+function closeEdu(){
+  document.getElementById('edu-grid-wrap').style.display='block';
+  document.getElementById('edu-content').style.display='none';
+}
+
+// ==================== KUIS ====================
+function startQuiz(){
+  quizIdx=0;quizScore=0;quizAnswered=false;
+  document.getElementById('quiz-start').style.display='none';
+  document.getElementById('quiz-area').style.display='block';
+  document.getElementById('q-final').style.display='none';
+  showQ();
+}
+function showQ(){
+  if(quizIdx>=QUIZ_Q.length){showQFinal();return;}
+  const q=QUIZ_Q[quizIdx];quizAnswered=false;
+  document.getElementById('qbar').style.width=((quizIdx/QUIZ_Q.length)*100)+'%';
+  document.getElementById('q-num').textContent=`Soal ${quizIdx+1} dari ${QUIZ_Q.length} | Skor: ${quizScore}`;
+  document.getElementById('q-case').innerHTML=q.case;
+  document.getElementById('q-question').textContent=q.q;
+  document.getElementById('q-options').innerHTML=q.opts.map((o,i)=>`<div class="quiz-opt" id="qo-${i}" onclick="answerQ(${i})">${String.fromCharCode(65+i)}. ${o}</div>`).join('');
+  document.getElementById('q-feedback').style.display='none';
+  document.getElementById('q-next').style.display='none';
+}
+function answerQ(i){
+  if(quizAnswered)return;quizAnswered=true;
+  const q=QUIZ_Q[quizIdx];const ok=i===q.ans;
+  if(ok)quizScore++;
+  document.getElementById('qo-'+i).classList.add(ok?'correct':'wrong');
+  if(!ok)document.getElementById('qo-'+q.ans).classList.add('correct');
+  const fb=document.getElementById('q-feedback');
+  fb.innerHTML=`<div class="alert ${ok?'alert-green':'alert-red'}">${ok?'✅ Benar!':'❌ Belum tepat.'} <strong>Penjelasan:</strong> ${q.exp}</div>`;
+  fb.style.display='block';
+  document.getElementById('q-next').style.display='block';
+}
+function nextQ(){quizIdx++;showQ();}
+function showQFinal(){
+  document.getElementById('q-final').style.display='block';
+  document.getElementById('q-options').innerHTML='';
+  document.getElementById('q-feedback').style.display='none';
+  document.getElementById('q-next').style.display='none';
+  const pct=Math.round((quizScore/QUIZ_Q.length)*100);
+  document.getElementById('q-final-score').textContent=`${quizScore} / ${QUIZ_Q.length} Benar (${pct}%)`;
+  let msg='';
+  if(pct===100)msg='🏆 Sempurna! Pemahaman keselamatan kemoterapi Anda sangat baik.';
+  else if(pct>=80)msg='⭐ Sangat Baik! Terus tingkatkan pemahaman Anda.';
+  else if(pct>=60)msg='👍 Cukup Baik. Pelajari kembali modul Edukasi untuk topik yang kurang.';
+  else msg='📚 Perlu belajar lebih lanjut. Kunjungi modul Edukasi terlebih dahulu.';
+  document.getElementById('q-final-msg').textContent=msg;
+  document.getElementById('qbar').style.width='100%';
+  qualData.quiz=pct;
+}
+
+// ==================== WORKSHEET ====================
+function generateWS(){
+  const init=document.getElementById('ws-init').value||'—';
+  const code=document.getElementById('ws-code').value||'—';
+  const date=document.getElementById('ws-date').value||new Date().toLocaleDateString('id-ID');
+  const reg=document.getElementById('ws-reg').value||'—';
+  const bsa=document.getElementById('ws-bsa').value||'—';
+  const bb=document.getElementById('ws-bb').value||'—';
+  const drugsRaw=document.getElementById('ws-drugs').value||'';
+  const drugRows=drugsRaw.split('\n').filter(l=>l.trim()).map(l=>{
+    const p=l.split('|').map(x=>x.trim());
+    return `<tr><td>${p[0]||'—'}</td><td>${p[1]||'—'}</td><td>${p[2]||'—'}</td><td>${p[3]||'—'}</td><td>☐ High Alert?<br>☐ Vesicant?</td></tr>`;
+  }).join('');
+  const html=`<div style="font-family:Arial,sans-serif;max-width:820px;margin:0 auto;padding:22px;border:2px solid #1565C0;border-radius:8px">
+  <div style="text-align:center;border-bottom:2px solid #1565C0;padding-bottom:10px;margin-bottom:14px">
+    <div style="font-size:20px;font-weight:800;color:#0D47A1">🧬 drAisyiEduCare</div>
+    <div style="font-size:12px;color:#666">Worksheet Persiapan Kemoterapi Anak</div>
+    <div style="font-size:11px;color:#E53935;font-weight:600;margin-top:4px">⚠️ KONFIDENSIAL — RAHASIA MEDIS — DE-IDENTIFIED</div>
+  </div>
+  <table style="width:100%;border-collapse:collapse;margin-bottom:12px">
+    <tr><td style="padding:5px;font-weight:600;width:30%">Inisial / Kode Pasien</td><td style="padding:5px;border-bottom:1px solid #ccc">${init}</td><td style="padding:5px;font-weight:600;width:20%">Kode Internal</td><td style="padding:5px;border-bottom:1px solid #ccc">${code}</td></tr>
+    <tr><td style="padding:5px;font-weight:600">Tanggal</td><td style="padding:5px;border-bottom:1px solid #ccc">${date}</td><td style="padding:5px;font-weight:600">Regimen</td><td style="padding:5px;border-bottom:1px solid #ccc">${reg}</td></tr>
+    <tr><td style="padding:5px;font-weight:600">BSA (m²)</td><td style="padding:5px;border-bottom:1px solid #ccc"><strong>${bsa}</strong></td><td style="padding:5px;font-weight:600">BB (kg)</td><td style="padding:5px;border-bottom:1px solid #ccc">${bb}</td></tr>
+  </table>
+  <div style="font-weight:700;color:#0D47A1;margin:12px 0 7px">DAFTAR OBAT</div>
+  <table style="width:100%;border-collapse:collapse">
+    <thead><tr style="background:#1565C0;color:#fff"><th style="padding:7px;text-align:left">Nama Obat</th><th style="padding:7px;text-align:left">Dosis</th><th style="padding:7px;text-align:left">Volume / Pelarut</th><th style="padding:7px;text-align:left">Waktu Infus</th><th style="padding:7px;text-align:left">Catatan Safety</th></tr></thead>
+    <tbody>${drugRows||'<tr><td colspan="5" style="padding:7px;color:#999">Tidak ada obat</td></tr>'}</tbody>
+  </table>
+  <div style="margin-top:14px;border:1px solid #ccc;padding:10px;border-radius:6px">
+    <div style="font-weight:700;color:#0D47A1;margin-bottom:8px">✅ SAFETY CHECKLIST (Singkat)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;font-size:12px">
+      <div>☐ Inisial/kode pasien benar</div><div>☐ Obat benar</div>
+      <div>☐ Dosis benar (BSA terbaru)</div><div>☐ Rute benar</div>
+      <div>☐ Pelarut & volume benar</div><div>☐ Waktu infus benar</div>
+      <div>☐ Label high-alert terpasang</div><div>☐ Dokumentasi lengkap</div>
+    </div>
+  </div>
+  <div style="margin-top:14px;display:flex;gap:40px">
+    <div style="flex:1;border-top:1px solid #333;padding-top:4px;font-size:11px;text-align:center">Verifikator 1 (Nama & Tanda Tangan)</div>
+    <div style="flex:1;border-top:1px solid #333;padding-top:4px;font-size:11px;text-align:center">Verifikator 2 (Nama & Tanda Tangan — INDEPENDENT)</div>
+  </div>
+  <div style="margin-top:14px;background:#FFF8E1;border:1px solid #F57F17;padding:9px;font-size:11px;color:#5D2E00;border-radius:5px">
+    ⚠️ Worksheet ini adalah alat bantu persiapan. Dosis akhir dan tata laksana wajib diverifikasi dengan protokol lokal, referensi farmasi resmi, rekam medis, dan tenaga kesehatan yang kompeten. Tool ini tidak menggantikan chemotherapy order atau keputusan klinis dokter. | drAisyiEduCare
+  </div>
+  </div>`;
+  document.getElementById('ws-output').innerHTML=html;
+  qualData.ws_done=100;
+}
+
+// ==================== QUALITY ====================
+function renderQuality(){
+  const scores=[
+    {l:'Checklist Score',s:qualData.checklist,c:'#1565C0'},
+    {l:'Safety Score',s:qualData.safety,c:'#2E7D32'},
+    {l:'Documentation',s:qualData.doc,c:'#E65100'},
+    {l:'Quiz Score',s:qualData.quiz,c:'#B71C1C'},
+    {l:'HA Warnings Seen',s:Math.min(qualData.ha_ack*20,100),c:'#6A1B9A'},
+    {l:'Worksheet Done',s:qualData.ws_done,c:'#0277BD'}
+  ];
+  document.getElementById('qual-grid').innerHTML=scores.map(s=>`
+    <div class="qc">
+      <div class="circle" style="background:${s.c}">${s.s}%</div>
+      <div class="qs" style="color:${s.c}">${s.s}%</div>
+      <div class="ql">${s.l}</div>
+    </div>`).join('');
+  document.getElementById('qual-history').innerHTML=checkHistory.length?
+    checkHistory.slice(-5).reverse().map(h=>`<div class="alert ${h.ok?'alert-green':'alert-red'}" style="margin-bottom:6px;font-size:12px">🕐 ${h.time} — Skor: <strong>${h.score}%</strong> (${h.checked}/${h.total}) — ${h.ok?'✅ Semua kritis OK':'🚨 Ada item kritis belum OK'}</div>`).join('')
+    :'<div class="alert alert-amber">Belum ada riwayat. Gunakan Safety Checklist terlebih dahulu.</div>';
+  document.getElementById('qual-indicators').innerHTML=`
+    <div class="alert alert-blue">🔵 <strong>Double-Check Rate:</strong> ${checkHistory.length>0?checkHistory.filter(h=>h.ok).length+'/'+checkHistory.length+' sesi dengan semua item kritis OK':'Belum ada data'}</div>
+    <div class="alert alert-amber">⚠️ <strong>High-Alert Warnings Dilihat:</strong> ${qualData.ha_ack} kali (dari Dosing Engine)</div>
+    <div class="alert alert-green">✅ <strong>Extravasation Kit:</strong> Pastikan kit tersedia dan dicek periodik di unit Anda.</div>
+    <div class="alert alert-${qualData.ws_done===100?'green':'amber'}">🖨️ <strong>Worksheet:</strong> ${qualData.ws_done===100?'Sudah dibuat sesi ini':'Belum dibuat sesi ini'}</div>`;
+}
+
+// ==================== INIT ====================
+window.addEventListener('load',()=>{
+  document.getElementById('pt-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('ws-date').value=new Date().toISOString().split('T')[0];
+});
+</script>
+</body>
+</html>

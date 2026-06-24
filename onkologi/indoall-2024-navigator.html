@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IndoALL 2024 Navigator — HR & SR</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--blue:#1565C0;--blue-lt:#E3F2FD;--blue-md:#1976D2;--blue-dk:#0D47A1;
+--teal:#00695C;--teal-lt:#E0F2F1;
+--green:#2E7D32;--green-lt:#E8F5E9;
+--gray:#546E7A;--gray-lt:#ECEFF1;--gray-dk:#263238;
+--white:#fff;--border:#CFD8DC;
+--warn:#F57F17;--warn-lt:#FFF8E1;
+--danger:#B71C1C;--danger-lt:#FFEBEE;
+--purple:#4527A0;--purple-lt:#EDE7F6;
+--text:#1A2E3B;--text-sec:#455A64;
+--radius:8px;--shadow:0 2px 8px rgba(0,0,0,.08);
+}
+body{font-family:'Segoe UI',Arial,sans-serif;font-size:14px;color:var(--text);background:#F4F7FA;min-height:100vh}
+
+/* HEADER */
+#header{background:linear-gradient(135deg,var(--blue-dk) 0%,var(--blue-md) 100%);color:#fff;padding:12px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+#header h1{font-size:14px;font-weight:700}
+#header p{font-size:10px;opacity:.85;margin-top:1px}
+#search-bar{display:flex;gap:8px;margin-top:8px}
+#search{flex:1;padding:7px 12px;border:none;border-radius:20px;font-size:12px;outline:none;background:rgba(255,255,255,.15);color:#fff}
+#search::placeholder{color:rgba(255,255,255,.6)}
+#search:focus{background:rgba(255,255,255,.25)}
+.hdr-btns{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+.hdr-btn{padding:4px 9px;border:1px solid rgba(255,255,255,.4);border-radius:14px;background:transparent;color:#fff;font-size:11px;cursor:pointer;transition:.2s}
+.hdr-btn:hover{background:rgba(255,255,255,.2)}
+.hdr-btn.active{background:rgba(255,255,255,.3);border-color:#fff}
+
+/* PROTOCOL SWITCHER */
+.proto-switch{display:flex;gap:6px;margin-top:7px}
+.proto-btn{padding:5px 14px;border-radius:16px;border:2px solid rgba(255,255,255,.5);background:transparent;color:#fff;font-size:12px;font-weight:700;cursor:pointer;transition:.2s}
+.proto-btn.active-hr{background:#fff;color:var(--blue-dk);border-color:#fff}
+.proto-btn.active-sr{background:#fff;color:var(--teal);border-color:#fff}
+
+/* LAYOUT */
+#app{display:flex;min-height:calc(100vh - 140px)}
+#sidebar{width:210px;background:#fff;border-right:1px solid var(--border);padding:10px 0;flex-shrink:0;overflow-y:auto;position:sticky;top:140px;max-height:calc(100vh - 140px)}
+#main{flex:1;padding:14px;overflow-y:auto}
+.nav-section{padding:5px 12px 2px;font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.8px}
+.nav-item{padding:7px 14px;cursor:pointer;border-left:3px solid transparent;font-size:12px;color:var(--text-sec);transition:.15s;display:flex;align-items:center;gap:7px}
+.nav-item:hover,.nav-item.active{background:var(--blue-lt);color:var(--blue);border-left-color:var(--blue)}
+.nav-item.active{font-weight:600}
+.nav-item.sr-nav:hover,.nav-item.sr-nav.active{background:var(--teal-lt);color:var(--teal);border-left-color:var(--teal)}
+
+/* CARDS */
+.card{background:#fff;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden}
+.card-header{padding:10px 14px;background:var(--blue-lt);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.card-header.teal{background:var(--teal-lt)}
+.card-header h2{font-size:13px;font-weight:700;color:var(--blue-dk)}
+.card-header.teal h2{color:var(--teal)}
+.card-body{padding:12px 14px}
+.badge{padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;background:var(--blue);color:#fff}
+.badge-sr{background:var(--teal)}
+
+/* PHASE HEADER */
+.phase-header{color:#fff;border-radius:var(--radius);padding:12px 16px;margin-bottom:12px}
+.phase-header.hr{background:linear-gradient(135deg,var(--blue-dk),var(--blue-md))}
+.phase-header.sr{background:linear-gradient(135deg,var(--teal),#00897B)}
+.phase-header h2{font-size:16px;font-weight:700}
+.phase-header p{font-size:11px;opacity:.85;margin-top:3px}
+.phase-meta{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
+.phase-badge{background:rgba(255,255,255,.2);border-radius:12px;padding:3px 9px;font-size:10px}
+
+/* DRUG TABLE */
+.drug-table{width:100%;border-collapse:collapse;font-size:12px}
+.drug-table th{background:var(--blue-lt);color:var(--blue-dk);padding:6px 9px;text-align:left;font-weight:600;border-bottom:2px solid var(--blue);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+.drug-table.teal th{background:var(--teal-lt);color:var(--teal);border-bottom-color:var(--teal)}
+.drug-table td{padding:6px 9px;border-bottom:1px solid var(--border);vertical-align:top}
+.drug-table tr:hover td{background:#F8FBFF}
+.drug-name{font-weight:700;color:var(--blue-dk);font-size:12px}
+.route-badge{display:inline-block;padding:1px 5px;border-radius:8px;font-size:9px;font-weight:700;margin-left:3px}
+.route-IT{background:#E8F5E9;color:#1B5E20}
+.route-IV{background:#E3F2FD;color:#0D47A1}
+.route-PO{background:#FFF3E0;color:#E65100}
+.route-IM{background:#F3E5F5;color:#4A148C}
+
+/* ACCORDION */
+.acc-item{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:7px;overflow:hidden}
+.acc-toggle{width:100%;background:#fff;border:none;padding:9px 12px;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;color:var(--text);transition:.15s}
+.acc-toggle:hover{background:var(--gray-lt)}
+.acc-toggle.open .arrow{transform:rotate(180deg)}
+.acc-toggle .arrow{transition:transform .25s;font-size:11px;color:var(--gray)}
+.acc-body{display:none;padding:10px 12px;background:#FAFBFC;border-top:1px solid var(--border);font-size:12px;line-height:1.6}
+.acc-body.show{display:block}
+
+/* ALERTS */
+.alert{padding:9px 12px;border-radius:var(--radius);margin-bottom:9px;font-size:11px;line-height:1.5;border-left:4px solid}
+.alert-warn{background:var(--warn-lt);border-color:var(--warn);color:#5D4037}
+.alert-danger{background:var(--danger-lt);border-color:var(--danger);color:var(--danger)}
+.alert-info{background:var(--blue-lt);border-color:var(--blue);color:var(--blue-dk)}
+.alert-success{background:var(--green-lt);border-color:var(--green);color:var(--green)}
+.alert-purple{background:var(--purple-lt);border-color:var(--purple);color:var(--purple)}
+.alert-teal{background:var(--teal-lt);border-color:var(--teal);color:var(--teal)}
+.alert-title{font-weight:700;margin-bottom:3px}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:600px){.grid-2,.grid-3{grid-template-columns:1fr}#sidebar{display:none}}
+
+/* MINI CARD */
+.mini-card{background:var(--blue-lt);border:1px solid #BBDEFB;border-radius:var(--radius);padding:9px 11px}
+.mini-card.teal{background:var(--teal-lt);border-color:#80CBC4}
+.mini-card h4{font-size:11px;font-weight:700;color:var(--blue-dk);margin-bottom:3px}
+.mini-card.teal h4{color:var(--teal)}
+.mini-card p{font-size:11px;color:var(--text-sec);line-height:1.5}
+
+/* COMPARISON TABLE */
+.cmp-table{width:100%;border-collapse:collapse;font-size:12px}
+.cmp-table th{padding:7px 10px;border:1px solid var(--border);font-weight:700;text-align:center}
+.cmp-table th.hr-col{background:var(--blue-lt);color:var(--blue-dk)}
+.cmp-table th.sr-col{background:var(--teal-lt);color:var(--teal)}
+.cmp-table td{padding:6px 10px;border:1px solid var(--border);vertical-align:top;font-size:11px}
+.cmp-table tr:nth-child(even) td{background:#FAFAFA}
+.cmp-diff{background:#FFF9C4!important;font-weight:600}
+
+/* PROTOCOL MAP */
+#map-container{overflow-x:auto;padding:8px 0}
+.flow-wrap{margin-bottom:16px}
+.flow-label{font-size:11px;font-weight:700;color:var(--gray);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.flow-map{display:flex;align-items:center;gap:0;flex-wrap:nowrap;min-width:600px}
+.flow-node{color:#fff;border-radius:7px;padding:8px 12px;text-align:center;cursor:pointer;transition:.2s;min-width:90px;font-size:11px;font-weight:700;flex-shrink:0}
+.flow-node:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 4px 10px rgba(0,0,0,.2)}
+.flow-node .sub{font-size:9px;font-weight:400;opacity:.85;margin-top:1px}
+.flow-arrow{font-size:16px;color:var(--gray);padding:0 3px;flex-shrink:0}
+.fn-hr{background:var(--blue)}
+.fn-teal{background:var(--teal)}
+.fn-green{background:var(--green)}
+.fn-gray{background:var(--gray)}
+.fn-warn{background:var(--warn)}
+
+/* QUICK CARDS */
+.quick-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px;margin-bottom:12px}
+.qcard{border-radius:var(--radius);padding:10px;cursor:pointer;transition:.2s;color:#fff;font-size:11px;font-weight:700}
+.qcard:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.qcard .qi{font-size:20px;margin-bottom:4px}
+.qcard .qs{font-size:9px;font-weight:400;opacity:.85;margin-top:2px}
+.qfn{background:#C62828}.qhl{background:#E65100}.qtls{background:#006064}.qhdmtx{background:#4527A0}.qcns{background:#1565C0}
+
+/* ERRATUM */
+.erratum{display:inline-block;background:#E53935;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:3px;margin-left:4px;vertical-align:middle}
+.highlight{background:#FFF9C4!important;font-weight:700}
+
+/* REF TABLE */
+.ref-table{width:100%;border-collapse:collapse;font-size:11px}
+.ref-table th{background:var(--gray-lt);padding:5px 8px;border:1px solid var(--border);font-weight:600;color:var(--gray-dk)}
+.ref-table td{padding:5px 8px;border:1px solid var(--border);vertical-align:top}
+.ref-table tr:nth-child(even) td{background:#FAFAFA}
+
+/* INTEL PANEL */
+.intel-panel{background:var(--purple-lt);border:1px solid #B39DDB;border-radius:var(--radius);padding:10px 12px;margin-bottom:12px}
+.intel-panel h4{color:var(--purple);font-size:11px;font-weight:700;margin-bottom:7px}
+.intel-item{margin-bottom:5px;font-size:11px;line-height:1.5}
+.intel-item strong{color:var(--purple)}
+
+/* DECISION */
+.decision-box{border:1.5px solid var(--blue);border-radius:var(--radius);padding:9px 12px;font-size:11px;margin-bottom:7px}
+.decision-box.question{background:var(--blue-lt);font-weight:600}
+.decision-box.positive{border-color:var(--green);background:var(--green-lt);color:var(--green)}
+.decision-box.negative{border-color:var(--danger);background:var(--danger-lt);color:var(--danger)}
+.decision-box.neutral{border-color:var(--warn);background:var(--warn-lt)}
+.decision-btn{padding:4px 10px;border-radius:12px;border:1px solid;cursor:pointer;font-size:11px;font-weight:600;margin:3px;transition:.15s}
+.decision-btn.yes{background:var(--green-lt);border-color:var(--green);color:var(--green)}
+.decision-btn.yes:hover{background:var(--green);color:#fff}
+.decision-btn.no{background:var(--danger-lt);border-color:var(--danger);color:var(--danger)}
+.decision-btn.no:hover{background:var(--danger);color:#fff}
+
+/* SAFETY */
+.safety-footer{margin-top:16px;padding:9px 12px;background:var(--warn-lt);border:1px solid var(--warn);border-radius:var(--radius);font-size:10px;color:#5D4037;text-align:center}
+
+/* SEARCH */
+#search-wrap{position:relative;flex:1}
+#search-results{position:absolute;top:100%;left:0;right:0;background:#fff;border-radius:0 0 8px 8px;box-shadow:0 4px 12px rgba(0,0,0,.2);max-height:280px;overflow-y:auto;z-index:200}
+.sr-item{padding:7px 12px;cursor:pointer;border-bottom:1px solid var(--border);font-size:12px;color:var(--text)}
+.sr-item:hover{background:var(--blue-lt);color:var(--blue)}
+.sr-tag{font-size:9px;color:var(--gray);margin-left:5px}
+
+/* PRINT */
+@media print{#sidebar,#header .hdr-btns,#header .proto-switch,#search-bar{display:none!important}#main{padding:0}body{background:#fff}}
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div>
+      <h1>🩸 IndoALL 2024 — Pediatric ALL Protocol Navigator</h1>
+      <p>Indonesian National Childhood ALL Pilot Protocol 2024 · HR & SR · Versi Final Sep 2024 + Erratum II</p>
+    </div>
+    <div style="margin-left:auto;text-align:right;flex-shrink:0">
+      <div style="font-size:13px;font-weight:700;letter-spacing:.3px">drAisyi EduCare</div>
+    </div>
+  </div>
+  <div class="proto-switch">
+    <button class="proto-btn active-hr" id="btn-hr" onclick="switchProto('HR')">🔵 High Risk (HR)</button>
+    <button class="proto-btn" id="btn-sr" onclick="switchProto('SR')">🟢 Standard Risk (SR)</button>
+    <button class="proto-btn" id="btn-cmp" onclick="showPage('compare')">⚖ Bandingkan HR vs SR</button>
+  </div>
+  <div id="search-bar">
+    <div id="search-wrap">
+      <input id="search" type="text" placeholder="Cari obat, fase, MRD, ANC, dosis..." oninput="doSearch(this.value)">
+      <div id="search-results" style="display:none"></div>
+    </div>
+  </div>
+  <div class="hdr-btns">
+    <button class="hdr-btn active" onclick="showPage('home')">🏠 Beranda</button>
+    <button class="hdr-btn" onclick="showPage('map')">🗺 Peta Protokol</button>
+    <button class="hdr-btn" onclick="showPage('mrd')">🔬 MRD</button>
+    <button class="hdr-btn" onclick="showPage('drug')">💊 Obat</button>
+    <button class="hdr-btn" onclick="showPage('emergency')">🚨 Emergensi</button>
+    <button class="hdr-btn" onclick="showPage('tables')">📋 Tabel Dosis</button>
+    <button class="hdr-btn" onclick="printPage()">🖨 Cetak / PDF</button>
+  </div>
+</div>
+
+<div id="app">
+<div id="sidebar">
+  <!-- HR sidebar -->
+  <div id="sidebar-HR">
+    <div class="nav-section">HR — Fase Terapi</div>
+    <div class="nav-item" onclick="showPage('hr-induksi1a')"><span>1️⃣</span>Induksi 1A</div>
+    <div class="nav-item" onclick="showPage('hr-induksi1b')"><span>2️⃣</span>Induksi 1B</div>
+    <div class="nav-item" onclick="showPage('hr-konsolidasi')"><span>3️⃣</span>Konsolidasi</div>
+    <div class="nav-item" onclick="showPage('hr-reinduksi2a')"><span>4️⃣</span>Reinduksi 2A</div>
+    <div class="nav-item" onclick="showPage('hr-reinduksi2b')"><span>5️⃣</span>Reinduksi 2B</div>
+    <div class="nav-item" onclick="showPage('maintenance')"><span>6️⃣</span>Maintenance</div>
+    <div class="nav-section">Panduan Klinis</div>
+    <div class="nav-item" onclick="showPage('risk')"><span>⚖</span>Stratifikasi Risiko</div>
+    <div class="nav-item" onclick="showPage('mrd')"><span>🔬</span>MRD Navigator</div>
+    <div class="nav-item" onclick="showPage('cns')"><span>🧠</span>Status CNS</div>
+    <div class="nav-item" onclick="showPage('relapse')"><span>⚠</span>Relaps</div>
+    <div class="nav-section">Referensi</div>
+    <div class="nav-item" onclick="showPage('drug')"><span>💊</span>Referensi Obat</div>
+    <div class="nav-item" onclick="showPage('hdmtx')"><span>⚗</span>HD MTX (HR)</div>
+    <div class="nav-item" onclick="showPage('kualifikasi')"><span>✅</span>Kualifikasi Fase</div>
+    <div class="nav-item" onclick="showPage('tables')"><span>📋</span>Tabel Dosis</div>
+    <div class="nav-item" onclick="showPage('emergency')"><span>🚨</span>Emergensi</div>
+    <div class="nav-item" onclick="showPage('map')"><span>🗺</span>Peta Protokol</div>
+    <div class="nav-item" onclick="showPage('compare')"><span>⚖</span>HR vs SR</div>
+  </div>
+  <!-- SR sidebar -->
+  <div id="sidebar-SR" style="display:none">
+    <div class="nav-section">SR — Fase Terapi</div>
+    <div class="nav-item sr-nav" onclick="showPage('sr-induksi')"><span>1️⃣</span>Induksi 1A</div>
+    <div class="nav-item sr-nav" onclick="showPage('sr-konsolidasi')"><span>2️⃣</span>Konsolidasi</div>
+    <div class="nav-item sr-nav" onclick="showPage('sr-reinduksi2a')"><span>3️⃣</span>Reinduksi 2A</div>
+    <div class="nav-item sr-nav" onclick="showPage('sr-maintenance')"><span>4️⃣</span>Maintenance</div>
+    <div class="nav-section">Panduan Klinis</div>
+    <div class="nav-item sr-nav" onclick="showPage('risk')"><span>⚖</span>Stratifikasi Risiko</div>
+    <div class="nav-item sr-nav" onclick="showPage('mrd')"><span>🔬</span>MRD Navigator</div>
+    <div class="nav-item sr-nav" onclick="showPage('cns')"><span>🧠</span>Status CNS</div>
+    <div class="nav-item sr-nav" onclick="showPage('relapse')"><span>⚠</span>Relaps</div>
+    <div class="nav-section">Referensi</div>
+    <div class="nav-item sr-nav" onclick="showPage('drug')"><span>💊</span>Referensi Obat</div>
+    <div class="nav-item sr-nav" onclick="showPage('idmtx')"><span>⚗</span>ID MTX (SR)</div>
+    <div class="nav-item sr-nav" onclick="showPage('sr-kualifikasi')"><span>✅</span>Kualifikasi Fase SR</div>
+    <div class="nav-item sr-nav" onclick="showPage('tables')"><span>📋</span>Tabel Dosis</div>
+    <div class="nav-item sr-nav" onclick="showPage('emergency')"><span>🚨</span>Emergensi</div>
+    <div class="nav-item sr-nav" onclick="showPage('map')"><span>🗺</span>Peta Protokol</div>
+    <div class="nav-item sr-nav" onclick="showPage('compare')"><span>⚖</span>HR vs SR</div>
+  </div>
+</div>
+
+<div id="main">
+
+<!-- ===== HOME ===== -->
+<div id="page-home">
+<div class="phase-header hr">
+  <h2>IndoALL 2024 — Protocol Navigator</h2>
+  <p>HR & SR · Indonesian National Childhood ALL Pilot Protocol 2024 · Sep 2024 + Erratum II</p>
+  <div class="phase-meta">
+    <span class="phase-badge">📄 HR: 13 hal</span>
+    <span class="phase-badge">📄 SR: 11 hal</span>
+    <span class="phase-badge">⚠ Erratum II terintegrasi</span>
+  </div>
+</div>
+
+<div class="alert alert-warn">
+  <div class="alert-title">⚠ Erratum II — Protokol HR</div>
+  1. <b>Reinduksi 2B:</b> CPA-Mesna hanya diberikan di <b>minggu 21</b> saja (tidak ada di minggu 22).<br>
+  2. <b>Tapering on PRED:</b> <b>25% → 50% → 75% → 100%</b> (bukan 20-40-60-80-100%).
+</div>
+
+<div class="grid-2">
+<div class="card">
+  <div class="card-header"><h2>🔵 Protokol High Risk (HR)</h2><span class="badge">HR</span></div>
+  <div class="card-body">
+    <div style="display:flex;flex-direction:column;gap:5px">
+      <div onclick="showPage('hr-induksi1a')" style="cursor:pointer;padding:6px 10px;background:var(--blue-lt);border-radius:5px;font-size:11px;font-weight:600;color:var(--blue-dk);border-left:3px solid var(--blue)">📍 Induksi 1A — 35 hari (Mg 1–4)</div>
+      <div onclick="showPage('hr-induksi1b')" style="cursor:pointer;padding:6px 10px;background:var(--blue-lt);border-radius:5px;font-size:11px;font-weight:600;color:var(--blue-dk);border-left:3px solid var(--blue)">📍 Induksi 1B — 28 hari (Mg 5–8)</div>
+      <div onclick="showPage('hr-konsolidasi')" style="cursor:pointer;padding:6px 10px;background:var(--blue-lt);border-radius:5px;font-size:11px;font-weight:600;color:var(--blue-dk);border-left:3px solid var(--blue)">📍 Konsolidasi — 56 hari · HD MTX 3.000 mg/m²</div>
+      <div onclick="showPage('hr-reinduksi2b')" style="cursor:pointer;padding:6px 10px;background:var(--blue-lt);border-radius:5px;font-size:11px;font-weight:600;color:var(--blue-dk);border-left:3px solid var(--blue)">📍 Reinduksi 2B — Mg 21–22 <span class="erratum">ERRATUM</span></div>
+      <div onclick="showPage('maintenance')" style="cursor:pointer;padding:6px 10px;background:var(--green-lt);border-radius:5px;font-size:11px;font-weight:600;color:var(--green);border-left:3px solid var(--green)">📍 Maintenance — Mg 23–108</div>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-header teal"><h2>🟢 Protokol Standard Risk (SR)</h2><span class="badge badge-sr">SR</span></div>
+  <div class="card-body">
+    <div style="display:flex;flex-direction:column;gap:5px">
+      <div onclick="showPage('sr-induksi')" style="cursor:pointer;padding:6px 10px;background:var(--teal-lt);border-radius:5px;font-size:11px;font-weight:600;color:var(--teal);border-left:3px solid var(--teal)">📍 Induksi 1A — 35 hari · tanpa DAUNO</div>
+      <div onclick="showPage('sr-konsolidasi')" style="cursor:pointer;padding:6px 10px;background:var(--teal-lt);border-radius:5px;font-size:11px;font-weight:600;color:var(--teal);border-left:3px solid var(--teal)">📍 Konsolidasi — 56 hari · ID MTX 2.000 mg/m²</div>
+      <div onclick="showPage('sr-reinduksi2a')" style="cursor:pointer;padding:6px 10px;background:var(--teal-lt);border-radius:5px;font-size:11px;font-weight:600;color:var(--teal);border-left:3px solid var(--teal)">📍 Reinduksi 2A — 28 hari · DOXO (bukan DAUNO)</div>
+      <div onclick="showPage('sr-maintenance')" style="cursor:pointer;padding:6px 10px;background:var(--green-lt);border-radius:5px;font-size:11px;font-weight:600;color:var(--green);border-left:3px solid var(--green)">📍 Maintenance — Mg 17–108</div>
+    </div>
+    <div class="alert alert-teal" style="margin-top:8px;font-size:10px">SR tidak memiliki fase Induksi 1B dan Reinduksi 2B. Langsung Konsolidasi setelah remisi.</div>
+  </div>
+</div>
+</div>
+
+<div class="quick-cards">
+  <div class="qcard qfn" onclick="showPage('emergency');showEmerg('fn')"><div class="qi">🌡</div>Febrile Neutropenia<div class="qs">ANC &lt;500 + Demam ≥38°C</div></div>
+  <div class="qcard qhl" onclick="showPage('emergency');showEmerg('hl')"><div class="qi">🩸</div>Hiperleukositosis<div class="qs">PRED tapering on <span class="erratum">E</span></div></div>
+  <div class="qcard qtls" onclick="showPage('emergency');showEmerg('tls')"><div class="qi">⚡</div>TLS<div class="qs">Monitor & profilaksis</div></div>
+  <div class="qcard qhdmtx" onclick="showPage('hdmtx')"><div class="qi">⚗</div>HD MTX (HR)<div class="qs">Protokol lengkap</div></div>
+  <div class="qcard qcns" onclick="showPage('cns')"><div class="qi">🧠</div>Status CNS<div class="qs">CNS1/2/3</div></div>
+</div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== PROTOCOL MAP ===== -->
+<div id="page-map" style="display:none">
+<div class="phase-header hr"><h2>🗺 Peta Protokol IndoALL 2024</h2><p>HR & SR — klik fase untuk detail</p></div>
+<div class="card"><div class="card-body">
+<div id="map-container">
+  <div class="flow-wrap">
+    <div class="flow-label">🔵 High Risk (HR)</div>
+    <div class="flow-map">
+      <div class="flow-node fn-hr" onclick="showPage('risk')">Diagnosis<br>&amp; Stratifikasi<div class="sub">Hari 0</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node fn-hr" onclick="showPage('hr-induksi1a')">Induksi 1A<div class="sub">35 hari · Mg 1–4</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node fn-hr" onclick="showPage('hr-induksi1b')">Induksi 1B<div class="sub">28 hari · Mg 5–8</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node fn-teal" onclick="showPage('hr-konsolidasi')">Konsolidasi<div class="sub">56 hari · HD MTX</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node fn-teal" onclick="showPage('hr-reinduksi2a')">Reinduksi 2A<div class="sub">Mg 17–20</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node fn-teal" onclick="showPage('hr-reinduksi2b')">Reinduksi 2B<div class="sub">Mg 21–22 ⚠E</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node fn-green" onclick="showPage('maintenance')">Maintenance<div class="sub">Mg 23–108</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node fn-gray">Selesai<div class="sub">Mg 108</div></div>
+    </div>
+  </div>
+  <div class="flow-wrap" style="margin-top:14px">
+    <div class="flow-label">🟢 Standard Risk (SR)</div>
+    <div class="flow-map">
+      <div class="flow-node fn-teal" onclick="showPage('risk')">Diagnosis<br>&amp; Stratifikasi<div class="sub">Hari 0</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node fn-teal" onclick="showPage('sr-induksi')">Induksi 1A<div class="sub">35 hari · Mg 1–4</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node fn-teal" onclick="showPage('sr-konsolidasi')">Konsolidasi<div class="sub">56 hari · ID MTX</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node fn-teal" onclick="showPage('sr-reinduksi2a')">Reinduksi 2A<div class="sub">28 hari · Mg 13–16</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node fn-green" onclick="showPage('sr-maintenance')">Maintenance<div class="sub">Mg 17–108</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node fn-gray">Selesai<div class="sub">Mg 108</div></div>
+    </div>
+  </div>
+  <div class="alert alert-warn" style="margin-top:10px;font-size:11px"><b>Jalur alih SR→HR:</b> SR poor responder atau tidak remisi (M2/M3) hari ke-35 → pindah ke protokol HR mulai Induksi HR 1B.</div>
+</div>
+</div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== HR INDUKSI 1A ===== -->
+<div id="page-hr-induksi1a" style="display:none">
+<div class="phase-header hr"><h2>🔵 HR — Fase Induksi 1A</h2><p>35 hari · Mg Prefase + 1–4 · Hari 1–35</p><div class="phase-meta"><span class="phase-badge">5 obat</span><span class="phase-badge">Echo hari ke-8</span><span class="phase-badge">BMP + MRD hari ke-35</span></div></div>
+<div class="intel-panel"><h4>🧠 Protocol Intelligence</h4>
+  <div class="intel-item"><strong>Tujuan:</strong> Eradikasi awal; remisi komplit (M1) pada BMP hari ke-35.</div>
+  <div class="intel-item"><strong>Sering terlewat:</strong> Echo wajib hari ke-8 sebelum DAUNO; limfoblas darah tepi hari ke-8 (respons PRED); MRD hari ke-15 dan 35.</div>
+  <div class="intel-item"><strong>Red flags:</strong> Limfoblas hari ke-8 ≥1.000/mm³ → poor responder → alih HR. M2/M3 hari ke-35 → Induksi 1B.</div>
+  <div class="intel-item"><strong>Perbedaan dengan SR:</strong> HR memiliki DAUNO 30 mg/m²; SR tidak ada DAUNO.</div>
+</div>
+<div class="card"><div class="card-header"><h2>💊 Regimen HR Induksi 1A</h2></div><div class="card-body">
+<table class="drug-table">
+  <tr><th>Obat</th><th>Dosis</th><th>Rute</th><th>Jadwal</th><th>Catatan</th></tr>
+  <tr><td><span class="drug-name">MTX</span><span class="route-badge route-IT">IT</span></td><td>Sesuai usia (Tabel 1)</td><td>IT</td><td>Hari 1, 15, 29, 35</td><td>TIT bila fasilitas tersedia</td></tr>
+  <tr><td><span class="drug-name">VCR</span><span class="route-badge route-IV">IV</span></td><td>1,5 mg/m² (maks. 2 mg)</td><td>IV bolus 10 mnt / drip 30 mnt</td><td>Hari 8, 15, 22, 29, 35</td><td>Maks absolut 2 mg</td></tr>
+  <tr><td><span class="drug-name">PRED</span><span class="route-badge route-PO">PO</span></td><td>60 mg/m²/hari</td><td>PO</td><td>Prefase s.d. hari 35 → tapering off</td><td>Tapering off: 60→40→20% tiap 3 hari</td></tr>
+  <tr><td><span class="drug-name">L-ASP</span><span class="route-badge route-IM">IM</span></td><td>7.500 IU/m² setiap 3 hari</td><td>IM</td><td>Hari 15–33 (tiap 3 hari)</td><td>Siapkan kit anafilaksis</td></tr>
+  <tr class="highlight"><td><span class="drug-name">DAUNO</span><span class="route-badge route-IV">IV</span></td><td>30 mg/m²</td><td>IV drip 1 jam</td><td>Hari 8, 15, 22</td><td>⚠ Echo WAJIB sebelum pemberian pertama (hari ke-8)</td></tr>
+</table>
+</div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== HR INDUKSI 1B ===== -->
+<div id="page-hr-induksi1b" style="display:none">
+<div class="phase-header hr"><h2>🔵 HR — Fase Induksi 1B</h2><p>28 hari · Mg 5–8 · 3 Blok ARA-C</p></div>
+<div class="intel-panel"><h4>🧠 Protocol Intelligence</h4>
+  <div class="intel-item"><strong>Tujuan:</strong> Pendalaman remisi. Untuk pasien HR dan SR poor responder/tidak remisi.</div>
+  <div class="intel-item"><strong>Sering terlewat:</strong> Kualifikasi Blok ARA-C dipenuhi setiap blok; jika ARA-C tunda → 6-MP juga tunda, berikan di akhir fase.</div>
+  <div class="intel-item"><strong>BMP:</strong> Hanya untuk SR yang alih HR (TR) atau ALL HR tidak remisi.</div>
+</div>
+<div class="card"><div class="card-header"><h2>💊 Regimen HR Induksi 1B</h2></div><div class="card-body">
+<table class="drug-table">
+  <tr><th>Obat</th><th>Dosis</th><th>Rute</th><th>Jadwal</th><th>Catatan</th></tr>
+  <tr><td><span class="drug-name">MTX</span><span class="route-badge route-IT">IT</span></td><td>Sesuai usia (Tabel 1)</td><td>IT</td><td>Awal tiap blok (Mg 5, 6, 7)</td><td></td></tr>
+  <tr><td><span class="drug-name">CPA</span><span class="route-badge route-IV">IV</span></td><td>1.000 mg/m²</td><td>IV</td><td>Awal tiap blok</td><td>Berikan bersama Mesna</td></tr>
+  <tr><td><span class="drug-name">Mesna</span><span class="route-badge route-IV">IV</span></td><td>200 mg/m² per kali</td><td>IV bolus</td><td>Jam 0, 4, 8 sejak CPA</td><td>Profilaksis sistitis hemoragik</td></tr>
+  <tr><td><span class="drug-name">ARA-C</span><span class="route-badge route-IV">IV</span></td><td>75 mg/m² tiap 24 jam</td><td>IV</td><td>4 hari/blok</td><td>Bila tunda → 6-MP juga tunda</td></tr>
+  <tr><td><span class="drug-name">6-MP</span><span class="route-badge route-PO">PO</span></td><td>25 mg/m²/hari (dosis tetap)</td><td>PO</td><td>Kontinu</td><td>Dosis tetap, tidak sesuai leukosit</td></tr>
+</table>
+<div class="alert alert-info" style="margin-top:8px"><b>Kualifikasi Blok ARA-C:</b> KU baik, tidak infeksi berat, kreatinin normal, Leukosit ≥2.000, ANC ≥500, Trombosit ≥50.000 sel/mm³</div>
+</div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== HR KONSOLIDASI ===== -->
+<div id="page-hr-konsolidasi" style="display:none">
+<div class="phase-header hr"><h2>🔵 HR — Fase Konsolidasi</h2><p>56 hari · Mg 9–16 · 4 siklus HD MTX 3.000 mg/m²</p></div>
+<div class="intel-panel"><h4>🧠 Protocol Intelligence</h4>
+  <div class="intel-item"><strong>Tujuan:</strong> Eradikasi sanctuary sites; pendalaman remisi dengan HD MTX.</div>
+  <div class="intel-item"><strong>Sering terlewat:</strong> pH urin harus &gt;7 sebelum HD MTX; leucovorin mulai jam ke-42 (bukan akhir infus); HD MTX tunda → 6-MP juga tunda.</div>
+  <div class="intel-item"><strong>Perbedaan dengan SR:</strong> HR: HD MTX 3.000 mg/m²; SR: ID MTX 2.000 mg/m² (lebih rendah).</div>
+  <div class="intel-item"><strong>Red flags:</strong> Kreatinin ≥1,5× → eskalasi hidrasi; ≥3× atau mukositis 3–4 → rescue intensif.</div>
+</div>
+<div class="card"><div class="card-header"><h2>💊 Regimen HR Konsolidasi</h2></div><div class="card-body">
+<table class="drug-table">
+  <tr><th>Obat</th><th>Dosis</th><th>Rute</th><th>Jadwal</th><th>Catatan</th></tr>
+  <tr><td><span class="drug-name">MTX IT</span><span class="route-badge route-IT">IT</span></td><td>Sesuai usia (Tabel 1)</td><td>IT</td><td>Bersama tiap HD MTX (Mg 10, 12, 14, 16)</td><td></td></tr>
+  <tr class="highlight"><td><span class="drug-name">HD MTX</span><span class="route-badge route-IV">IV</span></td><td><b>3.000 mg/m²</b></td><td>IV drip 24 jam</td><td>Mg 10, 12, 14, 16</td><td>MTX I: 300 mg/m² 30 mnt; MTX II: 2.700 mg/m² 23,5 jam</td></tr>
+  <tr><td><span class="drug-name">Leucovorin</span><span class="route-badge route-IV">IV</span></td><td>15 mg/m² tiap 6 jam (kelipatan 5)</td><td>IV drip 1 jam</td><td>Jam 42, 48, 54, 60, 66, 72</td><td>Bila ada efek samping → 9 dosis</td></tr>
+  <tr><td><span class="drug-name">6-MP</span><span class="route-badge route-PO">PO</span></td><td>25 mg/m²/hari (dosis tetap)</td><td>PO</td><td>Kontinu</td><td>Tunda jika HD MTX tunda</td></tr>
+</table>
+<div class="alert alert-danger" style="margin-top:8px">MTX TIDAK BOLEH bersamaan dengan: omeprazole, penicillin, acyclovir, cotrimoxazole, rifampicin</div>
+</div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== HR REINDUKSI 2A ===== -->
+<div id="page-hr-reinduksi2a" style="display:none">
+<div class="phase-header hr"><h2>🔵 HR — Fase Reinduksi 2A</h2><p>Mg 17–20 · Lihat naskah lengkap</p></div>
+<div class="card"><div class="card-body">
+  <div class="alert alert-info">Detail regimen Reinduksi 2A HR tidak tercantum dalam halaman yang terekstrak (hal. 4 HR). Gunakan naskah lengkap protokol.</div>
+  <h4 style="font-size:12px;margin-bottom:8px">Kualifikasi Reinduksi 2A HR:</h4>
+  <ol style="padding-left:16px;font-size:12px;line-height:1.8"><li>Remisi komplit</li><li>KU baik, tidak infeksi berat</li><li>Leukosit ≥2.500, ANC ≥1.000, Trombosit ≥100.000 sel/mm³</li></ol>
+  <div class="alert alert-warn" style="margin-top:8px">Neuropati berat → VCR tidak diberikan. Leukosit &lt;500 atau ANC &lt;200 → DOXO/VCR ditunda.</div>
+</div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== HR REINDUKSI 2B ===== -->
+<div id="page-hr-reinduksi2b" style="display:none">
+<div class="phase-header hr"><h2>🔵 HR — Reinduksi 2B <span class="erratum">ERRATUM II</span></h2><p>28 hari · Mg 21–22 · CPA hanya Mg 21</p></div>
+<div class="alert alert-danger"><div class="alert-title">🔴 ERRATUM II</div>CPA-Mesna <b>hanya Mg 21</b>. <b>TIDAK ADA</b> CPA-Mesna di Mg 22.</div>
+<div class="card"><div class="card-header"><h2>💊 Regimen HR Reinduksi 2B</h2></div><div class="card-body">
+<table class="drug-table">
+  <tr><th>Obat</th><th>Dosis</th><th>Rute</th><th>Jadwal</th><th>Catatan</th></tr>
+  <tr><td><span class="drug-name">MTX</span><span class="route-badge route-IT">IT</span></td><td>Sesuai usia</td><td>IT</td><td>Mg 21 hari 29</td><td></td></tr>
+  <tr class="highlight"><td><span class="drug-name">CPA <span class="erratum">E</span></span></td><td>1.000 mg/m²</td><td>IV</td><td><b>Hanya Mg 21</b></td><td>⚠ Tidak ada CPA di Mg 22</td></tr>
+  <tr class="highlight"><td><span class="drug-name">Mesna <span class="erratum">E</span></span></td><td>200 mg/m² per kali</td><td>IV bolus</td><td><b>Hanya Mg 21</b> — jam 0, 4, 8</td><td>⚠ Tidak ada Mesna di Mg 22</td></tr>
+  <tr><td><span class="drug-name">ARA-C</span><span class="route-badge route-IV">IV</span></td><td>75 mg/m² tiap 24 jam</td><td>IV</td><td>Mg 21 dan Mg 22</td><td>Bila tunda → 6-MP tunda</td></tr>
+  <tr><td><span class="drug-name">6-MP</span><span class="route-badge route-PO">PO</span></td><td>25 mg/m²/hari (dosis tetap)</td><td>PO</td><td>Kontinu</td><td></td></tr>
+</table>
+<div class="alert alert-warn" style="margin-top:8px">Bila ARA-C Mg 22 terpaksa tunda: lakukan BMP di akhir Mg 22, lanjut langsung ke Maintenance (Mg 22 tidak perlu diberikan).</div>
+</div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== MAINTENANCE (shared HR/SR) ===== -->
+<div id="page-maintenance" style="display:none">
+<div class="phase-header hr"><h2>Fase Maintenance — HR & SR</h2><p>HR: Mg 23–108 · SR: Mg 17–108 · Target leukosit 2.000–4.000 sel/mm³</p></div>
+<div class="intel-panel"><h4>🧠 Protocol Intelligence</h4>
+  <div class="intel-item"><strong>Persamaan HR & SR:</strong> Regimen maintenance IDENTIK — MTX IT, VCR IV, DEXA PO, 6-MP PO, MTX PO, Cotrimoxazole.</div>
+  <div class="intel-item"><strong>Sering terlewat:</strong> Dosis 6-MP & MTX PO disesuaikan tiap kunjungan (Tabel 2); IT MTX tidak diberikan Mg 79–108; cotrimoxazole dilanjutkan 3 bulan post-kemo.</div>
+  <div class="intel-item"><strong>Indikasi hentikan sementara:</strong> Leukosit &lt;1.000 sel/mm³, infeksi berat, toksisitas hati derajat &gt;3.</div>
+</div>
+<div class="card"><div class="card-header"><h2>💊 Regimen Maintenance</h2></div><div class="card-body">
+<table class="drug-table">
+  <tr><th>Obat</th><th>Dosis</th><th>Rute</th><th>Jadwal</th></tr>
+  <tr><td><span class="drug-name">MTX IT</span></td><td>Sesuai usia (Tabel 1)</td><td>IT</td><td>Periodik · Tidak diberikan Mg 79–108</td></tr>
+  <tr><td><span class="drug-name">VCR</span></td><td>1,5 mg/m² (maks. 2 mg)</td><td>IV</td><td>Periodik</td></tr>
+  <tr><td><span class="drug-name">DEXA</span></td><td>6 mg/m²</td><td>PO</td><td>Periodik bersama VCR</td></tr>
+  <tr><td><span class="drug-name">6-MP</span></td><td>50 mg/m² (<b>Tabel 2 — sesuai leukosit</b>)</td><td>PO</td><td>Setiap hari</td></tr>
+  <tr><td><span class="drug-name">MTX PO</span></td><td>20 mg/m² (<b>Tabel 2 — sesuai leukosit</b>)</td><td>PO</td><td>Tiap minggu</td></tr>
+  <tr><td><span class="drug-name">Cotrimoxazole</span></td><td>Sesuai BB (Tabel 3)</td><td>PO</td><td>3×/minggu · Lanjut 3 bulan post-kemo</td></tr>
+</table>
+</div></div>
+<div class="card"><div class="card-header"><h2>Tabel 2 — Dosis 6-MP & MTX PO Sesuai Leukosit</h2></div><div class="card-body">
+<table class="ref-table">
+  <tr><th>Leukosit (sel/mm³)</th><th>Dosis (%)</th></tr>
+  <tr class="highlight"><td>&lt;1.000</td><td>0 (tunda)</td></tr>
+  <tr><td>1.000–2.000</td><td>50%</td></tr>
+  <tr><td>&gt;2.000–4.000</td><td>100%</td></tr>
+  <tr><td>&gt;4.000 (6 mg pertama)</td><td>125–150%</td></tr>
+  <tr><td>&gt;4.000 persisten setelah 150%</td><td>175–200%</td></tr>
+</table>
+<p style="font-size:10px;margin-top:5px;color:var(--text-sec)">Leukosit tidak memengaruhi MTX IT, VCR IV, DEXA PO</p>
+</div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== SR INDUKSI 1A ===== -->
+<div id="page-sr-induksi" style="display:none">
+<div class="phase-header sr"><h2>🟢 SR — Fase Induksi 1A</h2><p>35 hari · Mg Prefase + 1–4 · tanpa DAUNO</p><div class="phase-meta"><span class="phase-badge">4 obat (no DAUNO)</span><span class="phase-badge">BMP hari ke-35</span></div></div>
+<div class="intel-panel"><h4>🧠 Protocol Intelligence — SR Induksi 1A</h4>
+  <div class="intel-item"><strong>Tujuan:</strong> Mencapai remisi komplit (M1) hari ke-35 tanpa antrasiklin.</div>
+  <div class="intel-item"><strong>Perbedaan kunci vs HR:</strong> SR tidak ada DAUNO → tidak perlu echocardiogram pre-induksi. SR juga mencatat sel blas darah tepi hari ke-8 untuk respons PRED.</div>
+  <div class="intel-item"><strong>Red flags:</strong> Limfoblas hari ke-8 ≥1.000/mm³ → poor responder → alih protokol HR. M2/M3 hari ke-35 → alih HR Induksi 1B.</div>
+  <div class="intel-item"><strong>Checkpoint khusus SR:</strong> Sel blas darah tepi hari ke-8 dicatat di form SR (berbeda dengan HR yang mencatat hari ke-0).</div>
+</div>
+<div class="card"><div class="card-header teal"><h2>💊 Regimen SR Induksi 1A</h2></div><div class="card-body">
+<table class="drug-table teal">
+  <tr><th>Obat</th><th>Dosis</th><th>Rute</th><th>Jadwal</th><th>Catatan</th></tr>
+  <tr><td><span class="drug-name">MTX</span><span class="route-badge route-IT">IT</span></td><td>Sesuai usia (Tabel 1)</td><td>IT</td><td>Hari 1, 15, 29, 35</td><td>TIT bila fasilitas tersedia</td></tr>
+  <tr><td><span class="drug-name">VCR</span><span class="route-badge route-IV">IV</span></td><td>1,5 mg/m² (maks. 2 mg)</td><td>IV bolus 10 mnt / drip 30 mnt</td><td>Hari 8, 15, 22, 29</td><td>Maks absolut 2 mg</td></tr>
+  <tr><td><span class="drug-name">PRED</span><span class="route-badge route-PO">PO</span></td><td>60 mg/m²/hari</td><td>PO</td><td>Prefase s.d. hari 35 → tapering off</td><td>Tapering off: 60→40→20% tiap 3 hari</td></tr>
+  <tr><td><span class="drug-name">L-ASP</span><span class="route-badge route-IM">IM</span></td><td>7.500 IU/m² setiap 3 hari</td><td>IM</td><td>Hari 15–33 (tiap 3 hari)</td><td>Siapkan kit anafilaksis</td></tr>
+</table>
+<div class="alert alert-teal" style="margin-top:8px">SR tidak ada DAUNO → echocardiogram tidak diperlukan di fase induksi. Echo dilakukan sebelum Reinduksi 2A (Mg 12).</div>
+<div class="alert alert-success" style="margin-top:6px"><b>Kualifikasi ke Konsolidasi SR:</b> Remisi komplit (M1) + CNS1 + tidak ada infiltrasi leukemia. Segera lanjutkan (maks. perbaikan 1–2 minggu).</div>
+</div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== SR KONSOLIDASI ===== -->
+<div id="page-sr-konsolidasi" style="display:none">
+<div class="phase-header sr"><h2>🟢 SR — Fase Konsolidasi</h2><p>56 hari · Mg 5–12 · ID MTX 2.000 mg/m² (bukan 3.000)</p><div class="phase-meta"><span class="phase-badge">ID MTX (bukan HD MTX)</span><span class="phase-badge">4 siklus</span><span class="phase-badge">Echo sebelum Reinduksi</span></div></div>
+<div class="intel-panel"><h4>🧠 Protocol Intelligence — SR Konsolidasi</h4>
+  <div class="intel-item"><strong>Tujuan:</strong> Pendalaman remisi dengan intermediate dose MTX (lebih rendah dari HR).</div>
+  <div class="intel-item"><strong>Perbedaan kunci vs HR:</strong> SR menggunakan <b>ID MTX 2.000 mg/m²</b> (HR: HD MTX 3.000 mg/m²). Leucovorin SR dimulai jam ke-<b>42, 48, 54</b> (hanya 3 jam awal) vs HR 6 jam.</div>
+  <div class="intel-item"><strong>Sering terlewat:</strong> ID MTX tunda → 6-MP juga tunda; Echo dilakukan sebelum Reinduksi 2A (di akhir Mg 12); kreatinin + pH urin sebelum tiap ID MTX.</div>
+  <div class="intel-item"><strong>Monitoring rutin:</strong> Darah lengkap tiap minggu; kreatinin + pH urin tiap siklus (RUTIN di Mg 6, 8, 10, 12).</div>
+</div>
+<div class="card"><div class="card-header teal"><h2>💊 Regimen SR Konsolidasi</h2></div><div class="card-body">
+<div class="alert alert-teal">4 siklus ID MTX: Mg 6 (H8), Mg 8 (H22), Mg 10 (H36), Mg 12 (H50) — Hiperhidrasi "B" sebelum tiap ID MTX</div>
+<table class="drug-table teal">
+  <tr><th>Obat</th><th>Dosis</th><th>Rute</th><th>Jadwal</th><th>Catatan</th></tr>
+  <tr><td><span class="drug-name">MTX IT</span><span class="route-badge route-IT">IT</span></td><td>Sesuai usia (Tabel 1)</td><td>IT</td><td>Bersama tiap ID MTX (Mg 6, 8, 10, 12)</td><td></td></tr>
+  <tr class="highlight"><td><span class="drug-name">ID MTX</span><span class="route-badge route-IV">IV</span></td><td><b>2.000 mg/m²</b></td><td>IV drip 24 jam</td><td>Mg 6, 8, 10, 12</td><td>MTX I: 200 mg/m² IV drip 30 mnt; MTX II: 1.800 mg/m² IV drip 23,5 jam</td></tr>
+  <tr><td><span class="drug-name">Leucovorin</span><span class="route-badge route-IV">IV</span></td><td>15 mg/m² tiap 6 jam (kelipatan 5)</td><td>IV drip 1 jam</td><td>Jam 42, 48, 54 sejak ID MTX dimulai</td><td>SR: 3 dosis standar (HR: 6 dosis)</td></tr>
+  <tr><td><span class="drug-name">6-MP</span><span class="route-badge route-PO">PO</span></td><td>25 mg/m²/hari (dosis tetap)</td><td>PO</td><td>Kontinu</td><td>Tunda jika ID MTX tunda</td></tr>
+</table>
+<div class="alert alert-teal" style="margin-top:8px"><b>Pemeriksaan keamanan:</b> Darah lengkap sebelum tiap minggu; kreatinin serum + pH urin rutin di Mg 6, 8, 10, 12. <b>Echocardiogram sebelum Reinduksi 2A</b> (akhir Mg 12).</div>
+<div class="alert alert-danger" style="margin-top:6px">MTX TIDAK BOLEH bersamaan dengan: omeprazole, penicillin, acyclovir, cotrimoxazole, rifampicin</div>
+</div></div>
+<div class="card"><div class="card-header teal"><h2>✅ Kualifikasi Konsolidasi SR</h2></div><div class="card-body">
+<ol style="padding-left:16px;font-size:12px;line-height:1.8">
+  <li>Remisi komplit</li><li>KU baik, tidak infeksi berat</li>
+  <li>Leukosit ≥2.000, ANC ≥500, Trombosit ≥50.000 sel/mm³</li>
+  <li>Kreatinin &lt;1,5× nilai awal</li>
+  <li>SGOT/SGPT ≤10× batas atas normal</li>
+  <li>Bilirubin total &lt;3 mg/dl</li>
+  <li>Tidak ada obstruksi saluran kemih</li>
+  <li>Tidak ada serositis</li>
+</ol>
+</div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== SR REINDUKSI 2A ===== -->
+<div id="page-sr-reinduksi2a" style="display:none">
+<div class="phase-header sr"><h2>🟢 SR — Fase Reinduksi 2A</h2><p>28 hari · Mg 13–16 · DOXO (bukan DAUNO)</p><div class="phase-meta"><span class="phase-badge">5 obat</span><span class="phase-badge">DOXO 25 mg/m²</span><span class="phase-badge">BMP di akhir fase</span></div></div>
+<div class="intel-panel"><h4>🧠 Protocol Intelligence — SR Reinduksi 2A</h4>
+  <div class="intel-item"><strong>Tujuan:</strong> Reinduksi; mempersiapkan maintenance jangka panjang.</div>
+  <div class="intel-item"><strong>Perbedaan kunci vs HR Reinduksi:</strong> SR menggunakan <b>DOXO 25 mg/m²</b> (bukan DAUNO seperti HR Induksi 1A). SR Reinduksi 2A juga menggunakan DEXA 10 mg/m² (bukan PRED).</div>
+  <div class="intel-item"><strong>Echo wajib sebelum Reinduksi 2A</strong> (dilakukan di akhir Mg 12 Konsolidasi).</div>
+  <div class="intel-item"><strong>Sering terlewat:</strong> GDS/GDP dan trigliserida dipantau (karena DEXA + L-ASP); BMP di akhir Reinduksi 2A (akhir Mg 16); bilirubin dipantau.</div>
+  <div class="intel-item"><strong>Red flags:</strong> Neuropati berat → VCR tidak diberikan; Leukosit &lt;500 atau ANC &lt;200 → DOXO/VCR ditunda.</div>
+</div>
+<div class="card"><div class="card-header teal"><h2>💊 Regimen SR Reinduksi 2A</h2></div><div class="card-body">
+<table class="drug-table teal">
+  <tr><th>Obat</th><th>Dosis</th><th>Rute</th><th>Jadwal</th><th>Catatan</th></tr>
+  <tr><td><span class="drug-name">MTX</span><span class="route-badge route-IT">IT</span></td><td>Sesuai usia (Tabel 1)</td><td>IT</td><td>Mg 13 hari 1</td><td></td></tr>
+  <tr><td><span class="drug-name">VCR</span><span class="route-badge route-IV">IV</span></td><td>1,5 mg/m² (maks. 2 mg)</td><td>IV bolus 10 mnt / drip 30 mnt</td><td>Mg 13, 14, 15</td><td>Tunda bila neuropati berat</td></tr>
+  <tr class="highlight"><td><span class="drug-name">DEXA</span><span class="route-badge route-PO">PO</span></td><td><b>10 mg/m²/hari</b></td><td>PO</td><td>Mg 13 + 14, lalu Mg 15 + 16 (periodik)</td><td>Bukan PRED; pantau GDS</td></tr>
+  <tr><td><span class="drug-name">L-ASP</span><span class="route-badge route-IM">IM</span></td><td>7.500 IU/m² setiap 3 hari</td><td>IM</td><td>Mg 13–15</td><td>Siapkan kit anafilaksis</td></tr>
+  <tr class="highlight"><td><span class="drug-name">DOXO</span><span class="route-badge route-IV">IV</span></td><td><b>25 mg/m²</b></td><td>IV drip 1 jam</td><td>Mg 13 dan Mg 15</td><td>Bukan DAUNO; pantau fungsi jantung</td></tr>
+</table>
+<div class="alert alert-teal" style="margin-top:8px">
+  <b>Pemeriksaan keamanan:</b> Darah lengkap, bilirubin tiap minggu; GDS/GDP + trigliserida (Mg 13, 14, 15, 16).<br>
+  <b>BMP checkpoint:</b> Akhir Reinduksi 2A (Mg 16).<br>
+  <b>Kualifikasi ke Maintenance:</b> Segera lanjutkan jika kualifikasi terpenuhi (maks. penundaan 1–2 minggu).
+</div>
+</div></div>
+<div class="card"><div class="card-header teal"><h2>✅ Kualifikasi Reinduksi 2A SR</h2></div><div class="card-body">
+<ol style="padding-left:16px;font-size:12px;line-height:1.8">
+  <li>Remisi komplit</li><li>KU baik, tidak infeksi berat</li>
+  <li>Leukosit ≥2.500, ANC ≥1.000, Trombosit ≥100.000 sel/mm³ (tanpa transfusi)</li>
+</ol>
+<div class="alert alert-warn" style="margin-top:6px">Leukosit &lt;500 atau ANC &lt;200 → DOXO atau VCR ditunda.</div>
+</div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== SR MAINTENANCE ===== -->
+<div id="page-sr-maintenance" style="display:none">
+<div class="phase-header sr"><h2>🟢 SR — Fase Maintenance</h2><p>Mg 17–108 · Target leukosit 2.000–4.000 sel/mm³</p></div>
+<div class="intel-panel"><h4>🧠 Protocol Intelligence</h4>
+  <div class="intel-item"><strong>Maintenance SR identik dengan HR</strong> dalam hal regimen obat, target leukosit, dan tabel dosis. Perbedaan hanya pada minggu mulainya (SR: Mg 17; HR: Mg 23).</div>
+  <div class="intel-item"><strong>Sering terlewat:</strong> Dosis 6-MP & MTX PO disesuaikan tiap kunjungan sesuai Tabel 2; IT MTX tidak diberikan Mg 79–108; cotrimoxazole dilanjutkan 3 bulan post-kemo.</div>
+</div>
+<div class="alert alert-teal">Regimen maintenance SR identik dengan HR. Lihat halaman <b>Maintenance</b> untuk detail lengkap.</div>
+<div style="margin-top:8px"><button onclick="showPage('maintenance')" style="padding:8px 16px;background:var(--teal);color:#fff;border:none;border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:600">→ Buka Halaman Maintenance Lengkap</button></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== COMPARE HR vs SR ===== -->
+<div id="page-compare" style="display:none">
+<div class="phase-header hr"><h2>⚖ Perbandingan HR vs SR — IndoALL 2024</h2><p>Perbedaan kunci antar protokol</p></div>
+<div class="card"><div class="card-header"><h2>Perbedaan Utama per Fase</h2></div><div class="card-body">
+<table class="cmp-table">
+  <tr><th style="width:20%">Aspek</th><th class="hr-col">High Risk (HR)</th><th class="sr-col">Standard Risk (SR)</th></tr>
+  <tr><td><b>Induksi 1A</b></td><td>MTX IT, VCR, PRED, L-ASP, <b>DAUNO 30 mg/m²</b></td><td class="cmp-diff">MTX IT, VCR, PRED, L-ASP — <b>TANPA DAUNO</b></td></tr>
+  <tr><td><b>Echo pre-induksi</b></td><td>Wajib hari ke-8</td><td class="cmp-diff">Tidak diperlukan (echo di akhir Mg 12)</td></tr>
+  <tr><td><b>Induksi 1B</b></td><td>Ada (CPA, Mesna, ARA-C, 6-MP) — Mg 5–8</td><td class="cmp-diff"><b>Tidak ada</b> Induksi 1B</td></tr>
+  <tr><td><b>Konsolidasi MTX</b></td><td class="cmp-diff"><b>HD MTX 3.000 mg/m²</b> × 4 siklus</td><td><b>ID MTX 2.000 mg/m²</b> × 4 siklus</td></tr>
+  <tr><td><b>Leucovorin konsolidasi</b></td><td class="cmp-diff">Jam 42, 48, 54, 60, 66, 72 (6 dosis)</td><td>Jam 42, 48, 54 (3 dosis standar)</td></tr>
+  <tr><td><b>Reinduksi 2A</b></td><td>Mg 17–20 (lihat naskah lengkap)</td><td class="cmp-diff">Mg 13–16; <b>DOXO 25 mg/m²</b> + DEXA 10 mg/m²</td></tr>
+  <tr><td><b>Reinduksi 2B</b></td><td class="cmp-diff">Ada — Mg 21–22 (CPA hanya Mg 21 ⚠E)</td><td><b>Tidak ada</b> Reinduksi 2B</td></tr>
+  <tr><td><b>Mulai Maintenance</b></td><td class="cmp-diff">Mg 23</td><td>Mg 17</td></tr>
+  <tr><td><b>Maintenance</b></td><td colspan="2" style="text-align:center;background:var(--green-lt);font-weight:600;color:var(--green)">IDENTIK — MTX IT, VCR, DEXA, 6-MP, MTX PO, Cotrimoxazole (Mg 17/23 s.d. 108)</td></tr>
+  <tr><td><b>Total terapi</b></td><td>~108 minggu (~2 tahun)</td><td>~108 minggu (~2 tahun)</td></tr>
+</table>
+</div></div>
+
+<div class="grid-2">
+<div class="card">
+  <div class="card-header"><h2>Perbedaan Obat Kunci</h2></div>
+  <div class="card-body">
+    <table class="ref-table">
+      <tr><th>Obat</th><th class="hr-col" style="background:var(--blue-lt);color:var(--blue-dk)">HR</th><th class="sr-col" style="background:var(--teal-lt);color:var(--teal)">SR</th></tr>
+      <tr><td>Antrasiklin</td><td>DAUNO 30 mg/m² (Induksi 1A)</td><td class="cmp-diff">DOXO 25 mg/m² (Reinduksi 2A saja)</td></tr>
+      <tr><td>MTX konsolidasi</td><td>HD MTX 3.000 mg/m²</td><td class="cmp-diff">ID MTX 2.000 mg/m²</td></tr>
+      <tr><td>Steroid reinduksi</td><td>DEXA (naskah lengkap)</td><td>DEXA 10 mg/m² (confirmed)</td></tr>
+      <tr><td>CPA / Mesna</td><td>Ada (Induksi 1B, Reinduksi 2B)</td><td class="cmp-diff">Tidak ada</td></tr>
+      <tr><td>ARA-C</td><td>Ada (Induksi 1B, Reinduksi 2B)</td><td class="cmp-diff">Tidak ada</td></tr>
+    </table>
+  </div>
+</div>
+<div class="card">
+  <div class="card-header"><h2>Kualifikasi yang Berbeda</h2></div>
+  <div class="card-body">
+    <table class="ref-table">
+      <tr><th>Fase</th><th>HR</th><th>SR</th></tr>
+      <tr><td>Reinduksi 2A</td><td>Leukosit ≥2.500, ANC ≥1.000, Trombosit ≥100.000</td><td>Sama</td></tr>
+      <tr><td>Maintenance</td><td>Leukosit ≥1.000, ANC ≥500, Trombosit ≥50.000</td><td class="cmp-diff">Leukosit ≥1.000, ANC ≥500, Trombosit ≥50.000 <i>(sama)</i></td></tr>
+    </table>
+  </div>
+</div>
+</div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== RISK STRATIFICATION ===== -->
+<div id="page-risk" style="display:none">
+<div class="phase-header hr"><h2>⚖ Stratifikasi Risiko & Definisi Operasional</h2></div>
+<div class="grid-2">
+<div class="card">
+  <div class="card-header teal"><h2>Standard Risk (SR)</h2><span class="badge badge-sr">SR</span></div>
+  <div class="card-body">
+    <p style="font-size:11px;color:var(--text-sec);margin-bottom:6px">Harus memenuhi <b>semua</b>:</p>
+    <ol style="padding-left:14px;font-size:12px;line-height:1.8">
+      <li>Tidak memenuhi kriteria HR <b>DAN</b></li>
+      <li>Prednisone good responder (limfoblas &lt;1.000/mm³ hari ke-8) <b>DAN</b></li>
+      <li>Remisi komplit (M1) pada BMP hari ke-35</li>
+    </ol>
+  </div>
+</div>
+<div class="card">
+  <div class="card-header"><h2>High Risk (HR)</h2><span class="badge">HR</span></div>
+  <div class="card-body">
+    <p style="font-size:11px;color:var(--text-sec);margin-bottom:6px">Salah satu dari:</p>
+    <ol style="padding-left:14px;font-size:11px;line-height:1.7">
+      <li>Steroid &gt;3 minggu / setara DEXA 400 mg</li>
+      <li>Umur &lt;1 thn atau ≥10 thn</li>
+      <li>Leukosit ≥50.000 sel/mm³</li>
+      <li>Massa mediastinum &gt;1/3 thorax</li>
+      <li>Keterlibatan CNS</li>
+      <li>Keterlibatan testis</li>
+      <li>T-lineage leukemia</li>
+      <li>Mixed leukemia</li>
+      <li>SR + poor responder</li>
+      <li>SR tidak remisi BMP hari ke-35</li>
+    </ol>
+  </div>
+</div>
+</div>
+<div class="grid-2">
+<div class="card"><div class="card-header"><h2>Status Sumsum Tulang (M)</h2></div><div class="card-body">
+  <table class="ref-table">
+    <tr><th>Status</th><th>Kriteria</th></tr>
+    <tr><td><b>M1</b></td><td>Limfoblas &lt;5% → Remisi komplit</td></tr>
+    <tr><td><b>M2</b></td><td>Limfoblas 5–25%</td></tr>
+    <tr><td><b>M3</b></td><td>Limfoblas &gt;25% → Tidak remisi</td></tr>
+  </table>
+</div></div>
+<div class="card"><div class="card-header"><h2>Respons Prednisone (Hari ke-8)</h2></div><div class="card-body">
+  <table class="ref-table">
+    <tr><th>Status</th><th>Definisi</th></tr>
+    <tr><td><b>Good responder</b></td><td>&lt;1.000 limfoblas/mm³</td></tr>
+    <tr><td><b>Poor responder</b></td><td>≥1.000 limfoblas/mm³</td></tr>
+  </table>
+  <div class="alert alert-warn" style="margin-top:6px">Poor responder pada SR → alih protokol HR</div>
+</div></div>
+</div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== MRD ===== -->
+<div id="page-mrd" style="display:none">
+<div class="phase-header hr"><h2>🔬 MRD Navigator</h2><p>Minimal Residual Disease · HR & SR</p></div>
+<div class="card"><div class="card-body">
+  <div class="decision-box question">Pilih waktu pengukuran MRD:</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0">
+    <button class="decision-btn yes" onclick="showMRD('d15')">Hari ke-15</button>
+    <button class="decision-btn yes" onclick="showMRD('d35')">Hari ke-35</button>
+    <button class="decision-btn yes" onclick="showMRD('post')">Post Reinduksi</button>
+  </div>
+  <div id="mrd-d15" style="display:none"><div class="decision-box neutral">MRD hari ke-15 (bila fasilitas tersedia). Digunakan evaluasi respons awal. Cut-off kuantitatif: konfirmasi dengan naskah lengkap protokol.</div></div>
+  <div id="mrd-d35" style="display:none"><div class="decision-box neutral">MRD hari ke-35 bersama BMP morfologi. M1 + MRD negatif = remisi optimal. MRD positif meski M1 → pertimbangkan eskalasi (konsultasi konsultan HOA).</div></div>
+  <div id="mrd-post" style="display:none"><div class="decision-box neutral">BMP di akhir Reinduksi (HR: akhir 2B; SR: akhir 2A). Blast &gt;5% → evaluasi relaps. Konfirmasi dengan naskah lengkap.</div></div>
+</div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== CNS ===== -->
+<div id="page-cns" style="display:none">
+<div class="phase-header hr"><h2>🧠 Status CNS</h2></div>
+<div class="grid-2">
+<div>
+  <div class="card"><div class="card-header" style="background:var(--green-lt)"><h2 style="color:var(--green)">CNS1</h2></div><div class="card-body">Tidak ada klinis/pencitraan CNS DAN tidak ada sel blas sitospin CSS</div></div>
+  <div class="card"><div class="card-header" style="background:var(--warn-lt)"><h2 style="color:var(--warn)">CNS2</h2></div><div class="card-body">Tidak ada klinis/pencitraan CNS DAN ≤5 leukosit/mm³ DAN positif sel blas sitospin CSS → Tambahan IT kemoterapi</div></div>
+  <div class="card"><div class="card-header" style="background:var(--danger-lt)"><h2 style="color:var(--danger)">CNS3 (Keterlibatan CNS)</h2></div><div class="card-body">Salah satu: &gt;5 leukosit/mm³ + blast; klinis/pencitraan CNS; massa CNS/leptomeningeal; palsi saraf kranial; keterlibatan retina → Tambahan IT lebih banyak</div></div>
+</div>
+<div>
+  <div class="card"><div class="card-header"><h2>Status CSS Khusus</h2></div><div class="card-body">
+    <div class="acc-item"><button class="acc-toggle" onclick="toggleAcc(this)">TLP <span class="arrow">▼</span></button><div class="acc-body">CSS ≥10 eritrosit/mm³</div></div>
+    <div class="acc-item"><button class="acc-toggle" onclick="toggleAcc(this)">Spinal Blood Tap <span class="arrow">▼</span></button><div class="acc-body">CSS ≥500 eritrosit/mm³</div></div>
+  </div></div>
+  <div class="card"><div class="card-header"><h2>Tindakan per Status CNS</h2></div><div class="card-body" style="font-size:12px">
+    <b>SR CNS2:</b> Tambahan IT kemoterapi, lanjut protokol ALL HR 2024<br>
+    <b>SR CNS3:</b> Tambahan IT kemoterapi lebih banyak, lanjut protokol ALL HR 2024<br>
+    <b>HR CNS2/3:</b> Tambahan IT sesuai jadwal protokol HR
+  </div></div>
+</div>
+</div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== RELAPSE ===== -->
+<div id="page-relapse" style="display:none">
+<div class="phase-header hr"><h2>⚠ Definisi & Klasifikasi Relaps</h2></div>
+<div class="card"><div class="card-header"><h2>Jenis Relaps</h2></div><div class="card-body">
+<div class="grid-2">
+  <div><div class="mini-card" style="margin-bottom:7px"><h4>Relaps BM (Isolated)</h4><p>&gt;25% blast BMP tanpa ekstramedular, ATAU &gt;5–&lt;25% blast BMP + kelainan klonal (flow/sitogenetik/FISH/PCR)</p></div>
+  <div class="mini-card"><h4>Relaps CNS (Isolated)</h4><p>&gt;5 sel blas/mm³ pada CSS</p></div></div>
+  <div><div class="mini-card" style="margin-bottom:7px"><h4>Relaps Ekstramedular</h4><p>Testis atau mediastinum: pembesaran organ (perlu pencitraan & biopsi)</p></div>
+  <div class="mini-card"><h4>Relaps Kombinasi</h4><p>BM relaps + setidaknya 1 organ lain</p></div></div>
+</div>
+</div></div>
+<div class="card"><div class="card-header"><h2>Klasifikasi Waktu</h2></div><div class="card-body">
+<table class="ref-table">
+  <tr><th>Klasifikasi</th><th>Definisi</th></tr>
+  <tr><td style="color:var(--danger);font-weight:700">Very Early Relapse</td><td>&lt;18 bulan sejak diagnosis</td></tr>
+  <tr><td style="color:var(--warn);font-weight:700">Intermediate Relapse</td><td>18–&lt;36 bulan sejak diagnosis</td></tr>
+  <tr><td><b>Early Relapse</b></td><td>Dalam 36 bulan sejak diagnosis</td></tr>
+  <tr><td style="color:var(--green);font-weight:700">Late Relapse</td><td>Setelah 36 bulan sejak diagnosis</td></tr>
+</table>
+<div class="alert alert-info" style="margin-top:8px">Tidak remisi (M2/M3) akhir reinduksi → Rujuk ke RS Kanker Nasional: diagnostik ulang + transplantasi sumsum tulang, atau paliatif tanpa kemoterapi.</div>
+</div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== DRUG REFERENCE ===== -->
+<div id="page-drug" style="display:none">
+<div class="phase-header hr"><h2>💊 Referensi Obat — HR & SR</h2></div>
+<div class="acc-item"><button class="acc-toggle" onclick="toggleAcc(this)">MTX — Methotrexate (IT/IV/PO) <span class="arrow">▼</span></button><div class="acc-body">
+  <div class="grid-2"><div><b>Kelas:</b> Antimetabolit (antifolat)<br><b>Dosis IT:</b> Sesuai usia Tabel 1A/1B<br><b>Dosis HD MTX (HR):</b> 3.000 mg/m² IV 24 jam<br><b>Dosis ID MTX (SR):</b> 2.000 mg/m² IV 24 jam<br><b>Dosis MTX PO:</b> 20 mg/m² (Tabel 2)</div>
+  <div><b>Rescue:</b> Leucovorin jam 42 (HR: 6 dosis; SR: 3 dosis)<br><b>Interaksi:</b> TIDAK BOLEH bersamaan dengan omeprazole, penicillin, acyclovir, cotrimoxazole, rifampicin<br><b>Efek samping:</b> Mukositis, nefrotoksisitas, hepatotoksisitas</div></div>
+</div></div>
+<div class="acc-item"><button class="acc-toggle" onclick="toggleAcc(this)">VCR — Vincristine <span class="arrow">▼</span></button><div class="acc-body">
+  <b>Dosis:</b> 1,5 mg/m² (maks. 2 mg absolut) IV bolus 10 mnt / drip 30 mnt<br><b>Monitoring:</b> Neuropati perifer, konstipasi, ileus<br><b>Tunda bila:</b> Neuropati berat (reinduksi) atau leukosit &lt;500/ANC &lt;200
+</div></div>
+<div class="acc-item"><button class="acc-toggle" onclick="toggleAcc(this)">PRED — Prednisone <span class="arrow">▼</span></button><div class="acc-body">
+  <b>Dosis induksi:</b> 60 mg/m²/hari PO<br><b>Tapering on (hiperleukositosis):</b> 25%→50%→75%→100% tiap 1 hari <span class="erratum">ERRATUM II</span><br><b>Tapering off:</b> 60%→40%→20% tiap 3 hari (total 9 hari)
+</div></div>
+<div class="acc-item"><button class="acc-toggle" onclick="toggleAcc(this)">DEXA — Dexamethasone <span class="arrow">▼</span></button><div class="acc-body">
+  <b>SR Reinduksi 2A:</b> 10 mg/m²/hari PO (berbeda dari HR)<br><b>Dosis Maintenance:</b> 6 mg/m² PO periodik bersama VCR<br><b>Dosis IT (TIT):</b> Sesuai usia Tabel 1B<br><b>Monitoring:</b> Tekanan darah, gula darah, tanda Cushingoid
+</div></div>
+<div class="acc-item"><button class="acc-toggle" onclick="toggleAcc(this)">L-ASP — L-Asparaginase <span class="arrow">▼</span></button><div class="acc-body">
+  <b>Dosis:</b> 7.500 IU/m² setiap 3 hari IM<br><b>Premedikasi:</b> Siapkan kit anafilaksis (epinefrin, antihistamin, kortikosteroid)<br><b>Monitoring:</b> Reaksi alergi, pankreas (amilase/lipase), koagulopati, hipoalbuminemia
+</div></div>
+<div class="acc-item"><button class="acc-toggle" onclick="toggleAcc(this)">DAUNO — Daunorubicin (HR only) <span class="arrow">▼</span></button><div class="acc-body">
+  <b>Hanya HR Induksi 1A.</b> Dosis: 30 mg/m² IV drip 1 jam. Hari 8, 15, 22.<br><b>⚠ Echo WAJIB sebelum pemberian pertama (hari ke-8)</b><br><b>Efek samping:</b> Kardiotoksisitas kumulatif, mielosupresi
+</div></div>
+<div class="acc-item"><button class="acc-toggle" onclick="toggleAcc(this)">DOXO — Doxorubicin (SR Reinduksi 2A) <span class="arrow">▼</span></button><div class="acc-body">
+  <b>Hanya SR Reinduksi 2A.</b> Dosis: 25 mg/m² IV drip 1 jam. Mg 13 dan Mg 15.<br><b>Echo sebelum Reinduksi 2A</b> (dilakukan akhir Mg 12 Konsolidasi)<br><b>Tunda bila:</b> Leukosit &lt;500 atau ANC &lt;200<br><b>Efek samping:</b> Kardiotoksisitas, mielosupresi, mukositis
+</div></div>
+<div class="acc-item"><button class="acc-toggle" onclick="toggleAcc(this)">CPA — Cyclophosphamide (HR only) <span class="arrow">▼</span></button><div class="acc-body">
+  <b>Hanya HR</b> (Induksi 1B, Reinduksi 2B Mg 21). Dosis: 1.000 mg/m² IV.<br><b>Selalu berikan bersama Mesna</b>: 200 mg/m² jam 0, 4, 8 sejak CPA.<br><b>Monitoring:</b> Diuresis, urin mikroskopik
+</div></div>
+<div class="acc-item"><button class="acc-toggle" onclick="toggleAcc(this)">ARA-C — Cytarabine (HR only) <span class="arrow">▼</span></button><div class="acc-body">
+  <b>Hanya HR</b> (Induksi 1B, Reinduksi 2B). Dosis: 75 mg/m² tiap 24 jam IV, 4 hari/blok.<br><b>Bila tunda → 6-MP juga tunda</b>, diberikan di akhir fase.
+</div></div>
+<div class="acc-item"><button class="acc-toggle" onclick="toggleAcc(this)">6-MP — 6-Mercaptopurine <span class="arrow">▼</span></button><div class="acc-body">
+  <b>Dosis induksi/reinduksi/konsolidasi:</b> 25 mg/m²/hari PO (dosis tetap)<br><b>Dosis maintenance:</b> 50 mg/m² (Tabel 2 — sesuai leukosit)<br><b>Interaksi:</b> Hindari allopurinol; azol → kurangi dosis antrasiklin/steroid
+</div></div>
+<div class="acc-item"><button class="acc-toggle" onclick="toggleAcc(this)">Cotrimoxazole — Profilaksis PCP <span class="arrow">▼</span></button><div class="acc-body">
+  Dosis sesuai BB (Tabel 3). 3×/minggu. Stop bila leukosit turun → evaluasi 1 minggu.<br><b>Post-kemo: lanjutkan 3 bulan setelah selesai maintenance.</b><br>⚠ Jangan bersamaan dengan MTX IV/IT.
+</div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== HD MTX ===== -->
+<div id="page-hdmtx" style="display:none">
+<div class="phase-header hr"><h2>⚗ Protokol HD MTX — HR</h2><p>3.000 mg/m² · IV drip 24 jam · 4 siklus Konsolidasi HR</p></div>
+<div class="card"><div class="card-header"><h2>Jadwal HD MTX</h2></div><div class="card-body">
+<table class="ref-table">
+  <tr><th>Waktu</th><th>Tindakan</th><th>Detail</th></tr>
+  <tr><td>Jam -24 s.d. -4</td><td>Hiperhidrasi pre-MTX</td><td>D5 1/4NS atau D5 1/2NS 3.000 ml/m²/24 jam + NaHCO₃ sampai pH urin &gt;7</td></tr>
+  <tr><td>Jam 0</td><td>MTX IT + HD MTX I</td><td>IT sesuai usia; MTX I: 300 mg/m² IV drip 30 mnt</td></tr>
+  <tr><td>Jam 0,5 – 24</td><td>HD MTX II</td><td>2.700 mg/m² IV drip 23,5 jam</td></tr>
+  <tr><td>Jam 42, 48, 54, 60, 66, 72</td><td>Leucovorin rescue</td><td>15 mg/m² tiap 6 jam IV drip 1 jam (6 dosis standar; 9 dosis bila ada efek samping)</td></tr>
+  <tr><td>Selama infus</td><td>Furosemide (bila perlu)</td><td>0,5 mg/kg (maks. 20 mg) IV bila balans cairan &gt;400 ml/m²/12 jam</td></tr>
+</table>
+<div class="alert alert-danger" style="margin-top:8px">2 jalur IV diperlukan. Evaluasi kreatinin + mukositis jam ke-24. Kreatinin ≥3× atau mukositis 3–4 → rescue intensif + hidrasi 200 ml/m²/jam.</div>
+</div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== ID MTX (SR) ===== -->
+<div id="page-idmtx" style="display:none">
+<div class="phase-header sr"><h2>⚗ Protokol ID MTX — SR</h2><p>2.000 mg/m² · IV drip 24 jam · 4 siklus Konsolidasi SR</p></div>
+<div class="card"><div class="card-header teal"><h2>Kualifikasi ID MTX</h2></div><div class="card-body">
+<div class="grid-2">
+  <ul style="padding-left:14px;font-size:12px;line-height:1.8"><li>Leukosit ≥2.000 sel/mm³</li><li>ANC ≥500 sel/mm³</li><li>Trombosit ≥50.000 sel/mm³</li></ul>
+  <ul style="padding-left:14px;font-size:12px;line-height:1.8"><li>Kreatinin &lt;1,5× nilai awal</li><li>pH urin &gt;7</li><li>SGOT/SGPT ≤10× BAN</li></ul>
+</div>
+</div></div>
+<div class="card"><div class="card-header teal"><h2>Jadwal ID MTX (SR)</h2></div><div class="card-body">
+<table class="ref-table">
+  <tr><th>Waktu</th><th>Tindakan</th><th>Detail</th></tr>
+  <tr><td>Pre-MTX</td><td>Hiperhidrasi</td><td>D5 1/4NS atau D5 1/2NS 3.000 ml/m²/24 jam + NaHCO₃ (IV drip 24 jam atau PO 650 mg/m²/6 jam)</td></tr>
+  <tr><td>Jam 0</td><td>MTX IT + ID MTX I</td><td>IT sesuai usia; ID MTX I: 200 mg/m² IV drip 30 mnt</td></tr>
+  <tr><td>Jam 0,5 – 24</td><td>ID MTX II</td><td>1.800 mg/m² IV drip 23,5 jam (lihat protokol ID MTX)</td></tr>
+  <tr class="highlight"><td>Jam 42, 48, 54</td><td>Leucovorin rescue</td><td>15 mg/m² tiap 6 jam IV drip 1 jam (<b>3 dosis</b> — berbeda dari HR 6 dosis)</td></tr>
+  <tr><td>Selama infus</td><td>Furosemide (bila perlu)</td><td>0,5 mg/kg (maks. 20 mg) IV bila balans cairan &gt;400 ml/m²/12 jam</td></tr>
+</table>
+<div class="alert alert-teal" style="margin-top:8px">
+  <b>Monitoring:</b> Darah lengkap, BUN, kreatinin, pH urin, keseimbangan cairan, diuresis, hipertensi, edema, mukositis.<br>
+  <b>Evaluasi kreatinin + mukositis jam ke-24:</b> Kreatinin 1,5–&lt;3× → naikkan hidrasi 200 ml/m²/jam; ≥3× atau mukositis 3–4 → rescue intensif (15 mg/m² tiap 6 jam × 3 dosis s.d. jam 72, periksa kreatinin tiap 12 jam).<br>
+  <b>Catatan:</b> Bila ada efek samping pada siklus sebelumnya → leucovorin 9 dosis tiap 6 jam.
+</div>
+<div class="alert alert-danger" style="margin-top:6px">MTX (IT/IV/PO) TIDAK BOLEH bersamaan dengan: omeprazole, penicillin, acyclovir, cotrimoxazole, rifampicin</div>
+</div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== SR KUALIFIKASI ===== -->
+<div id="page-sr-kualifikasi" style="display:none">
+<div class="phase-header sr"><h2>✅ Kualifikasi Fase — SR</h2></div>
+<div class="card"><div class="card-header teal"><h2>Kualifikasi Konsolidasi SR</h2></div><div class="card-body">
+<ol style="padding-left:14px;font-size:12px;line-height:1.9">
+  <li>Remisi komplit</li><li>KU baik</li><li>Tidak ada infeksi berat</li>
+  <li>Leukosit ≥2.000, ANC ≥500, Trombosit ≥50.000 sel/mm³</li>
+  <li>SGOT/SGPT ≤10× batas atas normal</li>
+  <li>Bilirubin total &lt;3 mg/dl</li>
+  <li>Tidak ada obstruksi saluran kemih; tidak ada serositis</li>
+  <li>Kreatinin &lt;1,5× nilai awal</li>
+</ol>
+</div></div>
+<div class="card"><div class="card-header teal"><h2>Kualifikasi Reinduksi 2A SR</h2></div><div class="card-body">
+<ol style="padding-left:14px;font-size:12px;line-height:1.9">
+  <li>Remisi komplit</li><li>KU baik</li><li>Tidak ada infeksi berat</li>
+  <li>Leukosit ≥2.500, ANC ≥1.000, Trombosit ≥100.000 sel/mm³ (tanpa transfusi)</li>
+</ol>
+<div class="alert alert-warn" style="margin-top:6px">Leukosit &lt;500 atau ANC &lt;200 → DOXO atau VCR ditunda.</div>
+</div></div>
+<div class="card"><div class="card-header teal"><h2>Kualifikasi Maintenance SR</h2></div><div class="card-body">
+<ol style="padding-left:14px;font-size:12px;line-height:1.9">
+  <li>KU baik</li><li>Tidak ada infeksi berat</li>
+  <li>Leukosit ≥1.000, ANC ≥500, Trombosit ≥50.000 sel/mm³ (tanpa transfusi)</li>
+</ol>
+<div class="alert alert-warn" style="margin-top:6px">Hentikan sementara bila leukosit &lt;1.000, infeksi berat, atau toksisitas hati &gt;3. Mulai lagi bila kondisi teratasi.</div>
+</div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== KUALIFIKASI HR ===== -->
+<div id="page-kualifikasi" style="display:none">
+<div class="phase-header hr"><h2>✅ Kualifikasi Fase — HR</h2></div>
+<div class="card"><div class="card-header"><h2>Induksi 1B / Reinduksi 2B / Blok ARA-C (HR)</h2></div><div class="card-body">
+<ol style="padding-left:14px;font-size:12px;line-height:1.9"><li>KU baik</li><li>Tidak ada infeksi berat</li><li>Kreatinin normal</li><li>Leukosit ≥2.000, ANC ≥500, Trombosit ≥50.000 sel/mm³</li></ol>
+</div></div>
+<div class="card"><div class="card-header"><h2>Konsolidasi HR</h2></div><div class="card-body">
+<ol style="padding-left:14px;font-size:12px;line-height:1.9"><li>Remisi komplit</li><li>KU baik, tidak infeksi berat</li><li>Leukosit ≥2.000, ANC ≥500, Trombosit ≥50.000</li><li>Kreatinin &lt;1,5×</li><li>SGOT/SGPT ≤10×</li><li>Bilirubin &lt;3 mg/dl</li><li>Tidak ada obstruksi kemih / serositis</li></ol>
+</div></div>
+<div class="card"><div class="card-header"><h2>Maintenance HR</h2></div><div class="card-body">
+<ol style="padding-left:14px;font-size:12px;line-height:1.9"><li>KU baik</li><li>Tidak infeksi berat</li><li>Leukosit ≥1.000, ANC ≥500, Trombosit ≥50.000</li></ol>
+</div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== TABLES ===== -->
+<div id="page-tables" style="display:none">
+<div class="phase-header hr"><h2>📋 Tabel Dosis Referensi — HR & SR</h2></div>
+<div class="card"><div class="card-header"><h2>Tabel 1A — Dosis MTX IT Sesuai Usia</h2></div><div class="card-body">
+<table class="ref-table">
+  <tr><th>Usia (tahun)</th><th>MTX (mg)</th><th>Pelarut NaCl 0,9% (mℓ)</th></tr>
+  <tr><td>&lt;1</td><td>6</td><td>1,5</td></tr>
+  <tr><td>1 s.d. &lt;2</td><td>8</td><td>2,0</td></tr>
+  <tr class="highlight"><td>2 s.d. &lt;3</td><td>10</td><td>2,5</td></tr>
+  <tr><td>3 s.d. &lt;9</td><td>12</td><td>3,0</td></tr>
+  <tr><td>≥9</td><td>15</td><td>3,5</td></tr>
+</table>
+</div></div>
+<div class="card"><div class="card-header"><h2>Tabel 1B — Dosis TIT Sesuai Usia</h2></div><div class="card-body">
+<table class="ref-table">
+  <tr><th>Usia (tahun)</th><th>MTX (mg)</th><th>DEXA (mg)</th><th>ARA-C (mg)</th></tr>
+  <tr><td>&lt;1</td><td>6</td><td>0,2</td><td>12</td></tr>
+  <tr><td>1 s.d. &lt;2</td><td>8</td><td>0,3</td><td>16</td></tr>
+  <tr class="highlight"><td>2 s.d. &lt;3</td><td>10</td><td>0,4</td><td>20</td></tr>
+  <tr><td>3 s.d. &lt;9</td><td>12</td><td>0,5</td><td>24</td></tr>
+  <tr><td>≥9</td><td>15</td><td>0,6</td><td>30</td></tr>
+</table>
+</div></div>
+<div class="card"><div class="card-header"><h2>Tabel 2 — Dosis 6-MP & MTX PO Sesuai Leukosit</h2></div><div class="card-body">
+<table class="ref-table">
+  <tr><th>Leukosit (sel/mm³)</th><th>Dosis (%)</th></tr>
+  <tr class="highlight"><td>&lt;1.000</td><td>0 (tunda)</td></tr>
+  <tr><td>1.000–2.000</td><td>50%</td></tr>
+  <tr><td>&gt;2.000–4.000</td><td>100%</td></tr>
+  <tr><td>&gt;4.000 (6 mg pertama maintenance)</td><td>125–150%</td></tr>
+  <tr><td>&gt;4.000 persisten setelah 150%</td><td>175–200%</td></tr>
+</table>
+</div></div>
+<div class="card"><div class="card-header"><h2>Tabel 3 — Cotrimoxazole Sesuai BB</h2></div><div class="card-body">
+<table class="ref-table">
+  <tr><th>BB</th><th>Dosis</th><th>Sediaan</th></tr>
+  <tr><td>&lt;12 kg</td><td>18 mg/kg/hari (15–25 mg/kg)</td><td>48 mg/ml sirup</td></tr>
+  <tr><td>12–17 kg</td><td>1×/hari 240 mg</td><td>½ tablet 480 mg</td></tr>
+  <tr><td>17–23 kg</td><td>1×/hari 360 mg</td><td>¾ tablet 480 mg</td></tr>
+  <tr><td>23–33 kg</td><td>1×/hari 480 mg</td><td>1 tablet 480 mg</td></tr>
+  <tr><td>33–55 kg</td><td>1×/hari 720 mg</td><td>1½ tablet 480 mg</td></tr>
+  <tr><td>&gt;55 kg</td><td>1×/hari 960 mg</td><td>2 tablet 480 mg</td></tr>
+</table>
+</div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+<!-- ===== EMERGENCY ===== -->
+<div id="page-emergency" style="display:none">
+<div class="phase-header hr"><h2>🚨 Manajemen Emergensi — Quick Access</h2></div>
+<div class="quick-cards">
+  <div class="qcard qfn" onclick="showEmerg('fn')"><div class="qi">🌡</div>Febrile Neutropenia<div class="qs">ANC &lt;500 + Demam ≥38°C</div></div>
+  <div class="qcard qhl" onclick="showEmerg('hl')"><div class="qs qi">🩸</div>Hiperleukositosis<div class="qs">PRED tapering on <span class="erratum">E</span></div></div>
+  <div class="qcard qtls" onclick="showEmerg('tls')"><div class="qi">⚡</div>TLS<div class="qs">Monitor & profilaksis</div></div>
+  <div class="qcard qhdmtx" onclick="showEmerg('hdmtx')"><div class="qi">⚗</div>Toksisitas MTX<div class="qs">Rescue protocol</div></div>
+  <div class="qcard qcns" onclick="showEmerg('cns')"><div class="qi">🧠</div>Emergensi CNS<div class="qs">CNS3 leukemia</div></div>
+</div>
+<div id="emerg-fn" style="display:none"><div class="card"><div class="card-header"><h2>🌡 Febrile Neutropenia</h2></div><div class="card-body">
+  <div class="alert alert-danger"><b>Definisi:</b> Demam ≥38°C + ANC &lt;500 sel/mm³ (atau &lt;1.000 dengan penurunan progresif)</div>
+  <div class="alert alert-info"><b>Indikasi hentikan kemoterapi sementara:</b> Leukosit &lt;1.000 + infeksi berat. Mulai lagi bila kondisi teratasi.</div>
+  <p style="font-size:11px">Panduan antibiotik empiris: ikuti kebijakan institusi (IDSA/ESMO/RS setempat).</p>
+</div></div></div>
+<div id="emerg-hl" style="display:none"><div class="card"><div class="card-header"><h2>🩸 Hiperleukositosis</h2></div><div class="card-body">
+  <div class="alert alert-danger"><b>Hiperleukositosis:</b> Leukosit ≥50.000 sel/mm³ → Kriteria HR</div>
+  <div class="alert alert-warn"><b>⚠ ERRATUM II — Tapering on PRED:</b> 25% → 50% → 75% → 100% (tiap 1 hari). Bukan 20-40-60-80-100%.</div>
+  <p style="font-size:11px;margin-top:6px">Monitor leukostasis (respirasi, neurologi), DIC, TLS. Pertimbangkan leukaferesis bila tersedia.</p>
+</div></div></div>
+<div id="emerg-tls" style="display:none"><div class="card"><div class="card-header"><h2>⚡ Tumor Lysis Syndrome</h2></div><div class="card-body">
+  <div class="alert alert-info"><b>Monitor:</b> Asam urat, K, P, Ca, kreatinin, LDH — terutama pasien leukosit tinggi / massa tumor besar</div>
+  <p style="font-size:11px">Protokol TLS spesifik (allopurinol vs rasburicase): ikuti panduan institusi.</p>
+</div></div></div>
+<div id="emerg-hdmtx" style="display:none"><div class="card"><div class="card-header"><h2>⚗ Toksisitas Berat MTX</h2></div><div class="card-body">
+  <div class="alert alert-danger"><b>Kreatinin ≥3× atau mukositis 3–4:</b> Hidrasi 200 ml/m²/jam + leucovorin 15 mg/m² tiap 6 jam × 3 dosis s.d. jam 90. Periksa kreatinin + mukositis tiap 12 jam.</div>
+  <div class="alert alert-warn"><b>Kreatinin 1,5–&lt;3× atau mukositis 1–2:</b> Naikkan hidrasi 200 ml/m²/jam. Periksa tiap 12 jam.</div>
+</div></div></div>
+<div id="emerg-cns" style="display:none"><div class="card"><div class="card-header"><h2>🧠 Emergensi CNS Leukemia</h2></div><div class="card-body">
+  <div class="alert alert-danger"><b>CNS3:</b> &gt;5 leukosit/mm³ + blast sitospin, ATAU klinis/pencitraan CNS, ATAU palsi saraf kranial, ATAU keterlibatan retina</div>
+  <div class="alert alert-info"><b>Per protokol:</b> Tambahan IT kemoterapi. MRI/CT kepala bila ada massa. Konsultasi segera konsultan HOA.</div>
+</div></div></div>
+<div class="safety-footer">⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi.</div>
+</div>
+
+</div><!-- end main -->
+</div><!-- end app -->
+
+<script>
+var currentProto='HR';
+var allPages=['home','map','hr-induksi1a','hr-induksi1b','hr-konsolidasi','hr-reinduksi2a','hr-reinduksi2b','maintenance','sr-induksi','sr-konsolidasi','sr-reinduksi2a','sr-maintenance','compare','risk','mrd','cns','relapse','drug','hdmtx','idmtx','kualifikasi','sr-kualifikasi','tables','emergency'];
+
+function showPage(p){
+  allPages.forEach(function(pg){var el=document.getElementById('page-'+pg);if(el)el.style.display='none';});
+  var el=document.getElementById('page-'+p);if(el)el.style.display='block';
+  window.scrollTo(0,0);
+}
+
+function switchProto(proto){
+  currentProto=proto;
+  document.getElementById('sidebar-HR').style.display=proto==='HR'?'block':'none';
+  document.getElementById('sidebar-SR').style.display=proto==='SR'?'block':'none';
+  document.getElementById('btn-hr').className='proto-btn'+(proto==='HR'?' active-hr':'');
+  document.getElementById('btn-sr').className='proto-btn'+(proto==='SR'?' active-sr':'');
+  document.getElementById('btn-cmp').className='proto-btn';
+  if(proto==='HR') showPage('hr-induksi1a');
+  else showPage('sr-induksi');
+}
+
+function toggleAcc(btn){btn.classList.toggle('open');btn.nextElementSibling.classList.toggle('show');}
+
+function showMRD(id){['d15','d35','post'].forEach(function(x){document.getElementById('mrd-'+x).style.display=(x===id)?'block':'none';});}
+function showEmerg(id){['fn','hl','tls','hdmtx','cns'].forEach(function(x){document.getElementById('emerg-'+x).style.display=(x===id)?'block':'none';});}
+
+// SEARCH
+var idx=[
+  {q:'MTX methotrexate',p:'drug',l:'Referensi Obat: MTX'},
+  {q:'VCR vincristine',p:'drug',l:'Referensi Obat: VCR'},
+  {q:'PRED prednisone tapering erratum',p:'drug',l:'PRED + Tapering (Erratum II)'},
+  {q:'DEXA dexamethasone',p:'drug',l:'Referensi Obat: DEXA'},
+  {q:'L-ASP asparaginase',p:'drug',l:'Referensi Obat: L-ASP'},
+  {q:'DAUNO daunorubicin HR echo',p:'drug',l:'DAUNO (HR only)'},
+  {q:'DOXO doxorubicin SR reinduksi',p:'drug',l:'DOXO (SR Reinduksi 2A)'},
+  {q:'CPA cyclophosphamide mesna',p:'drug',l:'CPA + Mesna (HR only)'},
+  {q:'ARA-C cytarabine',p:'drug',l:'ARA-C (HR only)'},
+  {q:'6-MP mercaptopurine leukosit',p:'drug',l:'6-MP'},
+  {q:'cotrimoxazole profilaksis PCP',p:'drug',l:'Cotrimoxazole'},
+  {q:'HR induksi 1A DAUNO',p:'hr-induksi1a',l:'HR — Induksi 1A'},
+  {q:'HR induksi 1B CPA ARA-C blok',p:'hr-induksi1b',l:'HR — Induksi 1B'},
+  {q:'HR konsolidasi HD MTX 3000',p:'hr-konsolidasi',l:'HR — Konsolidasi (HD MTX)'},
+  {q:'HR reinduksi 2B erratum CPA minggu 21',p:'hr-reinduksi2b',l:'HR — Reinduksi 2B (Erratum)'},
+  {q:'SR induksi tanpa DAUNO',p:'sr-induksi',l:'SR — Induksi 1A (tanpa DAUNO)'},
+  {q:'SR konsolidasi ID MTX 2000',p:'sr-konsolidasi',l:'SR — Konsolidasi (ID MTX)'},
+  {q:'SR reinduksi 2A DOXO DEXA',p:'sr-reinduksi2a',l:'SR — Reinduksi 2A (DOXO)'},
+  {q:'maintenance leukosit target 6MP MTX PO',p:'maintenance',l:'Fase Maintenance (HR & SR)'},
+  {q:'HD MTX protokol hiperhidrasi leucovorin rescue HR',p:'hdmtx',l:'Protokol HD MTX (HR)'},
+  {q:'ID MTX protokol intermediate dose SR',p:'idmtx',l:'Protokol ID MTX (SR)'},
+  {q:'MRD minimal residual disease',p:'mrd',l:'MRD Navigator'},
+  {q:'CNS status otak sitospin CSS',p:'cns',l:'Status CNS'},
+  {q:'stratifikasi risiko HR SR kriteria',p:'risk',l:'Stratifikasi Risiko'},
+  {q:'relaps early late bone marrow',p:'relapse',l:'Definisi Relaps'},
+  {q:'kualifikasi ANC trombosit leukosit HR',p:'kualifikasi',l:'Kualifikasi Fase HR'},
+  {q:'kualifikasi SR konsolidasi reinduksi maintenance',p:'sr-kualifikasi',l:'Kualifikasi Fase SR'},
+  {q:'tabel dosis usia MTX IT TIT cotrimoxazole',p:'tables',l:'Tabel Dosis Referensi'},
+  {q:'febrile neutropenia demam ANC',p:'emergency',l:'Emergensi: Febrile Neutropenia'},
+  {q:'hiperleukositosis tapering PRED erratum',p:'emergency',l:'Emergensi: Hiperleukositosis'},
+  {q:'TLS tumor lysis syndrome',p:'emergency',l:'Emergensi: TLS'},
+  {q:'erratum II revisi koreksi CPA tapering',p:'home',l:'Erratum II — Koreksi Protokol'},
+  {q:'peta protokol alur HR SR flowchart',p:'map',l:'Peta Protokol HR & SR'},
+  {q:'bandingkan HR SR perbedaan',p:'compare',l:'Perbandingan HR vs SR'},
+  {q:'echo echocardiogram DAUNO DOXO',p:'drug',l:'Echo — DAUNO (HR) / DOXO (SR)'},
+  {q:'remisi komplit M1 M2 M3 BMP hari 35',p:'risk',l:'Status BMP (M1/M2/M3)'},
+  {q:'prednisone good poor responder hari 8',p:'risk',l:'Respons Prednisone hari ke-8'},
+];
+
+function doSearch(v){
+  var res=document.getElementById('search-results');
+  if(!v||v.length<2){res.style.display='none';return;}
+  v=v.toLowerCase();
+  var hits=idx.filter(function(i){return i.q.toLowerCase().indexOf(v)>=0;}).slice(0,8);
+  if(!hits.length){res.style.display='none';return;}
+  res.innerHTML=hits.map(function(h){return'<div class="sr-item" onclick="showPage(\''+h.p+'\');document.getElementById(\'search-results\').style.display=\'none\';document.getElementById(\'search\').value=\'\';">'+h.l+'<span class="sr-tag">→ '+h.p+'</span></div>';}).join('');
+  res.style.display='block';
+}
+document.addEventListener('click',function(e){if(!document.getElementById('search-wrap').contains(e.target))document.getElementById('search-results').style.display='none';});
+
+function printPage(){
+  var activeId='';
+  allPages.forEach(function(pg){
+    var el=document.getElementById('page-'+pg);
+    if(el&&el.style.display!=='none') activeId=pg;
+  });
+  var content=document.getElementById('page-'+activeId)
+    ? document.getElementById('page-'+activeId).innerHTML : '';
+
+  var printDiv=document.getElementById('print-overlay');
+  if(!printDiv){
+    printDiv=document.createElement('div');
+    printDiv.id='print-overlay';
+    printDiv.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:9999;overflow:auto;padding:24px;box-sizing:border-box;font-family:Arial,sans-serif;font-size:12px;color:#1A2E3B;display:none';
+    document.body.appendChild(printDiv);
+  }
+
+  printDiv.innerHTML=
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:2px solid #1565C0;padding-bottom:8px">'+
+    '<span style="font-size:15px;font-weight:700;color:#0D47A1">🩸 IndoALL 2024 — Protocol Navigator</span>'+
+    '<span style="font-size:11px;font-weight:700;color:#0D47A1">drAisyi EduCare</span></div>'+
+    content+
+    '<div style="margin-top:20px;padding:8px;background:#FFF8E1;border:1px solid #F57F17;border-radius:6px;font-size:10px;text-align:center">'+
+    '⚠ Keputusan klinis harus selalu dikonfirmasi dengan dokumen protokol resmi dan kebijakan institusi. — drAisyi EduCare</div>'+
+    '<div style="margin-top:12px;text-align:center">'+
+    '<button onclick="document.getElementById(\'print-overlay\').style.display=\'none\'" '+
+    'style="padding:6px 16px;margin-right:8px;border:1px solid #546E7A;border-radius:6px;background:#fff;cursor:pointer;font-size:12px">✕ Tutup</button>'+
+    '<button onclick="window.print()" '+
+    'style="padding:6px 16px;border:none;border-radius:6px;background:#1565C0;color:#fff;cursor:pointer;font-size:12px;font-weight:700">🖨 Print / Save PDF</button></div>';
+
+  printDiv.style.display='block';
+}
+
+showPage('home');
+</script>
+</body>
+</html>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tocilizumab Readiness Calculator</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;font-size:15px;color:var(--color-text-primary,#111);background:transparent;padding:1rem 0}
+.brand-header{display:flex;align-items:center;gap:10px;padding:10px 16px;margin-bottom:1.25rem;background:#EEEDFE;border-radius:12px;border-left:4px solid #534AB7}
+.brand-logo{width:38px;height:38px;border-radius:50%;background:#534AB7;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:500;flex-shrink:0}
+.brand-title{font-size:15px;font-weight:500;color:#3C3489}
+.brand-sub{font-size:11px;color:#534AB7;margin-top:1px}
+.sec{font-size:12px;font-weight:500;color:var(--color-text-secondary,#666);text-transform:uppercase;letter-spacing:.6px;margin:1.25rem 0 .65rem;display:flex;align-items:center;gap:6px}
+.sec i{font-size:15px;color:#534AB7}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+label{display:block;font-size:13px;color:var(--color-text-secondary,#555);margin-bottom:4px}
+input,select{width:100%;padding:8px 10px;font-size:14px;border:.5px solid var(--color-border-tertiary,#ccc);border-radius:8px;background:var(--color-background-primary,#fff);color:var(--color-text-primary,#111);outline:none;transition:border-color .15s}
+input:focus,select:focus{border-color:#534AB7;box-shadow:0 0 0 2px rgba(83,74,183,.15)}
+.vial-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+.vc{border:1px solid var(--color-border-tertiary,#ddd);border-radius:8px;padding:10px 8px;text-align:center;cursor:pointer;transition:all .15s;background:var(--color-background-primary,#fff)}
+.vc:hover{border-color:#AFA9EC;background:#EEEDFE}
+.vc.sel{border:2px solid #534AB7;background:#EEEDFE}
+.vc-mg{font-size:16px;font-weight:500;color:#3C3489}
+.vc-sub{font-size:11px;color:#534AB7;margin-top:2px}
+.vc-chk{font-size:17px;color:#534AB7;margin-bottom:3px}
+.vc-chk.h{visibility:hidden}
+.vial-row{display:grid;grid-template-columns:80px 1fr 1fr 1fr 120px;gap:8px;align-items:end;margin-bottom:8px;font-size:13px}
+.vial-row-hdr{display:grid;grid-template-columns:80px 1fr 1fr 1fr 120px;gap:8px;margin-bottom:4px;font-size:11px;font-weight:500;color:var(--color-text-secondary,#666);text-transform:uppercase;letter-spacing:.4px}
+.btn-calc{width:100%;padding:11px;margin-top:1.25rem;background:#534AB7;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s}
+.btn-calc:hover{opacity:.88}
+.btn-calc:active{transform:scale(.98)}
+.result{margin-top:1.5rem;display:none}
+.result.vis{display:block}
+.tl-box{border-radius:12px;padding:14px 18px;margin-bottom:14px;display:flex;align-items:flex-start;gap:14px;border:1.5px solid}
+.tl-ready{background:#E1F5EE;border-color:#1D9E75}
+.tl-cond{background:#FAEEDA;border-color:#EF9F27}
+.tl-notready{background:#FCEBEB;border-color:#E24B4A}
+.tl-icon{font-size:26px;flex-shrink:0;margin-top:1px}
+.tl-ready .tl-icon{color:#0F6E56}
+.tl-cond .tl-icon{color:#854F0B}
+.tl-notready .tl-icon{color:#A32D2D}
+.tl-title{font-size:15px;font-weight:500;margin-bottom:3px}
+.tl-ready .tl-title{color:#085041}
+.tl-cond .tl-title{color:#633806}
+.tl-notready .tl-title{color:#791F1F}
+.tl-body{font-size:13px;line-height:1.55}
+.tl-ready .tl-body{color:#0F6E56}
+.tl-cond .tl-body{color:#854F0B}
+.tl-notready .tl-body{color:#A32D2D}
+.mc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px}
+.mc{background:var(--color-background-secondary,#f5f5f2);border-radius:8px;padding:12px 14px}
+.mc-lbl{font-size:12px;color:var(--color-text-secondary,#666);margin-bottom:4px}
+.mc-val{font-size:21px;font-weight:500;color:var(--color-text-primary,#111)}
+.mc-unit{font-size:11px;color:var(--color-text-secondary,#666);margin-top:2px}
+.sr{display:flex;align-items:flex-start;gap:10px;padding:9px 13px;border-radius:8px;margin-bottom:7px;font-size:13px;border:.5px solid}
+.sr-ok{background:#EAF3DE;color:#27500A;border-color:#C0DD97}
+.sr-warn{background:#FAEEDA;color:#633806;border-color:#FAC775}
+.sr-no{background:#FCEBEB;color:#791F1F;border-color:#F09595}
+.sr-info{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.sr i{font-size:16px;flex-shrink:0;margin-top:1px}
+.opt-box{background:#EEEDFE;border-radius:8px;padding:12px 14px;margin-bottom:10px;font-size:13px;color:#3C3489;border:.5px solid #AFA9EC}
+.opt-title{font-weight:500;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.opt-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:.5px solid rgba(83,74,183,.15)}
+.opt-row:last-child{border-bottom:none}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 9px;border-radius:5px;font-weight:500}
+.badge-ok{background:#E1F5EE;color:#085041}
+.badge-warn{background:#FAEEDA;color:#633806}
+.badge-no{background:#FCEBEB;color:#791F1F}
+.divider{height:.5px;background:var(--color-border-tertiary,#ddd);margin:1rem 0}
+.note-box{font-size:12px;color:var(--color-text-secondary,#666);background:var(--color-background-secondary,#f5f5f2);border-radius:6px;padding:8px 10px;margin-top:6px;display:flex;gap:6px;line-height:1.5}
+.note-box i{flex-shrink:0;font-size:14px;margin-top:1px}
+.access-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.ac-item{display:flex;align-items:center;gap:8px;font-size:13px;padding:7px 10px;border:.5px solid var(--color-border-tertiary,#ddd);border-radius:7px;cursor:pointer;background:var(--color-background-primary,#fff)}
+.ac-item.checked{background:#E1F5EE;border-color:#1D9E75;color:#085041}
+.ac-item input{width:auto;padding:0;margin:0}
+.print-area{display:none}
+.btn-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.btn-sec{background:transparent;border:.5px solid var(--color-border-tertiary,#ccc);border-radius:8px;padding:7px 14px;font-size:13px;color:var(--color-text-secondary,#666);cursor:pointer;display:flex;align-items:center;gap:5px}
+.btn-sec:hover{background:var(--color-background-secondary,#f5f5f2)}
+.pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:5px;margin-left:4px}
+.pill-auto{background:#E1F5EE;color:#085041}
+.pill-warn{background:#FAEEDA;color:#633806}
+@media(max-width:540px){.g2,.g3{grid-template-columns:1fr}.mc-grid{grid-template-columns:1fr 1fr}.vial-row,.vial-row-hdr{grid-template-columns:70px 1fr 1fr;}.vial-row .hide-m,.vial-row-hdr .hide-m{display:none}.access-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">CAR-T Tocilizumab Dose, Vial Optimization dan Rescue Stock Readiness Calculator</h2>
+
+<div class="brand-header">
+  <div class="brand-logo">dA</div>
+  <div>
+    <div class="brand-title">drAisyi EduCare</div>
+    <div class="brand-sub">CAR-T Tocilizumab Dose, Vial Optimization &amp; Rescue Stock Readiness Calculator</div>
+  </div>
+</div>
+
+<div class="sec"><i class="ti ti-user" aria-hidden="true"></i> Data pasien</div>
+<div class="g2">
+  <div>
+    <label for="berat">Berat badan (kg)</label>
+    <input type="number" id="berat" min="1" max="200" step="0.1" placeholder="cth. 28.0" oninput="autoFillDose()">
+  </div>
+  <div>
+    <label for="dp">Dosis protokol (mg/kg) <span class="pill pill-auto" id="dose-auto-lbl">auto</span></label>
+    <input type="number" id="dp" min="1" max="20" step="0.1" value="8">
+    <div class="note-box" id="dose-note" style="margin-top:6px"><i class="ti ti-info-circle"></i><span id="dose-note-txt">Masukkan berat badan untuk rekomendasi otomatis.</span></div>
+  </div>
+</div>
+
+<div class="note-box" style="margin-top:8px"><i class="ti ti-alert-triangle" style="color:#854F0B"></i><span style="color:#633806"><b>Catatan klinis:</b> Tocilizumab digunakan untuk CRS. Pada ICANS tanpa CRS, terapi utama adalah kortikosteroid dan neurocritical supportive care. Pertimbangkan tocilizumab pada ICANS hanya bila ada CRS bersamaan atau sesuai protokol institusi.</span></div>
+
+<div class="sec"><i class="ti ti-vaccine-bottle" aria-hidden="true"></i> Stok tocilizumab per vial</div>
+<div class="vial-grid" style="margin-bottom:12px" id="vpick">
+  <div class="vc" data-mg="80" onclick="toggleV(this)"><div class="vc-chk h" id="chk80"><i class="ti ti-circle-check-filled"></i></div><div class="vc-mg">80 mg</div><div class="vc-sub">vial kecil</div></div>
+  <div class="vc" data-mg="200" onclick="toggleV(this)"><div class="vc-chk h" id="chk200"><i class="ti ti-circle-check-filled"></i></div><div class="vc-mg">200 mg</div><div class="vc-sub">vial sedang</div></div>
+  <div class="vc" data-mg="400" onclick="toggleV(this)"><div class="vc-chk h" id="chk400"><i class="ti ti-circle-check-filled"></i></div><div class="vc-mg">400 mg</div><div class="vc-sub">vial besar</div></div>
+</div>
+<div id="vdetail"></div>
+
+<div class="sec"><i class="ti ti-map-pin" aria-hidden="true"></i> Akses &amp; lokasi</div>
+<div class="g2">
+  <div>
+    <label for="lokasi">Lokasi penyimpanan</label>
+    <input type="text" id="lokasi" placeholder="cth. Farmasi Onkologi, Kulkas A">
+  </div>
+  <div>
+    <label for="pic">PIC apoteker / penanggung jawab</label>
+    <input type="text" id="pic" placeholder="cth. Apt. [nama]">
+  </div>
+</div>
+<div class="access-grid" id="access-checklist" style="margin-top:10px">
+  <div class="ac-item" onclick="toggleAC(this)" data-key="onsite"><i class="ti ti-building-hospital" aria-hidden="true"></i> Tersedia onsite</div>
+  <div class="ac-item" onclick="toggleAC(this)" data-key="24h"><i class="ti ti-clock-24" aria-hidden="true"></i> Akses 24 jam / hari libur</div>
+  <div class="ac-item" onclick="toggleAC(this)" data-key="oncall"><i class="ti ti-phone-call" aria-hidden="true"></i> PIC farmasi on-call</div>
+  <div class="ac-item" onclick="toggleAC(this)" data-key="sop"><i class="ti ti-file-check" aria-hidden="true"></i> SOP pengambilan darurat tersedia</div>
+</div>
+
+<div class="sec"><i class="ti ti-users" aria-hidden="true"></i> Perencanaan bulanan</div>
+<div class="g2">
+  <div>
+    <label for="ep">Estimasi pasien CAR-T bulan ini</label>
+    <input type="number" id="ep" min="1" max="30" step="1" placeholder="cth. 3">
+  </div>
+  <div>
+    <label for="ep-mode">Kalkulasi proyeksi berdasarkan</label>
+    <select id="ep-mode">
+      <option value="current">Berat badan pasien ini</option>
+      <option value="lt30">Mayoritas &lt;30 kg (anak kecil, 12 mg/kg)</option>
+      <option value="gte30">Mayoritas ≥30 kg (8 mg/kg)</option>
+      <option value="mixed">Campuran (rata-rata 10 mg/kg, max 800 mg)</option>
+    </select>
+  </div>
+</div>
+
+<button class="btn-calc" onclick="calculate()"><i class="ti ti-calculator" aria-hidden="true"></i> Hitung Kesiapan Tocilizumab</button>
+
+<div id="result" class="result">
+  <div class="divider" style="margin-top:1.5rem"></div>
+  <div class="sec"><i class="ti ti-traffic-lights" aria-hidden="true"></i> Status kesiapan</div>
+  <div id="tl-status"></div>
+
+  <div class="sec"><i class="ti ti-report-analytics" aria-hidden="true"></i> Kalkulasi dosis</div>
+  <div class="mc-grid" id="metrics"></div>
+
+  <div class="sec"><i class="ti ti-vaccine" aria-hidden="true"></i> Optimasi kombinasi vial</div>
+  <div id="vial-opt"></div>
+
+  <div class="sec"><i class="ti ti-checklist" aria-hidden="true"></i> Detail kesiapan</div>
+  <div id="status-rows"></div>
+
+  <div id="monthly-out"></div>
+  <div id="exp-summary" style="margin-top:10px"></div>
+
+  <div class="note-box" style="margin-top:12px;background:#EEEDFE;border:.5px solid #AFA9EC"><i class="ti ti-info-circle" style="color:#534AB7"></i><span style="color:#3C3489">Kesiapan tocilizumab merupakan satu komponen readiness. Keputusan final infus CAR-T tetap memerlukan Go/No-Go MDT: product release, chain-of-identity, ICU/PICU readiness, emergency drugs, CRS/ICANS protocol, dan kondisi klinis pasien.</span></div>
+
+  <div class="btn-row">
+    <button class="btn-sec" onclick="copyReport()"><i class="ti ti-copy"></i> Salin ringkasan</button>
+    <button class="btn-sec" onclick="printReport()"><i class="ti ti-printer"></i> Cetak readiness note</button>
+    <button class="btn-sec" onclick="resetForm()"><i class="ti ti-refresh"></i> Hitung ulang</button>
+  </div>
+</div>
+
+<script>
+var selV = {};
+var acKeys = {};
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
+
+function parseLocalDate(s){if(!s)return null;var p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2]);}
+
+function daysUntil(s){var d=parseLocalDate(s);if(!d)return null;var n=new Date();n.setHours(0,0,0,0);d.setHours(0,0,0,0);return Math.round((d-n)/86400000);}
+
+function autoFillDose(){
+  var bb=parseFloat(document.getElementById('berat').value);
+  var dp=document.getElementById('dp');
+  var lbl=document.getElementById('dose-auto-lbl');
+  var ntxt=document.getElementById('dose-note-txt');
+  if(!bb||bb<=0){lbl.textContent='auto';lbl.className='pill pill-auto';ntxt.textContent='Masukkan berat badan untuk rekomendasi otomatis.';return;}
+  var rec=bb<30?12:8;
+  dp.value=rec;
+  lbl.textContent='auto ('+(bb<30?'BB<30 kg':'BB≥30 kg')+')';
+  lbl.className='pill pill-auto';
+  ntxt.textContent='BB '+bb+' kg → rekomendasi '+rec+' mg/kg (maks 800 mg). Sesuaikan bila protokol institusi berbeda.';
+}
+
+function toggleV(el){
+  var mg=parseInt(el.getAttribute('data-mg'));
+  if(selV[mg]){delete selV[mg];el.classList.remove('sel');document.getElementById('chk'+mg).classList.add('h');}
+  else{selV[mg]={qty:0,lot:'',exp:'',loc:''};el.classList.add('sel');document.getElementById('chk'+mg).classList.remove('h');}
+  renderVDetail();
+}
+
+function renderVDetail(){
+  var keys=Object.keys(selV).map(Number).sort(function(a,b){return a-b;});
+  var c=document.getElementById('vdetail');
+  if(!keys.length){c.innerHTML='';return;}
+  var h='<div class="vial-row-hdr"><span>Vial</span><span>Jumlah</span><span>No. Lot</span><span class="hide-m">Kedaluwarsa</span><span>Lokasi simpan</span></div>';
+  keys.forEach(function(mg){
+    var d=selV[mg];
+    h+='<div class="vial-row">'
+      +'<div style="font-size:13px;font-weight:500;color:#3C3489;padding-top:28px">'+mg+' mg</div>'
+      +'<div><label style="font-size:11px">Jumlah</label><input type="number" min="0" step="1" value="'+(d.qty||0)+'" onchange="selV['+mg+'].qty=parseInt(this.value)||0" style="font-size:13px"></div>'
+      +'<div><label style="font-size:11px">No. lot</label><input type="text" value="'+esc(d.lot||'')+'" placeholder="opt." onchange="selV['+mg+'].lot=this.value" style="font-size:13px"></div>'
+      +'<div class="hide-m"><label style="font-size:11px">Exp. date</label><input type="date" value="'+(d.exp||'')+'" onchange="selV['+mg+'].exp=this.value" style="font-size:13px"></div>'
+      +'<div><label style="font-size:11px">Lokasi</label><input type="text" value="'+esc(d.loc||'')+'" placeholder="opt." onchange="selV['+mg+'].loc=this.value" style="font-size:13px"></div>'
+      +'</div>';
+  });
+  c.innerHTML=h;
+}
+
+function toggleAC(el){
+  var k=el.getAttribute('data-key');
+  if(acKeys[k]){delete acKeys[k];el.classList.remove('checked');}
+  else{acKeys[k]=true;el.classList.add('checked');}
+}
+
+function vialCombos(doseNeeded, vialSizes){
+  var sizes=vialSizes.slice().sort(function(a,b){return b-a;});
+  var best=null;
+  function solve(idx,rem,combo){
+    if(rem<=0){
+      var total=combo.reduce(function(s,c){return s+c.n;},0);
+      var mg=combo.reduce(function(s,c){return s+c.n*c.mg;},0);
+      var waste=mg-doseNeeded;
+      if(!best||waste<best.waste||(waste===best.waste&&total<best.total)){
+        best={combo:combo.slice(),waste:waste,totalMg:mg,totalVials:total};
+      }
+      return;
+    }
+    if(idx>=sizes.length){
+      if(rem>0)return;
+    }
+    var mg=sizes[idx];
+    var maxN=Math.floor(rem/mg)+1;
+    for(var n=maxN;n>=0;n--){
+      if(n>0)combo.push({mg:mg,n:n});
+      if(n>0&&idx<sizes.length-1)solve(idx+1,rem-n*mg,combo);
+      else if(rem-n*mg<=0)solve(idx+1,rem-n*mg,combo);
+      if(n>0)combo.pop();
+      if(n===0){solve(idx+1,rem,combo);break;}
+    }
+  }
+  solve(0,doseNeeded,[]);
+  return best;
+}
+
+function totalMgAvail(){
+  return Object.keys(selV).map(Number).reduce(function(s,mg){return s+(selV[mg].qty||0)*mg;},0);
+}
+
+function totalVialsAvail(){
+  return Object.keys(selV).map(Number).reduce(function(s,mg){return s+(selV[mg].qty||0);},0);
+}
+
+function mgPerVialUsedForOptim(doseNeeded){
+  var keys=Object.keys(selV).map(Number).filter(function(mg){return (selV[mg].qty||0)>0;});
+  if(!keys.length)return null;
+  return vialCombos(doseNeeded,keys);
+}
+
+function calculate(){
+  var bb=parseFloat(document.getElementById('berat').value);
+  var dp=parseFloat(document.getElementById('dp').value);
+  var lokasi=document.getElementById('lokasi').value.trim();
+  var pic=document.getElementById('pic').value.trim();
+  var ep=parseInt(document.getElementById('ep').value)||0;
+  var epMode=document.getElementById('ep-mode').value;
+
+  if(!bb||bb<=0){alert('Masukkan berat badan pasien.');return;}
+  if(!dp||dp<=0){alert('Masukkan dosis protokol.');return;}
+  var vkeys=Object.keys(selV).map(Number).filter(function(mg){return(selV[mg].qty||0)>0;});
+  if(!vkeys.length){alert('Pilih minimal satu kekuatan vial dan masukkan jumlahnya.');return;}
+
+  var doseMg=Math.min(bb*dp,800);
+  var totalMg=totalMgAvail();
+
+  var opt1=mgPerVialUsedForOptim(doseMg);
+  var opt2=opt1;
+  var opt4=opt1;
+
+  var bisa2=totalMg>=2*doseMg;
+  var bisa4=totalMg>=4*doseMg;
+  var sisaAfter1=totalMg-doseMg;
+
+  var acCount=Object.keys(acKeys).length;
+  var expOK=true;
+  var expWarn=false;
+  var expInfo=[];
+  vkeys.forEach(function(mg){
+    var d=selV[mg];
+    var days=daysUntil(d.exp);
+    if(days===null)return;
+    if(days<0){expOK=false;expInfo.push({mg:mg,days:days,cls:'badge-no',txt:'Kedaluwarsa '+Math.abs(days)+' hari lalu'});}
+    else if(days<=30){expWarn=true;expInfo.push({mg:mg,days:days,cls:'badge-warn',txt:'Exp dalam '+days+' hari'});}
+    else{expInfo.push({mg:mg,days:days,cls:'badge-ok',txt:'Exp aman ('+days+' hari)'});}
+  });
+
+  var status='READY';
+  var tlCls='tl-ready',tlIcon='ti-circle-check',tlTitle='Tocilizumab READY',tlBody='';
+  if(!expOK){status='NOT READY';tlCls='tl-notready';tlIcon='ti-circle-x';tlTitle='NOT READY — Vial kedaluwarsa';}
+  else if(!bisa2){status='NOT READY';tlCls='tl-notready';tlIcon='ti-circle-x';tlTitle='NOT READY — Stok tidak cukup minimal 2 dosis';}
+  else if(!bisa4||expWarn||acCount<4){status='CONDITIONAL READY';tlCls='tl-cond';tlIcon='ti-alert-triangle';tlTitle='CONDITIONAL READY';}
+
+  if(status==='READY'){tlBody='Stok memenuhi ≥4 dosis, belum kedaluwarsa, dan akses terkonfirmasi. Kesiapan tocilizumab memenuhi syarat readiness rescue CAR-T.';}
+  else if(status==='CONDITIONAL READY'){
+    var reasons=[];
+    if(!bisa4)reasons.push('stok <4 dosis (cukup 2 dosis minimum)');
+    if(expWarn)reasons.push('ada vial dengan expiry ≤30 hari');
+    if(acCount<4)reasons.push('belum semua kriteria akses terpenuhi ('+acCount+'/4)');
+    tlBody='Catatan: '+reasons.join('; ')+'. Koordinasi pengadaan dan verifikasi akses sebelum infus.';}
+  else{
+    var reasons2=[];
+    if(!expOK)reasons2.push('ada vial kedaluwarsa');
+    if(!bisa2)reasons2.push('stok <2 dosis rescue (dibutuhkan '+(2*doseMg).toFixed(0)+' mg, tersedia '+totalMg+' mg)');
+    tlBody='Infus CAR-T tidak boleh dijadwalkan. '+reasons2.join('; ')+'. Segera koordinasi farmasi.';}
+
+  document.getElementById('tl-status').innerHTML='<div class="tl-box '+tlCls+'"><i class="ti '+tlIcon+' tl-icon" aria-hidden="true"></i><div><div class="tl-title">'+tlTitle+'</div><div class="tl-body">'+tlBody+'</div></div></div>';
+
+  document.getElementById('metrics').innerHTML=[
+    {lbl:'Dosis per pasien',val:doseMg.toFixed(0),unit:'mg ('+dp+' mg/kg × '+bb+' kg'+(bb*dp>800?', capped 800 mg':'')+')'},
+    {lbl:'Dosis 2× rescue',val:(2*doseMg).toFixed(0),unit:'mg minimum readiness'},
+    {lbl:'Stok tersedia',val:totalMg.toFixed(0),unit:'mg total'},
+    {lbl:'Sisa setelah 1 dosis',val:Math.max(0,sisaAfter1).toFixed(0),unit:'mg'},
+  ].map(function(m){return'<div class="mc"><div class="mc-lbl">'+m.lbl+'</div><div class="mc-val">'+m.val+'</div><div class="mc-unit">'+m.unit+'</div></div>';}).join('');
+
+  var vo=document.getElementById('vial-opt');
+  if(opt1){
+    var comboStr=opt1.combo.map(function(c){return c.n+'×'+c.mg+'mg';}).join(' + ');
+    var h='<div class="opt-box"><div class="opt-title"><i class="ti ti-wand" aria-hidden="true"></i> Kombinasi vial paling efisien per dosis</div>';
+    h+='<div class="opt-row"><span>Dosis dibutuhkan</span><span><b>'+doseMg.toFixed(0)+' mg</b></span></div>';
+    h+='<div class="opt-row"><span>Kombinasi terbaik</span><span><b>'+comboStr+'</b> = '+opt1.totalMg.toFixed(0)+' mg</span></div>';
+    h+='<div class="opt-row"><span>Waste per dosis</span><span>'+opt1.waste.toFixed(0)+' mg</span></div>';
+    h+='<div class="opt-row"><span>Total vial per dosis</span><span>'+opt1.totalVials+' vial</span></div>';
+    if(bisa2){h+='<div class="opt-row"><span>Untuk 2 dosis rescue</span><span>'+(opt1.totalVials*2)+' vial ('+comboStr+' × 2)</span></div>';}
+    if(bisa4){h+='<div class="opt-row"><span>Untuk 4 dosis</span><span>'+(opt1.totalVials*4)+' vial</span></div>';}
+    h+='</div>';
+    vo.innerHTML=h;
+  } else {vo.innerHTML='';}
+
+  var sr='';
+  sr+=srow(bisa2,'ok-no','Minimum 2 dosis rescue tersedia','2×'+doseMg.toFixed(0)+'='+(2*doseMg).toFixed(0)+' mg; tersedia '+totalMg+' mg'+(bisa2?'':', kurang '+(2*doseMg-totalMg).toFixed(0)+' mg'));
+  sr+=srow(bisa4,'ok-warn','Enhanced reserve: 4 dosis tersedia','4×'+doseMg.toFixed(0)+'='+(4*doseMg).toFixed(0)+' mg'+(bisa4?'':', kurang '+(4*doseMg-totalMg).toFixed(0)+' mg')+(bisa2&&!bisa4?' — conditional ready, sesuaikan kebijakan lokal':''));
+  sr+=srow(!expWarn&&expOK,'ok-warn','Kedaluwarsa semua vial aman',expOK?(expWarn?'Ada vial ≤30 hari':'Semua vial aman'):'Ada vial expired');
+  sr+=srow(!!lokasi,'ok-warn','Lokasi penyimpanan tercatat',lokasi?esc(lokasi):'Belum diisi');
+  sr+=srow(!!pic,'ok-warn','PIC farmasi tercatat',pic?esc(pic):'Belum diisi');
+  sr+=srow(acCount>=4,'ok-warn','Semua kriteria akses terpenuhi',acCount+'/4 kriteria akses');
+  document.getElementById('status-rows').innerHTML=sr;
+
+  if(expInfo.length){
+    var es='<div class="sec" style="margin-top:1rem"><i class="ti ti-calendar-check"></i> Status kedaluwarsa per vial</div>';
+    expInfo.forEach(function(e){es+='<span class="badge '+e.cls+'" style="margin-right:6px;margin-bottom:4px">'+e.mg+' mg: '+e.txt+'</span>';});
+    document.getElementById('exp-summary').innerHTML=es;
+  }
+
+  if(ep>0){
+    var refDose;
+    if(epMode==='lt30'){refDose=Math.min(25*12,800);}
+    else if(epMode==='gte30'){refDose=Math.min(40*8,800);}
+    else if(epMode==='mixed'){refDose=Math.min(35*10,800);}
+    else{refDose=doseMg;}
+    var needBulan=ep*refDose*2;
+    var cukupBulan=totalMg>=needBulan;
+    var mo='<div class="sec" style="margin-top:1rem"><i class="ti ti-calendar-month"></i> Proyeksi kebutuhan bulanan</div>';
+    mo+='<div class="mc-grid">';
+    mo+='<div class="mc"><div class="mc-lbl">Kebutuhan minimal (2 dosis × '+ep+' pasien)</div><div class="mc-val">'+needBulan.toFixed(0)+'</div><div class="mc-unit">mg (basis: '+refDose.toFixed(0)+' mg/pasien)</div></div>';
+    mo+='<div class="mc"><div class="mc-lbl">Kecukupan stok</div><div class="mc-val">'+(cukupBulan?'Cukup':'Tidak cukup')+'</div><div class="mc-unit">'+(cukupBulan?'Stok aman untuk '+ep+' pasien':'Kurang +'+(needBulan-totalMg).toFixed(0)+' mg — koordinasi pengadaan')+'</div></div>';
+    mo+='</div>';
+    document.getElementById('monthly-out').innerHTML=mo;
+  } else {document.getElementById('monthly-out').innerHTML='';}
+
+  document.getElementById('result').classList.add('vis');
+  document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function srow(ok,mode,label,detail){
+  var cls,icon;
+  if(mode==='ok-no'){cls=ok?'sr-ok':'sr-no';icon=ok?'ti-circle-check':'ti-circle-x';}
+  else{cls=ok?'sr-ok':'sr-warn';icon=ok?'ti-circle-check':'ti-alert-triangle';}
+  return'<div class="sr '+cls+'"><i class="ti '+icon+'"></i><span><b>'+label+'</b> <span style="font-weight:400">— '+detail+'</span></span></div>';
+}
+
+function copyReport(){
+  var bb=document.getElementById('berat').value;
+  var dp=document.getElementById('dp').value;
+  var doseMg=Math.min(parseFloat(bb)*parseFloat(dp),800);
+  var tl=document.getElementById('tl-status').innerText;
+  var rows=document.getElementById('status-rows').innerText;
+  var opt=document.getElementById('vial-opt').innerText;
+  var txt='=== TOCILIZUMAB READINESS NOTE ===\n'+new Date().toLocaleString('id-ID')+'\n\n'+tl+'\n\nBB: '+bb+' kg | Dosis: '+doseMg.toFixed(0)+' mg ('+dp+' mg/kg)\n\n'+opt+'\n'+rows+'\n\n[drAisyi EduCare — untuk MDT CAR-T]';
+  navigator.clipboard.writeText(txt).then(function(){alert('Ringkasan berhasil disalin ke clipboard.');}).catch(function(){alert('Gagal menyalin. Silakan salin manual.');});
+}
+
+function printReport(){window.print();}
+
+function resetForm(){
+  document.getElementById('berat').value='';
+  document.getElementById('dp').value='8';
+  document.getElementById('ep').value='';
+  document.getElementById('lokasi').value='';
+  document.getElementById('pic').value='';
+  document.getElementById('dose-note-txt').textContent='Masukkan berat badan untuk rekomendasi otomatis.';
+  document.getElementById('dose-auto-lbl').textContent='auto';
+  selV={};acKeys={};
+  document.querySelectorAll('.vc').forEach(function(c){c.classList.remove('sel');});
+  document.querySelectorAll('.vc-chk').forEach(function(c){c.classList.add('h');});
+  document.querySelectorAll('.ac-item').forEach(function(c){c.classList.remove('checked');});
+  document.getElementById('vdetail').innerHTML='';
+  document.getElementById('result').classList.remove('vis');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,2089 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>drAisyiEduCare – Pediatric Oncology Research Toolkit</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#1a56db;--blue-l:#e8f0fd;--blue-d:#1141a3;--blue-m:#3b82f6;
+  --green:#057a55;--green-l:#def7ec;--green-d:#03543f;
+  --yellow:#c27803;--yellow-l:#fdf6b2;--yellow-d:#92400e;
+  --red:#c81e1e;--red-l:#fde8e8;--red-d:#9b1c1c;
+  --gray:#374151;--gray-l:#f9fafb;--gray-m:#6b7280;--gray-d:#1f2937;
+  --border:#e5e7eb;--white:#fff;
+  --sidebar:264px;--hdr:58px;--mobnav:48px;
+}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f3f4f6;color:var(--gray);font-size:14px;line-height:1.55}
+a{color:var(--blue);text-decoration:none}
+
+/* ======= LAYOUT ======= */
+#app{display:flex;flex-direction:column;min-height:100vh}
+#hdr{height:var(--hdr);background:linear-gradient(135deg,var(--blue-d) 0%,var(--blue) 100%);display:flex;align-items:center;padding:0 16px;gap:10px;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.hdr-logo{color:#fff;font-size:15px;font-weight:700;letter-spacing:.2px;line-height:1.2}
+.hdr-logo small{display:block;font-size:10px;font-weight:400;opacity:.75;letter-spacing:.3px}
+.hdr-search{margin-left:auto;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:5px 12px}
+.hdr-search input{background:transparent;border:none;outline:none;color:#fff;width:160px;font-size:12px}
+.hdr-search input::placeholder{color:rgba(255,255,255,.6)}
+.hdr-btns{display:flex;gap:6px;margin-left:8px}
+.hdr-btn{padding:4px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff;font-size:11px;cursor:pointer;font-weight:600;transition:background .15s}
+.hdr-btn:hover{background:rgba(255,255,255,.25)}
+
+/* MOBILE NAV */
+#mobnav{display:none;background:var(--white);border-bottom:1px solid var(--border);overflow-x:auto;white-space:nowrap;height:var(--mobnav);align-items:center;padding:0 8px;gap:4px;position:sticky;top:var(--hdr);z-index:190}
+.mob-item{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border-radius:16px;cursor:pointer;font-size:11px;font-weight:600;color:var(--gray-m);white-space:nowrap;border:1px solid transparent;transition:all .15s;flex-shrink:0}
+.mob-item:hover,.mob-item.active{background:var(--blue-l);color:var(--blue);border-color:#bfdbfe}
+
+#body{display:flex;flex:1;overflow:hidden}
+
+/* SIDEBAR */
+#sidebar{width:var(--sidebar);background:var(--white);border-right:1px solid var(--border);padding:12px 0 24px;overflow-y:auto;position:sticky;top:var(--hdr);height:calc(100vh - var(--hdr));flex-shrink:0}
+.sb-section{padding:10px 14px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--gray-m)}
+.sb-item{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;color:var(--gray);font-size:12.5px;transition:all .12s;border-left:3px solid transparent;user-select:none}
+.sb-item:hover{background:#f1f5f9;color:var(--blue)}
+.sb-item.active{background:var(--blue-l);color:var(--blue);font-weight:700;border-left-color:var(--blue)}
+.sb-icon{font-size:14px;width:16px;text-align:center;flex-shrink:0}
+
+/* MAIN */
+#main{flex:1;padding:20px;overflow-y:auto;min-width:0}
+.page{display:none}.page.active{display:block}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:14px}
+.card-title{font-size:15px;font-weight:700;color:var(--blue-d);margin-bottom:3px;display:flex;align-items:center;gap:6px}
+.card-sub{color:var(--gray-m);font-size:12px;margin-bottom:14px;line-height:1.5}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+
+/* FORM */
+label{font-size:11px;font-weight:700;color:var(--gray-m);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
+input[type=text],input[type=number],select,textarea{width:100%;border:1.5px solid var(--border);border-radius:7px;padding:8px 10px;font-size:13px;color:var(--gray);outline:none;transition:border .15s;background:var(--white);font-family:inherit}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.08)}
+textarea{resize:vertical;min-height:72px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:7px;border:none;cursor:pointer;font-size:13px;font-weight:700;transition:all .15s;font-family:inherit}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue-d);transform:translateY(-1px)}
+.btn-outline{background:var(--white);color:var(--blue);border:1.5px solid var(--blue)}.btn-outline:hover{background:var(--blue-l)}
+.btn-sm{padding:5px 11px;font-size:11px;font-weight:600}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:var(--green-d)}
+.form-row{margin-bottom:12px}
+.form-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+/* OUTPUT */
+.output{background:#f8fafc;border:1.5px solid var(--border);border-radius:8px;padding:16px;margin-top:14px}
+.output-title{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray-m);margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px}
+.output-item{margin-bottom:10px}
+.output-item strong{display:block;font-size:11.5px;color:var(--blue-d);margin-bottom:2px;font-weight:700}
+.output-item p,.output-item li{font-size:13px;line-height:1.6}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}
+.badge-green{background:var(--green-l);color:var(--green-d)}
+.badge-yellow{background:var(--yellow-l);color:var(--yellow-d)}
+.badge-red{background:var(--red-l);color:var(--red-d)}
+.badge-blue{background:var(--blue-l);color:var(--blue-d)}
+.badge-gray{background:#f3f4f6;color:var(--gray-m)}
+
+/* INFO BOXES */
+.info-box{background:var(--blue-l);border-left:4px solid var(--blue);border-radius:0 7px 7px 0;padding:11px 13px;margin-bottom:10px;font-size:12.5px;line-height:1.5}
+.warn-box{background:var(--yellow-l);border-left:4px solid #f59e0b;border-radius:0 7px 7px 0;padding:11px 13px;margin-bottom:10px;font-size:12.5px;line-height:1.5}
+.err-box{background:var(--red-l);border-left:4px solid var(--red);border-radius:0 7px 7px 0;padding:11px 13px;margin-bottom:10px;font-size:12.5px;line-height:1.5}
+.success-box{background:var(--green-l);border-left:4px solid var(--green);border-radius:0 7px 7px 0;padding:11px 13px;font-size:12.5px;line-height:1.5}
+
+/* CHECKLIST */
+.check-item{display:flex;align-items:flex-start;gap:9px;padding:9px 11px;border-radius:7px;border:1.5px solid var(--border);margin-bottom:7px;cursor:pointer;transition:all .12s;user-select:none}
+.check-item:hover{background:#f8fafc}
+.check-item.done{background:var(--green-l);border-color:#6ee7b7}
+.check-item.partial{background:var(--yellow-l);border-color:#fcd34d}
+.check-box{width:18px;height:18px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;margin-top:1px;transition:all .12s}
+.check-item.done .check-box{background:var(--green);border-color:var(--green);color:#fff}
+.check-item.partial .check-box{background:#f59e0b;border-color:#f59e0b;color:#fff}
+.check-label{font-size:12.5px;line-height:1.45;font-weight:500}
+.check-desc{font-size:11px;color:var(--gray-m);margin-top:2px;line-height:1.4}
+
+/* PROGRESS / SCORE */
+.score-display{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:8px;background:var(--blue-l);border:1px solid #bfdbfe;margin-top:12px}
+.score-num{font-size:26px;font-weight:800;color:var(--blue);min-width:56px}
+.score-label{font-size:12px;color:var(--gray-m)}
+
+/* TABS */
+.tabs{display:flex;gap:2px;margin-bottom:14px;border-bottom:2px solid var(--border)}
+.tab{padding:7px 14px;cursor:pointer;font-size:12px;font-weight:600;color:var(--gray-m);border-bottom:2.5px solid transparent;margin-bottom:-2px;transition:all .12s;user-select:none;border-radius:6px 6px 0 0}
+.tab:hover{color:var(--blue);background:var(--blue-l)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);background:var(--blue-l)}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+/* DISCLAIMER */
+.disclaimer{background:#fffbeb;border:1.5px solid #fcd34d;border-radius:8px;padding:10px 14px;font-size:12px;color:#78350f;margin-bottom:16px;line-height:1.5}
+.privacy-warn{background:var(--red-l);border:1.5px solid #fca5a5;border-radius:8px;padding:9px 13px;font-size:11.5px;color:var(--red-d);margin-bottom:12px;line-height:1.5}
+
+/* ACCORDION */
+.acc-item{border:1.5px solid var(--border);border-radius:8px;margin-bottom:7px;overflow:hidden}
+.acc-head{padding:11px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:13px;background:var(--gray-l);transition:background .12s;user-select:none}
+.acc-head:hover{background:#f1f5f9}
+.acc-body{display:none;padding:13px 15px;font-size:13px;line-height:1.6;border-top:1px solid var(--border)}
+.acc-body.open{display:block}
+.acc-arrow{transition:transform .2s;font-size:11px;color:var(--gray-m)}
+.acc-item.open .acc-arrow{transform:rotate(180deg)}
+
+/* DASHBOARD MOD CARDS */
+.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(188px,1fr));gap:10px;margin-top:10px}
+.mod-card{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .15s;position:relative;user-select:none}
+.mod-card:hover{border-color:var(--blue);box-shadow:0 4px 14px rgba(26,86,219,.12);transform:translateY(-2px)}
+.mc-icon{font-size:22px;margin-bottom:7px}
+.mc-title{font-size:12.5px;font-weight:700;color:var(--gray-d);margin-bottom:3px}
+.mc-desc{font-size:11px;color:var(--gray-m);line-height:1.4}
+.mc-num{position:absolute;top:10px;right:10px;background:var(--blue-l);color:var(--blue);font-size:9.5px;font-weight:700;border-radius:9px;padding:2px 7px}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:16px}
+.stat-card{background:var(--blue-l);border-radius:8px;padding:12px;text-align:center;border:1px solid #bfdbfe}
+.stat-card .sv{font-size:20px;font-weight:800;color:var(--blue)}
+.stat-card .sl{font-size:10.5px;color:var(--gray-m);margin-top:2px}
+
+/* ROLE CARDS */
+.role-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:18px}
+.role-card{border-radius:9px;padding:13px 15px;border:1.5px solid}
+.role-nurse{background:#f0fdf4;border-color:#86efac;color:#14532d}
+.role-dr{background:#eff6ff;border-color:#93c5fd;color:#1e3a8a}
+.role-spa{background:#faf5ff;border-color:#c4b5fd;color:#4c1d95}
+.role-konsultan{background:#fff7ed;border-color:#fdba74;color:#7c2d12}
+.role-card h4{font-size:12px;font-weight:700;margin-bottom:6px}
+.role-card ul{list-style:none;font-size:11.5px;line-height:1.8}
+.role-card ul li::before{content:"▸ ";opacity:.6}
+
+/* TRAFFIC LIGHT */
+.tl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:10px}
+.tl-card{border-radius:8px;padding:10px;text-align:center;border:1.5px solid}
+.tl-green{background:#f0fdf4;border-color:#86efac}
+.tl-yellow{background:#fefce8;border-color:#fde047}
+.tl-red{background:#fef2f2;border-color:#fca5a5}
+.tl-gray{background:#f9fafb;border-color:#d1d5db}
+.tl-dot{width:20px;height:20px;border-radius:50%;margin:0 auto 6px;display:block}
+
+/* SECTION HEADER */
+.sec-head{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray-m);margin:18px 0 8px;padding-bottom:6px;border-bottom:1.5px solid var(--border)}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.data-table th{background:var(--blue-l);color:var(--blue-d);padding:7px 10px;text-align:left;font-weight:700;font-size:11.5px}
+.data-table td{padding:7px 10px;border-bottom:1px solid var(--border)}
+.data-table tr:hover td{background:#f8fafc}
+
+/* FOOTER */
+#footer{background:var(--white);border-top:1px solid var(--border);padding:10px 20px;font-size:11px;color:var(--gray-m);text-align:center;line-height:1.5}
+
+/* PRINT */
+@media print{
+  #hdr,#sidebar,#mobnav,#footer,.btn,.hdr-btns,.hdr-search,.no-print{display:none!important}
+  #body{display:block}
+  #main{padding:0}
+  .page.active{display:block}
+  .card{break-inside:avoid;border:1px solid #ccc;margin-bottom:10px}
+  .output{break-inside:avoid}
+  body{font-size:12px}
+}
+
+/* RESPONSIVE */
+@media(max-width:720px){
+  #sidebar{display:none}
+  #mobnav{display:flex}
+  #main{padding:12px}
+  .grid2,.grid3,.grid4,.form-2,.form-3{grid-template-columns:1fr}
+  .mod-grid{grid-template-columns:1fr 1fr}
+  .role-grid{grid-template-columns:1fr}
+  .hdr-search{display:none}
+  #main{padding-bottom:calc(var(--mobnav) + 12px)}
+}
+@media(max-width:400px){.mod-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- HEADER -->
+<div id="hdr">
+  <div style="font-size:22px;flex-shrink:0">🧬</div>
+  <div class="hdr-logo">drAisyiEduCare<small>Pediatric Oncology Research Toolkit</small></div>
+  <div class="hdr-search">🔍<input id="srch" placeholder="Cari modul..." oninput="searchMod(this.value)"></div>
+  <div class="hdr-btns">
+    <button class="hdr-btn" onclick="window.print()">🖨 Print</button>
+  </div>
+</div>
+
+<!-- MOBILE NAV -->
+<div id="mobnav">
+  <div class="mob-item active" onclick="showPage('home',this)">🏠 Home</div>
+  <div class="mob-item" onclick="showPage('rqb',this)">❓ RQ</div>
+  <div class="mob-item" onclick="showPage('pico',this)">🎯 PICO</div>
+  <div class="mob-item" onclick="showPage('sds',this)">📐 Design</div>
+  <div class="mob-item" onclick="showPage('sst',this)">📊 Sample</div>
+  <div class="mob-item" onclick="showPage('sat',this)">📈 Survival</div>
+  <div class="mob-item" onclick="showPage('hr',this)">⚖️ HR</div>
+  <div class="mob-item" onclick="showPage('km',this)">📉 KM</div>
+  <div class="mob-item" onclick="showPage('sts',this)">🔢 Stats</div>
+  <div class="mob-item" onclick="showPage('consort',this)">✅ CONSORT</div>
+  <div class="mob-item" onclick="showPage('strobe',this)">☑️ STROBE</div>
+  <div class="mob-item" onclick="showPage('care',this)">📋 CARE</div>
+  <div class="mob-item" onclick="showPage('prisma',this)">🔍 PRISMA</div>
+  <div class="mob-item" onclick="showPage('cat',this)">🔬 Appraisal</div>
+  <div class="mob-item" onclick="showPage('rob',this)">⚠️ RoB</div>
+  <div class="mob-item" onclick="showPage('prc',this)">📝 Readiness</div>
+  <div class="mob-item" onclick="showPage('onco',this)">🩸 Endpoints</div>
+  <div class="mob-item" onclick="showPage('mrd',this)">🧪 MRD</div>
+  <div class="mob-item" onclick="showPage('gcao',this)">✍️ GCAO</div>
+  <div class="mob-item" onclick="showPage('edu',this)">🎓 Edu</div>
+  <div class="mob-item" onclick="showPage('qref',this)">⚡ Quick Ref</div>
+  <div class="mob-item" onclick="showPage('refs',this)">📚 References</div>
+</div>
+
+<div id="body">
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="sb-section">Beranda</div>
+  <div class="sb-item active" onclick="showPage('home',this)"><span class="sb-icon">🏠</span>Dashboard</div>
+
+  <div class="sb-section">Perencanaan Penelitian</div>
+  <div class="sb-item" onclick="showPage('rqb',this)"><span class="sb-icon">❓</span>Research Question Builder</div>
+  <div class="sb-item" onclick="showPage('pico',this)"><span class="sb-icon">🎯</span>PICO Builder</div>
+  <div class="sb-item" onclick="showPage('sds',this)"><span class="sb-icon">📐</span>Study Design Selector</div>
+  <div class="sb-item" onclick="showPage('sst',this)"><span class="sb-icon">📊</span>Sample Size Toolkit</div>
+
+  <div class="sb-section">Analisis Statistik</div>
+  <div class="sb-item" onclick="showPage('sat',this)"><span class="sb-icon">📈</span>Survival Analysis Toolkit</div>
+  <div class="sb-item" onclick="showPage('hr',this)"><span class="sb-icon">⚖️</span>Hazard Ratio Interpreter</div>
+  <div class="sb-item" onclick="showPage('km',this)"><span class="sb-icon">📉</span>Kaplan-Meier Interpreter</div>
+  <div class="sb-item" onclick="showPage('sts',this)"><span class="sb-icon">🔢</span>Statistical Test Selector</div>
+
+  <div class="sb-section">Reporting Guidelines</div>
+  <div class="sb-item" onclick="showPage('consort',this)"><span class="sb-icon">✅</span>CONSORT 2025</div>
+  <div class="sb-item" onclick="showPage('strobe',this)"><span class="sb-icon">☑️</span>STROBE</div>
+  <div class="sb-item" onclick="showPage('care',this)"><span class="sb-icon">📋</span>CARE</div>
+  <div class="sb-item" onclick="showPage('prisma',this)"><span class="sb-icon">🔍</span>PRISMA 2020</div>
+
+  <div class="sb-section">Critical Appraisal</div>
+  <div class="sb-item" onclick="showPage('cat',this)"><span class="sb-icon">🔬</span>Critical Appraisal Tool</div>
+  <div class="sb-item" onclick="showPage('rob',this)"><span class="sb-icon">⚠️</span>Risk of Bias Tool</div>
+  <div class="sb-item" onclick="showPage('prc',this)"><span class="sb-icon">📝</span>Publication Readiness</div>
+
+  <div class="sb-section">Pediatric Oncology Modules</div>
+  <div class="sb-item" onclick="showPage('onco',this)"><span class="sb-icon">🩸</span>Oncology Endpoint Explorer</div>
+  <div class="sb-item" onclick="showPage('mrd',this)"><span class="sb-icon">🧪</span>MRD Interpreter</div>
+  <div class="sb-item" onclick="showPage('gcao',this)"><span class="sb-icon">✍️</span>GCAO Framework Builder</div>
+
+  <div class="sb-section">Education & Reference</div>
+  <div class="sb-item" onclick="showPage('edu',this)"><span class="sb-icon">🎓</span>Education Mode</div>
+  <div class="sb-item" onclick="showPage('qref',this)"><span class="sb-icon">⚡</span>Quick Reference</div>
+  <div class="sb-item" onclick="showPage('refs',this)"><span class="sb-icon">📚</span>References & Validation</div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+<!-- GLOBAL DISCLAIMER -->
+<div class="disclaimer">
+  ⚠️ <strong>Disclaimer Metodologi:</strong> Toolkit ini adalah alat bantu edukasi metodologi penelitian. Tidak menggantikan konsultasi biostatistik, epidemiologi klinis, komite etik, pembimbing penelitian, atau penilaian metodologis oleh reviewer/ahli. Semua kalkulator menghasilkan estimasi edukatif.
+</div>
+<div class="privacy-warn">
+  🔒 <strong>Privasi & Keamanan Data:</strong> Jangan memasukkan nama pasien, nomor rekam medis, tanggal lahir lengkap, alamat, atau identitas langsung lainnya ke dalam form ini. Gunakan data agregat atau data yang sudah dide-identifikasi.
+</div>
+
+<!-- ========== HOME ========== -->
+<div class="page active" id="page-home">
+  <div style="margin-bottom:14px">
+    <div style="font-size:20px;font-weight:800;color:var(--blue-d)">🧬 drAisyiEduCare</div>
+    <div style="font-size:12.5px;color:var(--gray-m)">Panduan Interaktif Metodologi Penelitian Hematologi dan Onkologi Anak · Educational &amp; Methodology Support Only</div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="sv">22</div><div class="sl">Total Modul</div></div>
+    <div class="stat-card"><div class="sv">4</div><div class="sl">Reporting Tools</div></div>
+    <div class="stat-card"><div class="sv">5</div><div class="sl">Appraisal Tools</div></div>
+    <div class="stat-card"><div class="sv">5</div><div class="sl">Kalkulator Statistik</div></div>
+    <div class="stat-card"><div class="sv">5</div><div class="sl">Pediatric Oncology</div></div>
+  </div>
+
+  <!-- ROLE-BASED GUIDANCE -->
+  <div class="sec-head">👥 Panduan Berdasarkan Peran Pengguna</div>
+  <div class="role-grid">
+    <div class="role-card role-nurse">
+      <h4>🩺 Perawat / Data Nurse</h4>
+      <ul>
+        <li>Screening kelengkapan data</li>
+        <li>Variabel & timeline terapi</li>
+        <li>Quality check rekam medis</li>
+        <li>CARE Checklist</li>
+        <li>Publication Readiness (data items)</li>
+      </ul>
+    </div>
+    <div class="role-card role-dr">
+      <h4>👨‍⚕️ Dokter Umum / Peneliti Pemula</h4>
+      <ul>
+        <li>Research Question Builder</li>
+        <li>PICO Builder</li>
+        <li>Study Design Selector</li>
+        <li>Statistical Test Selector</li>
+        <li>Education Mode</li>
+      </ul>
+    </div>
+    <div class="role-card role-spa">
+      <h4>🔬 SpA / Fellow / Residen</h4>
+      <ul>
+        <li>Oncology Endpoint Explorer</li>
+        <li>Survival Analysis Toolkit</li>
+        <li>MRD Interpreter</li>
+        <li>Hazard Ratio & KM Interpreter</li>
+        <li>GCAO Framework Builder</li>
+      </ul>
+    </div>
+    <div class="role-card role-konsultan">
+      <h4>👩‍🏫 Konsultan / Supervisor / PI</h4>
+      <ul>
+        <li>Risk of Bias Tool</li>
+        <li>Critical Appraisal Tool</li>
+        <li>Publication Readiness Checker</li>
+        <li>CONSORT / PRISMA / STROBE</li>
+        <li>References & Validation</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sec-head">📚 Perencanaan Penelitian</div>
+  <div class="mod-grid">
+    <div class="mod-card" onclick="showPage('rqb')"><div class="mc-icon">❓</div><div class="mc-num">M1</div><div class="mc-title">Research Question Builder</div><div class="mc-desc">Susun RQ, hipotesis, feasibility, bias utama</div></div>
+    <div class="mod-card" onclick="showPage('pico')"><div class="mc-icon">🎯</div><div class="mc-num">M2</div><div class="mc-title">PICO Builder</div><div class="mc-desc">PICO statement, tabel, desain yang disarankan</div></div>
+    <div class="mod-card" onclick="showPage('sds')"><div class="mc-icon">📐</div><div class="mc-num">M3</div><div class="mc-title">Study Design Selector</div><div class="mc-desc">10 tujuan penelitian → desain optimal + bias</div></div>
+    <div class="mod-card" onclick="showPage('sst')"><div class="mc-icon">📊</div><div class="mc-num">M4</div><div class="mc-title">Sample Size Toolkit</div><div class="mc-desc">Cross-sectional, case-control, cohort, survival</div></div>
+  </div>
+
+  <div class="sec-head">📈 Analisis Statistik</div>
+  <div class="mod-grid">
+    <div class="mod-card" onclick="showPage('sat')"><div class="mc-icon">📈</div><div class="mc-num">M5</div><div class="mc-title">Survival Analysis Toolkit</div><div class="mc-desc">OS/EFS/DFS/PFS, competing risks, KM curve</div></div>
+    <div class="mod-card" onclick="showPage('hr')"><div class="mc-icon">⚖️</div><div class="mc-num">M6</div><div class="mc-title">Hazard Ratio Interpreter</div><div class="mc-desc">Interpretasi HR, CI, p-value dengan logika benar</div></div>
+    <div class="mod-card" onclick="showPage('km')"><div class="mc-icon">📉</div><div class="mc-num">M7</div><div class="mc-title">Kaplan-Meier Interpreter</div><div class="mc-desc">Narasi ilmiah siap manuskrip</div></div>
+    <div class="mod-card" onclick="showPage('sts')"><div class="mc-icon">🔢</div><div class="mc-num">M8</div><div class="mc-title">Statistical Test Selector</div><div class="mc-desc">15+ uji statistik berdasarkan tipe data</div></div>
+  </div>
+
+  <div class="sec-head">📋 Reporting Guidelines</div>
+  <div class="mod-grid">
+    <div class="mod-card" onclick="showPage('consort')"><div class="mc-icon">✅</div><div class="mc-num">M9</div><div class="mc-title">CONSORT 2025</div><div class="mc-desc">Checklist RCT terkini, 30-item</div></div>
+    <div class="mod-card" onclick="showPage('strobe')"><div class="mc-icon">☑️</div><div class="mc-num">M10</div><div class="mc-title">STROBE</div><div class="mc-desc">Cohort · Case-Control · Cross-Sectional</div></div>
+    <div class="mod-card" onclick="showPage('care')"><div class="mc-icon">📋</div><div class="mc-num">M11</div><div class="mc-title">CARE Checklist</div><div class="mc-desc">Case report standar, de-identified data</div></div>
+    <div class="mod-card" onclick="showPage('prisma')"><div class="mc-icon">🔍</div><div class="mc-num">M12</div><div class="mc-title">PRISMA 2020</div><div class="mc-desc">Systematic review & meta-analysis</div></div>
+  </div>
+
+  <div class="sec-head">🔬 Critical Appraisal & Evaluasi</div>
+  <div class="mod-grid">
+    <div class="mod-card" onclick="showPage('cat')"><div class="mc-icon">🔬</div><div class="mc-num">M13</div><div class="mc-title">Critical Appraisal</div><div class="mc-desc">RCT, cohort, case-control, diagnostik, meta</div></div>
+    <div class="mod-card" onclick="showPage('rob')"><div class="mc-icon">⚠️</div><div class="mc-num">M14</div><div class="mc-title">Risk of Bias Tool</div><div class="mc-desc">RoB 2, ROBINS-I, QUADAS-2 inspired</div></div>
+    <div class="mod-card" onclick="showPage('prc')"><div class="mc-icon">📝</div><div class="mc-num">M15</div><div class="mc-title">Publication Readiness</div><div class="mc-desc">20-item checklist kesiapan submit</div></div>
+  </div>
+
+  <div class="sec-head">🩸 Pediatric Oncology Modules</div>
+  <div class="mod-grid">
+    <div class="mod-card" onclick="showPage('onco')"><div class="mc-icon">🩸</div><div class="mc-num">+</div><div class="mc-title">Oncology Endpoint Explorer</div><div class="mc-desc">OS, EFS, DFS, CIR, NRM, TRM, GRFS, MRD</div></div>
+    <div class="mod-card" onclick="showPage('mrd')"><div class="mc-icon">🧪</div><div class="mc-num">+</div><div class="mc-title">MRD Interpreter</div><div class="mc-desc">Interpretasi protocol-dependent, caveat lengkap</div></div>
+    <div class="mod-card" onclick="showPage('gcao')"><div class="mc-icon">✍️</div><div class="mc-num">+</div><div class="mc-title">GCAO Framework Builder</div><div class="mc-desc">Template manuskrip, proposal, grant, case report</div></div>
+    <div class="mod-card" onclick="showPage('edu')"><div class="mc-icon">🎓</div><div class="mc-num">+</div><div class="mc-title">Education Mode</div><div class="mc-desc">15+ konsep statistik bahasa sederhana</div></div>
+    <div class="mod-card" onclick="showPage('qref')"><div class="mc-icon">⚡</div><div class="mc-num">+</div><div class="mc-title">Quick Reference</div><div class="mc-desc">Rumus, tabel, definisi dalam satu layar</div></div>
+    <div class="mod-card" onclick="showPage('refs')"><div class="mc-icon">📚</div><div class="mc-num">+</div><div class="mc-title">References & Validation</div><div class="mc-desc">Sumber panduan & validasi internal</div></div>
+  </div>
+
+  <!-- ETHICS & PRIVACY CARD -->
+  <div class="sec-head">🔒 Ethics & Data Privacy</div>
+  <div class="card">
+    <div class="card-title">🔒 Etik Penelitian & Privasi Data</div>
+    <div class="card-sub">Panduan singkat etik dan privasi untuk penelitian onkologi pediatrik</div>
+    <div class="grid2">
+      <div>
+        <div class="output-item"><strong>⚖️ Prinsip Etik Dasar</strong>
+          <ul style="padding-left:16px;font-size:12.5px;line-height:1.8">
+            <li>Otonomi: informed consent pasien/wali</li>
+            <li>Beneficence: manfaat lebih besar dari risiko</li>
+            <li>Non-maleficence: tidak membahayakan subjek</li>
+            <li>Justice: distribusi manfaat yang adil</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="output-item"><strong>🔒 De-identifikasi Data</strong>
+          <ul style="padding-left:16px;font-size:12.5px;line-height:1.8">
+            <li>Hapus nama, NRM, tanggal lahir lengkap</li>
+            <li>Gunakan kode/ID anonim</li>
+            <li>Agregasi data jika n kecil (&lt;5 per sel)</li>
+            <li>Simpan key-code terpisah dan aman</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="warn-box">⚠️ Penelitian yang melibatkan pasien anak selalu membutuhkan ethical clearance dari komite etik yang berwenang dan informed consent dari orang tua/wali.</div>
+  </div>
+</div>
+
+<!-- ========== M1: RESEARCH QUESTION BUILDER ========== -->
+<div class="page" id="page-rqb">
+  <div class="card">
+    <div class="card-title">❓ Research Question Builder</div>
+    <div class="card-sub">Bangun pertanyaan penelitian terstruktur beserta hipotesis, feasibility, dan bias utama</div>
+    <div class="form-2">
+      <div class="form-row"><label>Topik / Area Penelitian</label><input type="text" id="rqb-topic" placeholder="misal: leukemia limfoblastik akut anak"></div>
+      <div class="form-row"><label>Populasi Target</label><input type="text" id="rqb-pop" placeholder="misal: anak 2–18 tahun dengan ALL"></div>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>Intervensi / Eksposur / Faktor yang Diteliti</label><input type="text" id="rqb-int" placeholder="misal: protokol BFM-2019 vs protokol lama"></div>
+      <div class="form-row"><label>Outcome Utama</label><input type="text" id="rqb-out-inp" placeholder="misal: overall survival 5 tahun"></div>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>Tujuan Penelitian</label>
+        <select id="rqb-goal">
+          <option value="">-- Pilih Tujuan --</option>
+          <option value="efektivitas">Mengevaluasi efektivitas terapi/intervensi</option>
+          <option value="risiko">Mengidentifikasi faktor risiko</option>
+          <option value="prognosis">Menilai prognosis/prediksi outcome</option>
+          <option value="diagnosis">Mengembangkan/mengevaluasi alat diagnostik</option>
+          <option value="prevalensi">Mendeskripsikan prevalensi/epidemiologi</option>
+          <option value="perbandingan">Membandingkan modalitas terapi/strategi</option>
+          <option value="survival">Analisis survival/time-to-event</option>
+          <option value="biomarker">Eksplorasi/validasi biomarker</option>
+        </select>
+      </div>
+      <div class="form-row"><label>Setting Penelitian</label>
+        <select id="rqb-setting">
+          <option>Satu senter (single-center)</option>
+          <option>Multisenter nasional</option>
+          <option>Multisenter internasional</option>
+          <option>Registry/database</option>
+          <option>Belum ditentukan</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="buildRQ()">🔨 Build Research Question</button>
+    <div class="output" id="rqb-result" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ========== M2: PICO BUILDER ========== -->
+<div class="page" id="page-pico">
+  <div class="card">
+    <div class="card-title">🎯 PICO Builder</div>
+    <div class="card-sub">Susun PICO statement terstruktur dan dapatkan rekomendasi desain serta catatan metodologi</div>
+    <div class="form-2">
+      <div class="form-row"><label>P – Population (siapa pasiennya?)</label><input type="text" id="pp" placeholder="misal: anak usia &lt;18 tahun dengan AML de novo"></div>
+      <div class="form-row"><label>I – Intervention (apa intervensinya?)</label><input type="text" id="pi" placeholder="misal: terapi induksi berbasis cytarabine dosis tinggi"></div>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>C – Comparison (dibandingkan dengan apa?)</label><input type="text" id="pc" placeholder="misal: terapi induksi standar dosis konvensional"></div>
+      <div class="form-row"><label>O – Outcome (apa yang diukur?)</label><input type="text" id="po" placeholder="misal: complete remission rate, EFS 3 tahun"></div>
+    </div>
+    <div class="form-row"><label>T – Timeframe (opsional)</label><input type="text" id="pt" placeholder="misal: 3 tahun follow-up"></div>
+    <button class="btn btn-primary" onclick="buildPICO()">🎯 Generate PICO Statement</button>
+    <div class="output" id="pico-result" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ========== M3: STUDY DESIGN SELECTOR ========== -->
+<div class="page" id="page-sds">
+  <div class="card">
+    <div class="card-title">📐 Study Design Selector</div>
+    <div class="card-sub">Pilih desain penelitian optimal berdasarkan tujuan utama penelitian Anda</div>
+    <div class="form-row"><label>Tujuan Penelitian Utama</label>
+      <select id="sds-goal" onchange="selectDesign()">
+        <option value="">-- Pilih Tujuan --</option>
+        <option value="terapi">Evaluasi Terapi / Intervensi</option>
+        <option value="diagnosis">Akurasi Diagnostik</option>
+        <option value="prognosis">Prognosis / Prediksi Outcome</option>
+        <option value="risiko">Faktor Risiko</option>
+        <option value="prevalensi">Prevalensi / Epidemiologi</option>
+        <option value="survival">Analisis Survival / Time-to-Event</option>
+        <option value="biomarker">Biomarker / Molecular Marker</option>
+        <option value="edukasi">Intervensi Edukasi / Kesehatan</option>
+        <option value="qi">Quality Improvement (QI)</option>
+        <option value="sr">Systematic Review / Meta-Analysis</option>
+      </select>
+    </div>
+    <div id="sds-result" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ========== M4: SAMPLE SIZE TOOLKIT ========== -->
+<div class="page" id="page-sst">
+  <div class="card">
+    <div class="card-title">📊 Sample Size Toolkit</div>
+    <div class="card-sub">Estimasi ukuran sampel untuk berbagai desain penelitian</div>
+    <div class="warn-box">⚠️ <strong>Caveat Penting:</strong> Semua kalkulator ini menghasilkan <em>estimasi edukatif</em> berdasarkan formula standar. Hasil tidak menggantikan konsultasi biostatistician yang mempertimbangkan desain aktual, stratifikasi, clustering, missing data, dan asumsi spesifik studi Anda.</div>
+    <div class="tabs">
+      <div class="tab active" onclick="sstTab(this,'sst-cs')">Cross-Sectional</div>
+      <div class="tab" onclick="sstTab(this,'sst-cc')">Case-Control</div>
+      <div class="tab" onclick="sstTab(this,'sst-coh')">Cohort / 2 Proporsi</div>
+      <div class="tab" onclick="sstTab(this,'sst-sv')">Survival Study</div>
+    </div>
+
+    <div class="tab-panel active" id="sst-cs">
+      <div class="form-3">
+        <div class="form-row"><label>Prevalensi yang Diharapkan (P) %</label><input type="number" id="cs-p" value="30" min="1" max="99" step="1"></div>
+        <div class="form-row"><label>Margin of Error (d) %</label><input type="number" id="cs-d" value="5" min="1" max="20" step="1"></div>
+        <div class="form-row"><label>Confidence Level</label>
+          <select id="cs-cl"><option value="1.96">95%</option><option value="2.576">99%</option><option value="1.645">90%</option></select>
+        </div>
+      </div>
+      <div class="form-2">
+        <div class="form-row"><label>Design Effect (DEFF, default=1 untuk simple random sampling)</label><input type="number" id="cs-de" value="1" min="1" max="5" step="0.1"></div>
+        <div class="form-row"><label>Antisipasi Missing/Drop-out (%)</label><input type="number" id="cs-miss" value="10" min="0" max="30" step="1"></div>
+      </div>
+      <button class="btn btn-primary" onclick="calcCS()">Hitung Sampel</button>
+      <div class="output" id="cs-out" style="display:none"></div>
+    </div>
+
+    <div class="tab-panel" id="sst-cc">
+      <div class="form-3">
+        <div class="form-row"><label>Proporsi Eksposur pada Kontrol (P₀) %</label><input type="number" id="cc-p0" value="30" min="1" max="99" step="1"></div>
+        <div class="form-row"><label>Odds Ratio yang Diharapkan (OR)</label><input type="number" id="cc-or" value="2.5" min="0.1" step="0.1"></div>
+        <div class="form-row"><label>Power (1-β) %</label><input type="number" id="cc-pow" value="80" min="60" max="99" step="1"></div>
+      </div>
+      <div class="form-3">
+        <div class="form-row"><label>Alpha (α)</label>
+          <select id="cc-a"><option value="1.96">0.05 (dua sisi)</option><option value="1.645">0.05 (satu sisi)</option><option value="2.576">0.01 (dua sisi)</option></select>
+        </div>
+        <div class="form-row"><label>Rasio Kontrol : Kasus</label><input type="number" id="cc-r" value="1" min="1" max="4" step="1"></div>
+        <div class="form-row"><label>Antisipasi Missing/Drop-out (%)</label><input type="number" id="cc-miss" value="10" min="0" max="30" step="1"></div>
+      </div>
+      <button class="btn btn-primary" onclick="calcCC()">Hitung Sampel</button>
+      <div class="output" id="cc-out" style="display:none"></div>
+    </div>
+
+    <div class="tab-panel" id="sst-coh">
+      <div class="form-3">
+        <div class="form-row"><label>Insidensi/Proporsi pada Kontrol (P₀) %</label><input type="number" id="coh-p0" value="15" min="1" max="99" step="1"></div>
+        <div class="form-row"><label>Relative Risk yang Diharapkan (RR)</label><input type="number" id="coh-rr" value="2" min="0.1" step="0.1"></div>
+        <div class="form-row"><label>Power (1-β) %</label><input type="number" id="coh-pow" value="80" min="60" max="99" step="1"></div>
+      </div>
+      <div class="form-3">
+        <div class="form-row"><label>Alpha (α)</label>
+          <select id="coh-a"><option value="1.96">0.05 (dua sisi)</option><option value="2.576">0.01 (dua sisi)</option></select>
+        </div>
+        <div class="form-row"><label>Rasio Eksposur : Kontrol</label><input type="number" id="coh-ratio" value="1" min="1" max="4" step="1"></div>
+        <div class="form-row"><label>Antisipasi Loss to Follow-Up (%)</label><input type="number" id="coh-miss" value="15" min="0" max="40" step="1"></div>
+      </div>
+      <button class="btn btn-primary" onclick="calcCoh()">Hitung Sampel</button>
+      <div class="output" id="coh-out" style="display:none"></div>
+    </div>
+
+    <div class="tab-panel" id="sst-sv">
+      <div class="form-3">
+        <div class="form-row"><label>Hazard Ratio yang Diharapkan (HR)</label><input type="number" id="sv-hr" value="0.7" min="0.1" step="0.05"></div>
+        <div class="form-row"><label>Power (1-β) %</label><input type="number" id="sv-pow" value="80" min="60" max="99" step="1"></div>
+        <div class="form-row"><label>Alpha (α) dua sisi</label>
+          <select id="sv-a"><option value="1.96">0.05</option><option value="2.576">0.01</option></select>
+        </div>
+      </div>
+      <div class="form-3">
+        <div class="form-row"><label>Expected Event Proportion (%) pada akhir studi</label><input type="number" id="sv-pe" value="50" min="5" max="99" step="1"></div>
+        <div class="form-row"><label>Rasio Alokasi (Intervensi : Kontrol)</label><input type="number" id="sv-ratio" value="1" min="1" max="4" step="1"></div>
+        <div class="form-row"><label>Antisipasi Drop-out (%)</label><input type="number" id="sv-miss" value="15" min="0" max="40" step="1"></div>
+      </div>
+      <button class="btn btn-primary" onclick="calcSurv()">Estimasi Sampel</button>
+      <div class="output" id="sv-out" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== M5: SURVIVAL ANALYSIS ========== -->
+<div class="page" id="page-sat">
+  <div class="card">
+    <div class="card-title">📈 Survival Analysis Toolkit</div>
+    <div class="card-sub">Interpretasi analisis survival untuk penelitian onkologi pediatrik</div>
+    <div class="form-2">
+      <div class="form-row"><label>Jumlah Pasien (N total)</label><input type="number" id="sat-n" value="120" min="1"></div>
+      <div class="form-row"><label>Median Follow-up (bulan)</label><input type="number" id="sat-fu" value="36" min="1"></div>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>Jumlah Events (bukan persentase)</label><input type="number" id="sat-ev" value="42" min="0"></div>
+      <div class="form-row"><label>Jenis Endpoint Utama</label>
+        <select id="sat-type">
+          <option>Overall Survival (OS)</option>
+          <option>Event-Free Survival (EFS)</option>
+          <option>Disease-Free Survival (DFS)</option>
+          <option>Progression-Free Survival (PFS)</option>
+          <option>Relapse-Free Survival (RFS)</option>
+          <option>Cumulative Incidence of Relapse (CIR)*</option>
+          <option>Non-Relapse Mortality (NRM)*</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-3">
+      <div class="form-row"><label>Survival 1 tahun (%)</label><input type="number" id="sat-s1" value="85" min="0" max="100"></div>
+      <div class="form-row"><label>Survival 3 tahun (%)</label><input type="number" id="sat-s3" value="72" min="0" max="100"></div>
+      <div class="form-row"><label>Survival 5 tahun (%)</label><input type="number" id="sat-s5" value="65" min="0" max="100"></div>
+    </div>
+    <div class="form-row"><label>Median Survival (bulan; isi 0 jika belum tercapai)</label><input type="number" id="sat-med" value="0" min="0"></div>
+    <button class="btn btn-primary" onclick="analyzeSurvival()">📈 Analisis &amp; Generate Narasi</button>
+    <div id="sat-result" style="display:none">
+      <div class="output" id="sat-text"></div>
+      <div class="card" style="margin-top:12px">
+        <div style="font-size:12.5px;font-weight:700;color:var(--blue-d);margin-bottom:10px">📉 Kurva Kaplan-Meier (Ilustrasi Edukatif)</div>
+        <svg id="km-svg-sat" width="100%" viewBox="0 0 520 210" style="border:1px solid var(--border);border-radius:6px;background:#f8fafc"></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== M6: HAZARD RATIO ========== -->
+<div class="page" id="page-hr">
+  <div class="card">
+    <div class="card-title">⚖️ Hazard Ratio Interpreter</div>
+    <div class="card-sub">Interpretasi HR, CI, dan p-value dengan logika statistik yang benar</div>
+    <div class="form-3">
+      <div class="form-row"><label>Hazard Ratio (HR)</label><input type="number" id="hr-val" value="2.5" min="0.01" step="0.01"></div>
+      <div class="form-row"><label>95% CI – Lower Bound</label><input type="number" id="hr-lo" value="1.4" min="0.01" step="0.01"></div>
+      <div class="form-row"><label>95% CI – Upper Bound</label><input type="number" id="hr-hi" value="4.3" min="0.01" step="0.01"></div>
+    </div>
+    <div class="form-3">
+      <div class="form-row"><label>p-value</label><input type="number" id="hr-p" value="0.002" min="0" max="1" step="0.001"></div>
+      <div class="form-row"><label>Endpoint yang Diukur</label><input type="text" id="hr-ep" value="Overall Survival"></div>
+      <div class="form-row"><label>Kelompok Referensi</label><input type="text" id="hr-ref" value="kelompok risiko rendah"></div>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>Apakah kurva KM menyilang?</label>
+        <select id="hr-cross"><option value="n">Tidak</option><option value="y">Ya</option><option value="uk">Tidak diketahui</option></select>
+      </div>
+      <div class="form-row"><label>Apakah asumsi proportional hazards diverifikasi?</label>
+        <select id="hr-ph"><option value="y">Ya, asumsi terpenuhi</option><option value="n">Tidak / tidak diverifikasi</option><option value="uk">Tidak diketahui</option></select>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="interpretHR()">⚖️ Interpretasi HR</button>
+    <div class="output" id="hr-result" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ========== M7: KAPLAN-MEIER ========== -->
+<div class="page" id="page-km">
+  <div class="card">
+    <div class="card-title">📉 Kaplan-Meier Interpreter</div>
+    <div class="card-sub">Generate interpretasi naratif ilmiah siap manuskrip</div>
+    <div class="form-2">
+      <div class="form-row"><label>Endpoint</label>
+        <select id="km-ep"><option>Overall Survival</option><option>Event-Free Survival</option><option>Disease-Free Survival</option><option>Progression-Free Survival</option></select>
+      </div>
+      <div class="form-row"><label>Log-rank p-value</label><input type="number" id="km-p" value="0.003" min="0" max="1" step="0.001"></div>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>Nama Kelompok 1</label><input type="text" id="km-g1" value="Kelompok Risiko Rendah"></div>
+      <div class="form-row"><label>Nama Kelompok 2</label><input type="text" id="km-g2" value="Kelompok Risiko Tinggi"></div>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>Median Survival Kelompok 1 (bulan; 0 = belum tercapai)</label><input type="number" id="km-m1" value="48" min="0"></div>
+      <div class="form-row"><label>Median Survival Kelompok 2 (bulan; 0 = belum tercapai)</label><input type="number" id="km-m2" value="24" min="0"></div>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>Survival Kelompok 1 pada 3 tahun (%)</label><input type="number" id="km-s1-3" value="72" min="0" max="100"></div>
+      <div class="form-row"><label>Survival Kelompok 2 pada 3 tahun (%)</label><input type="number" id="km-s2-3" value="45" min="0" max="100"></div>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>Apakah kurva menyilang?</label>
+        <select id="km-cross"><option value="n">Tidak</option><option value="y">Ya (kurva menyilang)</option></select>
+      </div>
+      <div class="form-row"><label>Deskripsi tambahan</label>
+        <select id="km-extra">
+          <option value="">-- Tidak ada --</option>
+          <option value="early">Divergensi kurva terjadi lebih awal (&lt;12 bulan)</option>
+          <option value="late">Divergensi kurva terjadi lebih lambat (&gt;12 bulan)</option>
+          <option value="plateau">Plateau pada kurva survival (long-term survivors)</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="interpretKM()">📝 Generate Narasi Ilmiah</button>
+    <div class="output" id="km-result" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ========== M8: STATISTICAL TEST SELECTOR ========== -->
+<div class="page" id="page-sts">
+  <div class="card">
+    <div class="card-title">🔢 Statistical Test Selector</div>
+    <div class="card-sub">Pilih uji statistik yang tepat berdasarkan karakteristik data Anda</div>
+    <div class="form-2">
+      <div class="form-row"><label>Tipe Variabel Dependen</label>
+        <select id="sts-var">
+          <option value="cont">Kontinu / Numerik</option>
+          <option value="cat">Kategorik / Nominal</option>
+          <option value="ord">Ordinal</option>
+          <option value="time">Time-to-Event / Survival</option>
+          <option value="count">Count data (Poisson-distributed)</option>
+          <option value="agree">Agreement / Reliabilitas</option>
+          <option value="corr">Korelasi antar dua variabel</option>
+        </select>
+      </div>
+      <div class="form-row"><label>Jumlah Kelompok / Variabel Independen</label>
+        <select id="sts-grp"><option value="1">1 Kelompok (vs nilai referensi)</option><option value="2">2 Kelompok</option><option value="3">3+ Kelompok</option></select>
+      </div>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>Normalitas Distribusi</label>
+        <select id="sts-norm"><option value="y">Normal (parametrik)</option><option value="n">Non-normal / Tidak diketahui</option></select>
+      </div>
+      <div class="form-row"><label>Data Berpasangan (repeated/paired)?</label>
+        <select id="sts-pair"><option value="n">Tidak berpasangan (independen)</option><option value="y">Berpasangan / Repeated measures</option></select>
+      </div>
+    </div>
+    <div class="form-row"><label>Tujuan Analisis</label>
+      <select id="sts-obj">
+        <option value="compare">Perbandingan antar kelompok</option>
+        <option value="assoc">Asosiasi / hubungan</option>
+        <option value="predict">Prediksi / regresi</option>
+        <option value="agree">Kesesuaian / reliabilitas</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="selectStat()">🔢 Rekomendasikan Uji Statistik</button>
+    <div class="output" id="sts-result" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ========== M9: CONSORT 2025 ========== -->
+<div class="page" id="page-consort">
+  <div class="card">
+    <div class="card-title">✅ CONSORT 2025 Checklist</div>
+    <div class="card-sub">Checklist pelaporan Randomized Controlled Trial (CONSORT 2025) — Klik item: 1x = Parsial (🟡), 2x = Lengkap (🟢), 3x = Reset</div>
+    <div class="info-box">📌 CONSORT 2025 merupakan pembaruan dari CONSORT 2010, mencakup item tambahan untuk data sharing, AI use statement, dan harms reporting yang lebih detail.</div>
+    <div id="consort-list"></div>
+    <div class="score-display"><div class="score-num" id="consort-pct">0%</div><div><div style="font-weight:700;font-size:13px">CONSORT Completeness Score</div><div class="score-label" id="consort-lbl">Klik item untuk penilaian</div></div></div>
+  </div>
+</div>
+
+<!-- ========== M10: STROBE ========== -->
+<div class="page" id="page-strobe">
+  <div class="card">
+    <div class="card-title">☑️ STROBE Checklist</div>
+    <div class="card-sub">STrengthening the Reporting of OBservational studies in Epidemiology — pilih desain studi Anda</div>
+    <div class="tabs">
+      <div class="tab active" onclick="strobeTab(this,'str-coh')">Cohort</div>
+      <div class="tab" onclick="strobeTab(this,'str-cc')">Case-Control</div>
+      <div class="tab" onclick="strobeTab(this,'str-cs')">Cross-Sectional</div>
+    </div>
+    <div class="tab-panel active" id="str-coh"><div id="strobe-coh-list"></div></div>
+    <div class="tab-panel" id="str-cc"><div id="strobe-cc-list"></div></div>
+    <div class="tab-panel" id="str-cs"><div id="strobe-cs-list"></div></div>
+    <div class="score-display" style="margin-top:14px"><div class="score-num" id="strobe-pct">0%</div><div><div style="font-weight:700;font-size:13px">STROBE Score</div><div class="score-label" id="strobe-lbl">Klik item untuk penilaian</div></div></div>
+  </div>
+</div>
+
+<!-- ========== M11: CARE ========== -->
+<div class="page" id="page-care">
+  <div class="card">
+    <div class="card-title">📋 CARE Checklist</div>
+    <div class="card-sub">CAse REport guidelines — Pastikan data pasien telah dide-identifikasi sebelum pelaporan</div>
+    <div class="privacy-warn">🔒 <strong>Privasi:</strong> Case report yang dipublikasikan harus memuat informed consent dari pasien/wali yang sah dan data yang telah dide-identifikasi sesuai regulasi yang berlaku.</div>
+    <div id="care-list"></div>
+    <div class="score-display" style="margin-top:14px"><div class="score-num" id="care-pct">0%</div><div><div style="font-weight:700;font-size:13px">CARE Readiness Score</div><div class="score-label" id="care-lbl">Klik item untuk penilaian</div></div></div>
+  </div>
+</div>
+
+<!-- ========== M12: PRISMA 2020 ========== -->
+<div class="page" id="page-prisma">
+  <div class="card">
+    <div class="card-title">🔍 PRISMA 2020 Checklist</div>
+    <div class="card-sub">Preferred Reporting Items for Systematic Reviews and Meta-Analyses (2020) — 27 item</div>
+    <div id="prisma-list"></div>
+    <div class="score-display" style="margin-top:14px"><div class="score-num" id="prisma-pct">0%</div><div><div style="font-weight:700;font-size:13px">PRISMA Completeness Score</div><div class="score-label" id="prisma-lbl">Klik item untuk penilaian</div></div></div>
+  </div>
+</div>
+
+<!-- ========== M13: CRITICAL APPRAISAL ========== -->
+<div class="page" id="page-cat">
+  <div class="card">
+    <div class="card-title">🔬 Critical Appraisal Tool</div>
+    <div class="card-sub">Penilaian validitas internal, eksternal, dan relevansi klinis artikel penelitian</div>
+    <div class="form-row"><label>Jenis Studi / Artikel</label>
+      <select id="cat-type" onchange="loadCAT()">
+        <option value="">-- Pilih Jenis Artikel --</option>
+        <option value="rct">RCT</option>
+        <option value="cohort">Cohort</option>
+        <option value="cc">Case-Control</option>
+        <option value="diag">Diagnostik / Akurasi Test</option>
+        <option value="meta">Meta-analysis / Systematic Review</option>
+      </select>
+    </div>
+    <div id="cat-list" style="margin-top:12px"></div>
+    <div class="score-display" style="margin-top:14px;display:none" id="cat-score-box"><div class="score-num" id="cat-pct">0%</div><div><div style="font-weight:700;font-size:13px">Appraisal Score</div><div class="score-label" id="cat-lbl">Klik item untuk penilaian</div></div></div>
+  </div>
+</div>
+
+<!-- ========== M14: RISK OF BIAS ========== -->
+<div class="page" id="page-rob">
+  <div class="card">
+    <div class="card-title">⚠️ Risk of Bias Assessment</div>
+    <div class="card-sub">Teaching visualization — pilih desain studi untuk domain bias yang relevan</div>
+    <div class="warn-box">⚠️ <strong>Catatan Penting:</strong> Traffic light ini adalah teaching visualization, bukan official risk-of-bias judgment. Penilaian RoB formal memerlukan metodolog/reviewer yang terlatih menggunakan tool standar (RoB 2, ROBINS-I, QUADAS-2).</div>
+    <div class="form-row"><label>Jenis Studi untuk Penilaian RoB</label>
+      <select id="rob-type" onchange="loadROB()">
+        <option value="">-- Pilih Jenis Studi --</option>
+        <option value="rct">RCT (RoB 2-inspired)</option>
+        <option value="nri">Non-randomized Intervention (ROBINS-I inspired)</option>
+        <option value="diag">Diagnostik (QUADAS-2 inspired)</option>
+        <option value="sr">Systematic Review (ROBIS/AMSTAR inspired)</option>
+      </select>
+    </div>
+    <div id="rob-list" style="margin-top:12px"></div>
+    <div id="rob-visual" style="margin-top:16px"></div>
+  </div>
+</div>
+
+<!-- ========== M15: PUBLICATION READINESS ========== -->
+<div class="page" id="page-prc">
+  <div class="card">
+    <div class="card-title">📝 Publication Readiness Checker</div>
+    <div class="card-sub">Evaluasi kelengkapan manuskrip sebelum submission — 20-item checklist</div>
+    <div class="warn-box">⚠️ Skor 100% bukan jaminan penerimaan manuskrip. Kesiapan final tetap memerlukan review pembimbing/supervisor dan penyesuaian dengan author guidelines jurnal target.</div>
+    <div id="prc-list"></div>
+    <div class="score-display" style="margin-top:14px"><div class="score-num" id="prc-pct">0%</div><div><div style="font-weight:700;font-size:13px">Publication Readiness Score</div><div class="score-label" id="prc-lbl">Evaluasi kelengkapan manuskrip Anda</div></div></div>
+  </div>
+</div>
+
+<!-- ========== ONCOLOGY ENDPOINT EXPLORER ========== -->
+<div class="page" id="page-onco">
+  <div class="card">
+    <div class="card-title">🩸 Oncology Endpoint Explorer</div>
+    <div class="card-sub">Panduan endpoint penelitian onkologi pediatrik dan transplantasi — klik untuk detail</div>
+    <div class="info-box">📌 Endpoint harus didefinisikan sebelum analisis, konsisten dengan protokol, dan dilaporkan secara transparan. Setiap trial/studi dapat mendefinisikan events secara berbeda — selalu periksa definisi operasional dalam protokol.</div>
+    <div id="onco-list"></div>
+  </div>
+</div>
+
+<!-- ========== MRD INTERPRETER ========== -->
+<div class="page" id="page-mrd">
+  <div class="card">
+    <div class="card-title">🧪 MRD Interpretation Assistant</div>
+    <div class="card-sub">Interpretasi Minimal Residual Disease berbasis nilai, timepoint, metode, dan diagnosis</div>
+    <div class="warn-box">⚠️ <strong>Interpretasi MRD sangat protocol-dependent.</strong> Keputusan intensifikasi/de-intensifikasi terapi, indikasi HSCT, atau penggunaan immunotherapy harus mengikuti protokol aktif yang digunakan dan konsultasi konsultan hematologi-onkologi anak. Tool ini bersifat edukatif.</div>
+    <div class="form-2">
+      <div class="form-row"><label>Diagnosis</label>
+        <select id="mrd-dx">
+          <option value="ball">ALL – B-cell</option>
+          <option value="tall">ALL – T-cell</option>
+          <option value="aml">AML</option>
+          <option value="hsct">Pasca HSCT</option>
+        </select>
+      </div>
+      <div class="form-row"><label>Timepoint Pemeriksaan</label>
+        <select id="mrd-tp">
+          <option value="ind1">Akhir Induksi (D29/D33)</option>
+          <option value="cons1">Akhir Konsolidasi-1</option>
+          <option value="prehsct">Pre-HSCT</option>
+          <option value="d100">D+100 pasca HSCT</option>
+          <option value="d180">D+180 pasca HSCT</option>
+          <option value="surv">Surveillance / Follow-up</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>Nilai MRD</label>
+        <select id="mrd-val">
+          <option value="neg">Negatif (undetectable / &lt;10⁻⁴)</option>
+          <option value="low">Positif Rendah (10⁻⁴ – &lt;10⁻³)</option>
+          <option value="mid">Positif Sedang (10⁻³ – &lt;10⁻²)</option>
+          <option value="high">Positif Tinggi (≥10⁻²)</option>
+        </select>
+      </div>
+      <div class="form-row"><label>Metode Pemeriksaan MRD</label>
+        <select id="mrd-method">
+          <option value="flow">Flow cytometry (LAIP-based / DfN)</option>
+          <option value="pcr">PCR – IG/TCR gene rearrangement</option>
+          <option value="rtpcr">RT-PCR – Fusion gene (misal BCR-ABL1)</option>
+          <option value="ngs">Next-Generation Sequencing (NGS)</option>
+          <option value="ddpcr">Digital droplet PCR (ddPCR)</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row"><label>Apakah ada perubahan tren MRD dibandingkan pemeriksaan sebelumnya?</label>
+      <select id="mrd-trend">
+        <option value="na">Pertama kali / tidak ada data sebelumnya</option>
+        <option value="decr">Menurun (MRD clearance)</option>
+        <option value="stable">Stabil/tidak berubah</option>
+        <option value="incr">Meningkat (MRD conversion/rising)</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="interpretMRD()">🧪 Interpretasi MRD</button>
+    <div class="output" id="mrd-result" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ========== GCAO BUILDER ========== -->
+<div class="page" id="page-gcao">
+  <div class="card">
+    <div class="card-title">✍️ GCAO Framework Builder</div>
+    <div class="card-sub">Generate template terstruktur untuk manuskrip, proposal, grant, dan case report</div>
+    <div class="form-2">
+      <div class="form-row"><label>Jenis Dokumen</label>
+        <select id="gcao-type">
+          <option value="manuskrip">Manuskrip Penelitian (Original Article)</option>
+          <option value="proposal">Proposal Penelitian</option>
+          <option value="grant">Grant Application</option>
+          <option value="casereport">Case Report</option>
+        </select>
+      </div>
+      <div class="form-row"><label>Judul / Topik Utama</label><input type="text" id="gcao-title" placeholder="misal: Analisis EFS Pasien ALL-B Anak Protokol X 2020-2024"></div>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>G – Goal (apa yang ingin dicapai?)</label><input type="text" id="gcao-g" placeholder="misal: Mengevaluasi EFS 3 tahun dan faktor prognostik..."></div>
+      <div class="form-row"><label>C – Context (latar belakang/masalah)</label><input type="text" id="gcao-c" placeholder="misal: Angka relaps ALL-B anak di Asia Tenggara masih tinggi..."></div>
+    </div>
+    <div class="form-2">
+      <div class="form-row"><label>A – Action (metode/intervensi/pendekatan)</label><input type="text" id="gcao-a" placeholder="misal: Studi kohort retrospektif, 2020-2024, survival analysis Kaplan-Meier..."></div>
+      <div class="form-row"><label>O – Outcome (hasil yang diharapkan)</label><input type="text" id="gcao-o" placeholder="misal: EFS 3 tahun ≥70%, identifikasi faktor risiko independen relaps..."></div>
+    </div>
+    <div class="form-row"><label>Keywords (3–5 kata kunci, pisah dengan koma)</label><input type="text" id="gcao-kw" placeholder="misal: acute lymphoblastic leukemia, pediatric, event-free survival, prognostic factors"></div>
+    <button class="btn btn-primary" onclick="buildGCAO()">✍️ Generate Template GCAO</button>
+    <div class="output" id="gcao-result" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ========== EDUCATION MODE ========== -->
+<div class="page" id="page-edu">
+  <div class="card">
+    <div class="card-title">🎓 Education Mode – Belajar Metodologi</div>
+    <div class="card-sub">Konsep statistik dan metodologi dalam bahasa sederhana untuk residen, fellow, dan peneliti pemula</div>
+    <div id="edu-list"></div>
+  </div>
+</div>
+
+<!-- ========== QUICK REFERENCE ========== -->
+<div class="page" id="page-qref">
+  <div class="card">
+    <div class="card-title">⚡ Quick Reference Mode</div>
+    <div class="card-sub">Rumus, definisi, tabel uji statistik, dan checklist dalam satu layar</div>
+    <div id="qref-content"></div>
+  </div>
+</div>
+
+<!-- ========== REFERENCES & VALIDATION ========== -->
+<div class="page" id="page-refs">
+  <div class="card">
+    <div class="card-title">📚 References & Validation</div>
+    <div class="card-sub">Sumber panduan metodologi internasional dan validasi internal toolkit</div>
+    <div class="sec-head">📖 Reporting Guidelines</div>
+    <div class="grid2">
+      <div class="acc-item"><div class="acc-head" onclick="toggleAcc(this)"><span>✅ CONSORT 2025</span><span class="acc-arrow">▼</span></div>
+        <div class="acc-body"><p><strong>Consolidated Standards of Reporting Trials (2025).</strong> Untuk RCT. Mencakup 30 item checklist, flow diagram, SAP, AI statement, harms reporting, dan data sharing statement. <br><br>Sumber: www.consort-statement.org</p></div>
+      </div>
+      <div class="acc-item"><div class="acc-head" onclick="toggleAcc(this)"><span>🔍 PRISMA 2020</span><span class="acc-arrow">▼</span></div>
+        <div class="acc-body"><p><strong>Preferred Reporting Items for Systematic Reviews and Meta-Analyses (2020).</strong> 27-item checklist. Mencakup search strategy, risk of bias, synthesis methods, certainty of evidence (GRADE), protocol registration, dan data availability. <br><br>Sumber: www.prisma-statement.org</p></div>
+      </div>
+      <div class="acc-item"><div class="acc-head" onclick="toggleAcc(this)"><span>☑️ STROBE</span><span class="acc-arrow">▼</span></div>
+        <div class="acc-body"><p><strong>STrengthening the Reporting of OBservational studies in Epidemiology.</strong> 22-item checklist untuk studi kohort, kasus-kontrol, dan cross-sectional. Tersedia juga STROBE-vet, STROBE-ID, STROBE-NI untuk domain spesifik. <br><br>Sumber: www.strobe-statement.org</p></div>
+      </div>
+      <div class="acc-item"><div class="acc-head" onclick="toggleAcc(this)"><span>📋 CARE</span><span class="acc-arrow">▼</span></div>
+        <div class="acc-body"><p><strong>CAse REport Guidelines.</strong> 13-item checklist untuk laporan kasus klinis. Menekankan de-identified patient information, patient perspective, timeline, dan informed consent. <br><br>Sumber: www.care-statement.org</p></div>
+      </div>
+    </div>
+
+    <div class="sec-head">🔬 Risk of Bias Tools</div>
+    <div class="grid2">
+      <div class="acc-item"><div class="acc-head" onclick="toggleAcc(this)"><span>RoB 2 – untuk RCT</span><span class="acc-arrow">▼</span></div>
+        <div class="acc-body"><p>Cochrane Risk of Bias tool versi 2. Menilai 5 domain: (1) proses randomisasi, (2) deviasi intervensi, (3) missing outcome data, (4) pengukuran outcome, (5) seleksi hasil yang dilaporkan. Output: Low / Some concerns / High. <br><br>Sumber: Sterne JAC et al., BMJ 2019.</p></div>
+      </div>
+      <div class="acc-item"><div class="acc-head" onclick="toggleAcc(this)"><span>ROBINS-I – untuk non-randomized studies</span><span class="acc-arrow">▼</span></div>
+        <div class="acc-body"><p>Risk Of Bias In Non-randomized Studies of Interventions. 7 domain: confounding, selection, classification of intervention, deviations, missing data, measurement of outcomes, selection of reported results. <br><br>Sumber: Sterne JA et al., BMJ 2016.</p></div>
+      </div>
+      <div class="acc-item"><div class="acc-head" onclick="toggleAcc(this)"><span>QUADAS-2 – untuk diagnostik</span><span class="acc-arrow">▼</span></div>
+        <div class="acc-body"><p>Quality Assessment of Diagnostic Accuracy Studies. 4 domain: patient selection, index test, reference standard, flow and timing. Menilai risk of bias dan applicability. <br><br>Sumber: Whiting PF et al., Ann Intern Med 2011.</p></div>
+      </div>
+      <div class="acc-item"><div class="acc-head" onclick="toggleAcc(this)"><span>AMSTAR-2 / ROBIS – untuk systematic review</span><span class="acc-arrow">▼</span></div>
+        <div class="acc-body"><p>AMSTAR-2: A MeaSurement Tool to Assess systematic Reviews. 16 items. ROBIS: Risk Of Bias In Systematic reviews. 4 domain + overall. <br><br>Sumber: Shea BJ et al., BMJ 2017 (AMSTAR-2). Whiting P et al., J Clin Epidemiol 2016 (ROBIS).</p></div>
+      </div>
+    </div>
+
+    <div class="sec-head">⚙️ Validasi Internal Toolkit</div>
+    <div class="card">
+      <table class="data-table">
+        <thead><tr><th>Komponen</th><th>Status</th><th>Catatan</th></tr></thead>
+        <tbody>
+          <tr><td>Sample size cross-sectional (Cochran formula)</td><td><span class="badge badge-green">✅ Valid</span></td><td>P₀ eksplisit, DEFF, inflasi missing</td></tr>
+          <tr><td>Sample size case-control (Kelsey formula)</td><td><span class="badge badge-green">✅ Valid</span></td><td>P₀ ditampilkan, tidak tersembunyi</td></tr>
+          <tr><td>Sample size cohort (Kelsey/Schlesselman)</td><td><span class="badge badge-green">✅ Valid</span></td><td>P₀, RR, P₁ eksplisit</td></tr>
+          <tr><td>Survival sample size (Schoenfeld 1981)</td><td><span class="badge badge-green">✅ Valid</span></td><td>Menampilkan required events dan N</td></tr>
+          <tr><td>HR interpreter – logika CI terhadap 1.0</td><td><span class="badge badge-green">✅ Dikoreksi</span></td><td>CI &amp; p-value dianalisis independen</td></tr>
+          <tr><td>Competing risk (CIR/NRM)</td><td><span class="badge badge-yellow">⚠️ Edukatif</span></td><td>Catatan Fine-Gray tersedia</td></tr>
+          <tr><td>MRD interpreter</td><td><span class="badge badge-yellow">⚠️ Edukatif</span></td><td>Caveat protocol-dependent jelas</td></tr>
+          <tr><td>Nama institusi / personal dalam kode</td><td><span class="badge badge-green">✅ Bersih</span></td><td>Tidak ada</td></tr>
+          <tr><td>Data pasien</td><td><span class="badge badge-green">✅ Tidak tersimpan</span></td><td>Semua input lokal, tidak dikirim</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="warn-box">⚠️ <strong>Biostatistics Caveat:</strong> Semua kalkulator dalam toolkit ini menggunakan formula standar untuk estimasi edukatif. Untuk penelitian yang akan dipublikasikan atau digunakan sebagai dasar keputusan klinis/protokol, selalu konsultasikan dengan biostatistician yang kompeten.</div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /body -->
+
+<div id="footer">
+  drAisyiEduCare · Pediatric Oncology Research Toolkit · Educational &amp; Methodology Support Only<br>
+  <small>Semua kalkulator menghasilkan estimasi edukatif. Tidak menggantikan konsultasi biostatistik, epidemiologi klinis, atau komite etik.</small>
+</div>
+
+</div><!-- /app -->
+
+<script>
+'use strict';
+// ======= NAVIGATION =======
+var activeSb = null, activeMob = null;
+function showPage(id, triggerEl) {
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  var pg = document.getElementById('page-'+id);
+  if(pg) pg.classList.add('active');
+  // sidebar
+  if(activeSb) activeSb.classList.remove('active');
+  document.querySelectorAll('.sb-item').forEach(function(i){
+    if(i.getAttribute('onclick') && i.getAttribute('onclick').includes("'"+id+"'")) {
+      i.classList.add('active'); activeSb = i;
+    }
+  });
+  // mobile nav
+  if(activeMob) activeMob.classList.remove('active');
+  document.querySelectorAll('.mob-item').forEach(function(i){
+    if(i.getAttribute('onclick') && i.getAttribute('onclick').includes("'"+id+"'")) {
+      i.classList.add('active'); activeMob = i;
+    }
+  });
+  window.scrollTo(0,0);
+}
+
+function searchMod(v) {
+  if(!v||v.length<2) return;
+  var q = v.toLowerCase();
+  var map = {rqb:'research question',pico:'pico',sds:'study design desain',sst:'sample size ukuran sampel',sat:'survival analisis',hr:'hazard ratio',km:'kaplan meier',sts:'statistical statistik uji',consort:'consort rct',strobe:'strobe observasional',care:'care case report',prisma:'prisma systematic review',cat:'critical appraisal',rob:'risk of bias',prc:'publication readiness',onco:'oncology endpoint onkologi',mrd:'mrd residual',gcao:'gcao manuskrip template',edu:'education edukasi belajar',qref:'quick reference',refs:'references referensi validasi'};
+  for(var k in map){if(map[k].includes(q)){showPage(k);return;}}
+}
+
+function sstTab(el,id){
+  document.querySelectorAll('#page-sst .tab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('#page-sst .tab-panel').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active'); document.getElementById(id).classList.add('active');
+}
+function strobeTab(el,id){
+  document.querySelectorAll('#page-strobe .tab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('#page-strobe .tab-panel').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active'); document.getElementById(id).classList.add('active');
+}
+function toggleAcc(el){
+  var item=el.parentElement;
+  var body=item.querySelector('.acc-body');
+  item.classList.toggle('open'); body.classList.toggle('open');
+}
+
+// ======= HELPERS =======
+function numOk(v){ return !isNaN(v) && isFinite(v) && v!==null && v!==undefined; }
+function showErr(id, msg){ var el=document.getElementById(id); el.style.display='block'; el.innerHTML='<div class="err-box">⚠️ '+msg+'</div>'; }
+function zPow(pow){ if(pow>=0.95)return 1.645; if(pow>=0.90)return 1.282; if(pow>=0.85)return 1.036; return 0.842; }
+
+// ======= M1: RESEARCH QUESTION BUILDER =======
+function buildRQ(){
+  var topic=document.getElementById('rqb-topic').value||'(topik belum diisi)';
+  var pop=document.getElementById('rqb-pop').value||'(populasi belum diisi)';
+  var intv=document.getElementById('rqb-int').value||'(intervensi belum diisi)';
+  var outc=document.getElementById('rqb-out-inp').value||'(outcome belum diisi)';
+  var goal=document.getElementById('rqb-goal').value||'mengevaluasi';
+  var setting=document.getElementById('rqb-setting').value;
+  var goalMap={efektivitas:{bias:'selection bias, performance bias, attrition bias',design:'RCT (ideal); cohort prospektif (alternatif)',endpoint:'efficacy outcome (OS/EFS/response rate)',data:'data rekam medis terapi, tanggal mulai-selesai terapi, adverse events'},risiko:{bias:'selection bias, recall bias, confounding bias',design:'case-control (kondisi langka); cohort (kondisi lebih umum)',endpoint:'odds ratio, relative risk, adjusted HR',data:'eksposur data, confounders, riwayat penyakit'},prognosis:{bias:'attrition bias, measurement bias, confounding',design:'cohort prospektif/retrospektif, survival analysis',endpoint:'OS, EFS, DFS, PFS, waktu median ke event',data:'tanggal diagnosis, tanggal event/censor, faktor risiko klinis'},diagnosis:{bias:'spectrum bias, verification bias',design:'cross-sectional diagnostik, nested case-control',endpoint:'sensitivitas, spesifisitas, AUC, LR+/-',data:'hasil index test, reference standard, spektrum pasien'},prevalensi:{bias:'selection bias, non-response bias',design:'cross-sectional, registry study',endpoint:'prevalensi (%), insidensi (/100.000)',data:'populasi denominat, kasus terkonfirmasi'},perbandingan:{bias:'performance bias, confounding, selection bias',design:'RCT (ideal); cohort retrospektif (data tersedia)',endpoint:'primary efficacy endpoint (OS, EFS, respons)',data:'data terapi komparatif, tanggal, outcomes'},survival:{bias:'immortal time bias, competing risks, censoring information bias',design:'survival study (cohort), dengan Kaplan-Meier, Cox regression',endpoint:'OS, EFS, DFS; CIR/NRM (competing risks model jika HSCT)',data:'tanggal mulai, tanggal event/censor, faktor kovariat'},biomarker:{bias:'measurement bias, selection bias, multiple testing',design:'nested case-control, prospective cohort dengan biobank',endpoint:'AUC-ROC, cut-off, HR per unit biomarker',data:'biospecimen, assay data, klinis outcomes'}};
+  var gd=goalMap[goal]||{bias:'disesuaikan dengan tujuan',design:'konsultasikan dengan metodolog',endpoint:'disesuaikan',data:'dataset klinis relevan'};
+  var el=document.getElementById('rqb-result'); el.style.display='block';
+  el.innerHTML='<div class="output-title">📋 Hasil Research Question Builder</div>'+
+    '<div class="output-item"><strong>🔬 Research Question</strong><p>Apakah <b>'+intv+'</b> berpengaruh terhadap <b>'+outc+'</b> pada <b>'+pop+'</b> dengan <b>'+topic+'</b>?</p></div>'+
+    '<div class="output-item"><strong>🎯 Primary Objective</strong><p>'+goal.charAt(0).toUpperCase()+goal.slice(1).replace('_',' ')+' pengaruh '+intv+' terhadap '+outc+' pada '+pop+'.</p></div>'+
+    '<div class="output-item"><strong>📌 Secondary Objectives</strong><ul style="padding-left:16px;line-height:1.8;font-size:13px"><li>Mengidentifikasi faktor-faktor yang mempengaruhi '+outc+'</li><li>Mengevaluasi profil keamanan/toksisitas '+intv+' pada '+pop+'</li><li>Membandingkan karakteristik baseline antar kelompok</li></ul></div>'+
+    '<div class="output-item"><strong>🔬 Hipotesis Alternatif (H₁)</strong><p>Terdapat perbedaan bermakna '+outc+' antara kelompok '+intv+' dibandingkan kontrol pada '+pop+'.</p></div>'+
+    '<div class="output-item"><strong>⭕ Hipotesis Nul (H₀)</strong><p>Tidak terdapat perbedaan bermakna '+outc+' antara kelompok '+intv+' dibandingkan kontrol pada '+pop+'.</p></div>'+
+    '<div class="output-item"><strong>💡 Relevansi Klinis</strong><p>Penelitian ini berkontribusi pada optimalisasi manajemen '+topic+' dan dapat memperbaiki luaran klinis '+pop+' di setting '+setting+'.</p></div>'+
+    '<div class="output-item"><strong>📐 Desain yang Disarankan</strong><p>'+gd.design+'</p></div>'+
+    '<div class="output-item"><strong>📊 Primary Endpoint yang Disarankan</strong><p>'+gd.endpoint+'</p></div>'+
+    '<div class="output-item"><strong>⚠️ Potensi Bias Utama</strong><p>'+gd.bias+'</p></div>'+
+    '<div class="output-item"><strong>🗂️ Minimum Dataset yang Dibutuhkan</strong><p>'+gd.data+'</p></div>'+
+    '<div class="output-item"><strong>✅ Feasibility Assessment</strong><ul style="padding-left:16px;line-height:1.8;font-size:13px"><li>Ketersediaan data rekam medis yang lengkap</li><li>Ethical clearance dari komite etik yang berwenang</li><li>Ukuran sampel yang memadai (lihat Sample Size Toolkit)</li><li>Follow-up yang cukup untuk endpoint yang dipilih</li><li>Sumber daya lab/biobank jika diperlukan</li></ul></div>'+
+    '<div class="warn-box">⚠️ Pertanyaan penelitian final perlu disesuaikan dengan ketersediaan data, ethical clearance, dan feasibility lokal. Konsultasikan dengan pembimbing/supervisor sebelum finalisasi.</div>';
+}
+
+// ======= M2: PICO BUILDER =======
+function buildPICO(){
+  var p=document.getElementById('pp').value||'(populasi)';
+  var i=document.getElementById('pi').value||'(intervensi)';
+  var c=document.getElementById('pc').value||'(komparator)';
+  var o=document.getElementById('po').value||'(outcome)';
+  var t=document.getElementById('pt').value;
+  var el=document.getElementById('pico-result'); el.style.display='block';
+  el.innerHTML='<div class="output-title">🎯 PICO Statement</div>'+
+    '<div class="output-item"><strong>📝 PICO Statement Terstruktur</strong><p>Pada <b>'+p+'</b>, apakah <b>'+i+'</b> dibandingkan dengan <b>'+c+'</b> menghasilkan perbedaan bermakna dalam <b>'+o+'</b>'+(t?' dalam jangka waktu <b>'+t+'</b>?':'?')+'</p></div>'+
+    '<div class="output-item"><strong>📋 Tabel PICO</strong>'+
+    '<table class="data-table" style="margin-top:6px"><thead><tr><th>Komponen</th><th>Isi</th></tr></thead><tbody>'+
+    '<tr><td><b>P</b> – Population</td><td>'+p+'</td></tr>'+
+    '<tr><td><b>I</b> – Intervention</td><td>'+i+'</td></tr>'+
+    '<tr><td><b>C</b> – Comparison</td><td>'+c+'</td></tr>'+
+    '<tr><td><b>O</b> – Outcome</td><td>'+o+'</td></tr>'+
+    (t?'<tr><td><b>T</b> – Timeframe</td><td>'+t+'</td></tr>':'')+'</tbody></table></div>'+
+    '<div class="output-item"><strong>📐 Rekomendasi Desain Studi</strong>'+
+    '<ul style="padding-left:16px;line-height:1.8;font-size:13px">'+
+    '<li><b>RCT</b> – gold standard jika feasible dan etis</li>'+
+    '<li><b>Cohort prospektif</b> – jika randomisasi tidak memungkinkan</li>'+
+    '<li><b>Cohort retrospektif</b> – jika data historis tersedia</li>'+
+    '<li><b>Case-control</b> – jika outcome langka</li>'+
+    '<li><b>Systematic Review / Meta-analysis</b> – jika literatur primer cukup</li>'+
+    '</ul></div>'+
+    '<div class="output-item"><strong>⚠️ Potential Confounders yang Perlu Dikontrol</strong><p>Usia, jenis kelamin, stadium/risiko penyakit, komorbiditas, terapi sebelumnya, center effect (jika multisenter), kepatuhan terapi.</p></div>'+
+    '<div class="output-item"><strong>📏 Catatan Pengukuran Outcome</strong><p>Definisikan '+o+' secara operasional sebelum pengumpulan data. Tentukan timepoint pengukuran, metode pengukuran, dan penilai (blinded/tidak).</p></div>'+
+    '<div class="output-item"><strong>📄 Suggested Manuscript Sentence</strong><p style="font-style:italic">"This study aimed to evaluate whether '+i+' compared to '+c+' was associated with improved '+o+' in patients with '+p+(t?', during '+t:'')+'."</p></div>';
+}
+
+// ======= M3: STUDY DESIGN SELECTOR =======
+var sdsData={
+  terapi:{primary:'RCT (Randomized Controlled Trial)',alt:'Cohort prospektif; Cohort retrospektif; Sebelum-sesudah (pre-post)',pros:'Mengurangi confounding, kausalitas kuat, allocation bias diminimalkan',cons:'Mahal, waktu lama, ethical challenge pada kondisi tertentu, dropout',bias:'Performance bias, attrition bias, contamination',data:'Randomization list, data intervensi detail, outcomes, adverse events, follow-up komplit',guide:'CONSORT 2025'},
+  diagnosis:{primary:'Cross-sectional diagnostik (semua subjek → index test + reference standard)',alt:'Nested case-control; Prospective diagnostic cohort',pros:'Estimasi sensitivitas/spesifisitas valid jika semua subjek diverifikasi',cons:'Spectrum bias, verification bias, prevalence-dependent PPV/NPV',bias:'Spectrum bias, verification bias, incorporation bias',data:'Hasil index test, reference standard pada semua subjek, populasi spektrum representatif',guide:'STARD 2015'},
+  prognosis:{primary:'Cohort prospektif',alt:'Cohort retrospektif; Registry-based study',pros:'Temporal sequence jelas, faktor prognostik dapat diukur prospektif',cons:'Mahal, follow-up panjang, attrition',bias:'Attrition bias, measurement bias, confounding',data:'Faktor prognostik, tanggal diagnosis, tanggal event/censor',guide:'STROBE / TRIPOD (jika model prediksi)'},
+  risiko:{primary:'Case-control (kondisi langka); Cohort (kondisi lebih umum)',alt:'Cross-sectional untuk prevalensi eksposur; Nested case-control',pros:'Case-control: efisien untuk kondisi langka, relatif murah',cons:'Recall bias, tidak bisa hitung insidensi, temporal ambiguity',bias:'Selection bias, recall bias, confounding',data:'Data eksposur (dari rekam medis/wawancara), case-control selection criteria',guide:'STROBE'},
+  prevalensi:{primary:'Cross-sectional',alt:'Registry study; Population-based cohort',pros:'Cepat, murah, estimasi prevalensi/insidensi populasi',cons:'Tidak bisa kausalitas, cross-sectional fallacy, snapshot satu waktu',bias:'Prevalence-incidence (Neyman) bias, non-response bias',data:'Populasi denominat, metode sampling, konfirmasi kasus',guide:'STROBE'},
+  survival:{primary:'Survival study (Cohort dengan analisis KM & Cox regression)',alt:'Registry-based survival study; Retrospective cohort',pros:'Menangani censoring dengan benar, time-to-event analysis',cons:'Membutuhkan follow-up adekuat, competing risks perlu model khusus',bias:'Immortal time bias, informative censoring, competing risk',data:'Tanggal mulai (T₀), tanggal event, tanggal censor, penyebab event',guide:'STROBE / CONSORT untuk survival RCT'},
+  biomarker:{primary:'Nested case-control (untuk validasi); Prospective cohort dengan biobank',alt:'Cross-sectional (eksplorasi); Case-control',pros:'Nested case-control hemat biospesimen dan efisien',cons:'Butuh biobank, preanalytical variability, multiple testing issue',bias:'Measurement bias, selection bias, multiple comparisons',data:'Biospecimen berkualitas, assay terstandarisasi, data klinis lengkap',guide:'REMARK (REporting recommendations for tumor MARKer studies)'},
+  edukasi:{primary:'RCT; Stepped-wedge design',alt:'Quasi-experimental; Sebelum-sesudah; Interrupted time series',pros:'RCT: kausalitas kuat; ITS: natural experiment',cons:'Contamination, blinding sulit, Hawthorne effect',bias:'Performance bias, detection bias, contamination',data:'Baseline assessment, intervensi detail, post-intervention outcomes',guide:'CONSORT 2025 / TiDieR (Template for Intervention Description and Replication)'},
+  qi:{primary:'Plan-Do-Study-Act (PDSA) cycle; Run chart/Control chart',alt:'Interrupted time series; Before-after study',pros:'Real-world setting, praktis, cepat iterasi',cons:'Bukan studi kausalitas, confounding tinggi, generalizability terbatas',bias:'Regression to mean, temporal confounding, secular trends',data:'Process measures, outcome measures, balancing measures, time-series data',guide:'SQUIRE 2.0 (Standards for QUality Improvement Reporting Excellence)'},
+  sr:{primary:'Systematic Review ± Meta-analysis',alt:'Scoping review; Rapid review; Narrative review (tidak direkomendasikan untuk pertanyaan kausal)',pros:'Sintesis bukti terbaik, meningkatkan power (meta-analysis), mengurangi bias satu studi',cons:'Heterogeneity, waktu, GIGO (garbage in = garbage out)',bias:'Publication bias, language bias, methodological heterogeneity',data:'Search strategy komprehensif, ekstraksi data independen, penilaian kualitas studi',guide:'PRISMA 2020'}
+};
+function selectDesign(){
+  var v=document.getElementById('sds-goal').value;
+  var el=document.getElementById('sds-result');
+  if(!v||!sdsData[v]){el.style.display='none';return;}
+  var d=sdsData[v]; el.style.display='block';
+  el.innerHTML='<div class="grid2">'+
+    '<div class="card" style="border-color:#86efac"><div style="font-size:12px;font-weight:700;color:var(--green-d);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px">✅ Desain Utama yang Direkomendasikan</div>'+
+    '<p style="font-size:14px;font-weight:700;color:var(--green)">'+d.primary+'</p>'+
+    '<div class="output-item" style="margin-top:10px"><strong>Alternatif</strong><p>'+d.alt+'</p></div></div>'+
+    '<div class="card"><div class="output-item"><strong>✅ Kelebihan</strong><p>'+d.pros+'</p></div>'+
+    '<div class="output-item"><strong>⚠️ Keterbatasan</strong><p>'+d.cons+'</p></div></div>'+
+    '</div>'+
+    '<div class="grid2">'+
+    '<div class="card"><div class="output-item"><strong>🔴 Potensi Bias</strong><p>'+d.bias+'</p></div>'+
+    '<div class="output-item"><strong>🗂️ Data Minimum yang Dibutuhkan</strong><p>'+d.data+'</p></div></div>'+
+    '<div class="card" style="border-color:#bfdbfe"><div class="output-item"><strong>📋 Reporting Guideline yang Disarankan</strong><p style="font-size:14px;font-weight:700;color:var(--blue)">'+d.guide+'</p></div>'+
+    '<div class="info-box" style="margin-top:8px">Periksa selalu versi terbaru dari reporting guideline melalui EQUATOR Network (www.equator-network.org)</div></div>'+
+    '</div>';
+}
+
+// ======= M4: SAMPLE SIZE =======
+function calcCS(){
+  var P=parseFloat(document.getElementById('cs-p').value)/100;
+  var d=parseFloat(document.getElementById('cs-d').value)/100;
+  var z=parseFloat(document.getElementById('cs-cl').value);
+  var de=parseFloat(document.getElementById('cs-de').value)||1;
+  var miss=parseFloat(document.getElementById('cs-miss').value)||0;
+  if(!numOk(P)||P<=0||P>=1||!numOk(d)||d<=0||!numOk(z)){showErr('cs-out','Input tidak valid. Periksa nilai prevalensi dan margin of error.');return;}
+  var n0=Math.ceil((z*z*P*(1-P))/(d*d));
+  var n=Math.ceil(n0*de);
+  var nMiss=Math.ceil(n/(1-miss/100));
+  var el=document.getElementById('cs-out'); el.style.display='block';
+  el.innerHTML='<div class="output-title">Hasil Kalkulasi – Cross-Sectional (Cochran Formula)</div>'+
+    '<div class="grid3"><div class="stat-card"><div class="sv">'+n0+'</div><div class="sl">n minimum (DEFF=1)</div></div>'+
+    '<div class="stat-card"><div class="sv">'+n+'</div><div class="sl">n setelah DEFF='+de+'</div></div>'+
+    '<div class="stat-card"><div class="sv">'+nMiss+'</div><div class="sl">n dengan antisipasi '+miss+'% missing</div></div></div>'+
+    '<div class="output-item" style="margin-top:12px"><strong>Asumsi dan Parameter</strong><ul style="padding-left:16px;font-size:12.5px;line-height:1.8"><li>Prevalensi yang diharapkan (P): '+(P*100).toFixed(1)+'%</li><li>Margin of error (d): '+(d*100).toFixed(1)+'%</li><li>Confidence level: Z = '+z+' ('+document.getElementById('cs-cl').options[document.getElementById('cs-cl').selectedIndex].text+')</li><li>Design Effect (DEFF): '+de+'</li><li>Antisipasi missing/drop-out: '+miss+'%</li></ul></div>'+
+    '<div class="output-item"><strong>Formula yang Digunakan</strong><p>n₀ = Z² × P(1-P) / d² → kemudian × DEFF → kemudian / (1 - missing%/100)</p></div>'+
+    '<div class="warn-box">⚠️ Estimasi edukatif. DEFF mungkin berbeda jika sampling bukan simple random. Konsultasikan dengan biostatistician untuk studi aktual.</div>';
+}
+
+function calcCC(){
+  var p0=parseFloat(document.getElementById('cc-p0').value)/100;
+  var OR=parseFloat(document.getElementById('cc-or').value);
+  var pow=parseFloat(document.getElementById('cc-pow').value)/100;
+  var za=parseFloat(document.getElementById('cc-a').value);
+  var r=parseFloat(document.getElementById('cc-r').value)||1;
+  var miss=parseFloat(document.getElementById('cc-miss').value)||0;
+  if(!numOk(p0)||p0<=0||p0>=1||!numOk(OR)||OR<=0){showErr('cc-out','Input tidak valid. Periksa nilai P₀ dan OR.');return;}
+  var zb=zPow(pow);
+  var p1=(OR*p0)/(1-p0+OR*p0);
+  if(p1>=1){showErr('cc-out','OR terlalu tinggi untuk P₀ ini: P₁ ≥ 1. Kurangi OR atau ubah P₀.');return;}
+  var pp=(p0+p1*r)/(1+r);
+  var num=Math.pow(za*Math.sqrt((1+1/r)*pp*(1-pp))+zb*Math.sqrt(p0*(1-p0)+p1*(1-p1)/r),2);
+  var den=Math.pow(p1-p0,2);
+  var n=Math.ceil(num/den);
+  var nMiss=Math.ceil(n/(1-miss/100));
+  var el=document.getElementById('cc-out'); el.style.display='block';
+  el.innerHTML='<div class="output-title">Hasil Kalkulasi – Case-Control (Kelsey/Schlesselman)</div>'+
+    '<div class="grid3"><div class="stat-card"><div class="sv">'+n+'</div><div class="sl">Kasus minimum</div></div>'+
+    '<div class="stat-card"><div class="sv">'+(n*r)+'</div><div class="sl">Kontrol (rasio 1:'+r+')</div></div>'+
+    '<div class="stat-card"><div class="sv">'+(nMiss+nMiss*r)+'</div><div class="sl">Total (mis.+'+miss+'%)</div></div></div>'+
+    '<div class="output-item" style="margin-top:12px"><strong>Asumsi dan Parameter yang Digunakan</strong>'+
+    '<table class="data-table" style="margin-top:6px"><tbody>'+
+    '<tr><td>P₀ (proporsi eksposur pada kontrol)</td><td><b>'+(p0*100).toFixed(1)+'%</b></td></tr>'+
+    '<tr><td>P₁ (proporsi eksposur pada kasus, dihitung)</td><td><b>'+(p1*100).toFixed(1)+'%</b></td></tr>'+
+    '<tr><td>Odds Ratio yang diharapkan</td><td><b>'+OR+'</b></td></tr>'+
+    '<tr><td>Power (1-β)</td><td><b>'+(pow*100).toFixed(0)+'%</b></td></tr>'+
+    '<tr><td>Alpha (Z_α)</td><td><b>'+za+'</b></td></tr>'+
+    '<tr><td>Rasio Kontrol:Kasus</td><td><b>'+r+':1</b></td></tr>'+
+    '<tr><td>Antisipasi missing</td><td><b>'+miss+'%</b></td></tr>'+
+    '</tbody></table></div>'+
+    '<div class="warn-box">⚠️ P₀ (proporsi eksposur pada kelompok kontrol) ditentukan secara eksplisit dan harus didasarkan pada data literatur atau pilot study, bukan asumsi tersembunyi.</div>';
+}
+
+function calcCoh(){
+  var p0=parseFloat(document.getElementById('coh-p0').value)/100;
+  var RR=parseFloat(document.getElementById('coh-rr').value);
+  var pow=parseFloat(document.getElementById('coh-pow').value)/100;
+  var za=parseFloat(document.getElementById('coh-a').value);
+  var ratio=parseFloat(document.getElementById('coh-ratio').value)||1;
+  var miss=parseFloat(document.getElementById('coh-miss').value)||0;
+  if(!numOk(p0)||p0<=0||p0>=1||!numOk(RR)||RR<=0){showErr('coh-out','Input tidak valid. Periksa nilai P₀ dan RR.');return;}
+  var zb=zPow(pow);
+  var p1=p0*RR; if(p1>0.99)p1=0.99;
+  var pp=(p0+p1)/2;
+  var n=Math.ceil(Math.pow(za*Math.sqrt(2*pp*(1-pp))+zb*Math.sqrt(p0*(1-p0)+p1*(1-p1)),2)/Math.pow(p1-p0,2));
+  var nE=Math.ceil(n/(1-miss/100)); var nC=Math.ceil(n*ratio/(1-miss/100));
+  var el=document.getElementById('coh-out'); el.style.display='block';
+  el.innerHTML='<div class="output-title">Hasil Kalkulasi – Cohort / Dua Proporsi</div>'+
+    '<div class="grid3"><div class="stat-card"><div class="sv">'+nE+'</div><div class="sl">Kelompok eksposur</div></div>'+
+    '<div class="stat-card"><div class="sv">'+nC+'</div><div class="sl">Kelompok kontrol</div></div>'+
+    '<div class="stat-card"><div class="sv">'+(nE+nC)+'</div><div class="sl">Total subjek</div></div></div>'+
+    '<div class="output-item" style="margin-top:12px"><strong>Parameter yang Digunakan</strong>'+
+    '<table class="data-table" style="margin-top:6px"><tbody>'+
+    '<tr><td>P₀ (insidensi pada kontrol)</td><td><b>'+(p0*100).toFixed(1)+'%</b></td></tr>'+
+    '<tr><td>P₁ (insidensi pada eksposur, = P₀ × RR)</td><td><b>'+(p1*100).toFixed(1)+'%</b></td></tr>'+
+    '<tr><td>Relative Risk (RR) yang diharapkan</td><td><b>'+RR+'</b></td></tr>'+
+    '<tr><td>Power (1-β)</td><td><b>'+(pow*100).toFixed(0)+'%</b></td></tr>'+
+    '<tr><td>Loss to follow-up (antisipasi)</td><td><b>'+miss+'%</b></td></tr>'+
+    '</tbody></table></div>'+
+    '<div class="warn-box">⚠️ Untuk studi dengan follow-up panjang, pertimbangkan competing risks dan time-varying exposure. Konsultasikan dengan biostatistician.</div>';
+}
+
+function calcSurv(){
+  var HR=parseFloat(document.getElementById('sv-hr').value);
+  var pow=parseFloat(document.getElementById('sv-pow').value)/100;
+  var za=parseFloat(document.getElementById('sv-a').value);
+  var pe=parseFloat(document.getElementById('sv-pe').value)/100;
+  var ratio=parseFloat(document.getElementById('sv-ratio').value)||1;
+  var miss=parseFloat(document.getElementById('sv-miss').value)||0;
+  if(!numOk(HR)||HR<=0||!numOk(pe)||pe<=0||pe>=1){showErr('sv-out','Input tidak valid. Periksa HR dan expected event proportion.');return;}
+  if(Math.abs(Math.log(HR))<0.001){showErr('sv-out','HR sangat mendekati 1.0 — tidak ada perbedaan yang diharapkan. Studi tidak dapat dipower dengan tepat.');return;}
+  var zb=zPow(pow);
+  var d=Math.ceil(4*Math.pow(za+zb,2)/Math.pow(Math.log(HR),2));
+  var nTotal=Math.ceil(d/pe);
+  var nTotal_miss=Math.ceil(nTotal/(1-miss/100));
+  var n1=Math.ceil(nTotal_miss/(1+ratio)); var n2=nTotal_miss-n1;
+  var el=document.getElementById('sv-out'); el.style.display='block';
+  el.innerHTML='<div class="output-title">Hasil Estimasi – Survival Study (Schoenfeld 1981)</div>'+
+    '<div class="grid2"><div class="stat-card"><div class="sv">'+d+'</div><div class="sl">Events yang dibutuhkan (d)</div></div>'+
+    '<div class="stat-card"><div class="sv">'+nTotal_miss+'</div><div class="sl">Estimasi total subjek</div></div></div>'+
+    '<div class="output-item" style="margin-top:12px"><strong>Rincian Alokasi</strong>'+
+    '<table class="data-table" style="margin-top:6px"><tbody>'+
+    '<tr><td>Kelompok intervensi</td><td><b>'+n1+' subjek</b></td></tr>'+
+    '<tr><td>Kelompok kontrol</td><td><b>'+n2+' subjek</b></td></tr>'+
+    '<tr><td>HR yang diharapkan</td><td><b>'+HR+'</b></td></tr>'+
+    '<tr><td>Expected event proportion</td><td><b>'+(pe*100).toFixed(0)+'%</b></td></tr>'+
+    '<tr><td>Antisipasi drop-out</td><td><b>'+miss+'%</b></td></tr>'+
+    '</tbody></table></div>'+
+    '<div class="warn-box">⚠️ <b>Catatan penting:</b> Formula Schoenfeld adalah pendekatan untuk equal allocation. Untuk accrual patterns, competing risks, non-proportional hazards, atau adaptive designs — konsultasikan dengan biostatistician. Events (bukan subjek) yang menentukan power survival study.</div>';
+}
+
+// ======= M5: SURVIVAL ANALYSIS =======
+function analyzeSurvival(){
+  var n=parseInt(document.getElementById('sat-n').value)||0;
+  var fu=parseFloat(document.getElementById('sat-fu').value)||0;
+  var ev=parseInt(document.getElementById('sat-ev').value)||0;
+  var type=document.getElementById('sat-type').value;
+  var s1=parseFloat(document.getElementById('sat-s1').value)||0;
+  var s3=parseFloat(document.getElementById('sat-s3').value)||0;
+  var s5=parseFloat(document.getElementById('sat-s5').value)||0;
+  var med=parseFloat(document.getElementById('sat-med').value)||0;
+  if(n<1){showErr('sat-text','Jumlah pasien harus ≥ 1.');document.getElementById('sat-result').style.display='block';return;}
+  var er=(ev/n*100).toFixed(1);
+  var cenRate=(100-parseFloat(er)).toFixed(1);
+  var isCompeting=type.includes('CIR')||type.includes('NRM');
+  var compWarn=isCompeting?'<div class="err-box">⚠️ <b>Perhatian:</b> CIR dan NRM merupakan competing events. Penggunaan Kaplan-Meier untuk CIR/NRM akan OVERESTIMATE karena mengabaikan competing risk. Gunakan <b>Fine-Gray model (Gray\'s test)</b> untuk analisis yang benar.</div>':'';
+  var evWarn=ev<25?'<div class="warn-box">⚠️ Jumlah events ('+ev+') tergolong kecil. Estimasi survival akan memiliki confidence interval yang lebar dan kurva kurang stabil.</div>':'';
+  var medStr=med>0?med+' bulan':'Belum tercapai (not reached) pada follow-up saat ini';
+  var abbr=type.split(' ').filter(function(w){return w.match(/[A-Z]/);}).map(function(w){return w.replace(/[()]/g,'');}).join('');
+  document.getElementById('sat-result').style.display='block';
+  document.getElementById('sat-text').innerHTML=
+    compWarn+evWarn+
+    '<div class="output-title">📈 Interpretasi '+type+'</div>'+
+    '<div class="output-item"><strong>Ringkasan Kohort</strong>'+
+    '<table class="data-table" style="margin-top:4px"><tbody>'+
+    '<tr><td>Jumlah pasien (N)</td><td><b>'+n+'</b></td></tr>'+
+    '<tr><td>Jumlah events</td><td><b>'+ev+' ('+er+'%)</b></td></tr>'+
+    '<tr><td>Jumlah tersensor/censor</td><td><b>'+(n-ev)+' ('+cenRate+'%)</b></td></tr>'+
+    '<tr><td>Median follow-up</td><td><b>'+fu+' bulan</b></td></tr>'+
+    '<tr><td>Median '+type.split('(')[0].trim()+'</td><td><b>'+medStr+'</b></td></tr>'+
+    '</tbody></table></div>'+
+    '<div class="output-item"><strong>Probabilitas Survival</strong>'+
+    '<table class="data-table" style="margin-top:4px"><thead><tr><th>Timepoint</th><th>Probability</th></tr></thead><tbody>'+
+    '<tr><td>1 tahun</td><td><b>'+s1+'%</b></td></tr>'+
+    '<tr><td>3 tahun</td><td><b>'+s3+'%</b></td></tr>'+
+    '<tr><td>5 tahun</td><td><b>'+s5+'%</b></td></tr>'+
+    '</tbody></table></div>'+
+    '<div class="output-item"><strong>Kalimat Manuskrip (Bahasa Inggris)</strong>'+
+    '<p style="font-style:italic">The '+type.split('(')[0].trim()+' ('+(abbr||type.split(' ').map(function(w){return w[0]}).join(''))+') was '+s1+'% at 1 year, '+s3+'% at 3 years, and '+s5+'% at 5 years. The median '+type.split('(')[0].trim()+' was '+medStr+'. With a median follow-up of '+fu+' months, '+ev+' events were observed in '+n+' patients (event rate '+er+'%). Censoring was applied to '+cenRate+'% of patients who were alive or lost to follow-up at the time of analysis.</p></div>'+
+    '<div class="output-item"><strong>Catatan Metodologi</strong>'+
+    '<ul style="padding-left:16px;font-size:12.5px;line-height:1.8">'+
+    '<li>Kaplan-Meier mengasumsikan censoring bersifat non-informative (independent censoring)</li>'+
+    '<li>Log-rank test digunakan untuk perbandingan antar kelompok</li>'+
+    '<li>Cox regression untuk analisis multivariat (periksa asumsi proportional hazards)</li>'+
+    (isCompeting?'<li style="color:var(--red-d);font-weight:600">Competing risks: gunakan cumulative incidence function (Fine-Gray) untuk CIR/NRM, bukan KM</li>':'')+
+    '</ul></div>';
+  drawKM(s1,s3,s5,'km-svg-sat');
+}
+
+function drawKM(s1,s3,s5,svgId){
+  var svg=document.getElementById(svgId);
+  if(!svg)return;
+  var w=520,h=210,pl=52,pr=20,pt=20,pb=40;
+  var W=w-pl-pr, H=h-pt-pb;
+  function sx(t){return pl+t/60*W;}
+  function sy(s){return pt+(1-s/100)*H;}
+  var pts=[[0,100],[12,s1],[36,s3],[60,s5]];
+  var step='';
+  for(var i=0;i<pts.length-1;i++){
+    step+='L'+sx(pts[i+1][0])+','+sy(pts[i][1])+' L'+sx(pts[i+1][0])+','+sy(pts[i+1][1])+' ';
+  }
+  var path='M'+sx(0)+','+sy(100)+' '+step;
+  var ticksX=['0','12','24','36','48','60'];
+  var ticksY=[100,80,60,40,20,0];
+  svg.innerHTML=
+    '<line x1="'+pl+'" y1="'+pt+'" x2="'+pl+'" y2="'+(pt+H)+'" stroke="#94a3b8" stroke-width="1"/>'+
+    '<line x1="'+pl+'" y1="'+(pt+H)+'" x2="'+(pl+W)+'" y2="'+(pt+H)+'" stroke="#94a3b8" stroke-width="1"/>'+
+    ticksY.map(function(s){return '<line x1="'+pl+'" y1="'+sy(s)+'" x2="'+(pl+W)+'" y2="'+sy(s)+'" stroke="#e2e8f0" stroke-width="0.5"/>'+'<text x="'+(pl-4)+'" y="'+(sy(s)+4)+'" text-anchor="end" font-size="9" fill="#64748b">'+s+'%</text>';}).join('')+
+    ticksX.map(function(t,i){return '<text x="'+sx(parseInt(t))+'" y="'+(pt+H+14)+'" text-anchor="middle" font-size="9" fill="#64748b">'+t+'</text>';}).join('')+
+    '<text x="'+(pl+W/2)+'" y="'+(pt+H+28)+'" text-anchor="middle" font-size="10" fill="#64748b">Waktu (bulan)</text>'+
+    '<text x="14" y="'+(pt+H/2)+'" text-anchor="middle" font-size="10" fill="#64748b" transform="rotate(-90,14,'+(pt+H/2)+')">Probabilitas Survival</text>'+
+    '<path d="'+path+'" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linejoin="round"/>'+
+    pts.map(function(p){return '<circle cx="'+sx(p[0])+'" cy="'+sy(p[1])+'" r="4" fill="var(--blue)" stroke="#fff" stroke-width="1.5"/>';}).join('')+
+    '<text x="'+(pl+W-2)+'" y="'+(sy(s5)-6)+'" text-anchor="end" font-size="9" fill="var(--blue)">'+s5+'%</text>'+
+    '<text x="'+(pl+10)+'" y="'+(pt+12)+'" font-size="9" fill="#64748b" font-style="italic">Ilustrasi edukatif – bukan data aktual</text>';
+}
+
+// ======= M6: HR INTERPRETER =======
+function interpretHR(){
+  var HR=parseFloat(document.getElementById('hr-val').value);
+  var lo=parseFloat(document.getElementById('hr-lo').value);
+  var hi=parseFloat(document.getElementById('hr-hi').value);
+  var p=parseFloat(document.getElementById('hr-p').value);
+  var ep=document.getElementById('hr-ep').value||'endpoint';
+  var ref=document.getElementById('hr-ref').value||'kelompok referensi';
+  var cross=document.getElementById('hr-cross').value;
+  var ph=document.getElementById('hr-ph').value;
+  var el=document.getElementById('hr-result'); el.style.display='block';
+  if(!numOk(HR)||HR<=0||!numOk(lo)||!numOk(hi)||lo<=0||hi<=0||lo>=hi){el.innerHTML='<div class="err-box">⚠️ Input tidak valid. Pastikan HR > 0 dan CI lower &lt; CI upper.</div>';return;}
+  if(!numOk(p)||p<0||p>1){el.innerHTML='<div class="err-box">⚠️ p-value harus antara 0 dan 1.</div>';return;}
+
+  // Logika yang benar: statistik signifikansi berdasarkan CI terhadap 1.0 DAN p-value
+  var ciCross1=(lo<1&&hi>1); // CI melewati 1
+  var statSig=(p<0.05)&&!ciCross1; // signifikan jika p<0.05 DAN CI tidak melewati 1
+  var ciConsistent=(p<0.05)===(!ciCross1); // konsistensi p-value vs CI
+
+  var dir,pct;
+  if(HR>1){dir='meningkat';pct=((HR-1)*100).toFixed(0);}
+  else if(HR<1){dir='menurun';pct=((1-HR)*100).toFixed(0);}
+  else{dir='tidak berubah';pct='0';}
+
+  var mag;
+  if(HR>=3||HR<=0.33)mag='Sangat kuat';
+  else if(HR>=2||HR<=0.5)mag='Kuat';
+  else if(HR>=1.5||HR<=0.67)mag='Sedang';
+  else mag='Lemah–Sedang';
+
+  var sigBadge=statSig?'<span class="badge badge-green">✅ Bermakna secara statistik</span>':'<span class="badge badge-red">❌ Tidak bermakna secara statistik</span>';
+  var ciWarn=ciCross1?'<div class="err-box">⚠️ <b>95% CI melewati nilai 1.0</b> — asosiasi <b>tidak bermakna secara statistik</b> meskipun HR ≠ 1.0. HR harus diinterpretasikan bersama dengan CI-nya, bukan p-value saja.</div>':'';
+  var consistWarn=!ciConsistent?'<div class="warn-box">⚠️ <b>Inkonsistensi:</b> p-value dan CI memberikan kesimpulan yang berbeda. Ini mungkin terjadi karena rounding atau metode statistik yang berbeda. Periksa kembali nilai yang diinput.</div>':'';
+  var crossWarn=cross==='y'?'<div class="warn-box">⚠️ <b>Kurva KM menyilang:</b> Asumsi proportional hazards kemungkinan tidak terpenuhi. HR sebagai summary measure mungkin menyesatkan. Pertimbangkan analisis alternatif (restricted mean survival time, landmark analysis).</div>':'';
+  var phWarn=ph==='n'?'<div class="warn-box">⚠️ <b>Asumsi proportional hazards belum diverifikasi.</b> Uji Schoenfeld residual atau log-log plot direkomendasikan untuk verifikasi.</div>':ph==='uk'?'<div class="warn-box">⚠️ Tidak diketahui apakah asumsi proportional hazards terpenuhi.</div>':'';
+
+  el.innerHTML=ciWarn+consistWarn+crossWarn+phWarn+
+    '<div class="output-title">⚖️ Interpretasi Hazard Ratio</div>'+
+    '<div class="output-item"><strong>Interpretasi Utama</strong>'+
+    '<p>HR = '+HR+' (95% CI: '+lo+'–'+hi+', p = '+p+'): Kelompok yang diteliti memiliki hazard <b>'+dir+'</b> sebesar <b>'+pct+'%</b> dibandingkan '+ref+' untuk endpoint <b>'+ep+'</b>.</p></div>'+
+    '<div class="output-item"><strong>Makna Statistik</strong><p>'+sigBadge+'</p></div>'+
+    '<div class="output-item"><strong>Magnitude Efek</strong><p><span class="badge badge-blue">'+mag+'</span></p></div>'+
+    '<div class="info-box">📌 <b>HR bukan Risk Ratio.</b> HR mengekspresikan rasio hazard (instantaneous event rate) antar kelompok pada setiap titik waktu — bukan rasio risiko kumulatif. Interpretasi bergantung pada endpoint dan konteks klinis.</div>'+
+    '<div class="output-item"><strong>Kalimat Manuskrip (Bahasa Inggris)</strong>'+
+    '<p style="font-style:italic">The hazard ratio for '+ep+' was '+HR+' (95% CI: '+lo+'–'+hi+'; p = '+p+'), indicating a '+pct+'% '+(HR>1?'increase':'decrease')+' in the hazard compared to the reference group ('+ref+')'+(statSig?', which was statistically significant':'')+'. '+(!ciCross1?'The confidence interval did not cross 1.0, consistent with statistical significance.':'The confidence interval crossed 1.0, indicating statistical non-significance.')+'</p></div>';
+}
+
+// ======= M7: KM INTERPRETER =======
+function interpretKM(){
+  var ep=document.getElementById('km-ep').value;
+  var p=parseFloat(document.getElementById('km-p').value);
+  var g1=document.getElementById('km-g1').value||'Kelompok 1';
+  var g2=document.getElementById('km-g2').value||'Kelompok 2';
+  var m1v=parseFloat(document.getElementById('km-m1').value)||0;
+  var m2v=parseFloat(document.getElementById('km-m2').value)||0;
+  var s13=document.getElementById('km-s1-3').value;
+  var s23=document.getElementById('km-s2-3').value;
+  var cross=document.getElementById('km-cross').value;
+  var extra=document.getElementById('km-extra').value;
+  var el=document.getElementById('km-result'); el.style.display='block';
+  var sig=p<0.05;
+  var m1str=m1v>0?m1v+' bulan':'belum tercapai (not reached)';
+  var m2str=m2v>0?m2v+' bulan':'belum tercapai (not reached)';
+  var crossNote=cross==='y'?'<div class="warn-box">⚠️ Kurva survival menyilang — asumsi proportional hazards kemungkinan tidak terpenuhi. Log-rank test mungkin tidak optimal; pertimbangkan weighted log-rank, RMST, atau landmark analysis.</div>':'';
+  var extraNote={early:'Divergensi kurva terjadi pada fase awal (&lt;12 bulan), menunjukkan efek intervensi bersifat early-onset.',late:'Divergensi kurva terjadi pada fase lanjut (&gt;12 bulan), menunjukkan efek intervensi bersifat late-onset atau delayed.',plateau:'Terdapat plateau pada kurva survival, menunjukkan adanya long-term survivors yang tidak mengalami event.'}[extra]||'';
+  el.innerHTML=crossNote+
+    '<div class="output-title">📝 Narasi Ilmiah Kaplan-Meier – Siap Manuskrip</div>'+
+    '<div class="output-item"><strong>Hasil Utama (Bahasa Inggris)</strong>'+
+    '<p style="font-style:italic">The Kaplan-Meier analysis demonstrated '+(sig?'a statistically significant difference':'no statistically significant difference')+' in '+ep+' between the '+g1+' and the '+g2+' (log-rank p = '+p+'). The median '+ep+' was '+m1str+' in the '+g1+' compared to '+m2str+' in the '+g2+'. The '+ep+' at 3 years was '+s13+'% vs '+s23+'%, respectively. '+(extraNote||'')+' Censoring was applied to patients who were alive and event-free at the time of analysis.</p></div>'+
+    '<div class="output-item"><strong>Versi Bahasa Indonesia</strong>'+
+    '<p>Analisis Kaplan-Meier menunjukkan '+(sig?'perbedaan bermakna secara statistik':'tidak terdapat perbedaan bermakna secara statistik')+' pada '+ep+' antara '+g1+' dan '+g2+' (log-rank p = '+p+'). Median '+ep+' adalah '+m1str+' pada '+g1+' dibandingkan '+m2str+' pada '+g2+'. '+ep+' pada 3 tahun masing-masing '+s13+'% vs '+s23+'%.</p></div>'+
+    '<div class="output-item"><strong>Suggested Figure Legend</strong>'+
+    '<p style="font-style:italic">Figure X. Kaplan-Meier curves for '+ep+' by group. '+g1+' (solid line) vs '+g2+' (dashed line). Log-rank p = '+p+'. Number at risk is shown below the x-axis. Tick marks indicate censored observations.</p></div>'+
+    '<div class="output-item"><strong>Catatan Metodologi</strong>'+
+    '<ul style="padding-left:16px;font-size:12.5px;line-height:1.8">'+
+    '<li>Log-rank test mengasumsikan proportional hazards sepanjang waktu</li>'+
+    '<li>Tampilkan number at risk di bawah kurva pada setiap timepoint</li>'+
+    '<li>Censor tick marks harus ditampilkan pada kurva</li>'+
+    (cross==='y'?'<li style="color:var(--red-d);font-weight:600">Kurva menyilang: konfirmasi dengan Weighted log-rank / RMST analysis</li>':'')+
+    '</ul></div>';
+}
+
+// ======= M8: STATISTICAL TEST SELECTOR =======
+function selectStat(){
+  var v=document.getElementById('sts-var').value;
+  var g=document.getElementById('sts-grp').value;
+  var norm=document.getElementById('sts-norm').value;
+  var pair=document.getElementById('sts-pair').value;
+  var obj=document.getElementById('sts-obj').value;
+  var rec='',note='',multi='';
+  if(v==='time'){
+    rec='Kaplan-Meier + Log-rank test';
+    note='Untuk 2 kelompok independen. Log-rank mengasumsikan proportional hazards.';
+    multi='Cox Proportional Hazards Regression (multivariat). Untuk competing risks: cumulative incidence function + Gray\'s test; multivariat dengan Fine-Gray model.';
+  }else if(v==='agree'){
+    rec='Kappa (kategorik) / ICC (kontinu) / Bland-Altman (measurement)';
+    note='Kappa: agreement kategorik. ICC: reliabilitas data kontinu. Bland-Altman: agreement antara dua metode pengukuran.';
+    multi='Tidak ada analisis multivariat spesifik untuk agreement.';
+  }else if(v==='corr'){
+    rec=norm==='y'?'Pearson correlation (r)':'Spearman rank correlation (ρ)';
+    note=norm==='y'?'Pearson: asumsi bivariate normal, hubungan linear.':'Spearman: non-parametrik, untuk hubungan monoton.';
+    multi='Partial correlation atau linear regression jika mengontrol confounders.';
+  }else if(v==='count'){
+    rec='Poisson regression atau Negative binomial regression';
+    note='Untuk count outcomes (jumlah events per waktu/orang). Jika overdispersion: negative binomial.';
+    multi='Negative binomial regression untuk multivariat. Zero-inflated models jika banyak nol.';
+  }else if(v==='ord'){
+    rec=g==='2'?'Mann-Whitney U (independen) / Wilcoxon signed-rank (berpasangan)':'Kruskal-Wallis + Dunn post-hoc';
+    note='Data ordinal sebaiknya tidak diasumsikan kontinu kecuali skala ≥5 poin dengan distribusi mendekati normal.';
+    multi='Ordinal logistic regression (proportional odds model) untuk multivariat.';
+  }else if(v==='cat'){
+    if(g==='2'&&pair==='n') rec='Chi-square test (jika expected count ≥5) / Fisher Exact test (jika expected count <5)';
+    else if(g==='2'&&pair==='y') rec='McNemar test (berpasangan 2×2)';
+    else rec='Chi-square test (3+ kelompok) / Cochran-Armitage trend test (jika ordinal)';
+    note='Gunakan Fisher Exact jika ada sel dengan expected count < 5. Untuk 2×2 berpasangan: McNemar.';
+    multi='Logistic regression (binary outcome) / Multinomial logistic (>2 kategori) / Ordinal logistic (ordinal).';
+  }else{
+    // kontinu
+    if(g==='1'){
+      rec=norm==='y'?'One-sample t-test':'Wilcoxon signed-rank test (vs nilai referensi)';
+      note=norm==='y'?'Bandingkan mean sampel vs nilai hipotetis.':'Non-parametrik untuk median vs nilai referensi.';
+    }else if(g==='2'&&pair==='n'){
+      rec=norm==='y'?'Independent samples t-test':'Mann-Whitney U test';
+      note=norm==='y'?'Asumsi: distribusi normal, homogeneity of variance (Levene test).':'Non-parametrik; bandingkan distribusi antara 2 kelompok independen.';
+    }else if(g==='2'&&pair==='y'){
+      rec=norm==='y'?'Paired t-test':'Wilcoxon signed-rank test';
+      note=norm==='y'?'Bandingkan mean sebelum-sesudah pada subjek yang sama.':'Non-parametrik untuk data berpasangan.';
+    }else if(g==='3'){
+      rec=norm==='y'?'One-Way ANOVA + post-hoc (Tukey/Bonferroni)':'Kruskal-Wallis + Dunn post-hoc';
+      note=norm==='y'?'ANOVA: asumsi normalitas dan equal variance. Post-hoc untuk perbandingan pasangan.':'Kruskal-Wallis: non-parametrik untuk ≥3 kelompok independen.';
+    }
+    if(pair==='y'&&g==='3') rec=norm==='y'?'Repeated Measures ANOVA':'Friedman test';
+    multi=v==='cont'?(obj==='predict'?'Linear regression / Multiple linear regression':'ANCOVA untuk mengontrol kovariat'):'-';
+  }
+  var el=document.getElementById('sts-result'); el.style.display='block';
+  el.innerHTML='<div class="output-title">🔢 Rekomendasi Uji Statistik</div>'+
+    '<div class="output-item"><strong>Uji yang Direkomendasikan</strong><p style="font-size:15px;font-weight:700;color:var(--blue)">'+rec+'</p></div>'+
+    '<div class="output-item"><strong>Catatan Metodologi</strong><p>'+note+'</p></div>'+
+    '<div class="output-item"><strong>Untuk Analisis Multivariat</strong><p>'+multi+'</p></div>'+
+    '<div class="warn-box">⚠️ Pemilihan uji statistik bergantung pada tujuan analisis, distribusi data, dan asumsi yang terpenuhi. Selalu verifikasi asumsi uji yang dipilih sebelum analisis.</div>';
+}
+
+// ======= CHECKLISTS =======
+function makeChecklist(items,containerId,pctId,lblId,prefix){
+  var cont=document.getElementById(containerId); if(!cont)return;
+  var state={};
+  items.forEach(function(it,i){state[prefix+i]=0;});
+  function render(){
+    var done=0,partial=0;
+    Object.keys(state).forEach(function(k){if(state[k]===2)done++;else if(state[k]===1)partial++;});
+    var total=items.length;
+    var pct=Math.round((done+partial*0.5)/total*100);
+    var pctEl=document.getElementById(pctId); var lblEl=document.getElementById(lblId);
+    if(pctEl){pctEl.textContent=pct+'%'; pctEl.style.color=pct>=80?'var(--green)':pct>=50?'var(--yellow)':'var(--red)';}
+    if(lblEl)lblEl.textContent=done+'/'+total+' lengkap, '+partial+' parsial';
+    cont.innerHTML='';
+    items.forEach(function(it,i){
+      var k=prefix+i; var s=state[k];
+      var cls=s===2?'done':s===1?'partial':'';
+      var icon=s===2?'✓':s===1?'~':'';
+      var div=document.createElement('div');
+      div.className='check-item '+cls;
+      div.setAttribute('role','button');
+      div.setAttribute('tabindex','0');
+      div.innerHTML='<div class="check-box">'+icon+'</div><div><div class="check-label">'+(it.num?'<span style="font-size:10px;color:var(--gray-m);margin-right:4px">'+it.num+'</span>':'')+it.label+'</div>'+(it.desc?'<div class="check-desc">'+it.desc+'</div>':'')+'</div>';
+      var tog=function(){state[k]=(state[k]+1)%3;render();};
+      div.onclick=tog; div.onkeydown=function(e){if(e.key==='Enter'||e.key===' ')tog();};
+      cont.appendChild(div);
+    });
+  }
+  render();
+}
+
+var consortItems=[
+  {num:'1a',label:'Title',desc:'Identifikasi sebagai randomized trial dalam judul'},
+  {num:'1b',label:'Abstract',desc:'Structured summary: design, methods, results, conclusions'},
+  {num:'2a',label:'Background & Rationale',desc:'Latar belakang ilmiah dan penjelasan rasionalitas studi'},
+  {num:'2b',label:'Objectives',desc:'Tujuan spesifik dan hipotesis yang akan diuji'},
+  {num:'3a',label:'Trial Design',desc:'Deskripsi desain trial: paralel, crossover, factorial, dll'},
+  {num:'3b',label:'Allocation Ratio',desc:'Rasio alokasi antar kelompok'},
+  {num:'4a',label:'Participants – Eligibility',desc:'Kriteria inklusi dan eksklusi'},
+  {num:'4b',label:'Participants – Settings',desc:'Setting dan lokasi pengumpulan data'},
+  {num:'5',label:'Interventions',desc:'Detail intervensi tiap kelompok, cukup untuk replikasi'},
+  {num:'6a',label:'Outcomes – Primary',desc:'Primary outcome: definisi, timepoint, metode pengukuran'},
+  {num:'6b',label:'Outcomes – Secondary',desc:'Secondary outcomes: definisi, timepoint, metode pengukuran'},
+  {num:'7a',label:'Sample Size – Calculation',desc:'Bagaimana ukuran sampel dihitung'},
+  {num:'7b',label:'Sample Size – Interim Analysis',desc:'Interim analysis dan stopping guidelines jika ada'},
+  {num:'8a',label:'Randomisation – Sequence',desc:'Metode generasi sequence randomisasi'},
+  {num:'8b',label:'Randomisation – Type',desc:'Tipe randomisasi: simple, block, stratified'},
+  {num:'9',label:'Allocation Concealment',desc:'Mekanisme concealment alokasi'},
+  {num:'10',label:'Implementation',desc:'Siapa yang menghasilkan sequence, enroll, assign'},
+  {num:'11a',label:'Blinding – Participants',desc:'Blinding: siapa yang diblinding dan bagaimana'},
+  {num:'11b',label:'Blinding – Assessment',desc:'Blinding assessors dan outcome evaluators'},
+  {num:'12a',label:'Statistical Methods – Primary',desc:'Metode statistik untuk primary outcome'},
+  {num:'12b',label:'Statistical Methods – Secondary',desc:'Metode statistik untuk secondary, subgroup, sensitivity'},
+  {num:'13a',label:'Participant Flow – Diagram',desc:'Flow diagram CONSORT'},
+  {num:'13b',label:'Participant Flow – Deviations',desc:'Deviasi protokol dan alasannya'},
+  {num:'14a',label:'Recruitment Dates',desc:'Tanggal rekrutmen dan follow-up'},
+  {num:'14b',label:'Trial Stopped Early',desc:'Apakah trial dihentikan lebih awal dan alasannya'},
+  {num:'15',label:'Baseline Data',desc:'Tabel karakteristik baseline tiap kelompok'},
+  {num:'16',label:'Numbers Analysed',desc:'Jumlah subjek per kelompok per analisis; ITT vs PP'},
+  {num:'17a',label:'Outcomes & Estimation',desc:'Hasil tiap outcome, estimasi efek, CI'},
+  {num:'17b',label:'Dichotomous Outcomes',desc:'Absolute dan relative effect measures'},
+  {num:'18',label:'Ancillary Analyses',desc:'Hasil subgroup dan sensitivity analysis, termasuk pre-specified'},
+  {num:'19',label:'Harms',desc:'Adverse events, harms, unintended effects'},
+  {num:'20',label:'Limitations',desc:'Bias potensial, imprecision, ketidakpastian'},
+  {num:'21',label:'Generalisability',desc:'External validity, applicability'},
+  {num:'22',label:'Interpretation',desc:'Konsisten dengan bukti, balance benefit/harm'},
+  {num:'23',label:'Registration',desc:'Nama registry dan nomor registrasi trial'},
+  {num:'24',label:'Protocol',desc:'Akses protokol jika tersedia'},
+  {num:'25',label:'Statistical Analysis Plan',desc:'Akses SAP jika terpisah dari protokol (CONSORT 2025)'},
+  {num:'26',label:'Funding',desc:'Sumber pendanaan dan peran funder'},
+  {num:'27',label:'Conflicts of Interest',desc:'COI seluruh penulis (CONSORT 2025)'},
+  {num:'28',label:'Data Availability',desc:'Ketersediaan data dan/atau kode analisis (CONSORT 2025)'},
+  {num:'29',label:'AI/Tool Use Statement',desc:'Penggunaan AI tools dalam penulisan/analisis (CONSORT 2025)'},
+  {num:'30',label:'Harms – Detailed',desc:'Comprehensive harms reporting (CONSORT 2025)'}
+];
+
+var strobeItems=[
+  {num:'1',label:'Title & Abstract',desc:'Desain studi dalam judul atau abstract; structured abstract'},
+  {num:'2',label:'Background / Rationale',desc:'Latar belakang dan rasionalitas'},
+  {num:'3',label:'Objectives',desc:'Tujuan spesifik termasuk hipotesis yang ditetapkan a priori'},
+  {num:'4',label:'Study Design',desc:'Presentasi elemen kunci desain studi di awal paper'},
+  {num:'5',label:'Setting',desc:'Setting, lokasi, dan periode waktu yang relevan'},
+  {num:'6',label:'Participants',desc:'Kriteria eligibilitas; sumber dan metode seleksi; follow-up (kohort)'},
+  {num:'7',label:'Variables',desc:'Definisi outcome, exposure, prediktor, confounders, modifier'},
+  {num:'8',label:'Data Sources / Measurement',desc:'Sumber data dan metode pengukuran tiap variabel'},
+  {num:'9',label:'Bias',desc:'Potensi sumber bias dan cara menanganinya'},
+  {num:'10',label:'Study Size',desc:'Penjelasan dasar penentuan ukuran studi'},
+  {num:'11',label:'Quantitative Variables',desc:'Handling variabel kuantitatif (kategorisasi, cut-off)'},
+  {num:'12a',label:'Statistical Methods – Main',desc:'Metode statistik utama untuk analisis'},
+  {num:'12b',label:'Statistical Methods – Subgroup',desc:'Metode untuk subgroup dan interaction'},
+  {num:'12c',label:'Statistical Methods – Missing',desc:'Handling missing data'},
+  {num:'12d',label:'Statistical Methods – Sensitivity',desc:'Sensitivity analysis'},
+  {num:'13',label:'Participants – Flow',desc:'Jumlah subjek di tiap tahap studi (number at each stage)'},
+  {num:'14',label:'Descriptive Data',desc:'Karakteristik partisipan, data eksposur, follow-up duration'},
+  {num:'15',label:'Outcome Data',desc:'Jumlah outcome events atau summary measures'},
+  {num:'16',label:'Main Results',desc:'Unadjusted dan adjusted estimates dengan CI'},
+  {num:'17',label:'Other Analyses',desc:'Hasil subgroup, interaction, sensitivity analysis'},
+  {num:'18',label:'Key Results',desc:'Ringkasan key results sesuai objectives'},
+  {num:'19',label:'Limitations',desc:'Bias potensial, imprecision, multiplicity, external validity'},
+  {num:'20',label:'Interpretation',desc:'Interpretasi mempertimbangkan objectives, limitations, multiplicity'},
+  {num:'21',label:'Generalisability',desc:'External validity/generalisabilitas'},
+  {num:'22',label:'Funding',desc:'Sumber pendanaan, peran funder, dan COI'}
+];
+
+var careItems=[
+  {num:'1',label:'Title',desc:'Kata "case report" dalam judul'},
+  {num:'2',label:'Keywords',desc:'2–5 kata kunci'},
+  {num:'3a',label:'Abstract – Background',desc:'Background: konteks kasus'},
+  {num:'3b',label:'Abstract – Case Presentation',desc:'Chief complaints, diagnosis, interventions'},
+  {num:'3c',label:'Abstract – Conclusion',desc:'Kesimpulan utama dan takeaway'},
+  {num:'4',label:'Introduction',desc:'Keunikan kasus, alasan pelaporan, dan konteks literatur'},
+  {num:'5a',label:'Patient Information – Demographics',desc:'Demografi anonim (usia, jenis kelamin, tidak ada nama/identitas)'},
+  {num:'5b',label:'Patient Information – Complaint',desc:'Chief complaints dan riwayat penyakit'},
+  {num:'5c',label:'Patient Information – History',desc:'Riwayat medis, keluarga, psikososial yang relevan'},
+  {num:'6',label:'Clinical Findings',desc:'Temuan pemeriksaan fisik yang relevan'},
+  {num:'7',label:'Timeline',desc:'Timeline kronologis kejadian klinis'},
+  {num:'8a',label:'Diagnostic Assessment – Methods',desc:'Metode diagnostik yang digunakan'},
+  {num:'8b',label:'Diagnostic Assessment – Challenges',desc:'Tantangan diagnostik dan diagnosis banding'},
+  {num:'8c',label:'Diagnostic Assessment – Results',desc:'Hasil diagnostik dan interpretasi'},
+  {num:'9',label:'Therapeutic Interventions',desc:'Jenis, dosis, durasi, dan alasan pemilihan terapi'},
+  {num:'10a',label:'Follow-up & Outcomes – Clinician',desc:'Outcomes klinis dan follow-up'},
+  {num:'10b',label:'Follow-up & Outcomes – Patient',desc:'Patient-reported outcomes'},
+  {num:'11',label:'Discussion',desc:'Kekuatan, keterbatasan, temuan kunci, dan literature comparison'},
+  {num:'12',label:'Patient Perspective',desc:'Perspektif pasien/keluarga (jika sesuai dan tersedia)'},
+  {num:'13',label:'Informed Consent',desc:'Informed consent tertulis dari pasien/wali telah diperoleh dan disimpan'}
+];
+
+var prismaItems=[
+  {num:'1',label:'Title',desc:'"Systematic review" atau "meta-analysis" atau keduanya dalam judul'},
+  {num:'2',label:'Abstract',desc:'Structured abstract: background, objectives, sources, methods, results, conclusions, registration'},
+  {num:'3',label:'Rationale',desc:'Rasionalitas review dalam konteks bukti yang sudah ada'},
+  {num:'4',label:'Objectives',desc:'Penelitian questions dan PICO yang eksplisit'},
+  {num:'5',label:'Eligibility Criteria',desc:'Kriteria inklusi dan eksklusi studi'},
+  {num:'6',label:'Information Sources',desc:'Semua database dan sumber yang dicari, beserta tanggal terakhir pencarian'},
+  {num:'7',label:'Search Strategy',desc:'Full search strategy untuk minimal 1 database'},
+  {num:'8',label:'Selection Process',desc:'Metode seleksi studi (screening, eligibility), jumlah reviewer, dan reconciliation'},
+  {num:'9',label:'Data Collection',desc:'Metode ekstraksi data, proses, dan tools'},
+  {num:'10',label:'Data Items',desc:'Variabel data yang diekstrak dan definisi'},
+  {num:'11',label:'Study Risk of Bias',desc:'Metode penilaian risk of bias per studi; tools yang digunakan'},
+  {num:'12',label:'Effect Measures',desc:'Effect measure untuk setiap outcome (RR, OR, MD, dsb)'},
+  {num:'13',label:'Synthesis Methods',desc:'Metode pooling, heterogeneity assessment, moderator analysis'},
+  {num:'14',label:'Reporting Bias Assessment',desc:'Metode penilaian publication bias dan selective reporting (funnel plot, Egger)'},
+  {num:'15',label:'Certainty Assessment',desc:'Penilaian certainty of evidence (GRADE atau serupa) per outcome'},
+  {num:'16',label:'Study Selection Results',desc:'PRISMA 2020 flow diagram'},
+  {num:'17',label:'Study Characteristics',desc:'Karakteristik tiap studi yang diinklusikan'},
+  {num:'18',label:'Risk of Bias Results',desc:'Risk of bias tiap studi dengan visualisasi'},
+  {num:'19',label:'Individual Study Results',desc:'Data dan effect estimates per studi'},
+  {num:'20',label:'Synthesis Results',desc:'Hasil pooled analysis, forest plot, I² heterogeneity'},
+  {num:'21',label:'Reporting Biases',desc:'Risk of reporting bias across studies'},
+  {num:'22',label:'Certainty of Evidence',desc:'Certainty of evidence per outcome (e.g., GRADE table)'},
+  {num:'23',label:'Discussion – Findings',desc:'Interpretasi hasil, konsistensi dengan prior evidence'},
+  {num:'24',label:'Discussion – Limitations',desc:'Limitasi evidence base dan review'},
+  {num:'25',label:'Discussion – Conclusions',desc:'Kesimpulan dan implikasi untuk penelitian dan praktik'},
+  {num:'26',label:'Registration & Protocol',desc:'Nomor registrasi (PROSPERO) dan akses protokol'},
+  {num:'27',label:'Funding & COI',desc:'Sumber pendanaan, peran funder, COI reviewer dan penulis'}
+];
+
+var prcItems=[
+  {label:'Judul jelas, spesifik, dan mencerminkan desain & populasi',desc:''},
+  {label:'Abstract terstruktur & lengkap (background, methods, results, conclusions)',desc:''},
+  {label:'Tujuan penelitian jelas (primary & secondary objectives)',desc:''},
+  {label:'Desain studi optimal untuk pertanyaan penelitian yang diajukan',desc:''},
+  {label:'Populasi, sampling, dan kriteria eligibilitas terdeskripsi',desc:''},
+  {label:'Metode pengukuran valid dan terstandarisasi',desc:''},
+  {label:'Sample size dengan kalkulasi dan asumsi eksplisit',desc:''},
+  {label:'Statistical Analysis Plan (SAP) atau deskripsi analisis lengkap',desc:''},
+  {label:'Handling missing data dijelaskan',desc:''},
+  {label:'Confounders diperhitungkan (analisis multivariat jika diperlukan)',desc:''},
+  {label:'Hasil disajikan dengan estimasi efek + 95% CI (bukan hanya p-value)',desc:''},
+  {label:'Flow diagram subjek tersedia (CONSORT/STROBE/PRISMA)',desc:''},
+  {label:'Tabel karakteristik baseline per kelompok',desc:''},
+  {label:'Sensitivity analysis dilakukan dan dilaporkan',desc:''},
+  {label:'Diskusi tidak overclaim; konsisten dengan hasil aktual',desc:''},
+  {label:'Keterbatasan diakui secara jelas (bias, imprecision, generalizability)',desc:''},
+  {label:'Ethical clearance dan informed consent tercantum',desc:''},
+  {label:'Trial registration (jika RCT) / PROSPERO (jika SR) tercantum',desc:''},
+  {label:'Reporting guideline checklist dilengkapi (CONSORT/STROBE/CARE/PRISMA)',desc:''},
+  {label:'AI/tool use statement, data availability statement, funding, dan COI tercantum',desc:''}
+];
+
+var catData={
+  rct:[
+    {label:'Apakah pertanyaan klinis jelas, spesifik, dan relevan?'},
+    {label:'Apakah randomisasi dilakukan dengan sequence generation yang valid?'},
+    {label:'Apakah alokasi benar-benar disembunyikan (allocation concealment)?'},
+    {label:'Apakah blinding dilakukan pada pasien, klinisi, dan/atau assessor?'},
+    {label:'Apakah semua yang dirandomisasi dianalisis (intention-to-treat)?'},
+    {label:'Apakah loss to follow-up adekuat (&lt;20%) dan ditangani dengan baik?'},
+    {label:'Apakah baseline characteristics seimbang antar kelompok?'},
+    {label:'Apakah primary outcome didefinisikan sebelum studi (pre-specified)?'},
+    {label:'Apakah ukuran efek secara klinis bermakna (bukan hanya statistik)?'},
+    {label:'Apakah presisi estimasi dilaporkan dengan 95% CI?'},
+    {label:'Apakah harms/adverse events dilaporkan secara komprehensif?'},
+    {label:'Apakah hasil dapat diaplikasikan pada pasien Anda (applicability)?'}
+  ],
+  cohort:[
+    {label:'Apakah kohort representatif dari populasi target yang relevan?'},
+    {label:'Apakah eksposur/faktor prognostik diukur sebelum outcome terjadi?'},
+    {label:'Apakah eksposur diukur dengan valid dan reliabel?'},
+    {label:'Apakah semua confounders penting diidentifikasi dan dikontrol?'},
+    {label:'Apakah follow-up cukup panjang dan proportion loss to follow-up &lt;20%?'},
+    {label:'Apakah outcome diukur dengan cara yang sama di semua kelompok (blinded)?'},
+    {label:'Apakah analisis multivariat dilakukan untuk mengontrol confounding?'},
+    {label:'Apakah immortal time bias dipertimbangkan?'},
+    {label:'Apakah competing risks diperhitungkan (jika time-to-event)?'},
+    {label:'Apakah presisi estimasi dan CI dilaporkan?'},
+    {label:'Apakah hasil dapat digeneralisasi ke populasi yang relevan?'}
+  ],
+  cc:[
+    {label:'Apakah definisi kasus jelas dan terverifikasi dengan kriteria baku?'},
+    {label:'Apakah kontrol dipilih dari populasi yang sama dengan kasus (base population)?'},
+    {label:'Apakah exposure dinilai dengan cara yang sama pada kasus dan kontrol?'},
+    {label:'Apakah recall bias diminimalkan (data rekam medis vs wawancara)?'},
+    {label:'Apakah confounders utama diperhitungkan dalam desain atau analisis?'},
+    {label:'Apakah matching dilakukan? Jika ya, apakah matched analysis digunakan?'},
+    {label:'Apakah jumlah sampel adekuat (power analysis)?'},
+    {label:'Apakah OR dilaporkan dengan 95% CI dan menggunakan logistic regression?'},
+    {label:'Apakah temporal ambiguity antara eksposur dan outcome ditangani?'},
+    {label:'Apakah hasil dapat diaplikasikan pada konteks klinis Anda?'}
+  ],
+  diag:[
+    {label:'Apakah spektrum pasien representatif untuk populasi yang akan menggunakan test?'},
+    {label:'Apakah reference standard (gold standard) diterapkan pada SEMUA subjek?'},
+    {label:'Apakah penilaian index test dan reference standard dilakukan secara independen (blinded)?'},
+    {label:'Apakah cut-off ditentukan a priori (bukan post-hoc)?'},
+    {label:'Apakah sensitivitas dan spesifisitas dilaporkan dengan 95% CI?'},
+    {label:'Apakah likelihood ratio positif dan negatif (LR+, LR-) dilaporkan?'},
+    {label:'Apakah AUC-ROC dilaporkan untuk test kontinu?'},
+    {label:'Apakah verification bias dihindari (semua subjek mendapat reference standard)?'},
+    {label:'Apakah spectrum bias ditangani (spektrum penyakit representatif)?'},
+    {label:'Apakah test dapat diterapkan di setting klinis Anda (applicability)?'}
+  ],
+  meta:[
+    {label:'Apakah protokol SR terdaftar (PROSPERO) dan/atau dipublikasikan sebelum studi?'},
+    {label:'Apakah PICO didefinisikan secara eksplisit dan a priori?'},
+    {label:'Apakah pencarian literatur komprehensif (minimal 2-3 database + grey literature)?'},
+    {label:'Apakah seleksi studi dan ekstraksi data dilakukan secara independen oleh ≥2 reviewer?'},
+    {label:'Apakah penilaian kualitas studi dilakukan menggunakan tool yang valid?'},
+    {label:'Apakah publication bias dinilai (funnel plot asymmetry, Egger test)?'},
+    {label:'Apakah heterogeneity dinilai secara memadai (I², Q-test, sumber heterogeneity)?'},
+    {label:'Apakah metode pooling sesuai dengan tingkat heterogeneity?'},
+    {label:'Apakah sensitivity analysis dilakukan?'},
+    {label:'Apakah certainty of evidence dinilai (GRADE)?'},
+    {label:'Apakah kesimpulan didukung oleh data dan tidak overclaim?'},
+    {label:'Apakah PRISMA 2020 checklist dilengkapi?'}
+  ]
+};
+
+function loadCAT(){
+  var t=document.getElementById('cat-type').value;
+  var scoreBox=document.getElementById('cat-score-box');
+  var c=document.getElementById('cat-list');
+  if(!t){c.innerHTML='';scoreBox.style.display='none';return;}
+  scoreBox.style.display='flex';
+  makeChecklist(catData[t],'cat-list','cat-pct','cat-lbl','cat-'+t);
+}
+
+// ROB TOOL
+var robDomains={
+  rct:[
+    {label:'D1: Proses Randomisasi',desc:'Sequence generation & allocation concealment'},
+    {label:'D2: Deviasi dari Intervensi',desc:'Performance bias; deviasi dari intended intervention'},
+    {label:'D3: Missing Outcome Data',desc:'Attrition bias; completeness of outcome data'},
+    {label:'D4: Pengukuran Outcome',desc:'Detection bias; blinding of outcome assessors'},
+    {label:'D5: Seleksi Hasil yang Dilaporkan',desc:'Reporting bias; pre-specified vs reported outcomes'}
+  ],
+  nri:[
+    {label:'D1: Confounding',desc:'Apakah confounding pre-intervention dikontrol?'},
+    {label:'D2: Seleksi Partisipan',desc:'Apakah seleksi berhubungan dengan intervensi dan outcome?'},
+    {label:'D3: Klasifikasi Intervensi',desc:'Apakah intervensi didefinisikan dan diklasifikasikan dengan benar?'},
+    {label:'D4: Deviasi Intervensi',desc:'Apakah ada deviasi yang tidak sesuai dengan pertanyaan penelitian?'},
+    {label:'D5: Missing Data',desc:'Apakah missing data berdampak pada hasil?'},
+    {label:'D6: Pengukuran Outcome',desc:'Apakah outcome diukur dengan valid dan tidak bias?'},
+    {label:'D7: Seleksi Hasil Dilaporkan',desc:'Apakah selective reporting terjadi?'}
+  ],
+  diag:[
+    {label:'PD1: Patient Selection',desc:'Risiko bias dari seleksi pasien; spectrum bias; case-control design'},
+    {label:'PD2: Index Test',desc:'Blinding terhadap reference standard; cut-off ditentukan a priori?'},
+    {label:'PD3: Reference Standard',desc:'Akurasi reference standard; blinding terhadap index test'},
+    {label:'PD4: Flow & Timing',desc:'Interval antara index test & reference standard; tidak semua subjek diverifikasi?'}
+  ],
+  sr:[
+    {label:'D1: Study Eligibility Criteria',desc:'Apakah eligibility criteria cukup jelas dan sesuai?'},
+    {label:'D2: Search & Selection',desc:'Apakah pencarian komprehensif dan seleksi tidak bias?'},
+    {label:'D3: Data Collection & RoB',desc:'Apakah ekstraksi data dan penilaian RoB adekuat?'},
+    {label:'D4: Synthesis & Findings',desc:'Apakah synthesis method sesuai dan tidak bias?'}
+  ]
+};
+var robState={};
+function loadROB(){
+  var t=document.getElementById('rob-type').value;
+  var el=document.getElementById('rob-list'); var vis=document.getElementById('rob-visual');
+  if(!t){el.innerHTML='';vis.innerHTML='';return;}
+  robState={};
+  var items=robDomains[t]||[];
+  items.forEach(function(it,i){robState[i]='?';});
+  renderROB(items,t);
+}
+function setROB(i,v){ robState[i]=v; var t=document.getElementById('rob-type').value; renderROB(robDomains[t],t);}
+function renderROB(items,t){
+  var el=document.getElementById('rob-list'); el.innerHTML='';
+  items.forEach(function(it,i){
+    var v=robState[i]||'?';
+    var div=document.createElement('div');
+    div.style.cssText='display:flex;align-items:flex-start;gap:10px;padding:10px;border:1.5px solid var(--border);border-radius:8px;margin-bottom:8px;';
+    var btns=['low','concerns','high','unclear'].map(function(val){
+      var labels={low:'🟢 Rendah',concerns:'🟡 Beberapa Kekhawatiran',high:'🔴 Tinggi',unclear:'⬜ Tidak Jelas'};
+      var bg={low:v===val?'#10b981':'',concerns:v===val?'#f59e0b':'',high:v===val?'#ef4444':'',unclear:v===val?'#94a3b8':''}[val]||'';
+      return '<button onclick="setROB('+i+',\''+val+'\')" style="padding:3px 9px;border-radius:12px;border:1px solid #d1d5db;cursor:pointer;font-size:11px;font-weight:600;background:'+(bg||'#fff')+';color:'+(bg?'#fff':'#374151')+'">'+labels[val]+'</button>';
+    }).join(' ');
+    div.innerHTML='<div style="flex:1"><div style="font-weight:700;font-size:12.5px;margin-bottom:2px">'+it.label+'</div><div style="font-size:11px;color:var(--gray-m);margin-bottom:6px">'+it.desc+'</div>'+btns+'</div>';
+    el.appendChild(div);
+  });
+  // Traffic light summary
+  var vis=document.getElementById('rob-visual');
+  vis.innerHTML='<div style="font-weight:700;font-size:12.5px;margin-bottom:8px">Traffic Light Summary</div>'+
+    '<div class="tl-grid">'+
+    items.map(function(it,i){
+      var v=robState[i]||'?';
+      var col={low:'#10b981',concerns:'#f59e0b',high:'#ef4444',unclear:'#94a3b8'}[v]||'#94a3b8';
+      var lbl={low:'Rendah',concerns:'Bbrp Kekhawatiran',high:'Tinggi',unclear:'Tidak Jelas'}[v]||'Belum dinilai';
+      return '<div style="border:1.5px solid '+col+'20;background:'+col+'12;border-radius:8px;padding:10px;text-align:center">'+
+        '<div style="width:18px;height:18px;border-radius:50%;background:'+col+';margin:0 auto 5px"></div>'+
+        '<div style="font-size:11px;font-weight:700;color:var(--gray-d);margin-bottom:2px">'+it.label.split(':')[0]+'</div>'+
+        '<div style="font-size:10.5px;color:'+col+';font-weight:700">'+lbl+'</div></div>';
+    }).join('')+'</div>';
+}
+
+// LOAD CHECKLISTS
+makeChecklist(consortItems,'consort-list','consort-pct','consort-lbl','co');
+makeChecklist(strobeItems,'strobe-coh-list','strobe-pct','strobe-lbl','scoh');
+makeChecklist(strobeItems,'strobe-cc-list','strobe-pct','strobe-lbl','scc');
+makeChecklist(strobeItems,'strobe-cs-list','strobe-pct','strobe-lbl','scs');
+makeChecklist(careItems,'care-list','care-pct','care-lbl','ca');
+makeChecklist(prismaItems,'prisma-list','prisma-pct','prisma-lbl','pr');
+makeChecklist(prcItems,'prc-list','prc-pct','prc-lbl','prc');
+
+// ======= ONCOLOGY ENDPOINTS =======
+var oncoEndpoints=[
+  {name:'OS – Overall Survival',def:'Waktu dari tanggal diagnosis atau randomisasi hingga kematian akibat sebab apapun.',note:'Event: kematian dari sebab apapun. Censoring: hidup pada waktu analisis. Endpoint paling objektif dan tidak ambigu.',method:'Kaplan-Meier; Cox regression untuk multivariat. Tidak ada competing risk.'},
+  {name:'EFS – Event-Free Survival',def:'Waktu dari mulai terapi hingga kejadian pertama: kematian, relaps, kegagalan induksi, progresi, atau toksisitas yang menyebabkan penghentian terapi (bergantung pada definisi protokol).',note:'Events harus didefinisikan secara eksplisit dan konsisten dalam protokol. Definisi dapat berbeda antar protokol.',method:'Kaplan-Meier; Cox regression. Cek protokol aktual untuk definisi events yang digunakan.'},
+  {name:'DFS – Disease-Free Survival',def:'Waktu dari achieved complete remission (CR) hingga relaps atau kematian. Hanya berlaku untuk pasien yang mencapai CR.',note:'Berbeda dari EFS: DFS menghitung dari remisi, EFS dari awal terapi. Pasien yang tidak mencapai CR biasanya dikecualikan.',method:'Kaplan-Meier; dianalisis pada subpopulasi yang mencapai CR.'},
+  {name:'PFS – Progression-Free Survival',def:'Waktu dari randomisasi atau mulai terapi hingga progresi penyakit atau kematian (dari sebab apapun).',note:'Definisi progresi harus mengacu pada kriteria standar (RECIST 1.1 untuk tumor padat, IMWG untuk mieloma, dsb). Sering digunakan pada tumor padat dan hematologik non-kuratif.',method:'Kaplan-Meier; Cox regression. Pastikan definisi progresi konsisten dan blinded assessor.'},
+  {name:'RFS – Relapse-Free Survival',def:'Waktu dari CR hingga relaps saja. Kematian tanpa relaps di-censor (berbeda dari DFS).',note:'Berguna untuk mengisolasi risiko relaps dari risiko NRM secara terpisah. Gunakan bersama NRM untuk gambaran lengkap.',method:'Kaplan-Meier; Cox regression. Kematian tanpa relaps di-censor.'},
+  {name:'CIR – Cumulative Incidence of Relapse',def:'Probabilitas kumulatif relaps memperhitungkan competing event (NRM). Lebih akurat dari 1-DFS pada setting HSCT atau multisenter dengan NRM signifikan.',note:'WAJIB menggunakan Fine-Gray model (competing risks regression) untuk analisis CIR. Penggunaan Kaplan-Meier akan overestimate CIR karena mengabaikan NRM.',method:'Cumulative incidence function (Kalbfleisch-Prentice); Gray\'s test untuk perbandingan; Fine-Gray untuk multivariat.'},
+  {name:'NRM – Non-Relapse Mortality',def:'Kematian tanpa relaps yang dikonfirmasi sebelumnya. Competing event dengan CIR.',note:'CIR + NRM ≠ 1 - OS (karena pasien yang relaps dapat meninggal, menghitung ganda). CIR + NRM = P(event terjadi pertama kali) jika dilihat sebagai first event. Kunci untuk menilai toksisitas HSCT dan intensitas terapi.',method:'Cumulative incidence function; Gray\'s test; Fine-Gray untuk multivariat. JANGAN gunakan Kaplan-Meier.'},
+  {name:'TRM – Treatment-Related Mortality',def:'Kematian yang secara langsung berhubungan dengan terapi, bukan karena progresi penyakit. Kadang digunakan interchangeably dengan NRM namun secara teknis berbeda.',note:'TRM memerlukan atribusi kematian yang kadang subyektif. NRM lebih objektif (kematian tanpa bukti relaps/progresi).',method:'Biasanya dilaporkan sebagai proporsi kumulatif. Jika sebagai time-to-event: cumulative incidence dengan competing risk.'},
+  {name:'GVHD-free Survival',def:'Bebas dari GVHD berat (akut grade III-IV atau kronik ekstensif/severe) DAN hidup.',note:'Penting untuk menilai kualitas hidup pasca HSCT. Definisi GVHD berat harus eksplisit mengacu pada kriteria standar (GRADING: Seattle/Glucksberg atau NIH Consensus).',method:'Composite endpoint: Kaplan-Meier. Event pertama: GVHD berat atau kematian.'},
+  {name:'GRFS – GVHD-Relapse-Free Survival',def:'Composite endpoint: bebas dari relaps/progresi, GVHD berat (akut ≥grade III atau kronik berat), DAN hidup.',note:'Direkomendasikan oleh EBMT sebagai endpoint utama studi HSCT modern. Mencerminkan keberhasilan HSCT secara holistik. Event pertama dari ketiganya yang menentukan.',method:'Kaplan-Meier untuk GRFS. Event: relaps ATAU GVHD berat ATAU kematian, mana yang terjadi lebih dahulu.'},
+  {name:'MRD Endpoints',def:'Berbagai endpoint berbasis MRD: MRD negativity rate pada timepoint tertentu, MRD clearance, MRD conversion, time-to-MRD negativity.',note:'MRD endpoints semakin diakui sebagai surrogate endpoints oleh FDA dan EMA untuk hematologik. Sensitivity threshold metode harus didefinisikan secara eksplisit. Protokol-dependent.',method:'MRD negativity rate: proporsi (%, uji chi-square/logistic). Time-to-MRD: survival analysis. Korelasi dengan OS/EFS: landmark analysis atau MRD-as-time-varying covariate.'}
+];
+var oncoDiv=document.getElementById('onco-list');
+if(oncoDiv){
+  oncoEndpoints.forEach(function(ep){
+    var div=document.createElement('div');
+    div.className='acc-item';
+    div.innerHTML='<div class="acc-head" onclick="toggleAcc(this)"><span>🔵 '+ep.name+'</span><span class="acc-arrow">▼</span></div>'+
+      '<div class="acc-body">'+
+      '<p style="margin-bottom:10px;font-size:13px">'+ep.def+'</p>'+
+      '<div class="output-item"><strong>📌 Catatan Metodologi</strong><p>'+ep.note+'</p></div>'+
+      '<div class="info-box"><strong>📊 Metode Analisis yang Disarankan:</strong> '+ep.method+'</div>'+
+      '</div>';
+    oncoDiv.appendChild(div);
+  });
+}
+
+// ======= MRD INTERPRETER =======
+function interpretMRD(){
+  var dx=document.getElementById('mrd-dx').value;
+  var tp=document.getElementById('mrd-tp').value;
+  var val=document.getElementById('mrd-val').value;
+  var method=document.getElementById('mrd-method').value;
+  var trend=document.getElementById('mrd-trend').value;
+  var el=document.getElementById('mrd-result'); el.style.display='block';
+
+  var dxLabel={ball:'ALL – B-cell',tall:'ALL – T-cell',aml:'AML',hsct:'Pasca HSCT'}[dx];
+  var tpLabel={ind1:'Akhir Induksi (D29/D33)',cons1:'Akhir Konsolidasi-1',prehsct:'Pre-HSCT',d100:'D+100 pasca HSCT',d180:'D+180 pasca HSCT',surv:'Surveillance'}[tp];
+  var valLabel={neg:'Negatif (<10⁻⁴)',low:'Positif Rendah (10⁻⁴–10⁻³)',mid:'Positif Sedang (10⁻³–10⁻²)',high:'Positif Tinggi (≥10⁻²)'}[val];
+
+  var interpMap={
+    neg:{status:'🟢 MRD Negatif',makna:'Tidak terdeteksi penyakit sisa pada batas sensitivitas metode yang digunakan.',
+      tp:{ind1:'Respons terapi sangat baik. Pada ALL-B, sesuai definisi MRD-negatif akhir induksi yang umumnya dikaitkan dengan prognosis favorable. Pertimbangkan de-eskalasi terapi sesuai protokol.',
+          cons1:'Remisi molekuler dalam dikonfirmasi. Risiko relaps rendah. Lanjutkan sesuai protokol.',
+          prehsct:'Status MRD negatif pre-HSCT umumnya dikaitkan dengan outcome pasca transplantasi yang lebih baik.',
+          d100:'Remisi molekuler pasca HSCT tercapai. Monitoring lebih jarang sesuai protokol. Awasi GVHD dan komplikasi lain.',
+          d180:'Remisi berkelanjutan. Pertimbangkan spacing monitoring.',
+          surv:'Tidak ada bukti penyakit sisa saat ini. Lanjutkan surveilans rutin sesuai protokol.'}},
+    low:{status:'🟡 MRD Positif Rendah',makna:'Penyakit sisa terdeteksi dalam jumlah kecil. Signifikansi klinis sangat bergantung pada konteks, timepoint, dan protokol yang digunakan.',
+      tp:{ind1:'Respons suboptimal menurut sebagian besar protokol ALL. Pertimbangkan eskalasi kelompok risiko atau modifikasi terapi sesuai protokol aktif.',
+          cons1:'MRD persistence menunjukkan risiko relaps meningkat. Pertimbangkan intensifikasi atau evaluasi indikasi HSCT sesuai protokol.',
+          prehsct:'MRD positif rendah pre-HSCT dikaitkan dengan peningkatan risiko relaps pasca transplantasi. Diskusikan dengan tim.',
+          d100:'Sinyal awal potensi relaps. Pertimbangkan tapering imunosupresi lebih lambat atau DLI profilaktik (sesuai protokol). Konfirmasi dengan repeat MRD.',
+          d180:'MRD konversi dari negatif memerlukan evaluasi segera. Repeat MRD dan konfirmasi dengan bone marrow.',
+          surv:'Pantau ketat dengan interval lebih pendek. Konfirmasi dengan repeat testing. Pertimbangkan bone marrow assessment.'}},
+    mid:{status:'🟠 MRD Positif Sedang',makna:'Beban penyakit sisa bermakna. Umumnya mengindikasikan kegagalan respons terapi saat ini atau risiko relaps yang signifikan.',
+      tp:{ind1:'Kegagalan respons induksi atau respons sangat buruk. Evaluasi ulang diagnosis (resistensi, transformasi). Diskusikan salvage/eskalasi intensif.',
+          cons1:'Kegagalan konsolidasi. Evaluasi bone marrow lengkap. Pertimbangkan eskalasi atau HSCT sesuai indikasi.',
+          prehsct:'Risiko relaps pasca HSCT sangat tinggi dengan MRD positif sedang. Diskusikan multidisiplin apakah prosedur layak dilanjutkan.',
+          d100:'Kemungkinan relaps pasca HSCT. Bone marrow assessment segera. Diskusikan DLI atau terapi salvage.',
+          d180:'Evaluasi segera. Bone marrow aspiration untuk konfirmasi.',
+          surv:'Potensi relaps hematologik. Evaluasi bone marrow segera.'}},
+    high:{status:'🔴 MRD Positif Tinggi',makna:'Beban penyakit sisa sangat tinggi. Indikatif kegagalan terapi bermakna atau relaps hematologik (perlu konfirmasi morfologi).',
+      tp:{ind1:'Kegagalan induksi (induction failure). Konfirmasi dengan bone marrow morphology. Salvage therapy segera sesuai protokol.',
+          cons1:'Primary refractory atau kegagalan konsolidasi berat. Bone marrow segera. Terapi salvage.',
+          prehsct:'Kontraindikasi relatif HSCT dalam kondisi ini pada sebagian besar protokol. Diskusikan multidisiplin.',
+          d100:'Relaps pasca HSCT kemungkinan besar. Bone marrow segera. Salvage/terapi lanjutan.',
+          d180:'Relaps. Bone marrow segera.',
+          surv:'Relaps hematologik. Konfirmasi segera.'}}
+  };
+
+  var interp=interpMap[val];
+  var implikasi=interp.tp[tp]||'Interpretasi memerlukan konteks klinis dan protokol yang digunakan.';
+  var trendNote={na:'',decr:'<div class="success-box">✅ <b>Tren MRD menurun</b> – MRD clearance adalah tanda respons terapi yang baik. Pantau hingga negatif.</div>',stable:'<div class="warn-box">⚠️ <b>MRD stabil/tidak berubah</b> – Tren tidak berubah dapat mengindikasikan plateau response. Evaluasi protokol.</div>',incr:'<div class="err-box">⚠️ <b>MRD meningkat (rising MRD / MRD conversion)</b> – Sinyal peringatan kuat untuk potensi relaps. Evaluasi segera, repeat testing, pertimbangkan intervensi dini.</div>'}[trend]||'';
+
+  el.innerHTML=trendNote+
+    '<div class="output-title">🧪 Interpretasi MRD – '+dxLabel+' | '+tpLabel+'</div>'+
+    '<div class="output-item"><strong>Status MRD</strong><p style="font-size:14px;font-weight:700">'+interp.status+' ('+valLabel+')</p></div>'+
+    '<div class="output-item"><strong>Metode</strong><p>'+{flow:'Flow cytometry (LAIP-based/DfN)',pcr:'PCR – IG/TCR gene rearrangement',rtpcr:'RT-PCR – Fusion gene',ngs:'Next-Generation Sequencing (NGS)',ddpcr:'Digital droplet PCR (ddPCR)'}[method]+'</p></div>'+
+    '<div class="output-item"><strong>Makna Klinis</strong><p>'+interp.makna+'</p></div>'+
+    '<div class="output-item"><strong>Implikasi pada Timepoint: '+tpLabel+'</strong><p>'+implikasi+'</p></div>'+
+    '<div class="err-box">⚠️ <b>Caveat penting:</b> Interpretasi MRD sangat protocol-dependent. Keputusan intensifikasi/de-intensifikasi terapi, indikasi HSCT, atau penggunaan immunotherapy (DLI, blinatumomab, CAR-T) harus mengikuti <b>protokol aktif yang digunakan</b> dan keputusan <b>konsultan hematologi-onkologi anak</b>. Nilai sensitivitas metode dan kualitas sample harus selalu dipertimbangkan.</div>';
+}
+
+// ======= GCAO BUILDER =======
+function buildGCAO(){
+  var type=document.getElementById('gcao-type').value;
+  var title=document.getElementById('gcao-title').value||'(judul belum diisi)';
+  var g=document.getElementById('gcao-g').value||'(goal belum diisi)';
+  var c=document.getElementById('gcao-c').value||'(context belum diisi)';
+  var a=document.getElementById('gcao-a').value||'(action belum diisi)';
+  var o=document.getElementById('gcao-o').value||'(outcome belum diisi)';
+  var kw=document.getElementById('gcao-kw').value||'(keywords belum diisi)';
+  var typeLabels={manuskrip:'Manuskrip Penelitian (Original Article)',proposal:'Proposal Penelitian',grant:'Grant Application',casereport:'Case Report'};
+  var sections={
+    manuskrip:{
+      title:'Judul yang Disarankan',content:title,
+      abstract:'ABSTRACT\nBackground: '+c+'\nObjectives: '+g+'\nMethods: '+a+'\nResults: [Isi dengan data aktual]\nConclusions: [Isi sesuai temuan]\nKeywords: '+kw,
+      intro:'PENDAHULUAN\n'+c+'\n[Pernyataan masalah dan gap pengetahuan]\n[Tujuan penelitian]: '+g,
+      methods:'METODE\n'+a+'\n[Desain studi, populasi, kriteria eligibilitas]\n[Definisi variabel dan outcomes]\n[Analisis statistik]\n[Ethical clearance]',
+      results:'HASIL\n[Karakteristik subjek]\n[Hasil analisis primer: '+o+']\n[Hasil analisis sekunder]\n[Tabel dan Gambar]',
+      disc:'DISKUSI\n[Temuan utama: '+o+']\n[Perbandingan dengan literatur]\n[Mekanisme/penjelasan temuan]\n[Kekuatan penelitian]\n[Keterbatasan]',
+      conc:'KESIMPULAN\n'+g+'. '+o+'. [Implikasi klinis dan penelitian]',
+      other:'FUNDING & COI | ETHICAL CLEARANCE | DATA AVAILABILITY | AI USE STATEMENT (jika ada)\nKeywords: '+kw
+    },
+    proposal:{
+      title:'Judul Proposal',content:title,
+      abstract:'RINGKASAN PROPOSAL\nLatar belakang: '+c+'\nTujuan: '+g+'\nMetode: '+a+'\nLuaran: '+o,
+      intro:'LATAR BELAKANG\n'+c+'\n[Gap pengetahuan / unmet need]\n[Relevansi penelitian]',
+      methods:'TUJUAN\n'+g+'\n\nMETODE PENELITIAN\n'+a+'\n[Desain studi, populasi, sampling]\n[Variabel, definisi operasional]\n[Rencana analisis statistik]\n[Etika penelitian]',
+      results:'LUARAN YANG DIHARAPKAN\n'+o+'\n[Target publikasi]\n[Target waktu]',
+      disc:'KEKUATAN & INOVASI\n[Kontribusi terhadap pengetahuan]\n[Inovasi metodologi atau klinis]',
+      conc:'TIMELINE & ANGGARAN\n[Jadwal penelitian]\n[Estimasi anggaran per komponen]',
+      other:'REFERENCES UTAMA | TIM PENELITI | ETHICAL CLEARANCE\nKeywords: '+kw
+    },
+    grant:{
+      title:'Grant Title',content:title,
+      abstract:'SPECIFIC AIMS / EXECUTIVE SUMMARY\nAim 1: '+g+'\nBackground: '+c+'\nSignificance: '+o,
+      intro:'SIGNIFICANCE & INNOVATION\n'+c+'\n[Gap in knowledge]\n[Why this is important and novel]',
+      methods:'APPROACH\n'+a+'\n[Study design, population, sample size with power calculation]\n[Variables, outcomes, measurement]\n[Timeline]\n[Potential challenges and mitigation]',
+      results:'EXPECTED OUTCOMES\n'+o+'\n[How will this advance the field?]',
+      disc:'TEAM & RESOURCES\n[Co-investigators, collaborators]\n[Institutional resources and support]',
+      conc:'BUDGET JUSTIFICATION\n[Detailed budget rationale]\n[Budget period and milestones]',
+      other:'REFERENCES | BIOSKETCHES | LETTERS OF SUPPORT\nKeywords: '+kw
+    },
+    casereport:{
+      title:'Judul Laporan Kasus (de-identified)',content:title,
+      abstract:'ABSTRACT\nIntroduction: '+c+'\nCase Presentation: [Demografi anonim, chief complaint, temuan kunci]\nManagement: '+a+'\nOutcomes: '+o+'\nConclusion: [Takeaway message]\nKeywords: '+kw,
+      intro:'INTRODUCTION\n'+c+'\n[Alasan pelaporan]\n[Kontribusi kasus ini terhadap literatur]',
+      methods:'LAPORAN KASUS\n[Demografi anonim: usia, jenis kelamin]\n[Chief complaint & riwayat singkat]\n[Temuan klinis]\n[Timeline terapi]\n[Assessment diagnostik]\n[Intervensi: '+a+']\n[Follow-up & outcomes: '+o+']',
+      results:'DISKUSI\n[Keunikan kasus]\n[Perbandingan dengan kasus serupa di literatur]\n[Mekanisme/hipotesis]\n[Keterbatasan pelaporan]',
+      disc:'PERSPEKTIF PASIEN/KELUARGA (jika sesuai dan tersedia)\n[Pengalaman subjektif]',
+      conc:'KESIMPULAN\n'+g+'. Kasus ini menekankan pentingnya...',
+      other:'INFORMED CONSENT | ETHICAL CLEARANCE | DE-IDENTIFICATION STATEMENT\nKeywords: '+kw
+    }
+  };
+  var s=sections[type]||sections['manuskrip'];
+  var el=document.getElementById('gcao-result'); el.style.display='block';
+  el.innerHTML='<div class="output-title">✍️ Template GCAO – '+typeLabels[type]+'</div>'+
+    '<div class="grid2">'+
+    '<div class="output-item"><strong>G – Goal</strong><p>'+g+'</p></div>'+
+    '<div class="output-item"><strong>C – Context</strong><p>'+c+'</p></div>'+
+    '<div class="output-item"><strong>A – Action</strong><p>'+a+'</p></div>'+
+    '<div class="output-item"><strong>O – Outcome</strong><p>'+o+'</p></div>'+
+    '</div>'+
+    '<hr style="border:none;border-top:1px solid var(--border);margin:12px 0">'+
+    '<div class="output-item"><strong>📄 Template Struktur '+typeLabels[type]+'</strong>'+
+    '<pre style="white-space:pre-wrap;font-family:inherit;font-size:11.5px;line-height:1.7;background:#f8fafc;padding:14px;border-radius:7px;border:1px solid var(--border);margin-top:8px;overflow-x:auto">'+
+    Object.keys(s).filter(function(k){return k!=='title'&&k!=='content';}).map(function(k){return s[k];}).join('\n\n---\n\n')+'</pre></div>';
+}
+
+// ======= EDUCATION MODE =======
+var eduTopics=[
+  {t:'P-value: Apa yang Sebenarnya Artinya?',c:'P-value adalah probabilitas mendapatkan hasil yang sama atau lebih ekstrem JIKA hipotesis nul benar dan studi diulang berkali-kali. P &lt; 0.05 TIDAK berarti "ada perbedaan klinis bermakna" — hanya berarti "tidak konsisten dengan hipotesis nul pada level α=5%". P-value bergantung pada N — studi besar bisa menghasilkan p sangat kecil meski efeknya tidak bermakna klinis. Selalu evaluasi bersama CI dan effect size.'},
+  {t:'Confidence Interval (CI): Informasi Lebih dari P-value',c:'95% CI menunjukkan rentang nilai yang kompatibel dengan data yang diamati. CI sempit = presisi tinggi (N besar). CI lebar = presisi rendah. Untuk HR/OR/RR: CI yang tidak melewati 1.0 = bermakna statistik. CI lebih informatif dari p-value karena memberikan magnitude dan presisi estimasi. Selalu laporkan keduanya — CI + p-value.'},
+  {t:'Effect Size: Mengapa Penting Selain P-value?',c:'Effect size mengukur besarnya perbedaan/hubungan: Cohen\'s d (untuk perbedaan mean), OR/RR (kategorik), HR (survival), AUC (diagnostik). Studi dengan N besar bisa menghasilkan p&lt;0.001 dengan effect size yang kecil secara klinis. Selalu tanyakan: "Apakah efek ini bermakna secara klinis, bukan hanya statistik?"'},
+  {t:'Hazard Ratio (HR) vs Odds Ratio (OR) vs Relative Risk (RR)',c:'RR = P(event|eksposur) / P(event|tidak eksposur). OR = (odds event pada kasus) / (odds event pada kontrol). HR = rasio hazard (instantaneous event rate) antar kelompok pada tiap titik waktu — bukan kumulatif. Untuk outcome langka, OR ≈ RR. Untuk outcome umum, OR mengoverestimasi RR. HR berasal dari Cox regression dan bergantung pada asumsi proportional hazards.'},
+  {t:'Censoring dalam Analisis Survival: Apa Artinya?',c:'Censoring terjadi ketika kita tidak mengetahui kapan event terjadi pada subjek tertentu: subjek hidup saat analisis, lost to follow-up, atau meninggal dari penyebab lain (jika bukan competing event). Kaplan-Meier mengasumsikan censoring bersifat independent (non-informative) — subjek yang di-censor memiliki prognosis serupa dengan yang tidak di-censor. Informative censoring (misal: pasien yang memburuk lebih sering drop-out) dapat menghasilkan bias.'},
+  {t:'Competing Risks: Mengapa Kaplan-Meier Bisa Misleading?',c:'Competing risk adalah event yang mencegah event utama terjadi. Contoh: pada studi CIR (relaps), kematian tanpa relaps (NRM) adalah competing event — pasien yang meninggal karena NRM tidak bisa relaps. Jika KM digunakan untuk CIR, KM akan OVERESTIMATE karena mengabaikan NRM. Solusi: Cumulative Incidence Function (CIF) dengan Gray\'s test dan Fine-Gray regression. Gunakan KM HANYA untuk OS dan composite endpoints tanpa competing risk.'},
+  {t:'Immortal Time Bias',c:'Terjadi ketika periode sebelum "eligibility event" (misal: mencapai remisi sebelum HSCT) tidak diperhitungkan dengan benar dalam waktu follow-up. Contoh: membandingkan pasien yang akhirnya HSCT vs tidak, dimulai dari diagnosis — pasien HSCT secara definisi harus survive hingga transplantasi ("immortal time"). Solusi: Landmark analysis (mulai follow-up pada timepoint fixed post-treatment), atau time-varying covariate dalam Cox regression.'},
+  {t:'Confounding: Musuh Utama Studi Observasional',c:'Confounder adalah variabel yang berhubungan dengan BOTH eksposur/intervensi DAN outcome, sehingga mengaburkan asosiasi sejati. Contoh: usia adalah confounder antara jenis terapi dan OS karena klinisi mungkin memilih terapi berbeda berdasarkan usia. Cara mengatasi: randomisasi (RCT), matching, stratifikasi, analisis multivariat (regresi), propensity score matching, instrumental variable.'},
+  {t:'Selection Bias dan Cara Menghindarinya',c:'Selection bias terjadi ketika populasi yang masuk studi berbeda secara sistematis dari populasi yang seharusnya diteliti. Contoh: pasien yang kembali follow-up mungkin lebih sehat dari yang drop-out. Cara menghindari: strategi rekrutmen komprehensif, consecutive enrollment, analisis non-responders, sensitivity analysis untuk loss to follow-up.'},
+  {t:'Internal Validity vs External Validity',c:'Internal validity: apakah kesimpulan valid untuk populasi studi ini? Ancaman: selection bias, confounding, measurement error, attrition. External validity (generalizability): apakah hasil dapat diterapkan ke populasi/setting lain? Faktor: spektrum pasien, era terapi, setting klinis, ketersediaan teknologi. RCT umumnya memiliki internal validity tinggi tetapi external validity terbatas karena kriteria inklusi ketat.'},
+  {t:'Missing Data: Strategi dan Implikasinya',c:'Missing data dapat dikategorikan: MCAR (Missing Completely At Random) — tidak bermasalah besar; MAR (Missing At Random) — dapat ditangani dengan multiple imputation; MNAR (Missing Not At Random) — paling bermasalah, butuh sensitivity analysis. Strategi: complete case analysis (jika MCAR dan &lt;5-10% missing), multiple imputation (MAR), sensitivity analysis untuk MNAR. Jangan hanya laporan "N excluded" tanpa menjelaskan missing data mechanism.'},
+  {t:'Intention-to-Treat (ITT) vs Per-Protocol (PP) Analysis',c:'ITT: semua yang dirandomisasi dianalisis sesuai alokasi awal, terlepas dari compliance. ITT mempertahankan keseimbangan confounding dari randomisasi dan memberikan estimasi "effectiveness" di real-world. PP: hanya yang comply dengan protokol. PP lebih mendekati "efficacy" di kondisi ideal tapi rentan confounding. Untuk RCT, ITT adalah analisis primer; PP sebagai sensitivity analysis.'},
+  {t:'Multivariable Regression: Kapan dan Bagaimana?',c:'Regresi multivariat digunakan untuk mengontrol confounding simultaan. Linear regression: outcome kontinu. Logistic regression: outcome binary (OR sebagai output). Cox regression: time-to-event (HR sebagai output). Fine-Gray: competing risks. Jumlah variabel dalam model dibatasi oleh "events per variable" (EPV): minimal 10-15 events per variabel untuk hasil reliabel. Overfitting terjadi jika terlalu banyak variabel relatif terhadap events.'},
+  {t:'Number Needed to Treat (NNT): Komunikasi Efek ke Klinisi',c:'NNT = 1 / ARR (Absolute Risk Reduction). NNT = 10 berarti: perlu mengobati 10 pasien untuk mencegah 1 event tambahan. NNT &lt; 5 = efek sangat kuat. NNT 10-50 = efek sedang. NNT &gt; 100 = efek lemah. ARR lebih informatif dari RRR (Relative Risk Reduction) karena mempertimbangkan baseline risk. Komunikasikan NNT bersama konteks: beban penyakit, toksisitas, dan biaya terapi.'},
+  {t:'Heterogeneity dalam Meta-Analysis',c:'I² mengukur proporsi variabilitas antar studi karena heterogeneity (bukan chance): I²&lt;25% rendah, 25-75% sedang, &gt;75% tinggi. Q-test memiliki power rendah pada sedikit studi — jangan andalkan hanya Q-test. Sumber heterogeneity: populasi (P), intervensi (I), komparator (C), outcome definition (O), desain studi, kualitas studi. Jika I² tinggi: jangan pool, lakukan subgroup atau meta-regression, atau lakukan qualitative synthesis.'}
+];
+var eduDiv=document.getElementById('edu-list');
+if(eduDiv){
+  eduTopics.forEach(function(tp,idx){
+    var div=document.createElement('div');
+    div.className='acc-item';
+    div.innerHTML='<div class="acc-head" onclick="toggleAcc(this)"><span>🎓 '+tp.t+'</span><span class="acc-arrow">▼</span></div>'+
+      '<div class="acc-body"><p style="line-height:1.75">'+tp.c+'</p></div>';
+    eduDiv.appendChild(div);
+  });
+}
+
+// ======= QUICK REFERENCE =======
+var qDiv=document.getElementById('qref-content');
+if(qDiv){
+  qDiv.innerHTML=
+    '<div class="sec-head">📐 Rumus Sample Size</div>'+
+    '<div class="grid2">'+
+    '<div class="card"><div class="card-title" style="font-size:13px">Cross-Sectional (Cochran)</div>'+
+    '<p style="font-size:12.5px;line-height:1.8">n₀ = Z²α × P(1-P) / d²<br>nDEFF = n₀ × DEFF<br>nfinal = nDEFF / (1 – missing%/100)</p></div>'+
+    '<div class="card"><div class="card-title" style="font-size:13px">Survival Study (Schoenfeld 1981)</div>'+
+    '<p style="font-size:12.5px;line-height:1.8">d = 4(Zα + Zβ)² / (ln HR)²<br>N = d / (expected event proportion)</p></div>'+
+    '<div class="card"><div class="card-title" style="font-size:13px">Case-Control (Kelsey)</div>'+
+    '<p style="font-size:12.5px;line-height:1.8">P₁ = OR × P₀ / (1 – P₀ + OR × P₀)<br>n = [Zα√(1+1/r)p̄q̄ + Zβ√p₀q₀+p₁q₁/r]² / (p₁-p₀)²</p></div>'+
+    '<div class="card"><div class="card-title" style="font-size:13px">Z-values Referensi</div>'+
+    '<table class="data-table"><thead><tr><th>Level</th><th>Zα (2-sided)</th><th>Zβ (Power)</th></tr></thead><tbody>'+
+    '<tr><td>α=0.05; Power 80%</td><td>1.960</td><td>0.842</td></tr>'+
+    '<tr><td>α=0.05; Power 90%</td><td>1.960</td><td>1.282</td></tr>'+
+    '<tr><td>α=0.01; Power 80%</td><td>2.576</td><td>0.842</td></tr>'+
+    '<tr><td>α=0.01; Power 90%</td><td>2.576</td><td>1.282</td></tr>'+
+    '</tbody></table></div></div>'+
+
+    '<div class="sec-head">🔢 Uji Statistik Cepat</div>'+
+    '<table class="data-table"><thead><tr><th>Situasi</th><th>Uji Utama</th><th>Multivariat</th></tr></thead><tbody>'+
+    [['2 grup independen, kontinu, normal','Independent t-test','ANCOVA'],
+     ['2 grup independen, kontinu, non-normal','Mann-Whitney U','–'],
+     ['2 grup berpasangan, kontinu, normal','Paired t-test','–'],
+     ['2 grup berpasangan, non-normal','Wilcoxon signed-rank','–'],
+     ['3+ grup independen, kontinu, normal','One-Way ANOVA + post-hoc','ANCOVA'],
+     ['3+ grup independen, non-normal','Kruskal-Wallis + Dunn','–'],
+     ['3+ grup berpasangan, normal','Repeated Measures ANOVA','Mixed ANOVA'],
+     ['2×2 kategorik independen','Chi-square / Fisher Exact','Logistic regression'],
+     ['2×2 berpasangan','McNemar','Conditional logistic'],
+     ['Korelasi 2 variabel kontinu, normal','Pearson (r)','Linear regression'],
+     ['Korelasi, non-normal atau ordinal','Spearman (ρ)','–'],
+     ['Time-to-event, 2 kelompok','KM + Log-rank','Cox regression'],
+     ['Competing risks (CIR/NRM)','Cumulative incidence + Gray','Fine-Gray model'],
+     ['Agreement kategorik','Cohen\'s kappa','–'],
+     ['Agreement kontinu','ICC / Bland-Altman','–']].map(function(r){
+       return '<tr><td>'+r[0]+'</td><td style="font-weight:600;color:var(--blue)">'+r[1]+'</td><td>'+r[2]+'</td></tr>';
+     }).join('')+'</tbody></table>'+
+
+    '<div class="sec-head">🔬 Survival Endpoints – Definisi Cepat</div>'+
+    '<table class="data-table"><thead><tr><th>Endpoint</th><th>Event</th><th>Mulai dari</th><th>Analisis</th></tr></thead><tbody>'+
+    [['OS','Kematian (sebab apapun)','Diagnosis/randomisasi','KM + Log-rank + Cox'],
+     ['EFS','Kematian/relaps/gagal terapi (per protokol)','Mulai terapi','KM + Log-rank + Cox'],
+     ['DFS','Relaps/kematian','CR achievement','KM (subpopulasi CR)'],
+     ['PFS','Progresi/kematian','Randomisasi','KM + Log-rank + Cox'],
+     ['RFS','Relaps saja (kematian non-relaps di-censor)','CR achievement','KM'],
+     ['CIR','Relaps (competing: NRM)','CR/HSCT','CIF + Gray + Fine-Gray ⚠️'],
+     ['NRM','Kematian non-relaps (competing: CIR)','HSCT','CIF + Gray + Fine-Gray ⚠️'],
+     ['GRFS','Relaps ATAU GVHD berat ATAU kematian','HSCT','KM (composite endpoint)']].map(function(r){
+       return '<tr><td style="font-weight:700;color:var(--blue-d)">'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td style="font-size:11.5px">'+r[3]+'</td></tr>';
+     }).join('')+'</tbody></table>'+
+    '<div class="info-box" style="margin-top:8px">⚠️ CIF/Fine-Gray wajib untuk CIR dan NRM — jangan gunakan Kaplan-Meier untuk competing risk endpoints.</div>'+
+
+    '<div class="sec-head">📋 Reporting Guideline per Desain</div>'+
+    '<table class="data-table"><thead><tr><th>Desain Studi</th><th>Guideline</th><th>Sumber</th></tr></thead><tbody>'+
+    [['RCT','CONSORT 2025','www.consort-statement.org'],
+     ['Cohort/Case-Control/Cross-Sectional','STROBE','www.strobe-statement.org'],
+     ['Case Report','CARE','www.care-statement.org'],
+     ['Systematic Review/Meta-analysis','PRISMA 2020','www.prisma-statement.org'],
+     ['Diagnostik (Accuracy)','STARD 2015','www.equator-network.org'],
+     ['Prognostik/Prediksi','TRIPOD','www.tripod-statement.org'],
+     ['Biomarker (Tumor Marker)','REMARK','www.equator-network.org'],
+     ['Quality Improvement','SQUIRE 2.0','www.squire-statement.org'],
+     ['Intervensi (deskripsi)','TiDieR','www.equator-network.org']].map(function(r){
+       return '<tr><td>'+r[0]+'</td><td style="font-weight:600;color:var(--blue)">'+r[1]+'</td><td style="font-size:11px;color:var(--gray-m)">'+r[2]+'</td></tr>';
+     }).join('')+'</tbody></table>';
+}
+</script>
+</body>
+</html>

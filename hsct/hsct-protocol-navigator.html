@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pediatric HSCT Protocol Navigator – drAisyiEduCare</title>
+<style>
+:root{
+  --primary:#1a3a5c;--primary-light:#2e5f8a;--accent:#2e7d6b;--accent-light:#3ca88e;
+  --warn:#c0392b;--warn-light:#f8d7da;--orange:#e67e22;--orange-light:#fef3e2;
+  --yellow:#d4a017;--yellow-light:#fffbea;--green:#1a7a4a;--green-light:#d4edda;
+  --blue-light:#e8f4f8;--border:#c5d0dc;--text:#1a1a2e;--bg:#eef1f5;
+  --card:#fff;--label:#5a6a7e;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13.5px;}
+#shell{display:flex;min-height:100vh;}
+#sidebar{width:210px;background:var(--primary);flex-shrink:0;display:flex;flex-direction:column;padding:0 0 16px;}
+#sidebar-logo{padding:14px 12px 10px;border-bottom:1px solid rgba(255,255,255,.15);}
+#sidebar-logo .brand{color:#fff;font-weight:800;font-size:14px;}
+#sidebar-logo .sub{color:rgba(255,255,255,.6);font-size:10px;margin-top:2px;}
+.nav-item{display:flex;align-items:center;gap:8px;padding:9px 12px;color:rgba(255,255,255,.75);cursor:pointer;font-size:12px;font-weight:500;border-left:3px solid transparent;transition:.15s;}
+.nav-item:hover{background:rgba(255,255,255,.08);color:#fff;}
+.nav-item.active{background:rgba(255,255,255,.13);color:#fff;border-left-color:#4fc3a1;}
+.nav-item .icon{font-size:14px;width:18px;text-align:center;}
+#main{flex:1;overflow:auto;padding:18px;}
+.page{display:none;}.page.active{display:block;}
+.card{background:var(--card);border-radius:10px;border:1px solid var(--border);padding:16px 18px;margin-bottom:12px;}
+.card-title{font-size:12px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 14px;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px 12px;}
+.f{display:flex;flex-direction:column;gap:4px;}
+.f label{font-size:11px;font-weight:600;color:var(--label);text-transform:uppercase;letter-spacing:.3px;}
+.f input,.f select,.f textarea{border:1.5px solid var(--border);border-radius:6px;padding:7px 10px;font-size:13px;font-family:inherit;color:var(--text);background:#fafbfc;transition:.15s;}
+.f input:focus,.f select:focus,.f textarea:focus{outline:none;border-color:var(--primary);background:#fff;}
+.f textarea{resize:vertical;min-height:54px;}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:14px;font-size:11px;font-weight:700;gap:4px;}
+.b-ideal{background:#d4edda;color:#155724;}
+.b-acceptable{background:#cce5ff;color:#004085;}
+.b-limited{background:#fff3cd;color:#856404;}
+.b-highrisk{background:#f8d7da;color:#721c24;}
+.b-green{background:var(--green-light);color:var(--green);}
+.b-orange{background:var(--orange-light);color:var(--orange);}
+.b-red{background:var(--warn-light);color:var(--warn);}
+.b-blue{background:var(--blue-light);color:var(--primary);}
+.alert{border-radius:8px;padding:9px 13px;font-size:12.5px;margin-bottom:8px;border-left:4px solid;}
+.alert-warn{background:var(--warn-light);border-color:var(--warn);color:#721c24;}
+.alert-orange{background:var(--orange-light);border-color:var(--orange);color:#7a3e0a;}
+.alert-info{background:var(--blue-light);border-color:var(--primary-light);color:#1a3a5c;}
+.alert-success{background:var(--green-light);border-color:var(--green);color:#155724;}
+.alert-yellow{background:var(--yellow-light);border-color:var(--yellow);color:#6b4c0a;}
+.risk-flag{background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:9px 13px;margin-bottom:7px;display:flex;align-items:flex-start;gap:9px;}
+.risk-flag.high{border-color:var(--warn);background:var(--warn-light);}
+.risk-flag.medium{border-color:var(--orange);background:var(--orange-light);}
+.risk-flag.low{border-color:var(--green);background:var(--green-light);}
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-accent{background:var(--accent);color:#fff;}
+.btn-outline{background:#fff;color:var(--primary);border:2px solid var(--primary);}
+.btn-warn{background:var(--warn);color:#fff;}
+.btn-sm{padding:5px 12px;font-size:12px;border-radius:6px;}
+.btn-del{background:#fff;border:1.5px solid #ddd;border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:13px;color:var(--warn);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+.role-tabs{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
+.role-tab{padding:5px 12px;border-radius:16px;font-size:11.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--label);}
+.role-tab.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.role-note{display:none;font-size:12px;padding:8px 12px;border-radius:6px;background:#f0f4f8;border:1px solid var(--border);}
+.role-note.active{display:block;}
+.checklist-item{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;}
+.checklist-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;}
+.score-bar{height:10px;border-radius:6px;background:#e0e0e0;overflow:hidden;margin-top:4px;}
+.score-fill{height:100%;border-radius:6px;transition:width .4s;}
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px;}
+.dash-card{background:#fff;border-radius:10px;border:1px solid var(--border);padding:12px 14px;}
+.dash-card .dc-label{font-size:10px;font-weight:700;color:var(--label);text-transform:uppercase;letter-spacing:.3px;}
+.dash-card .dc-val{font-size:14px;font-weight:800;color:var(--primary);margin-top:4px;}
+.dash-card .dc-sub{font-size:11px;color:var(--label);margin-top:2px;}
+.cond-row{background:#f9fbfc;border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;position:relative;}
+.cond-row:hover{border-color:var(--primary-light);}
+.cond-row-grid{display:grid;grid-template-columns:1.8fr 1.4fr 1fr 1fr 1.6fr 26px;gap:8px;align-items:start;}
+.cond-field label{font-size:10px;font-weight:700;color:var(--label);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;display:block;}
+.cond-field select,.cond-field input{border:1.5px solid var(--border);border-radius:6px;padding:6px 8px;font-size:12px;font-family:inherit;background:#fff;width:100%;color:var(--text);}
+.cond-field select:focus,.cond-field input:focus{outline:none;border-color:var(--primary);}
+.cond-hint{font-size:10.5px;color:#2e7d6b;margin-top:5px;padding:5px 8px;background:#e8f4f1;border-radius:5px;border-left:3px solid var(--accent);line-height:1.4;display:none;}
+.cond-ref{font-size:10px;color:#888;margin-top:3px;font-style:italic;display:none;}
+.cond-actual-badge{font-size:11px;font-weight:700;color:var(--primary);background:#e8f4f8;border-radius:5px;padding:3px 7px;margin-top:4px;display:none;}
+.cond-warn{font-size:10.5px;color:#721c24;background:#f8d7da;border-radius:5px;padding:4px 8px;margin-top:4px;border-left:3px solid var(--warn);display:none;}
+/* TOAST NOTIFICATION */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a3a5c;color:#fff;padding:10px 22px;border-radius:24px;font-size:13px;font-weight:600;box-shadow:0 4px 18px rgba(0,0,0,.3);z-index:99999;display:none;align-items:center;gap:8px;}
+#toast.show{display:flex;}
+#toast.success{background:#1a7a4a;}
+#toast.error{background:#c0392b;}
+/* SIDEBAR BTN AREA */
+#sidebar-btns{padding:10px 12px;border-top:1px solid rgba(255,255,255,.15);}
+#generateBtn{width:100%;justify-content:center;font-size:12px;padding:9px;}
+#generateBtn:disabled{opacity:.6;cursor:not-allowed;}
+.sidebar-row{display:flex;gap:6px;margin-top:7px;}
+.sidebar-row button{flex:1;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:6px;padding:6px 4px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s;}
+.sidebar-row button:hover{background:rgba(255,255,255,.22);}
+.sidebar-row button:active{background:rgba(255,255,255,.3);}
+.sidebar-row button:disabled{opacity:.5;cursor:not-allowed;}
+#save-indicator{font-size:10px;color:rgba(255,255,255,.5);text-align:center;margin-top:5px;min-height:14px;}
+/* PRINT */
+#printOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;overflow:auto;padding:20px;flex-direction:column;align-items:center;}
+#printOverlay.show{display:flex;}
+#printBar{display:flex;gap:8px;margin-bottom:10px;align-self:flex-start;}
+#printBox{background:#fff;width:210mm;max-width:100%;font-family:Arial,sans-serif;font-size:8.5pt;color:#000;padding:12mm 14mm 10mm;border-radius:4px;}
+.p-hdr{display:flex;justify-content:space-between;align-items:center;border-bottom:2pt solid #1a3a5c;padding-bottom:5pt;margin-bottom:7pt;}
+.p-title{font-size:10.5pt;font-weight:700;color:#1a3a5c;text-transform:uppercase;}
+.p-sub{font-size:7.5pt;color:#555;margin-top:2pt;}
+.p-brand{font-size:9pt;font-weight:800;color:#2e7d6b;}
+.p-sec{font-size:7pt;font-weight:700;background:#1a3a5c;color:#fff;padding:2.5pt 5pt;text-transform:uppercase;letter-spacing:.4px;margin-top:5pt;}
+.ptbl{width:100%;border-collapse:collapse;}
+.ptbl td,.ptbl th{border:1pt solid #aaa;padding:2.5pt 4pt;font-size:7.5pt;vertical-align:top;}
+.ptbl th{background:#2e5f8a;color:#fff;font-size:7pt;text-transform:uppercase;}
+.ptbl tr:nth-child(even) td{background:#f5f8fb;}
+.p-flag{background:#fff3cd;border:1pt solid #e0a800;padding:3pt 6pt;font-size:7.5pt;margin-top:3pt;border-radius:2pt;}
+.p-flag.red{background:#f8d7da;border-color:#c0392b;}
+.p-warn{background:#f8d7da;border:1pt solid #c0392b;padding:2pt 5pt;font-size:7pt;color:#721c24;margin:2pt 0;}
+.p-note{background:#e8f0f7;border:1pt solid #aac;padding:2pt 5pt;font-size:7pt;margin:2pt 0;}
+.p2{page-break-before:always;padding-top:8pt;}
+.p-footer{text-align:center;font-size:6.5pt;color:#888;margin-top:8pt;border-top:1pt solid #ddd;padding-top:4pt;}
+.ig2{display:grid;grid-template-columns:1fr 1fr;border:1pt solid #aaa;margin-bottom:4pt;}
+.igc{padding:2.5pt 5pt;border-right:1pt solid #aaa;border-bottom:1pt solid #aaa;font-size:7.5pt;}
+.igc:nth-child(even){border-right:none;}
+.igl{font-size:6.5pt;font-weight:700;color:#555;text-transform:uppercase;}
+@media(max-width:700px){#sidebar{display:none;}#main{padding:10px;}.g2,.g3,.g4{grid-template-columns:1fr;}.cond-row-grid{grid-template-columns:1fr 1fr;}}
+@media print{body>*{display:none!important;}#printOverlay{display:block!important;position:static!important;background:none!important;padding:0!important;}#printBar{display:none!important;}#printBox{width:100%!important;}.p2{page-break-before:always;}}
+</style>
+</head>
+<body>
+<!-- TOAST -->
+<div id="toast"></div>
+
+<div id="shell">
+<div id="sidebar">
+  <div id="sidebar-logo">
+    <div class="brand">🏥 drAisyiEduCare</div>
+    <div class="sub">Pediatric HSCT Navigator</div>
+  </div>
+  <div style="height:8px"></div>
+  <div class="nav-item active" data-page="dashboard"><span class="icon">📊</span>Dashboard</div>
+  <div class="nav-item" data-page="patient"><span class="icon">👤</span>Data Pasien &amp; Donor</div>
+  <div class="nav-item" data-page="donor"><span class="icon">🧬</span>Seleksi Donor</div>
+  <div class="nav-item" data-page="conditioning"><span class="icon">💊</span>Conditioning</div>
+  <div class="nav-item" data-page="gvhd"><span class="icon">🛡️</span>GVHD Profilaksis</div>
+  <div class="nav-item" data-page="infection"><span class="icon">🦠</span>Infeksi &amp; CMV</div>
+  <div class="nav-item" data-page="vod"><span class="icon">⚠️</span>VOD/SOS Risk</div>
+  <div class="nav-item" data-page="monitoring"><span class="icon">🔬</span>Monitoring</div>
+  <div class="nav-item" data-page="schedule"><span class="icon">📅</span>Jadwal BMT</div>
+  <div class="nav-item" data-page="posttx"><span class="icon">📋</span>Pasca Transplant</div>
+  <div class="nav-item" data-page="evidence"><span class="icon">📚</span>Evidence &amp; SOP</div>
+  <div style="flex:1"></div>
+  <div id="sidebar-btns">
+    <!-- GENERATE -->
+    <button class="btn btn-accent" id="generateBtn">🖨️ Generate Summary</button>
+    <!-- SAVE / LOAD -->
+    <div class="sidebar-row">
+      <button id="saveBtn" title="Simpan semua data ke browser (localStorage)">💾 Save</button>
+      <button id="loadBtn" title="Muat kembali data yang tersimpan">📂 Load</button>
+    </div>
+    <div id="save-indicator"></div>
+  </div>
+</div>
+
+<div id="main">
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <div style="font-size:15px;font-weight:700;color:var(--primary);">📊 Dashboard – Transplant Readiness</div>
+    <button class="btn btn-sm btn-accent" id="refreshDash">🔄 Refresh</button>
+  </div>
+
+  <!-- PANDUAN TOMBOL SIDEBAR -->
+  <div class="card" style="background:#e8f4f8;border-color:var(--primary-light);margin-bottom:14px;">
+    <div class="card-title" style="margin-bottom:8px;"><span>ℹ️</span>Panduan Tombol Utama</div>
+    <div class="g3">
+      <div style="background:#fff;border-radius:8px;padding:10px 12px;border:1.5px solid var(--border);">
+        <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;">🖨️ Generate Summary</div>
+        <div style="font-size:11.5px;color:#444;line-height:1.5;">Membuat <strong>laporan PDF/print</strong> lengkap dari semua data yang sudah diisi di seluruh tab. Hasilnya muncul di overlay — bisa langsung dicetak atau disimpan sebagai PDF.<br><em style="color:#888;">Tidak menyimpan data ke storage.</em></div>
+      </div>
+      <div style="background:#fff;border-radius:8px;padding:10px 12px;border:1.5px solid var(--border);">
+        <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:4px;">💾 Save</div>
+        <div style="font-size:11.5px;color:#444;line-height:1.5;">Menyimpan <strong>semua isian form</strong> (obat, dosis, data pasien, jadwal, dll.) ke <em>localStorage</em> browser. Data tetap ada walau halaman di-refresh atau browser ditutup.<br><em style="color:#888;">Tidak membuat laporan — hanya menyimpan draft.</em></div>
+      </div>
+      <div style="background:#fff;border-radius:8px;padding:10px 12px;border:1.5px solid var(--border);">
+        <div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:4px;">📂 Load</div>
+        <div style="font-size:11.5px;color:#444;line-height:1.5;">Mengambil kembali <strong>draft yang tersimpan</strong> sebelumnya dan mengisi ulang seluruh form secara otomatis. Cocok untuk melanjutkan sesi sebelumnya.<br><em style="color:#888;">Akan menimpa data yang sedang diisi saat ini.</em></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-grid" id="dash-grid"></div>
+  <div class="g2">
+    <div>
+      <div class="card"><div class="card-title"><span>🚨</span>Risk Flags</div><div id="dash-flags"><div class="alert alert-info">Lengkapi data dan klik Refresh.</div></div></div>
+      <div class="card"><div class="card-title"><span>❌</span>Data Kritis Belum Diisi</div><div id="dash-missing"></div></div>
+    </div>
+    <div>
+      <div class="card"><div class="card-title"><span>🔀</span>Pathway Summary</div><div id="dash-pathway"></div></div>
+      <div class="card"><div class="card-title"><span>✅</span>Required Approvals</div><div id="dash-approvals"></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span>ℹ️</span>Panduan Penggunaan</div>
+    <div class="alert alert-info" style="margin-bottom:8px;">Isi tab <strong>Data Pasien</strong> (BB &amp; TB) terlebih dahulu agar <strong>dosis aktual dihitung otomatis</strong> di modul Conditioning.</div>
+    <div class="g3">
+      <div class="alert alert-success"><strong>🟢 Ideal:</strong> Semua sumber daya tersedia.</div>
+      <div class="alert alert-yellow"><strong>🟡 Acceptable:</strong> Alternatif dengan monitoring ketat.</div>
+      <div class="alert alert-warn"><strong>🔴 High-risk:</strong> Perlu approval senior &amp; mitigasi.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PATIENT -->
+<div class="page" id="page-patient">
+  <div style="font-size:15px;font-weight:700;color:var(--primary);margin-bottom:12px;">👤 Data Pasien &amp; Donor</div>
+  <div class="card">
+    <div class="card-title"><span>🏷️</span>Data Pasien (Recipient)</div>
+    <div class="alert alert-orange" style="margin-bottom:10px;">⚠️ De-identified mode: gunakan kode pasien, bukan nama lengkap.</div>
+    <div class="g3">
+      <div class="f"><label>Kode / ID Pasien *</label><input id="p_code" placeholder="Misal: HSCT-2024-001"></div>
+      <div class="f"><label>Tanggal Lahir</label><input id="p_dob" type="date"></div>
+      <div class="f"><label>Usia</label><input id="p_age" placeholder="e.g. 8 tahun"></div>
+      <div class="f"><label>Jenis Kelamin</label><select id="p_sex"><option value="">—</option><option>Laki-laki</option><option>Perempuan</option></select></div>
+      <div class="f"><label>Berat Badan (kg) *</label><input id="p_wt" type="number" step="0.1" placeholder="kg"></div>
+      <div class="f"><label>Tinggi Badan (cm) *</label><input id="p_ht" type="number" step="0.1" placeholder="cm"></div>
+      <div class="f"><label>BSA (m²) – otomatis</label><input id="p_bsa" readonly style="background:#f0f4f8;font-weight:700;color:var(--primary);"></div>
+      <div class="f"><label>Golongan Darah</label><input id="p_bg" placeholder="e.g. A pos"></div>
+      <div class="f"><label>CMV Status</label><select id="p_cmv"><option value="">—</option><option>IgG Positif</option><option>IgG Negatif</option><option>Tidak diketahui</option></select></div>
+      <div class="f" style="grid-column:1/-1"><label>HLA Typing Recipient</label><input id="p_hla" placeholder="A, B, C, DRB1, DQB1"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span>🎗️</span>Diagnosis &amp; Indikasi *</div>
+    <div class="g2">
+      <div class="f"><label>Diagnosis Primer *</label><input id="p_diag" placeholder="e.g. High Risk B-ALL"></div>
+      <div class="f"><label>Status Penyakit *</label><select id="p_status"><option value="">—</option><option>CR1</option><option>CR2</option><option>CR3+</option><option>Relaps aktif</option><option>Refrakter</option><option>Remisi parsial</option></select></div>
+      <div class="f"><label>Risiko</label><select id="p_risk"><option value="">—</option><option>Standard</option><option>Intermediate</option><option>High Risk</option><option>Very High Risk</option></select></div>
+      <div class="f"><label>Tipe Transplant</label><select id="p_txtype"><option value="">—</option><option>Allogeneic – MSD</option><option>Allogeneic – MUD</option><option>Allogeneic – Haploidentical</option><option>Allogeneic – Cord Blood</option><option>Autologous</option></select></div>
+    </div>
+    <div class="f" style="margin-top:8px"><label>Catatan Indikasi</label><textarea id="p_ind_notes" placeholder="Detail indikasi, riwayat relaps, terapi sebelumnya..."></textarea></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span>👥</span>Data Donor</div>
+    <div class="g3">
+      <div class="f"><label>Kode Donor</label><input id="d_code" placeholder="Kode de-identified"></div>
+      <div class="f"><label>Hubungan Donor</label><select id="d_rel"><option value="">—</option><option>Saudara kandung (MSD)</option><option>Orang tua (Haplo)</option><option>MUD Registry</option><option>Cord Blood</option><option>Lainnya</option></select></div>
+      <div class="f"><label>Golongan Darah Donor</label><input id="d_bg" placeholder="e.g. O pos"></div>
+      <div class="f"><label>CMV Status Donor</label><select id="d_cmv"><option value="">—</option><option>IgG Positif</option><option>IgG Negatif</option><option>Tidak diketahui</option></select></div>
+      <div class="f"><label>HLA Typing Donor</label><input id="d_hla" placeholder="A, B, C, DRB1, DQB1"></div>
+      <div class="f"><label>ABO Compatibility</label><select id="d_abo"><option value="compatible">Compatible</option><option value="minor">Minor mismatch</option><option value="major">Major mismatch</option><option value="bidirect">Bidirectional</option></select></div>
+      <div class="f"><label>HLA Match Level *</label><select id="d_hla_match"><option value="">—</option><option value="10">10/10 Match</option><option value="9">9/10 Match</option><option value="8">8/10 Match</option><option value="haplo">Haploidentical</option><option value="cord">Cord Blood ≥4/6</option></select></div>
+      <div class="f"><label>Donor Type *</label><select id="d_type_cat"><option value="">—</option><option value="msd">MSD</option><option value="mud">MUD</option><option value="haplo">Haploidentical</option><option value="cb">Cord Blood</option></select></div>
+      <div class="f"><label>DSA Status</label><select id="d_dsa"><option value="neg">Negatif</option><option value="pos_low">Positif – rendah</option><option value="pos_high">Positif – tinggi</option></select></div>
+    </div>
+  </div>
+</div>
+
+<!-- DONOR -->
+<div class="page" id="page-donor">
+  <div style="font-size:15px;font-weight:700;color:var(--primary);margin-bottom:12px;">🧬 Seleksi Donor – Suitability Score</div>
+  <div class="card">
+    <div class="card-title"><span>🎯</span>Donor Suitability Assessment</div>
+    <div class="g2">
+      <div class="f"><label>CMV D/R Pair</label><select id="d_cmv_pair"><option value="neg_neg">D– / R–</option><option value="pos_neg">D+ / R–</option><option value="neg_pos">D– / R+</option><option value="pos_pos">D+ / R+</option></select></div>
+      <div class="f"><label>Usia Donor</label><select id="d_age_cat"><option value="young">&lt;40 tahun</option><option value="mid">40–55 tahun</option><option value="old">≥56 tahun</option></select></div>
+    </div>
+    <div id="donor-score-box" style="margin-top:10px;"></div>
+    <div id="donor-risk-box" style="margin-top:8px;"></div>
+    <label class="checklist-item" style="margin-top:8px;"><input type="checkbox" id="d_senior_approve"> ⚠️ Perlu approval senior untuk konfigurasi donor ini</label>
+    <div class="f" style="margin-top:8px"><label>Mitigation Plan</label><textarea id="d_mitigation" placeholder="e.g. plasma reduction, DSA desensitization, PTCy protocol..."></textarea></div>
+  </div>
+</div>
+
+<!-- CONDITIONING -->
+<div class="page" id="page-conditioning">
+  <div style="font-size:15px;font-weight:700;color:var(--primary);margin-bottom:12px;">💊 Conditioning Regimen</div>
+  <div class="card">
+    <div class="card-title"><span>📋</span>Pilih Regimen</div>
+    <div class="g2">
+      <div class="f"><label>Regimen Library *</label>
+        <select id="cond_regimen">
+          <option value="">— Pilih Regimen —</option>
+          <option value="FluBu">FluBu (Fludarabine + Busulfan)</option>
+          <option value="FluBuThio">FluBuThio (Flu + Bu + Thiotepa) – Intensified</option>
+          <option value="FluMel">FluMel (Fludarabine + Melphalan) – RIC</option>
+          <option value="BuCy">BuCy (Busulfan + Cyclophosphamide) – MAC</option>
+          <option value="TreoFlu">TreoFlu (Treosulfan + Fludarabine) – RIC</option>
+          <option value="TBI">TBI-based (TBI + Cy/VP16)</option>
+          <option value="FluCy">FluCy – NMA</option>
+          <option value="PTCy_haplo">PTCy-Haplo (Flu + Bu/Cy + PTCy)</option>
+        </select>
+      </div>
+      <div class="f"><label>Intensitas</label>
+        <select id="cond_intensity"><option value="">—</option><option value="MAC">MAC – Myeloablative</option><option value="RIC">RIC – Reduced Intensity</option><option value="NMA">NMA – Non-myeloablative</option></select>
+      </div>
+    </div>
+    <div id="regimen-badge" style="margin-top:8px;"></div>
+    <div id="regimen-ref" style="font-size:11px;color:#666;margin-top:6px;font-style:italic;"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span>⚗️</span>Obat Conditioning
+      <span style="font-size:11px;font-weight:400;color:var(--label);margin-left:8px;">BB: <strong id="disp-wt">—</strong> kg &nbsp;|&nbsp; BSA: <strong id="disp-bsa">—</strong> m²</span>
+    </div>
+    <div class="alert alert-info" style="margin-bottom:10px;font-size:12px;">Pilih obat → dosis/frekuensi/hari terisi otomatis. <strong>Dosis aktual dihitung langsung</strong> dari BB/BSA tab Pasien.</div>
+    <div id="cond_rows"></div>
+    <button class="btn btn-accent btn-sm" style="margin-top:6px;" id="cond_add">+ Tambah Obat</button>
+  </div>
+  <div class="card">
+    <div class="card-title"><span>🔬</span>Busulfan TDM &amp; Seizure Prophylaxis</div>
+    <div class="g3">
+      <div class="f"><label>Busulfan TDM Tersedia?</label><select id="bu_tdm"><option value="yes">Ya – TDM tersedia</option><option value="no">Tidak – Fixed dose</option></select></div>
+      <div class="f"><label>Target AUC Busulfan</label><input id="bu_auc" placeholder="e.g. 900–1350 μmol·min (MAC)"></div>
+      <div class="f"><label>Seizure Prophylaxis</label>
+        <select id="bu_seiz">
+          <option value="">— Pilih —</option>
+          <option value="levetiracetam">Levetiracetam (Keppra) – Pilihan Utama</option>
+          <option value="phenytoin">Phenytoin – Alternatif</option>
+          <option value="clonazepam">Clonazepam – Alternatif</option>
+          <option value="none">Tidak digunakan</option>
+        </select>
+      </div>
+    </div>
+    <div id="bu-tdm-alert" style="margin-top:8px;"></div>
+    <div id="seizure-info-box" style="margin-top:8px;"></div>
+    <div class="f" style="margin-top:8px"><label>Catatan Khusus / Dose Variance</label><textarea id="cond_notes" placeholder="Catatan dose variance, alasan penyesuaian dosis..."></textarea></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span>👥</span>Role-based Notes – Conditioning</div>
+    <div class="role-tabs">
+      <button class="role-tab active" data-role="dokter-cond">Dokter</button>
+      <button class="role-tab" data-role="farmasi-cond">Farmasi</button>
+      <button class="role-tab" data-role="perawat-cond">Perawat</button>
+      <button class="role-tab" data-role="koordinator-cond">Koordinator</button>
+    </div>
+    <div class="role-note active" id="role-dokter-cond">Verifikasi regimen sesuai indikasi dan BB/BSA terkini. Konfirmasi TDM bila busulfan digunakan. Dokumentasi informed consent risiko conditioning.</div>
+    <div class="role-note" id="role-farmasi-cond">Cek dosis aktual vs kalkulasi. Tandai dose variance >10%. Verifikasi kompatibilitas obat dan osmolaritas. Pastikan mesna untuk regimen mengandung Cy.</div>
+    <div class="role-note" id="role-perawat-cond">Konfirmasi identitas pasien (double-check). Monitor tanda infus: ekstravasasi, reaksi hipersensitivitas. Catat waktu infus. Laporkan segera bila ada keluhan.</div>
+    <div class="role-note" id="role-koordinator-cond">Koordinasi jadwal TDM dengan lab. Pastikan obat tersedia H-2 sebelum kondisioning. Update status regimen di rekam medis.</div>
+  </div>
+</div>
+
+<!-- GVHD -->
+<div class="page" id="page-gvhd">
+  <div style="font-size:15px;font-weight:700;color:var(--primary);margin-bottom:12px;">🛡️ GVHD Prophylaxis</div>
+  <div class="card">
+    <div class="card-title"><span>💉</span>Regimen GVHD Profilaksis</div>
+    <div class="g2">
+      <div class="f"><label>Regimen GVHD *</label>
+        <select id="gvhd_regimen">
+          <option value="">—</option>
+          <option value="cni_mtx">CNI + MTX</option><option value="cni_mmf">CNI + MMF</option>
+          <option value="tac_mmf">Tacrolimus + MMF</option><option value="csa_mmf">Cyclosporine + MMF</option>
+          <option value="ptcy">PTCy-based (Haplo)</option><option value="tcd">Ex vivo T-cell depletion</option>
+        </select>
+      </div>
+      <div class="f"><label>CNI yang Digunakan</label>
+        <select id="gvhd_cni"><option value="">—</option><option value="csa">Cyclosporine A</option><option value="tac">Tacrolimus</option><option value="none">Tidak menggunakan CNI</option></select>
+      </div>
+    </div>
+    <div id="gvhd-badge" style="margin-top:8px;"></div><div id="gvhd-alert" style="margin-top:8px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span>⚗️</span>Detail Obat GVHD
+      <span style="font-size:11px;font-weight:400;color:var(--label);margin-left:8px;">BB: <strong id="gvhd-disp-wt">—</strong> kg &nbsp;|&nbsp; BSA: <strong id="gvhd-disp-bsa">—</strong> m²</span>
+    </div>
+    <div class="alert alert-info" style="margin-bottom:10px;font-size:12px;">Pilih obat → dosis, frekuensi, durasi terisi otomatis. Dosis aktual dihitung dari BB/BSA.</div>
+    <div id="gvhd_rows"></div>
+    <button class="btn btn-accent btn-sm" style="margin-top:6px;" id="gvhd_add">+ Tambah Obat</button>
+    <div class="g2" style="margin-top:12px;">
+      <div class="f"><label>CNI untuk Trough</label>
+        <select id="gvhd_trough_cni_type">
+          <option value="">— Pilih CNI —</option>
+          <option value="csa_msd">Cyclosporine A – MSD</option>
+          <option value="csa_mud">Cyclosporine A – MUD</option>
+          <option value="csa_haplo">Cyclosporine A – Haplo/PTCy</option>
+          <option value="tac_msd">Tacrolimus – MSD</option>
+          <option value="tac_mud">Tacrolimus – MUD</option>
+          <option value="tac_haplo">Tacrolimus – Haplo/PTCy</option>
+        </select>
+      </div>
+      <div class="f"><label>Target Trough CNI</label>
+        <select id="gvhd_trough_phase"><option value="">— Pilih fase —</option></select>
+        <input id="gvhd_trough_target" placeholder="Target trough akan terisi otomatis" style="margin-top:4px;">
+      </div>
+      <div class="f"><label>Trough Monitoring</label>
+        <select id="gvhd_trough_avail">
+          <option value="yes">Tersedia reguler (2×/minggu)</option>
+          <option value="weekly">Tersedia mingguan</option>
+          <option value="limited">Terbatas</option>
+          <option value="no">Tidak tersedia</option>
+        </select>
+      </div>
+    </div>
+    <div id="trough-alert" style="margin-top:8px;"></div>
+    <div id="trough-detail-box" style="margin-top:8px;"></div>
+    <div style="margin-top:12px;">
+      <div style="font-size:11px;font-weight:700;color:var(--label);text-transform:uppercase;letter-spacing:.3px;margin-bottom:8px;">📉 Rencana Tapering CNI</div>
+      <div class="g2">
+        <div class="f"><label>Pilih Protokol Tapering</label>
+          <select id="gvhd_taper_sel">
+            <option value="">— Pilih protokol tapering —</option>
+            <option value="std20">Standar: turun 20%/minggu mulai Day +60</option>
+            <option value="std10">Konservatif: turun 10%/minggu mulai Day +90</option>
+            <option value="haplo">Haplo/MUD: turun 20%/2 minggu mulai Day +90</option>
+            <option value="rapid">Cepat: turun 25%/minggu mulai Day +60</option>
+            <option value="ptcy">PTCy-based: stop CsA/Tac lebih awal (Day +180)</option>
+            <option value="custom">Custom (isi manual)</option>
+          </select>
+        </div>
+        <div class="f"><label>Detail Rencana Tapering</label>
+          <textarea id="gvhd_taper" placeholder="Detail protokol tapering..." style="min-height:60px;"></textarea>
+        </div>
+      </div>
+      <div id="taper-info-box" style="margin-top:8px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- INFECTION -->
+<div class="page" id="page-infection">
+  <div style="font-size:15px;font-weight:700;color:var(--primary);margin-bottom:12px;">🦠 Profilaksis Infeksi &amp; CMV</div>
+  <div class="card">
+    <div class="card-title"><span>🔬</span>CMV Strategy</div>
+    <div class="g2">
+      <div class="f"><label>CMV D/R Risk Group</label><select id="cmv_group"><option value="neg_neg">D– / R–</option><option value="pos_neg">D+ / R–</option><option value="neg_pos">D– / R+</option><option value="pos_pos">D+ / R+</option></select></div>
+      <div class="f"><label>Strategi CMV</label><select id="cmv_strategy"><option value="preemptive">Pre-emptive</option><option value="prophylaxis">Universal prophylaxis</option></select></div>
+      <div class="f"><label>CMV PCR Tersedia?</label><select id="cmv_pcr_avail"><option value="weekly">Mingguan</option><option value="biweekly">2x/bulan</option><option value="limited">Terbatas</option><option value="no">Tidak tersedia</option></select></div>
+      <div class="f"><label>Threshold Lokal CMV PCR</label><input id="cmv_threshold" placeholder="e.g. >500 copies/mL"></div>
+      <div class="f"><label>Letermovir Tersedia?</label><select id="cmv_letermovir"><option value="no">Tidak</option><option value="yes_adult">Ya (dewasa)</option><option value="yes_ped">Ya (pediatrik, off-label)</option></select></div>
+      <div class="f"><label>Obat Pre-emptive</label><select id="cmv_preemptive"><option value="ganciclovir">IV Ganciclovir</option><option value="valganciclovir">PO Valganciclovir</option><option value="foscarnet">Foscarnet</option></select></div>
+    </div>
+    <div id="cmv-alert" style="margin-top:8px;"></div>
+    <div class="alert alert-yellow" style="margin-top:8px;">⚠️ Threshold CMV bersifat platform-spesifik. Validasi dengan laboratorium lokal.</div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span>💊</span>Agen Profilaksis Infeksi
+      <span style="font-size:11px;font-weight:400;color:var(--label);margin-left:8px;">BB: <strong id="inf-disp-wt">—</strong> kg &nbsp;|&nbsp; BSA: <strong id="inf-disp-bsa">—</strong> m²</span>
+    </div>
+    <div class="alert alert-info" style="margin-bottom:10px;font-size:12px;">Pilih agen → dosis, frekuensi, durasi terisi otomatis. Tersedia pilihan alternatif bila agen utama tidak tersedia.</div>
+    <div id="inf_rows"></div>
+    <button class="btn btn-accent btn-sm" style="margin-top:6px;" id="inf_add">+ Tambah Agen</button>
+  </div>
+</div>
+
+<!-- VOD -->
+<div class="page" id="page-vod">
+  <div style="font-size:15px;font-weight:700;color:var(--primary);margin-bottom:12px;">⚠️ VOD/SOS Risk Assessment</div>
+  <div class="card">
+    <div class="card-title"><span>🔎</span>Faktor Risiko VOD/SOS</div>
+    <div class="g2">
+      <div>
+        <label class="checklist-item"><input type="checkbox" id="vod_bu"> Conditioning berbasis Busulfan (MAC)</label>
+        <label class="checklist-item"><input type="checkbox" id="vod_tbi"> TBI-based conditioning</label>
+        <label class="checklist-item"><input type="checkbox" id="vod_liver"> Riwayat penyakit hati</label>
+        <label class="checklist-item"><input type="checkbox" id="vod_bili"> Bilirubin/transaminase meningkat</label>
+        <label class="checklist-item"><input type="checkbox" id="vod_2nd"> HSCT ke-2 atau lebih</label>
+        <label class="checklist-item"><input type="checkbox" id="vod_infant"> Bayi/usia sangat muda (&lt;2 tahun)</label>
+      </div>
+      <div>
+        <label class="checklist-item"><input type="checkbox" id="vod_iron"> Iron overload (ferritin &gt;1000)</label>
+        <label class="checklist-item"><input type="checkbox" id="vod_inflam"> Infeksi/inflamasi aktif pre-HSCT</label>
+        <label class="checklist-item"><input type="checkbox" id="vod_siro"> Paparan sirolimus</label>
+        <label class="checklist-item"><input type="checkbox" id="vod_allohigh"> Allogeneic setting risiko tinggi</label>
+        <label class="checklist-item"><input type="checkbox" id="vod_gem"> Riwayat gemtuzumab/inotuzumab</label>
+        <label class="checklist-item"><input type="checkbox" id="vod_tpn"> TPN berkepanjangan</label>
+      </div>
+    </div>
+    <div id="vod-score-box" style="margin-top:10px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span>💊</span>Pencegahan VOD/SOS</div>
+    <div class="g2">
+      <div class="f"><label>Ursodeoxycholic Acid</label><input id="vod_udca" placeholder="e.g. UDCA 250 mg TDS dari admission s/d Day +30"></div>
+      <div class="f"><label>Defibrotide Tersedia?</label><select id="vod_defib"><option value="yes">Ya</option><option value="no">Tidak</option><option value="limited">Terbatas</option></select></div>
+    </div>
+    <div id="defib-alert" style="margin-top:8px;"></div>
+    <div class="f" style="margin-top:8px"><label>Rencana Monitoring VOD/SOS</label><textarea id="vod_monitor" placeholder="BB harian, balance cairan, bilirubin serial..."></textarea></div>
+    <div class="f" style="margin-top:8px"><label>Rencana Eskalasi / Rujukan</label><textarea id="vod_escalation" placeholder="Bila defibrotide tidak tersedia dan VOD berat..."></textarea></div>
+  </div>
+</div>
+
+<!-- MONITORING -->
+<div class="page" id="page-monitoring">
+  <div style="font-size:15px;font-weight:700;color:var(--primary);margin-bottom:12px;">🔬 Monitoring &amp; Resource Assessment</div>
+  <div class="card">
+    <div class="card-title"><span>🏥</span>Ketersediaan Sumber Daya</div>
+    <div class="g2">
+      <div class="f"><label>Chimerism Studies</label><select id="mon_chim"><option value="full">Lengkap</option><option value="limited">Terbatas</option><option value="no">Tidak tersedia</option></select></div>
+      <div class="f"><label>CMV PCR</label><select id="mon_cmv"><option value="weekly">Mingguan</option><option value="limited">Terbatas</option><option value="no">Tidak tersedia</option></select></div>
+      <div class="f"><label>Produk Darah Iradiasi</label><select id="mon_irrad"><option value="yes">Tersedia</option><option value="no">Tidak tersedia</option></select></div>
+      <div class="f"><label>Ruang HEPA</label><select id="mon_hepa"><option value="yes">Tersedia</option><option value="partial">Parsial</option><option value="no">Tidak tersedia</option></select></div>
+      <div class="f"><label>Stem Cell Processing</label><select id="mon_scp"><option value="full">Lengkap</option><option value="limited">Terbatas</option><option value="basic">Dasar</option></select></div>
+      <div class="f"><label>Jadwal Chimerism</label><input id="mon_chim_sched" placeholder="e.g. Day +30, +60, +90, +180"></div>
+      <div class="f"><label>Threshold Hb Transfusi</label><input id="tx_hb" placeholder="e.g. Hb &lt;8 g/dL"></div>
+      <div class="f"><label>Threshold Plt Transfusi</label><input id="tx_plt" placeholder="e.g. Plt &lt;20×10⁹/L"></div>
+    </div>
+    <div id="monitoring-alerts" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<!-- SCHEDULE -->
+<div class="page" id="page-schedule">
+  <div style="font-size:15px;font-weight:700;color:var(--primary);margin-bottom:12px;">📅 Jadwal BMT Day-by-Day</div>
+  <div class="card">
+    <div class="card-title"><span>📅</span>Jadwal Harian</div>
+    <div style="display:grid;grid-template-columns:65px 65px 105px 1fr 26px;gap:7px;margin-bottom:6px;">
+      <span style="font-size:10px;font-weight:700;color:var(--label);text-transform:uppercase;">BMT Day</span>
+      <span style="font-size:10px;font-weight:700;color:var(--label);text-transform:uppercase;">Hari</span>
+      <span style="font-size:10px;font-weight:700;color:var(--label);text-transform:uppercase;">Tanggal</span>
+      <span style="font-size:10px;font-weight:700;color:var(--label);text-transform:uppercase;">Prosedur</span>
+      <span></span>
+    </div>
+    <div id="sched_rows"></div>
+    <button class="btn btn-accent btn-sm" style="margin-top:6px;" id="sched_add">+ Tambah Hari</button>
+  </div>
+</div>
+
+<!-- POST TX -->
+<div class="page" id="page-posttx">
+  <div style="font-size:15px;font-weight:700;color:var(--primary);margin-bottom:12px;">📋 Instruksi Pasca Transplant</div>
+  <div class="card">
+    <div class="card-title"><span>📋</span>Monitoring Post-Transplant</div>
+    <div id="post_items"></div>
+    <button class="btn btn-accent btn-sm" style="margin-top:8px;" id="post_add">+ Tambah Instruksi</button>
+    <div class="g2" style="margin-top:10px;">
+      <div class="f"><label>Jadwal Chimerism</label><input id="post_chim" placeholder="e.g. Day +30, +60, +90, +180"></div>
+      <div class="f"><label>Monitoring CMV</label><textarea id="post_cmv" placeholder="e.g. CMV PCR mingguan; pre-emptive jika >500 copies/mL"></textarea></div>
+      <div class="f"><label>Threshold Transfusi</label><textarea id="post_transfuse" placeholder="RCC: Hb <8 | Plt: <20×10⁹/L (IRRADIATED)"></textarea></div>
+      <div class="f"><label>Masalah Unresolved</label><textarea id="post_unresolved" placeholder="Isu yang belum terselesaikan..."></textarea></div>
+    </div>
+    <div style="margin-top:10px;font-size:11px;font-weight:700;color:var(--label);margin-bottom:6px;">REQUIRED APPROVALS:</div>
+    <label class="checklist-item"><input type="checkbox" id="appr_senior"> ✅ Approval senior transplant physician</label>
+    <label class="checklist-item"><input type="checkbox" id="appr_pharma"> ✅ Review farmasi klinis</label>
+    <label class="checklist-item"><input type="checkbox" id="appr_ic"> ✅ Informed consent pasien/keluarga</label>
+    <label class="checklist-item"><input type="checkbox" id="appr_ic2"> ✅ Donor consent</label>
+    <label class="checklist-item"><input type="checkbox" id="appr_ethics"> ✅ Pertimbangan etis/komite</label>
+  </div>
+</div>
+
+<!-- EVIDENCE -->
+<div class="page" id="page-evidence">
+  <div style="font-size:15px;font-weight:700;color:var(--primary);margin-bottom:12px;">📚 Evidence &amp; SOP Notes</div>
+  <div class="card">
+    <div class="card-title"><span>📖</span>Referensi Kunci</div>
+    <div class="risk-flag low"><div><strong>EBMT 2024 Guidelines:</strong> Conditioning regimen, GVHD, infeksi, VOD/SOS.</div></div>
+    <div class="risk-flag low"><div><strong>ASBMT/ASTCT 2023:</strong> CMV management, CRS/ICANS grading post-HSCT.</div></div>
+    <div class="risk-flag medium"><div><strong>Busulfan TDM:</strong> Fixed-dose tanpa TDM = resource-limited. Risiko toksisitas hepatik lebih tinggi (Ref: Nava T, et al. Bone Marrow Transplant 2020).</div></div>
+    <div class="risk-flag high"><div><strong>⛔ Irradiated Blood:</strong> Wajib seluruh produk seluler pada HSCT. TA-GvHD fatal. (BCSH Guidelines 2011, diperbarui 2023).</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span>📝</span>Catatan SOP Lokal</div>
+    <div class="f"><label>Catatan SOP / Deviasi Guideline</label><textarea id="ev_sop" placeholder="Tulis deviasi dari guideline standar dan alasannya..." style="min-height:80px;"></textarea></div>
+    <div class="f" style="margin-top:8px"><label>Isu untuk Eskalasi</label><textarea id="ev_issues" placeholder="Isu ketersediaan obat, lab, fasilitas..." style="min-height:60px;"></textarea></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- PRINT OVERLAY -->
+<div id="printOverlay">
+  <div id="printBar">
+    <button class="btn btn-warn" id="printClose">✕ Tutup</button>
+    <button class="btn btn-accent" id="doPrint">🖨️ Print / PDF</button>
+  </div>
+  <div id="printBox"></div>
+</div>
+
+<script>
+// ============================================================
+// TOAST UTILITY
+// ============================================================
+function showToast(msg, type, duration) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + (type || '');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function() { t.className = ''; }, duration || 2800);
+}
+
+// ============================================================
+// CONDITIONING DRUG DATABASE
+// ============================================================
+var COND_DB = {
+  'IV Fludarabine':{basis:'BSA',doseOptions:[{label:'30 mg/m²/hari (standar MAC/RIC)',value:'30 mg/m²/hari'},{label:'25 mg/m²/hari (NMA / dosis rendah)',value:'25 mg/m²/hari'},{label:'40 mg/m²/hari (intensifikasi)',value:'40 mg/m²/hari'}],freqOptions:[{label:'OD – sekali sehari',value:'OD'},{label:'BD – dosis terbagi 2x',value:'BD'}],noteOptions:[{label:'Day -7 s/d -3 (5 hari)',value:'Day -7 s/d -3'},{label:'Day -6 s/d -2 (5 hari)',value:'Day -6 s/d -2'},{label:'Day -6 s/d -3 (4 hari)',value:'Day -6 s/d -3'},{label:'Day -5 s/d -2 (4 hari)',value:'Day -5 s/d -2'},{label:'Day -5 s/d -3 (3 hari)',value:'Day -5 s/d -3'}],calcFn:function(wt,bsa){if(!bsa)return null;return{dose30:(30*bsa).toFixed(1)+' mg',dose25:(25*bsa).toFixed(1)+' mg',dose40:(40*bsa).toFixed(1)+' mg'};},hint:'Standar: 30 mg/m²/hari × 4–5 hari. Infus IV 30 menit. Sesuaikan dosis pada CrCl <30 mL/min.',ref:'Ref: EBMT Handbook 2019; Jacobsohn DA, Pediatr Blood Cancer 2020.',warn:''},
+  'IV Busulfan':{basis:'BB',doseOptions:[{label:'4 mg/kg/hari OD – MAC (anak ≥1 th)',value:'4 mg/kg/hari'},{label:'3.2 mg/kg/hari OD – RIC',value:'3.2 mg/kg/hari'},{label:'0.8 mg/kg/dosis QID – MAC klasik',value:'0.8 mg/kg/dosis (QID)'},{label:'1.1 mg/kg/dosis QID – anak <4 th',value:'1.1 mg/kg/dosis (QID)'},{label:'2 mg/kg/hari – RIC rendah',value:'2 mg/kg/hari'}],freqOptions:[{label:'OD – sekali sehari',value:'OD'},{label:'QID – 4x sehari setiap 6 jam',value:'QID'}],noteOptions:[{label:'Day -7 s/d -4 (4 hari)',value:'Day -7 s/d -4'},{label:'Day -6 s/d -3 (4 hari)',value:'Day -6 s/d -3'},{label:'Day -5 s/d -2 (4 hari)',value:'Day -5 s/d -2'},{label:'Day -4 s/d -3 (2 hari)',value:'Day -4 s/d -3'}],calcFn:function(wt,bsa){if(!wt)return null;return{'d4':(4*wt).toFixed(1)+' mg/hari (OD-MAC)','d3.2':(3.2*wt).toFixed(1)+' mg/hari (RIC)','d0.8':(0.8*wt).toFixed(1)+' mg/dosis (QID)'};},hint:'⚠️ WAJIB TDM bila tersedia. Target AUC: 900–1350 μmol·min/L (MAC). Anak <4 th: PK sangat bervariasi, TDM kritis.',ref:'Ref: Bartelink IH, et al. BBMT 2016; Nava T, et al. BMT 2020; EBMT 2024.',warn:'⚠️ Seizure prophylaxis WAJIB. Hepatotoksisitas (VOD/SOS) – pantau LFT harian.'},
+  'IV Thiotepa':{basis:'BB',doseOptions:[{label:'10 mg/kg/hari – standar intensified',value:'10 mg/kg/hari'},{label:'5 mg/kg/hari – dosis rendah (RIC)',value:'5 mg/kg/hari'},{label:'8 mg/kg/hari – dosis sedang',value:'8 mg/kg/hari'}],freqOptions:[{label:'BD – 2 dosis interval 12 jam',value:'BD (0800H + 2000H)'},{label:'OD – dosis tunggal',value:'OD'}],noteOptions:[{label:'Day -2',value:'Day -2'},{label:'Day -3',value:'Day -3'},{label:'Day -3 dan -2',value:'Day -3 dan -2'}],calcFn:function(wt,bsa){if(!wt)return null;return{'d10':(10*wt).toFixed(1)+' mg/hari → BD: '+(5*wt).toFixed(1)+' mg','d5':(5*wt).toFixed(1)+' mg/hari (OD)'};},hint:'Dosis 10 mg/kg/hari: bagi 2 dosis BD interval 12 jam. Infus 1 jam. Penetrasi SSP baik.',ref:'Ref: Dalle JH, et al. BMT 2013; EBMT Pediatric WP 2022.',warn:'⚠️ Myelosupresi dalam. Toksisitas kulit (hiperpigmentasi).'},
+  'IV Melphalan':{basis:'BSA',doseOptions:[{label:'140 mg/m² – standar RIC allogeneic',value:'140 mg/m²'},{label:'100 mg/m² – dosis rendah',value:'100 mg/m²'},{label:'200 mg/m² – standar autologous',value:'200 mg/m²'}],freqOptions:[{label:'Single dose',value:'Single dose'},{label:'OD × 2 hari',value:'OD × 2 hari'}],noteOptions:[{label:'Day -1',value:'Day -1'},{label:'Day -2',value:'Day -2'}],calcFn:function(wt,bsa){if(!bsa)return null;return{'d140':(140*bsa).toFixed(1)+' mg','d100':(100*bsa).toFixed(1)+' mg','d200':(200*bsa).toFixed(1)+' mg'};},hint:'Infus IV cepat (15–20 menit) via CVC. Mukositis berat – profilaksis intensif. Hidrasi agresif.',ref:'Ref: Jacobsohn DA, Pediatr Blood Cancer 2020; EBMT Handbook 2024.',warn:'⚠️ Mukositis berat – siapkan morfin PCA. Kurangi dosis pada GFR rendah.'},
+  'IV Cyclophosphamide':{basis:'BB',doseOptions:[{label:'60 mg/kg/hari – BuCy MAC',value:'60 mg/kg/hari'},{label:'50 mg/kg/hari – dosis sedang',value:'50 mg/kg/hari'},{label:'1800 mg/m²/hari – PTCy Day +3,+4',value:'1800 mg/m²/hari (PTCy)'},{label:'50 mg/kg/hari × 4 hari – SAA',value:'50 mg/kg/hari × 4 hari'}],freqOptions:[{label:'OD – sekali sehari',value:'OD'},{label:'BD – dosis terbagi',value:'BD'}],noteOptions:[{label:'Day -3 dan -2 (BuCy)',value:'Day -3 dan -2'},{label:'Day -5 s/d -2 (SAA)',value:'Day -5 s/d -2'},{label:'Day +3 dan +4 (PTCy)',value:'Day +3 dan +4 (PTCy)'}],calcFn:function(wt,bsa){if(!wt||!bsa)return null;return{'d60':(60*wt).toFixed(0)+' mg/hari','d50':(50*wt).toFixed(0)+' mg/hari','ptcy':(1800*bsa).toFixed(0)+' mg/hari (PTCy)'};},hint:'Mesna WAJIB: 100% dosis Cy (jam ke-0, +4, +8). Hidrasi IV ≥3 L/m²/hari. Monitor urine hourly.',ref:'Ref: Luznik L, et al. BBMT 2008; Samarasinghe S, et al. Blood 2021.',warn:'⚠️ MESNA WAJIB. Kardiotoksik pada dosis tinggi kumulatif.'},
+  'IV Treosulfan':{basis:'BSA',doseOptions:[{label:'14 g/m²/hari – dosis tinggi (≥6 th)',value:'14 g/m²/hari'},{label:'12 g/m²/hari – standar',value:'12 g/m²/hari'},{label:'10 g/m²/hari – dosis rendah',value:'10 g/m²/hari'}],freqOptions:[{label:'OD – infus 2 jam',value:'OD (infus 2 jam)'}],noteOptions:[{label:'Day -6 s/d -4 (3 hari)',value:'Day -6 s/d -4'},{label:'Day -5 s/d -3 (3 hari)',value:'Day -5 s/d -3'}],calcFn:function(wt,bsa){if(!bsa)return null;return{'d14':(14*bsa).toFixed(2)+' g/hari','d12':(12*bsa).toFixed(2)+' g/hari','d10':(10*bsa).toFixed(2)+' g/hari'};},hint:'Alternatif Busulfan – hepatotoksisitas lebih rendah. Ideal untuk infant dan risiko VOD tinggi.',ref:'Ref: Boztug H, et al. BBMT 2015; Schots R, et al. Blood 2022.',warn:''},
+  'IV Etoposide (VP-16)':{basis:'BSA',doseOptions:[{label:'60 mg/kg – dosis tunggal tinggi (TBI+VP16)',value:'60 mg/kg (BB)'},{label:'200 mg/m²/hari – dosis sedang',value:'200 mg/m²/hari'},{label:'100 mg/m²/hari – dosis rendah',value:'100 mg/m²/hari'}],freqOptions:[{label:'Single dose – infus 4–6 jam',value:'Single dose (infus 4–6 jam)'},{label:'OD – sekali sehari',value:'OD'}],noteOptions:[{label:'Day -3',value:'Day -3'},{label:'Day -5 s/d -3',value:'Day -5 s/d -3'}],calcFn:function(wt,bsa){if(!wt||!bsa)return null;return{'hd':(60*wt).toFixed(0)+' mg (60 mg/kg)','d200':(200*bsa).toFixed(0)+' mg/hari'};},hint:'Pre-medikasi WAJIB: antihistamin + steroid. Infus lambat ≥1 jam. Konsentrasi <0.4 mg/mL.',ref:'Ref: Cairo MS, et al. Blood 2012; EBMT Handbook 2024.',warn:'⚠️ Hipersensitivitas (5–10%) – siapkan epinefrin.'},
+  'TBI (Total Body Irradiation)':{basis:'—',doseOptions:[{label:'12 Gy total, 6 fraksi – MAC',value:'12 Gy total (6 fraksi)'},{label:'10 Gy total, 5 fraksi',value:'10 Gy total (5 fraksi)'},{label:'2 Gy single – NMA',value:'2 Gy single (NMA)'}],freqOptions:[{label:'BD – 2 fraksi/hari ≥6 jam',value:'BD (≥6 jam interval)'},{label:'OD – satu fraksi/hari',value:'OD'},{label:'Single',value:'Single'}],noteOptions:[{label:'Day -7 s/d -5',value:'Day -7 s/d -5'},{label:'Day -2 (NMA)',value:'Day -2 (NMA)'}],calcFn:function(wt,bsa){return null;},hint:'Perlu fasilitas radioterapi khusus. Shielding paru & mata wajib untuk dosis >10 Gy.',ref:'Ref: Qayed M, et al. Blood 2020; EBMT 2024.',warn:'⚠️ Risiko jangka panjang: gangguan pertumbuhan, katarak, disfungsi tiroid.'},
+  'PO/IV Mesna':{basis:'% dosis Cy',doseOptions:[{label:'100% dosis Cy – dibagi 3 dosis',value:'100% dosis Cy (÷3)'},{label:'20% dosis Cy per dosis',value:'20% dosis Cy per dosis'}],freqOptions:[{label:'TDS – jam ke-0, +4, +8 pasca Cy',value:'TDS (jam 0, +4, +8)'},{label:'Infus kontinu 24 jam',value:'Infus kontinu'}],noteOptions:[{label:'Bersama dan setelah setiap dosis Cy',value:'Bersama dan setelah Cyclophosphamide'},{label:'Lanjut 24 jam pasca dosis Cy terakhir',value:'Lanjut 24 jam pasca Cy terakhir'}],calcFn:function(wt,bsa){return null;},hint:'WAJIB diberikan bersama setiap regimen mengandung Cyclophosphamide.',ref:'Ref: Hensley ML, et al. JCO 2008; ASCO Guidelines Mesna 2023.',warn:''},
+  'IV ATG (Antithymocyte Globulin)':{basis:'BB',doseOptions:[{label:'2.5 mg/kg/hari – Thymoglobulin',value:'2.5 mg/kg/hari (Thymoglobulin)'},{label:'3.75 mg/kg/hari',value:'3.75 mg/kg/hari'},{label:'10 mg/kg/hari – equine ATG',value:'10 mg/kg/hari (equine ATG)'}],freqOptions:[{label:'OD – infus lambat ≥6 jam',value:'OD (infus ≥6 jam)'}],noteOptions:[{label:'Day -3 s/d -1 (3 hari)',value:'Day -3 s/d -1'},{label:'Day -4 s/d -2',value:'Day -4 s/d -2'}],calcFn:function(wt,bsa){if(!wt)return null;return{'d2.5':(2.5*wt).toFixed(1)+' mg/hari','d3.75':(3.75*wt).toFixed(1)+' mg/hari','d10':(10*wt).toFixed(0)+' mg/hari'};},hint:'Pre-medikasi 30 menit sebelum: Paracetamol 15 mg/kg + Antihistamin + Hydrocortisone 1 mg/kg.',ref:'Ref: Admiraal R, et al. Lancet Haematol 2017; EBMT 2024.',warn:'⚠️ Reaksi infus berat (demam, rigors). Risiko PTLD jangka panjang.'}
+};
+
+var FREQ_PRESETS=['OD','BD','TDS','QID','Single dose','OD (infus 2 jam)','BD (0800H + 2000H)','OD (infus ≥6 jam)','TDS (jam 0, +4, +8)','Infus kontinu'];
+var DAY_PRESETS=['Day -8','Day -7 s/d -3','Day -7 s/d -4','Day -6 s/d -2','Day -6 s/d -3','Day -6 s/d -4','Day -5 s/d -3','Day -5 s/d -2','Day -4 s/d -2','Day -3 dan -2','Day -2 dan -1','Day -2','Day -1','Day 0','Day +1 s/d +30','Day +3 dan +4 (PTCy)'];
+
+var DOSE_CALC_MAP={
+  '30 mg/m²/hari':function(wt,bsa){return bsa?(30*bsa).toFixed(1)+' mg':null;},
+  '25 mg/m²/hari':function(wt,bsa){return bsa?(25*bsa).toFixed(1)+' mg':null;},
+  '40 mg/m²/hari':function(wt,bsa){return bsa?(40*bsa).toFixed(1)+' mg':null;},
+  '4 mg/kg/hari':function(wt,bsa){return wt?(4*wt).toFixed(1)+' mg/hari':null;},
+  '3.2 mg/kg/hari':function(wt,bsa){return wt?(3.2*wt).toFixed(1)+' mg/hari':null;},
+  '0.8 mg/kg/dosis (QID)':function(wt,bsa){return wt?(0.8*wt).toFixed(1)+' mg/dosis (×4 = '+(3.2*wt).toFixed(1)+' mg/hari)':null;},
+  '1.1 mg/kg/dosis (QID)':function(wt,bsa){return wt?(1.1*wt).toFixed(1)+' mg/dosis (×4 = '+(4.4*wt).toFixed(1)+' mg/hari)':null;},
+  '2 mg/kg/hari':function(wt,bsa){return wt?(2*wt).toFixed(1)+' mg/hari':null;},
+  '10 mg/kg/hari':function(wt,bsa){return wt?(10*wt).toFixed(1)+' mg/hari → BD: '+(5*wt).toFixed(1)+' mg':null;},
+  '5 mg/kg/hari':function(wt,bsa){return wt?(5*wt).toFixed(1)+' mg/hari':null;},
+  '8 mg/kg/hari':function(wt,bsa){return wt?(8*wt).toFixed(1)+' mg/hari → BD: '+(4*wt).toFixed(1)+' mg':null;},
+  '140 mg/m²':function(wt,bsa){return bsa?(140*bsa).toFixed(1)+' mg':null;},
+  '100 mg/m²':function(wt,bsa){return bsa?(100*bsa).toFixed(1)+' mg':null;},
+  '200 mg/m²':function(wt,bsa){return bsa?(200*bsa).toFixed(1)+' mg':null;},
+  '60 mg/kg/hari':function(wt,bsa){return wt?(60*wt).toFixed(0)+' mg/hari':null;},
+  '50 mg/kg/hari':function(wt,bsa){return wt?(50*wt).toFixed(0)+' mg/hari':null;},
+  '1800 mg/m²/hari (PTCy)':function(wt,bsa){return bsa?(1800*bsa).toFixed(0)+' mg/hari (PTCy)':null;},
+  '50 mg/kg/hari × 4 hari':function(wt,bsa){return wt?(50*wt).toFixed(0)+' mg/hari × 4 hari':null;},
+  '14 g/m²/hari':function(wt,bsa){return bsa?(14*bsa).toFixed(2)+' g/hari ('+(14000*bsa).toFixed(0)+' mg)':null;},
+  '12 g/m²/hari':function(wt,bsa){return bsa?(12*bsa).toFixed(2)+' g/hari ('+(12000*bsa).toFixed(0)+' mg)':null;},
+  '10 g/m²/hari':function(wt,bsa){return bsa?(10*bsa).toFixed(2)+' g/hari ('+(10000*bsa).toFixed(0)+' mg)':null;},
+  '60 mg/kg (BB)':function(wt,bsa){return wt?(60*wt).toFixed(0)+' mg (single)':null;},
+  '200 mg/m²/hari':function(wt,bsa){return bsa?(200*bsa).toFixed(0)+' mg/hari':null;},
+  '100 mg/m²/hari':function(wt,bsa){return bsa?(100*bsa).toFixed(0)+' mg/hari':null;},
+  '2.5 mg/kg/hari (Thymoglobulin)':function(wt,bsa){return wt?(2.5*wt).toFixed(1)+' mg/hari':null;},
+  '3.75 mg/kg/hari':function(wt,bsa){return wt?(3.75*wt).toFixed(1)+' mg/hari':null;},
+  '10 mg/kg/hari (equine ATG)':function(wt,bsa){return wt?(10*wt).toFixed(0)+' mg/hari':null;}
+};
+
+// ============================================================
+// UTILS
+// ============================================================
+function el(id){return document.getElementById(id);}
+function val(id){var e=el(id);return e?e.value.trim():'';}
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function checked(id){var e=el(id);return e?e.checked:false;}
+function setVal(id,v){var e=el(id);if(e)e.value=v||'';}
+function setCheck(id,v){var e=el(id);if(e)e.checked=!!v;}
+
+function calcBSA(){
+  var wt=parseFloat(val('p_wt')),ht=parseFloat(val('p_ht'));
+  if(wt>0&&ht>0){
+    var bsa=(Math.sqrt(wt*ht/3600)).toFixed(2);
+    el('p_bsa').value=bsa;
+    el('disp-wt').textContent=wt; el('disp-bsa').textContent=bsa;
+    if(el('gvhd-disp-wt'))el('gvhd-disp-wt').textContent=wt;
+    if(el('gvhd-disp-bsa'))el('gvhd-disp-bsa').textContent=bsa;
+    if(el('inf-disp-wt'))el('inf-disp-wt').textContent=wt;
+    if(el('inf-disp-bsa'))el('inf-disp-bsa').textContent=bsa;
+    // recalc inf rows
+    el('inf_rows').querySelectorAll('div').forEach(function(row){
+      if(row._tryAutoActual)row._tryAutoActual();
+    });
+    document.querySelectorAll('.cond-row').forEach(function(row){
+      var ds=row.querySelector('.cond-drug-sel');
+      if(ds&&ds.value) recalcRow(row,ds.value,wt,bsa);
+    });
+  }
+}
+
+// ============================================================
+// CONDITIONING ROW BUILDER
+// ============================================================
+function makeCondRow(data){
+  data=data||{};
+  var row=document.createElement('div');
+  row.className='cond-row';
+  var grid=document.createElement('div');
+  grid.className='cond-row-grid';
+
+  // 1 Drug
+  var drugDiv=document.createElement('div');drugDiv.className='cond-field';
+  var drugLbl=document.createElement('label');drugLbl.textContent='Obat';drugDiv.appendChild(drugLbl);
+  var drugSel=document.createElement('select');drugSel.className='cond-drug-sel';
+  var ob=document.createElement('option');ob.value='';ob.textContent='— Pilih obat —';drugSel.appendChild(ob);
+  Object.keys(COND_DB).forEach(function(name){
+    var opt=document.createElement('option');opt.value=name;opt.textContent=name;
+    if(data.drug===name)opt.selected=true;
+    drugSel.appendChild(opt);
+  });
+  var customInp=document.createElement('input');
+  customInp.placeholder='atau ketik nama obat lain...';customInp.className='cond-custom-drug';
+  customInp.style.marginTop='4px';
+  customInp.value=(data.drug&&!COND_DB[data.drug])?data.drug:'';
+  customInp.style.display=(data.drug&&!COND_DB[data.drug])?'block':'none';
+  drugDiv.appendChild(drugSel);drugDiv.appendChild(customInp);
+  grid.appendChild(drugDiv);
+
+  // 2 Dose
+  var doseDiv=document.createElement('div');doseDiv.className='cond-field';
+  var doseLbl=document.createElement('label');doseLbl.textContent='Dosis';doseDiv.appendChild(doseLbl);
+  var doseSel=document.createElement('select');doseSel.className='cond-dose-sel';
+  var dob=document.createElement('option');dob.value='';dob.textContent='— Pilih dosis —';doseSel.appendChild(dob);
+  var doseInp=document.createElement('input');doseInp.className='cond-dose-inp';
+  doseInp.placeholder='atau ketik dosis';doseInp.value=data.dose||'';doseInp.style.marginTop='4px';
+  doseDiv.appendChild(doseSel);doseDiv.appendChild(doseInp);
+  grid.appendChild(doseDiv);
+
+  // 3 Actual
+  var actualDiv=document.createElement('div');actualDiv.className='cond-field';
+  var actualLbl=document.createElement('label');actualLbl.textContent='Dosis Aktual';actualDiv.appendChild(actualLbl);
+  var actualInp=document.createElement('input');actualInp.className='cond-actual-inp';
+  actualInp.placeholder='Otomatis / manual';actualInp.value=data.actual||'';
+  actualInp.style.fontWeight='700';actualInp.style.color='var(--primary)';
+  actualDiv.appendChild(actualInp);
+  grid.appendChild(actualDiv);
+
+  // 4 Freq
+  var freqDiv=document.createElement('div');freqDiv.className='cond-field';
+  var freqLbl=document.createElement('label');freqLbl.textContent='Frekuensi';freqDiv.appendChild(freqLbl);
+  var freqSel=document.createElement('select');freqSel.className='cond-freq-sel';
+  var fb=document.createElement('option');fb.value='';fb.textContent='— Pilih —';freqSel.appendChild(fb);
+  FREQ_PRESETS.forEach(function(f){var o=document.createElement('option');o.value=f;o.textContent=f;freqSel.appendChild(o);});
+  var freqInp=document.createElement('input');freqInp.className='cond-freq-inp';
+  freqInp.placeholder='atau ketik';freqInp.value=data.freq||'';freqInp.style.marginTop='4px';
+  freqDiv.appendChild(freqSel);freqDiv.appendChild(freqInp);
+  grid.appendChild(freqDiv);
+
+  // 5 Notes/Days
+  var notesDiv=document.createElement('div');notesDiv.className='cond-field';
+  var notesLbl=document.createElement('label');notesLbl.textContent='Hari / Catatan';notesDiv.appendChild(notesLbl);
+  var notesSel=document.createElement('select');notesSel.className='cond-notes-sel';
+  var nb=document.createElement('option');nb.value='';nb.textContent='— Pilih hari —';notesSel.appendChild(nb);
+  DAY_PRESETS.forEach(function(d){var o=document.createElement('option');o.value=d;o.textContent=d;notesSel.appendChild(o);});
+  var notesInp=document.createElement('input');notesInp.className='cond-notes-inp';
+  notesInp.placeholder='atau ketik';notesInp.value=data.notes||'';notesInp.style.marginTop='4px';
+  notesDiv.appendChild(notesSel);notesDiv.appendChild(notesInp);
+  grid.appendChild(notesDiv);
+
+  // 6 Del
+  var delDiv=document.createElement('div');delDiv.style.paddingTop='18px';
+  var delBtn=document.createElement('button');delBtn.className='btn-del';delBtn.textContent='✕';
+  delBtn.addEventListener('click',function(){row.remove();});
+  delDiv.appendChild(delBtn);grid.appendChild(delDiv);
+  row.appendChild(grid);
+
+  var hintDiv=document.createElement('div');hintDiv.className='cond-hint';row.appendChild(hintDiv);
+  var refDiv=document.createElement('div');refDiv.className='cond-ref';row.appendChild(refDiv);
+  var warnDiv=document.createElement('div');warnDiv.className='cond-warn';row.appendChild(warnDiv);
+  var calcDiv=document.createElement('div');
+  calcDiv.className='cond-calc-box';
+  calcDiv.style.cssText='font-size:11px;color:#1a3a5c;background:#e8f0f7;border-radius:6px;padding:5px 10px;margin-top:5px;display:none;line-height:1.6;';
+  row.appendChild(calcDiv);
+
+  // Events
+  drugSel.addEventListener('change',function(){
+    var name=drugSel.value;
+    customInp.style.display=name?'none':'block';
+    if(!name){hintDiv.style.display='none';refDiv.style.display='none';warnDiv.style.display='none';calcDiv.style.display='none';return;}
+    populateRowFromDB(row,name);
+    var wt=parseFloat(val('p_wt')),bsa=parseFloat(val('p_bsa'));
+    if(wt&&bsa)recalcRow(row,name,wt,bsa);
+  });
+  doseSel.addEventListener('change',function(){
+    if(!doseSel.value)return;
+    doseInp.value=doseSel.value;
+    autoActual(row);
+  });
+  doseInp.addEventListener('input',function(){autoActual(row);});
+  actualInp.addEventListener('input',function(){actualInp.dataset.manual='1';actualInp.style.background='#fffbe8';actualInp.style.borderColor='var(--orange)';});
+  actualInp.addEventListener('blur',function(){
+    if(!actualInp.value.trim()){delete actualInp.dataset.manual;actualInp.style.background='';actualInp.style.borderColor='';autoActual(row);}
+  });
+  freqSel.addEventListener('change',function(){if(freqSel.value)freqInp.value=freqSel.value;});
+  notesSel.addEventListener('change',function(){if(notesSel.value)notesInp.value=notesSel.value;});
+
+  el('cond_rows').appendChild(row);
+
+  if(data.drug&&COND_DB[data.drug]){
+    setTimeout(function(){
+      populateRowFromDB(row,data.drug,data.dose,data.freq,data.notes);
+      var wt=parseFloat(val('p_wt')),bsa=parseFloat(val('p_bsa'));
+      var ai=row.querySelector('.cond-actual-inp');
+      if(ai){
+        if(data.actual){ai.value=data.actual;ai.dataset.manual='1';ai.style.background='#fffbe8';ai.style.borderColor='var(--orange)';}
+        else if(wt&&bsa){autoActual(row);}
+      }
+      if(wt&&bsa)recalcRow(row,data.drug,wt,bsa);
+    },30);
+  }
+}
+
+function autoActual(row){
+  var ai=row.querySelector('.cond-actual-inp');
+  if(!ai||ai.dataset.manual)return;
+  var di=row.querySelector('.cond-dose-inp');
+  var dv=di?di.value.trim():'';
+  var wt=parseFloat(val('p_wt')),bsa=parseFloat(val('p_bsa'));
+  var fn=DOSE_CALC_MAP[dv];
+  var result=fn?fn(wt,bsa):null;
+  if(result){ai.value=result;ai.style.background='#e8f4f1';ai.style.borderColor='var(--accent)';}
+  else{ai.value='';ai.style.background='';ai.style.borderColor='';}
+}
+
+function populateRowFromDB(row,name,setDose,setFreq,setNotes){
+  var db=COND_DB[name];if(!db)return;
+  var doseSel=row.querySelector('.cond-dose-sel');
+  doseSel.innerHTML='';
+  var ob=document.createElement('option');ob.value='';ob.textContent='— Pilih dosis —';doseSel.appendChild(ob);
+  db.doseOptions.forEach(function(d){var o=document.createElement('option');o.value=d.value;o.textContent=d.label;doseSel.appendChild(o);});
+  if(setDose)row.querySelector('.cond-dose-inp').value=setDose;
+
+  var freqSel=row.querySelector('.cond-freq-sel');
+  freqSel.innerHTML='';
+  var fb=document.createElement('option');fb.value='';fb.textContent='— Pilih —';freqSel.appendChild(fb);
+  db.freqOptions.forEach(function(f){var o=document.createElement('option');o.value=f.value;o.textContent=f.label;freqSel.appendChild(o);});
+  FREQ_PRESETS.forEach(function(f){var ex=db.freqOptions.some(function(x){return x.value===f;});if(!ex){var o=document.createElement('option');o.value=f;o.textContent=f;freqSel.appendChild(o);}});
+  if(setFreq)row.querySelector('.cond-freq-inp').value=setFreq;
+  else if(db.freqOptions.length===1)row.querySelector('.cond-freq-inp').value=db.freqOptions[0].value;
+
+  var notesSel=row.querySelector('.cond-notes-sel');
+  notesSel.innerHTML='';
+  var nb=document.createElement('option');nb.value='';nb.textContent='— Pilih hari —';notesSel.appendChild(nb);
+  db.noteOptions.forEach(function(n){var o=document.createElement('option');o.value=n.value;o.textContent=n.label;notesSel.appendChild(o);});
+  DAY_PRESETS.forEach(function(d){var ex=db.noteOptions.some(function(x){return x.value===d;});if(!ex){var o=document.createElement('option');o.value=d;o.textContent=d;notesSel.appendChild(o);}});
+  if(setNotes)row.querySelector('.cond-notes-inp').value=setNotes;
+  else if(db.noteOptions.length>=1)row.querySelector('.cond-notes-inp').value=db.noteOptions[0].value;
+
+  var hintDiv=row.querySelector('.cond-hint');
+  var refDiv=row.querySelector('.cond-ref');
+  var warnDiv=row.querySelector('.cond-warn');
+  if(db.hint){hintDiv.textContent='💡 '+db.hint;hintDiv.style.display='block';}else hintDiv.style.display='none';
+  if(db.ref){refDiv.textContent=db.ref;refDiv.style.display='block';}else refDiv.style.display='none';
+  if(db.warn){warnDiv.textContent=db.warn;warnDiv.style.display='block';}else warnDiv.style.display='none';
+}
+
+function recalcRow(row,name,wt,bsa){
+  var db=COND_DB[name];if(!db||!db.calcFn)return;
+  var result=db.calcFn(wt,bsa);
+  var calcDiv=row.querySelector('.cond-calc-box');
+  if(!result){if(calcDiv)calcDiv.style.display='none';return;}
+  var html='<strong>📐 Kalkulasi (BB:'+wt+' kg | BSA:'+bsa+' m²):</strong><br>';
+  if(result.note)html+=result.note;
+  else Object.keys(result).forEach(function(k){html+='• '+result[k]+'<br>';});
+  if(calcDiv){calcDiv.innerHTML=html;calcDiv.style.display='block';}
+  autoActual(row);
+}
+
+function getCondRows(){
+  var rows=[];
+  document.querySelectorAll('#cond_rows .cond-row').forEach(function(row){
+    var ds=row.querySelector('.cond-drug-sel');
+    var ci=row.querySelector('.cond-custom-drug');
+    var drug=(ds&&ds.value)?ds.value:(ci?ci.value.trim():'');
+    if(!drug)return;
+    rows.push({
+      drug:drug,
+      dose:row.querySelector('.cond-dose-inp').value.trim(),
+      actual:row.querySelector('.cond-actual-inp').value.trim(),
+      freq:row.querySelector('.cond-freq-inp').value.trim(),
+      notes:row.querySelector('.cond-notes-inp').value.trim()
+    });
+  });
+  return rows;
+}
+
+// ============================================================
+// GVHD DB & ROW BUILDER
+// ============================================================
+var GVHD_DB={
+  'Cyclosporine A (CsA)':{basis:'BB',doseOptions:[{label:'3 mg/kg/hari IV – standar awal',value:'3 mg/kg/hari IV'},{label:'5 mg/kg/hari PO – ekuivalen oral',value:'5 mg/kg/hari PO'},{label:'2 mg/kg/hari IV – dosis rendah',value:'2 mg/kg/hari IV'}],freqOptions:['BD (IV)','OD (IV kontinu 24 jam)','BD (PO)'],durationOptions:['Mulai Day -1, s/d Day +60 lalu taper','Mulai Day -1 s/d Day +180 (MUD)','Mulai Day +5 (PTCy)'],calcFn:function(wt,bsa){if(!wt)return null;return{iv:(3*wt).toFixed(1)+' mg/hari IV → BD: '+(1.5*wt).toFixed(1)+' mg/dosis',po:(5*wt).toFixed(1)+' mg/hari PO → BD: '+(2.5*wt).toFixed(1)+' mg/dosis',low:(2*wt).toFixed(1)+' mg/hari (dosis rendah)'};},hint:'Trough target: 100–200 μg/L (MSD), 150–250 μg/L (MUD). Monitor 2×/minggu.',ref:'Ref: Ruutu T, et al. BMT 2014; EBMT 2024.',warn:''},
+  'Tacrolimus (FK506)':{basis:'BB',doseOptions:[{label:'0.03 mg/kg/hari IV',value:'0.03 mg/kg/hari IV'},{label:'0.1 mg/kg/hari PO',value:'0.1 mg/kg/hari PO'},{label:'0.02 mg/kg/hari IV – dosis rendah',value:'0.02 mg/kg/hari IV'}],freqOptions:['Infus kontinu 24 jam (IV)','BD (PO)'],durationOptions:['Mulai Day -1, s/d Day +60 lalu taper (MSD)','Mulai Day -1, s/d Day +90 (MUD)','Mulai Day +5 (PTCy)'],calcFn:function(wt,bsa){if(!wt)return null;return{iv:(0.03*wt).toFixed(3)+' mg/hari IV (kontinu)',po:(0.1*wt).toFixed(2)+' mg/hari PO → BD: '+(0.05*wt).toFixed(2)+' mg/dosis',low:(0.02*wt).toFixed(3)+' mg/hari (dosis rendah)'};},hint:'Trough target: 5–15 ng/mL. Azol meningkatkan kadar 5–10×. Monitor 2×/minggu.',ref:'Ref: Nash RA, et al. Blood 2000; EBMT 2024.',warn:''},
+  'Methotrexate (MTX) – Mini-dose':{basis:'BSA',doseOptions:[{label:'15 mg/m² Day +1',value:'15 mg/m² Day +1'},{label:'10 mg/m² Day +3, +6, +11',value:'10 mg/m² Day +3, +6, +11'},{label:'Short MTX: D+1, +3, +6',value:'Short MTX: D+1, +3, +6'}],freqOptions:['Dosis tunggal IV push/infus 30 menit'],durationOptions:['4 dosis: Day +1, +3, +6, +11 (standar)','3 dosis: Day +1, +3, +6 (short MTX)'],calcFn:function(wt,bsa){if(!bsa)return null;return{d1:'Day +1: '+(15*bsa).toFixed(1)+' mg',d3:'Day +3/+6/+11: '+(10*bsa).toFixed(1)+' mg/dosis'};},hint:'Standar emas GVHD profilaksis MSD/MUD. Skip dosis bila mucositis grade 3–4 atau kreatinin tinggi.',ref:'Ref: Storb R, et al. NEJM 1986; EBMT 2024.',warn:'⚠️ Kontraindikasi bila bilirubin >3, kreatinin >2× ULN, atau efusi bermakna.'},
+  'Mycophenolate Mofetil (MMF)':{basis:'BB',doseOptions:[{label:'15 mg/kg/dosis TDS – standar anak',value:'15 mg/kg/dosis TDS'},{label:'600 mg/m²/dosis TDS – BSA-based',value:'600 mg/m²/dosis TDS'},{label:'500 mg TDS – fixed dewasa',value:'500 mg TDS'}],freqOptions:['TDS (setiap 8 jam)','BD (setiap 12 jam)'],durationOptions:['Day +1 s/d Day +30 (stop bila engraftment baik)','Day +1 s/d Day +45 (MUD)','Day +5 s/d Day +35 (PTCy)'],calcFn:function(wt,bsa){if(!wt&&!bsa)return null;var r={};if(wt)r.tds_bb=(15*wt).toFixed(0)+' mg/dosis TDS = '+(45*wt).toFixed(0)+' mg/hari';if(bsa)r.tds_bsa=(600*bsa).toFixed(0)+' mg/dosis TDS';return r;},hint:'Alternatif MTX. Pantau CBC (leukopenia). Stop bila ANC <1.0.',ref:'Ref: Bolwell B, et al. BMT 2004; EBMT 2024.',warn:''},
+  'Cyclophosphamide Post-Transplant (PTCy)':{basis:'BSA',doseOptions:[{label:'50 mg/kg/hari (BB)',value:'50 mg/kg/hari (BB)'},{label:'1800 mg/m²/hari (BSA)',value:'1800 mg/m²/hari (BSA)'}],freqOptions:['OD – Day +3 dan Day +4'],durationOptions:['Day +3 dan +4 pasca infus stem sel (standar)'],calcFn:function(wt,bsa){if(!wt&&!bsa)return null;var r={};if(wt)r.bb=(50*wt).toFixed(0)+' mg/dosis × 2 hari';if(bsa)r.bsa=(1800*bsa).toFixed(0)+' mg/dosis × 2 hari';return r;},hint:'PTCy Day +3 dan +4. Mesna WAJIB. Diikuti Tac/CsA + MMF mulai Day +5.',ref:'Ref: Luznik L, et al. BBMT 2008; Kasamon YL, et al. JCO 2017.',warn:'⚠️ Mesna WAJIB. PTCy diberikan SETELAH infus stem sel.'}
+};
+
+var TAPER_PLANS={
+  std20:{text:'Turunkan 20% dari dosis saat ini tiap minggu, mulai Day +60 bila tidak ada GVHD.',steps:'Day +60: 80% → Day +67: 60% → Day +74: 40% → Day +81: 20% → Day +88: stop.',note:'Pantau tanda GVHD. Bila muncul: pause tapering, kembali ke dosis sebelumnya.',ref:'Ref: EBMT Standard Protocol 2024.',badge:'b-ideal'},
+  std10:{text:'Turunkan 10% tiap 2 minggu mulai Day +90. Konservatif untuk risiko relaps rendah.',steps:'Day +90: 90% → Day +104: 80% → ... → ~Day +220: stop.',note:'',ref:'Ref: EBMT 2024.',badge:'b-acceptable'},
+  haplo:{text:'Haplo/MUD: turunkan 20% setiap 2 minggu mulai Day +90.',steps:'Day +90: 80% → Day +104: 60% → Day +118: 40% → Day +132: 20% → Day +146: stop.',note:'',ref:'Ref: Luznik PTCy protocol; O\'Donnell BBMT 2012.',badge:'b-limited'},
+  rapid:{text:'Tapering cepat: turun 25%/minggu mulai Day +60.',steps:'Day +60: 75% → Day +67: 50% → Day +74: 25% → Day +81: stop.',note:'⚠️ Risiko aGVHD meningkat.',ref:'Ref: expert opinion.',badge:'b-limited'},
+  ptcy:{text:'PTCy-based: MMF stop Day +35. Tac taper mulai Day +90 (MSD) atau Day +150–+180 (haplo).',steps:'MMF: Day +5 → +35. Tac: taper mulai Day +90/+150 → stop Day +150/+180.',note:'',ref:'Ref: Luznik L, BBMT 2008; Kasamon JCO 2017.',badge:'b-ideal'},
+  custom:{text:'',steps:'',note:'',ref:'',badge:'b-blue'}
+};
+
+function makeGVHDRow(data){
+  data=data||{};
+  var row=document.createElement('div');row.className='cond-row';
+  var grid=document.createElement('div');grid.className='cond-row-grid';
+
+  // 1 Drug
+  var drugDiv=document.createElement('div');drugDiv.className='cond-field';
+  var dLbl=document.createElement('label');dLbl.textContent='Obat';drugDiv.appendChild(dLbl);
+  var drugSel=document.createElement('select');drugSel.className='gvhd-drug-sel';
+  var ob=document.createElement('option');ob.value='';ob.textContent='— Pilih obat —';drugSel.appendChild(ob);
+  Object.keys(GVHD_DB).forEach(function(name){
+    var o=document.createElement('option');o.value=name;o.textContent=name;
+    if(data.drug===name)o.selected=true;
+    drugSel.appendChild(o);
+  });
+  var ci=document.createElement('input');ci.placeholder='atau ketik...';ci.style.cssText='border:1.5px solid var(--border);border-radius:6px;padding:5px 8px;font-size:11px;font-family:inherit;background:#fafbfc;width:100%;margin-top:4px;display:none;';
+  ci.value=(data.drug&&!GVHD_DB[data.drug])?data.drug:'';
+  ci.style.display=(data.drug&&!GVHD_DB[data.drug])?'block':'none';
+  drugDiv.appendChild(drugSel);drugDiv.appendChild(ci);
+  grid.appendChild(drugDiv);
+
+  function mkInp(cls,ph,val2,mt){var i=document.createElement('input');i.className=cls;i.placeholder=ph;i.value=val2||'';i.style.cssText='border:1.5px solid var(--border);border-radius:6px;padding:6px 8px;font-size:12px;font-family:inherit;background:#fafbfc;width:100%;'+(mt?'margin-top:4px;':'');return i;}
+  function mkSel(cls,ph){var s=document.createElement('select');s.className=cls;s.style.cssText='border:1.5px solid var(--border);border-radius:6px;padding:6px 8px;font-size:11.5px;font-family:inherit;background:#fff;width:100%;';var o=document.createElement('option');o.value='';o.textContent=ph;s.appendChild(o);return s;}
+
+  // 2 Dose
+  var dd=document.createElement('div');dd.className='cond-field';
+  var dl=document.createElement('label');dl.textContent='Dosis';dd.appendChild(dl);
+  var dSel=mkSel('gvhd-dose-sel','— Pilih dosis —');
+  var dInp=mkInp('gvhd-dose-inp','atau ketik',data.dose,'1');
+  dSel.addEventListener('change',function(){if(dSel.value){dInp.value=dSel.value;trigGVHD(row);}});
+  dInp.addEventListener('input',function(){trigGVHD(row);});
+  dd.appendChild(dSel);dd.appendChild(dInp);grid.appendChild(dd);
+
+  // 3 Actual
+  var ad=document.createElement('div');ad.className='cond-field';
+  var al=document.createElement('label');al.textContent='Dosis Aktual';ad.appendChild(al);
+  var aInp=mkInp('gvhd-actual-inp','Otomatis',data.actual,'');
+  aInp.style.fontWeight='700';aInp.style.color='var(--primary)';
+  aInp.addEventListener('input',function(){aInp.dataset.manual='1';aInp.style.background='#fffbe8';aInp.style.borderColor='var(--orange)';});
+  aInp.addEventListener('blur',function(){if(!aInp.value.trim()){delete aInp.dataset.manual;aInp.style.background='';aInp.style.borderColor='';trigGVHD(row);}});
+  ad.appendChild(aInp);grid.appendChild(ad);
+
+  // 4 Freq
+  var fd=document.createElement('div');fd.className='cond-field';
+  var fl=document.createElement('label');fl.textContent='Frekuensi';fd.appendChild(fl);
+  var fSel=mkSel('gvhd-freq-sel','— Pilih —');
+  var fInp=mkInp('gvhd-freq-inp','atau ketik',data.freq,'1');
+  fSel.addEventListener('change',function(){if(fSel.value)fInp.value=fSel.value;});
+  fd.appendChild(fSel);fd.appendChild(fInp);grid.appendChild(fd);
+
+  // 5 Notes
+  var nd=document.createElement('div');nd.className='cond-field';
+  var nl=document.createElement('label');nl.textContent='Durasi / Catatan';nd.appendChild(nl);
+  var nSel=mkSel('gvhd-notes-sel','— Pilih durasi —');
+  var nInp=mkInp('gvhd-notes-inp','atau ketik',data.notes,'1');
+  nSel.addEventListener('change',function(){if(nSel.value)nInp.value=nSel.value;});
+  nd.appendChild(nSel);nd.appendChild(nInp);grid.appendChild(nd);
+
+  // 6 Del
+  var xd=document.createElement('div');xd.style.paddingTop='18px';
+  var xb=document.createElement('button');xb.className='btn-del';xb.textContent='✕';
+  xb.addEventListener('click',function(){row.remove();});
+  xd.appendChild(xb);grid.appendChild(xd);
+  row.appendChild(grid);
+
+  var hD=document.createElement('div');hD.className='cond-hint';row.appendChild(hD);
+  var rD=document.createElement('div');rD.className='cond-ref';row.appendChild(rD);
+  var wD=document.createElement('div');wD.className='cond-warn';row.appendChild(wD);
+  var cD=document.createElement('div');cD.className='gvhd-calc-box';
+  cD.style.cssText='font-size:11px;color:#1a3a5c;background:#e8f0f7;border-radius:6px;padding:5px 10px;margin-top:5px;display:none;line-height:1.6;';
+  row.appendChild(cD);
+
+  drugSel.addEventListener('change',function(){
+    var name=drugSel.value;
+    ci.style.display=name?'none':'block';
+    if(!name){hD.style.display='none';rD.style.display='none';wD.style.display='none';cD.style.display='none';return;}
+    populateGVHDRow(row,name);
+    trigGVHD(row);
+  });
+
+  el('gvhd_rows').appendChild(row);
+
+  if(data.drug&&GVHD_DB[data.drug]){
+    setTimeout(function(){
+      populateGVHDRow(row,data.drug,data.dose,data.freq,data.notes);
+      var ai=row.querySelector('.gvhd-actual-inp');
+      if(ai){
+        if(data.actual){ai.value=data.actual;ai.dataset.manual='1';ai.style.background='#fffbe8';ai.style.borderColor='var(--orange)';}
+        else trigGVHD(row);
+      }
+    },30);
+  }
+}
+
+function populateGVHDRow(row,name,setDose,setFreq,setNotes){
+  var db=GVHD_DB[name];if(!db)return;
+  var dSel=row.querySelector('.gvhd-dose-sel');
+  dSel.innerHTML='';var ob=document.createElement('option');ob.value='';ob.textContent='— Pilih —';dSel.appendChild(ob);
+  db.doseOptions.forEach(function(d){var o=document.createElement('option');o.value=d.value;o.textContent=d.label;dSel.appendChild(o);});
+  if(setDose)row.querySelector('.gvhd-dose-inp').value=setDose;
+  else if(db.doseOptions.length)row.querySelector('.gvhd-dose-inp').value=db.doseOptions[0].value;
+
+  var fSel=row.querySelector('.gvhd-freq-sel');
+  fSel.innerHTML='';var fb=document.createElement('option');fb.value='';fb.textContent='— Pilih —';fSel.appendChild(fb);
+  db.freqOptions.forEach(function(f){var o=document.createElement('option');o.value=f;o.textContent=f;fSel.appendChild(o);});
+  if(setFreq)row.querySelector('.gvhd-freq-inp').value=setFreq;
+  else if(db.freqOptions.length)row.querySelector('.gvhd-freq-inp').value=db.freqOptions[0];
+
+  var nSel=row.querySelector('.gvhd-notes-sel');
+  nSel.innerHTML='';var nb=document.createElement('option');nb.value='';nb.textContent='— Pilih —';nSel.appendChild(nb);
+  db.durationOptions.forEach(function(d){var o=document.createElement('option');o.value=d;o.textContent=d;nSel.appendChild(o);});
+  if(setNotes)row.querySelector('.gvhd-notes-inp').value=setNotes;
+  else if(db.durationOptions.length)row.querySelector('.gvhd-notes-inp').value=db.durationOptions[0];
+
+  var hD=row.querySelector('.cond-hint'),rD=row.querySelector('.cond-ref'),wD=row.querySelector('.cond-warn');
+  if(db.hint){hD.textContent='💡 '+db.hint;hD.style.display='block';}else hD.style.display='none';
+  if(db.ref){rD.textContent=db.ref;rD.style.display='block';}else rD.style.display='none';
+  if(db.warn){wD.textContent=db.warn;wD.style.display='block';}else wD.style.display='none';
+}
+
+function trigGVHD(row){
+  var ai=row.querySelector('.gvhd-actual-inp');
+  if(!ai||ai.dataset.manual)return;
+  var ds=row.querySelector('.gvhd-drug-sel');
+  var di=row.querySelector('.gvhd-dose-inp');
+  if(!ds||!di)return;
+  var db=GVHD_DB[ds.value];if(!db||!db.calcFn)return;
+  var wt=parseFloat(val('p_wt')),bsa=parseFloat(val('p_bsa'));
+  if(!wt&&!bsa)return;
+  var result=db.calcFn(wt,bsa);if(!result)return;
+  var dv=di.value.trim();
+  var auto='';
+  if(dv.includes('3 mg/kg')&&result.iv)auto=result.iv;
+  else if(dv.includes('5 mg/kg')&&result.po)auto=result.po;
+  else if(dv.includes('2 mg/kg')&&result.low)auto=result.low;
+  else if(dv.includes('0.03')&&result.iv)auto=result.iv;
+  else if(dv.includes('0.1')&&result.po)auto=result.po;
+  else if(dv.includes('0.02')&&result.low)auto=result.low;
+  else if(dv.includes('15 mg/m²')&&result.d1)auto=result.d1;
+  else if(dv.includes('10 mg/m²')&&result.d3)auto=result.d3;
+  else if(dv.includes('15 mg/kg')&&result.tds_bb)auto=result.tds_bb;
+  else if(dv.includes('600')&&result.tds_bsa)auto=result.tds_bsa;
+  else if(dv.includes('50 mg/kg')&&result.bb)auto=result.bb;
+  else if(dv.includes('1800')&&result.bsa)auto=result.bsa;
+  else{var vs=Object.values(result);if(vs.length)auto=vs[0];}
+  if(auto){ai.value=auto;ai.style.background='#e8f4f1';ai.style.borderColor='var(--accent)';}
+  var cD=row.querySelector('.gvhd-calc-box');
+  if(cD&&result){
+    var html='<strong>📐 Kalkulasi (BB:'+wt+' kg | BSA:'+bsa+' m²):</strong><br>';
+    Object.keys(result).forEach(function(k){html+='• '+esc(result[k])+'<br>';});
+    cD.innerHTML=html;cD.style.display='block';
+  }
+}
+
+function getGVHDRows(){
+  var rows=[];
+  el('gvhd_rows').querySelectorAll('.cond-row').forEach(function(row){
+    var ds=row.querySelector('.gvhd-drug-sel');
+    var drug=ds?ds.value:'';
+    if(!drug)return;
+    rows.push({
+      drug:drug,
+      dose:(row.querySelector('.gvhd-dose-inp')||{}).value||'',
+      actual:(row.querySelector('.gvhd-actual-inp')||{}).value||'',
+      freq:(row.querySelector('.gvhd-freq-inp')||{}).value||'',
+      notes:(row.querySelector('.gvhd-notes-inp')||{}).value||''
+    });
+  });
+  return rows;
+}
+
+// ============================================================
+// INFECTION DB (simplified for space – uses generic row)
+// ============================================================
+// ── Inf dose calc map: keyword patterns → calc fn
+var INF_CALC=[
+  // Aciclovir / Acyclovir
+  {pat:/(\d+(?:\.\d+)?)\s*mg\/kg\/dosis/i, fn:function(m,wt,bsa){return wt?(+m[1]*wt).toFixed(1)+' mg/dosis':null;}},
+  {pat:/(\d+(?:\.\d+)?)\s*mg\/kg\/hari/i,  fn:function(m,wt,bsa){return wt?(+m[1]*wt).toFixed(1)+' mg/hari':null;}},
+  // BSA-based mg/m²
+  {pat:/(\d+(?:\.\d+)?)\s*mg\/m²\/hari/i,  fn:function(m,wt,bsa){return bsa?(+m[1]*bsa).toFixed(1)+' mg/hari':null;}},
+  {pat:/(\d+(?:\.\d+)?)\s*mg\/m²/i,        fn:function(m,wt,bsa){return bsa?(+m[1]*bsa).toFixed(1)+' mg':null;}},
+  // mcg/kg
+  {pat:/(\d+(?:\.\d+)?)\s*mcg\/kg\/hari/i, fn:function(m,wt,bsa){return wt?(+m[1]*wt).toFixed(1)+' mcg/hari':null;}},
+  {pat:/(\d+(?:\.\d+)?)\s*mcg\/kg/i,       fn:function(m,wt,bsa){return wt?(+m[1]*wt).toFixed(1)+' mcg/dosis':null;}},
+  // g/m²
+  {pat:/(\d+(?:\.\d+)?)\s*g\/m²\/hari/i,   fn:function(m,wt,bsa){return bsa?(+m[1]*bsa).toFixed(2)+' g/hari ('+(+m[1]*bsa*1000).toFixed(0)+' mg)':null;}},
+  // TMP component: "5 mg/kg/hari TMP"
+  {pat:/(\d+(?:\.\d+)?)\s*mg\/kg\/hari\s*TMP/i, fn:function(m,wt,bsa){
+    if(!wt)return null;
+    var tmp=(+m[1]*wt).toFixed(1);
+    var smx=(+m[1]*5*wt).toFixed(1);
+    return 'TMP '+tmp+' mg / SMX '+smx+' mg';
+  }},
+  // Levetiracetam "10 mg/kg/dosis BD"
+  {pat:/(\d+(?:\.\d+)?)\s*mg\/kg\/dosis/i, fn:function(m,wt,bsa){return wt?(+m[1]*wt).toFixed(1)+' mg/dosis':null;}},
+  // UDCA "12–15 mg/kg/hari"
+  {pat:/(\d+)[\u2013-](\d+)\s*mg\/kg/i,    fn:function(m,wt,bsa){
+    if(!wt)return null;
+    return (+m[1]*wt).toFixed(0)+'–'+(+m[2]*wt).toFixed(0)+' mg/hari';
+  }},
+];
+
+function calcInfActual(doseStr,wt,bsa){
+  if(!doseStr)return null;
+  // try TMP first (more specific)
+  var tmpM=doseStr.match(/(\d+(?:\.\d+)?)\s*mg\/kg\/hari\s*TMP/i);
+  if(tmpM&&wt){
+    var tmp=(+tmpM[1]*wt).toFixed(1);
+    var smx=(+tmpM[1]*5*wt).toFixed(1);
+    return 'TMP '+tmp+' mg / SMX '+smx+' mg';
+  }
+  // range pattern e.g. "12–15 mg/kg"
+  var rangeM=doseStr.match(/(\d+)[–\-](\d+)\s*mg\/kg/i);
+  if(rangeM&&wt){
+    return (+rangeM[1]*wt).toFixed(0)+'–'+(+rangeM[2]*wt).toFixed(0)+' mg/hari';
+  }
+  for(var i=0;i<INF_CALC.length;i++){
+    var m=doseStr.match(INF_CALC[i].pat);
+    if(m){
+      var r=INF_CALC[i].fn(m,wt,bsa);
+      if(r)return r;
+    }
+  }
+  return null;
+}
+
+function makeInfRow(data){
+  data=data||{};
+  var row=document.createElement('div');
+  row.style.cssText='display:grid;grid-template-columns:2fr 1.3fr 1fr 1fr 1.5fr 26px;gap:8px;margin-bottom:6px;align-items:center;';
+  var fields=['drug','dose','actual','freq','notes'];
+  var inputs={};
+  fields.forEach(function(f){
+    var inp=document.createElement('input');
+    inp.placeholder={drug:'Nama agen',dose:'Dosis/m²·kg',actual:'Otomatis / manual',freq:'Frekuensi',notes:'Durasi / Catatan'}[f]||'';
+    inp.value=data[f]||'';inp.dataset.field=f;
+    inp.style.cssText='border:1.5px solid var(--border);border-radius:6px;padding:6px 8px;font-size:12px;font-family:inherit;background:#fafbfc;width:100%;';
+    if(f==='actual'){inp.style.fontWeight='700';inp.style.color='var(--primary)';}
+    inputs[f]=inp;
+    row.appendChild(inp);
+  });
+  var del=document.createElement('button');del.className='btn-del';del.textContent='✕';
+  del.addEventListener('click',function(){row.remove();});
+  row.appendChild(del);
+
+  function tryAutoActual(){
+    var ai=inputs['actual'];
+    if(ai.dataset.manual)return;
+    var wt=parseFloat(val('p_wt')),bsa=parseFloat(val('p_bsa'));
+    var result=calcInfActual(inputs['dose'].value.trim(),wt,bsa);
+    if(result){
+      ai.value=result;
+      ai.style.background='#e8f4f1';ai.style.borderColor='var(--accent)';
+      ai.title='Dihitung otomatis. Edit untuk override.';
+    } else {
+      ai.value='';ai.style.background='';ai.style.borderColor='';
+    }
+  }
+
+  inputs['dose'].addEventListener('input',tryAutoActual);
+  inputs['actual'].addEventListener('input',function(){
+    inputs['actual'].dataset.manual='1';
+    inputs['actual'].style.background='#fffbe8';inputs['actual'].style.borderColor='var(--orange)';
+  });
+  inputs['actual'].addEventListener('blur',function(){
+    if(!inputs['actual'].value.trim()){
+      delete inputs['actual'].dataset.manual;
+      inputs['actual'].style.background='';inputs['actual'].style.borderColor='';
+      tryAutoActual();
+    }
+  });
+  // store ref for global recalc
+  row._tryAutoActual=tryAutoActual;
+
+  el('inf_rows').appendChild(row);
+  // auto-calc on creation if dose provided
+  if(data.dose&&!data.actual){setTimeout(tryAutoActual,40);}
+}
+
+function getInfRows(){
+  var rows=[];
+  el('inf_rows').querySelectorAll('div').forEach(function(row){
+    var obj={};
+    row.querySelectorAll('input[data-field]').forEach(function(inp){obj[inp.dataset.field]=inp.value.trim();});
+    if(obj.drug)rows.push(obj);
+  });
+  return rows;
+}
+
+// ============================================================
+// SCHEDULE & POST ITEMS
+// ============================================================
+function makeSchedRow(data){
+  data=data||{};
+  var row=document.createElement('div');
+  row.style.cssText='display:grid;grid-template-columns:65px 65px 105px 1fr 26px;gap:7px;align-items:start;margin-bottom:6px;';
+  ['bmt','day','date','proc'].forEach(function(f){
+    var e2;
+    if(f==='proc'){
+      e2=document.createElement('textarea');
+      e2.style.cssText='border:1.5px solid var(--border);border-radius:6px;padding:6px 8px;font-size:12px;font-family:inherit;background:#fafbfc;width:100%;min-height:44px;resize:vertical;';
+      e2.placeholder='Prosedur / kejadian';
+    }else{
+      e2=document.createElement('input');
+      e2.style.cssText='border:1.5px solid var(--border);border-radius:6px;padding:6px 8px;font-size:12px;font-family:inherit;background:#fafbfc;width:100%;';
+      e2.placeholder={bmt:'e.g. -7',day:'Senin',date:''}[f]||'';
+      if(f==='date')e2.type='date';
+    }
+    e2.value=data[f]||'';e2.dataset.field=f;
+    row.appendChild(e2);
+  });
+  var del=document.createElement('button');del.className='btn-del';del.textContent='✕';del.style.marginTop='4px';
+  del.addEventListener('click',function(){row.remove();});
+  row.appendChild(del);
+  el('sched_rows').appendChild(row);
+}
+
+function getSchedRows(){
+  var rows=[];
+  Array.from(el('sched_rows').children).forEach(function(row){
+    var obj={};
+    row.querySelectorAll('input,textarea').forEach(function(i){if(i.dataset.field)obj[i.dataset.field]=i.value.trim();});
+    if(obj.bmt||obj.proc)rows.push(obj);
+  });
+  return rows;
+}
+
+function addPostItem(txt){
+  var wrap=document.createElement('div');
+  wrap.style.cssText='display:flex;gap:8px;margin-bottom:6px;align-items:center;';
+  var inp=document.createElement('input');
+  inp.style.cssText='flex:1;border:1.5px solid var(--border);border-radius:6px;padding:7px 10px;font-size:13px;font-family:inherit;background:#fafbfc;';
+  inp.placeholder='Instruksi pasca transplant...';inp.value=txt||'';
+  var del=document.createElement('button');del.className='btn-del';del.textContent='✕';
+  del.addEventListener('click',function(){wrap.remove();});
+  wrap.appendChild(inp);wrap.appendChild(del);
+  el('post_items').appendChild(wrap);
+}
+
+function getPostItems(){
+  var items=[];
+  el('post_items').querySelectorAll('input').forEach(function(inp){if(inp.value.trim())items.push(inp.value.trim());});
+  return items;
+}
+
+// ============================================================
+// CLINICAL LOGIC
+// ============================================================
+function updateDonorScore(){
+  var hla=val('d_hla_match'),type=val('d_type_cat'),abo=val('d_abo'),dsa=val('d_dsa'),cmv=val('d_cmv_pair'),age=val('d_age_cat');
+  var score=0,max=6,flags=[];
+  if(hla==='10')score+=2;else if(hla==='9'){score+=1;flags.push({t:'1 antigen mismatch – GVHD meningkat',l:'medium'});}
+  else if(hla==='haplo')flags.push({t:'Haploidentical – perlu PTCy atau TCD',l:'high'});
+  else if(hla==='cord')score+=1;
+  if(type==='msd')score+=2;else if(type==='mud')score+=1;
+  else if(type==='haplo')flags.push({t:'Haplo – GVHD profilaksis intensif',l:'medium'});
+  if(abo==='compatible')score+=1;else if(abo==='major')flags.push({t:'Major ABO mismatch – red cell depletion',l:'medium'});
+  else if(abo==='bidirect')flags.push({t:'Bidirectional ABO mismatch – processing khusus',l:'high'});
+  if(dsa==='pos_high'){score-=1;flags.push({t:'DSA positif titer tinggi – risiko graft failure',l:'high'});}
+  else if(dsa==='pos_low')flags.push({t:'DSA positif titer rendah – monitor',l:'medium'});
+  else score+=1;
+  if(cmv==='neg_neg')score+=1;else if(cmv==='pos_pos')flags.push({t:'D+/R+ – reaktivasi CMV tinggi',l:'high'});
+  else flags.push({t:'CMV mismatch – PCR ketat',l:'medium'});
+  if(age==='young')score+=1;else if(age==='old')flags.push({t:'Donor ≥56 th – kualitas stem cell berkurang',l:'medium'});
+  score=Math.max(0,Math.min(score,max));
+  var pct=Math.round(score/max*100);
+  var label=pct>=75?'Donor Optimal':pct>=50?'Donor Acceptable':pct>=30?'Donor Suboptimal':'Donor Berisiko Tinggi';
+  var cls=pct>=75?'b-ideal':pct>=50?'b-acceptable':pct>=30?'b-limited':'b-highrisk';
+  el('donor-score-box').innerHTML='<div style="margin-bottom:6px;"><span class="badge '+cls+'">'+label+' – Skor: '+score+'/'+max+' ('+pct+'%)</span></div><div class="score-bar"><div class="score-fill" style="width:'+pct+'%;background:'+(pct>=75?'var(--green)':pct>=50?'var(--accent)':pct>=30?'var(--orange)':'var(--warn)')+'"></div></div>';
+  var fhtml='';flags.forEach(function(f){fhtml+='<div class="alert alert-'+(f.l==='high'?'warn':f.l==='medium'?'orange':'info')+'">⚠️ '+esc(f.t)+'</div>';});
+  el('donor-risk-box').innerHTML=fhtml;
+}
+
+function updateGVHD(){
+  var reg=val('gvhd_regimen');
+  var badges={cni_mtx:'<span class="badge b-ideal">✅ Ideal – Standar MSD/MUD</span>',cni_mmf:'<span class="badge b-acceptable">🔵 Acceptable – MTX tidak tersedia</span>',tac_mmf:'<span class="badge b-acceptable">🔵 Tacrolimus-based</span>',csa_mmf:'<span class="badge b-acceptable">🔵 Cyclosporine-based</span>',ptcy:'<span class="badge b-limited">🟡 PTCy – Preferred Haplo</span>',tcd:'<span class="badge b-limited">🟡 T-cell depletion</span>'};
+  el('gvhd-badge').innerHTML=badges[reg]||'';
+  var alerts={cni_mmf:'<div class="alert alert-yellow">ℹ️ MMF kurang efektif dibanding MTX. Monitor GVHD akut lebih ketat.</div>',ptcy:'<div class="alert alert-info">ℹ️ PTCy Day +3 dan +4. Mesna wajib.</div>',tcd:'<div class="alert alert-orange">⚠️ T-cell depletion memerlukan fasilitas khusus. Risiko relaps lebih tinggi.</div>'};
+  el('gvhd-alert').innerHTML=alerts[reg]||'';
+}
+
+function checkTrough(){
+  var av=val('gvhd_trough_avail');
+  el('trough-alert').innerHTML=av==='no'?'<div class="alert alert-warn">⛔ Monitoring trough CNI tidak tersedia. Risiko toksisitas ginjal, neurotoksisitas, TMA.</div>':av==='limited'?'<div class="alert alert-orange">⚠️ Terbatas – tingkatkan monitoring klinis.</div>':'<div class="alert alert-success">✅ Monitoring trough tersedia.</div>';
+}
+
+var TROUGH_DB={
+  csa_msd:{name:'Cyclosporine A – MSD',unit:'μg/L',phases:[
+    {label:'Day -1 s/d Day +14 (engraftment awal)',target:'150–250 μg/L',note:'Target tinggi untuk mencegah aGVHD saat engraftment.'},
+    {label:'Day +15 s/d Day +30',target:'100–200 μg/L',note:'Turunkan perlahan setelah engraftment terkonfirmasi.'},
+    {label:'Day +31 s/d Day +60 (pre-tapering)',target:'100–150 μg/L',note:'Pertahankan sebelum mulai tapering.'},
+    {label:'Day +61 s/d tapering selesai',target:'75–100 μg/L → turunkan bertahap',note:'Taper 20%/minggu hingga stop ~Day +105.'}
+  ],warn:'Azol meningkatkan kadar CsA 2–5×. Kurangi dosis 25–50% saat mulai azol.'},
+  csa_mud:{name:'Cyclosporine A – MUD',unit:'μg/L',phases:[
+    {label:'Day -1 s/d Day +14',target:'200–300 μg/L',note:'Target lebih tinggi pada MUD.'},
+    {label:'Day +15 s/d Day +30',target:'150–250 μg/L',note:''},
+    {label:'Day +31 s/d Day +60',target:'150–200 μg/L',note:'Pertahankan hingga evaluasi GVHD Day +60.'},
+    {label:'Day +61 s/d Day +90',target:'100–150 μg/L → taper',note:'Taper lebih lambat dari MSD (10–20%/2 minggu).'},
+    {label:'Day +91 s/d Day +180',target:'75–100 μg/L',note:'Target rendah selama tapering akhir.'}
+  ],warn:'Durasi lebih panjang → risiko toksisitas lebih tinggi. Pantau fungsi ginjal dan TMA.'},
+  csa_haplo:{name:'Cyclosporine A – Haplo/PTCy',unit:'μg/L',phases:[
+    {label:'Day +5 s/d Day +30 (mulai setelah PTCy)',target:'150–250 μg/L',note:'CsA dimulai Day +5, bukan Day -1.'},
+    {label:'Day +31 s/d Day +60',target:'100–200 μg/L',note:''},
+    {label:'Day +61 s/d Day +90',target:'100–150 μg/L',note:'Evaluasi GVHD sebelum tapering.'},
+    {label:'Day +91 s/d Day +150',target:'75–100 μg/L → taper',note:'Taper 20%/2 minggu pada haplo.'}
+  ],warn:'PTCy juga nefrotoksik – pantau kreatinin lebih ketat.'},
+  tac_msd:{name:'Tacrolimus – MSD',unit:'ng/mL',phases:[
+    {label:'Day -1/+1 s/d Day +30 (fase awal)',target:'10–15 ng/mL',note:'Target awal tinggi untuk pencegahan aGVHD.'},
+    {label:'Day +31 s/d Day +60',target:'8–12 ng/mL',note:'Turunkan setelah engraftment stabil.'},
+    {label:'Day +61 s/d tapering',target:'5–10 ng/mL → taper',note:'Mulai tapering Day +60 bila tidak ada GVHD.'},
+    {label:'Day +90 s/d selesai',target:'5–8 ng/mL',note:'Target rendah selama tapering akhir.'}
+  ],warn:'Voriconazole: kurangi dosis Tac 70–80%. Fluconazole: kurangi 50%. Posaconazole: kurangi 75%.'},
+  tac_mud:{name:'Tacrolimus – MUD',unit:'ng/mL',phases:[
+    {label:'Day -1/+1 s/d Day +30',target:'12–20 ng/mL',note:'Target lebih tinggi pada MUD.'},
+    {label:'Day +31 s/d Day +60',target:'10–15 ng/mL',note:''},
+    {label:'Day +61 s/d Day +90',target:'8–12 ng/mL',note:'Pertimbangkan tapering bila tidak ada GVHD.'},
+    {label:'Day +91 s/d Day +180',target:'5–10 ng/mL → taper',note:'Taper lebih lambat dari MSD.'}
+  ],warn:'Durasi lebih panjang. Dokumentasi semua penyesuaian dosis interaksi obat.'},
+  tac_haplo:{name:'Tacrolimus – Haplo/PTCy',unit:'ng/mL',phases:[
+    {label:'Day +5 s/d Day +30 (mulai setelah PTCy)',target:'10–15 ng/mL',note:'Tac dimulai Day +5 setelah PTCy selesai.'},
+    {label:'Day +31 s/d Day +60',target:'8–12 ng/mL',note:''},
+    {label:'Day +61 s/d Day +90',target:'6–10 ng/mL',note:'Evaluasi GVHD dan chimerism sebelum tapering.'},
+    {label:'Day +91 s/d Day +150–+180',target:'5–8 ng/mL → taper',note:'Taper lebih lambat. Target stop Day +150–+180.'}
+  ],warn:'Kombinasi PTCy + Tac meningkatkan risiko nefrotoksisitas. Monitor kreatinin lebih sering.'}
+};
+
+function loadTroughTargets(){
+  var type=val('gvhd_trough_cni_type');
+  var phaseSel=el('gvhd_trough_phase');
+  var targetInp=el('gvhd_trough_target');
+  phaseSel.innerHTML='<option value="">— Pilih fase —</option>';
+  targetInp.value='';
+  el('trough-detail-box').innerHTML='';
+  if(!type||!TROUGH_DB[type])return;
+  var db=TROUGH_DB[type];
+  db.phases.forEach(function(p,i){
+    var o=document.createElement('option');
+    o.value=i;
+    o.textContent=p.label+' → '+p.target;
+    phaseSel.appendChild(o);
+  });
+  // auto-select first phase
+  phaseSel.selectedIndex=1;
+  targetInp.value=db.phases[0].target;
+  renderTroughDetail(db);
+}
+
+function selectTroughPhase(){
+  var type=val('gvhd_trough_cni_type');
+  var idx=el('gvhd_trough_phase').value;
+  if(!type||idx===''||!TROUGH_DB[type])return;
+  var phase=TROUGH_DB[type].phases[parseInt(idx)];
+  if(phase){
+    el('gvhd_trough_target').value=phase.target;
+    // highlight
+    var inp=el('gvhd_trough_target');
+    inp.style.background='#e8f4f1';inp.style.borderColor='var(--accent)';
+    setTimeout(function(){inp.style.background='';inp.style.borderColor='';},1200);
+  }
+}
+
+function renderTroughDetail(db){
+  var box=el('trough-detail-box');if(!box)return;
+  var html='<div style="background:#f9fbfc;border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;margin-top:8px;">';
+  html+='<div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px;">🎯 '+esc(db.name)+' <span style="font-size:11px;font-weight:400;color:var(--label);">('+esc(db.unit)+')</span></div>';
+  html+='<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:8px;">';
+  html+='<tr style="background:#1a3a5c;color:#fff;"><th style="padding:5px 8px;text-align:left;font-size:11px;">Fase / Waktu</th><th style="padding:5px 8px;text-align:left;font-size:11px;min-width:160px;">Target</th><th style="padding:5px 8px;text-align:left;font-size:11px;">Catatan</th></tr>';
+  db.phases.forEach(function(p,i){
+    var bg=i%2===0?'#f5f8fb':'#fff';
+    html+='<tr style="background:'+bg+';"><td style="padding:5px 8px;border:1px solid #ddd;">'+esc(p.label)+'</td>';
+    html+='<td style="padding:5px 8px;border:1px solid #ddd;font-weight:700;color:var(--primary);background:#e8f4f1;">'+esc(p.target)+'</td>';
+    html+='<td style="padding:5px 8px;border:1px solid #ddd;font-size:11px;color:#555;">'+esc(p.note)+'</td></tr>';
+  });
+  html+='</table>';
+  if(db.warn)html+='<div class="alert alert-orange" style="margin-bottom:0;font-size:12px;">⚠️ <strong>Interaksi Obat:</strong> '+esc(db.warn)+'</div>';
+  html+='</div>';
+  box.innerHTML=html;
+}
+
+function loadTaperingPlan(){
+  var sel=val('gvhd_taper_sel');
+  var box=el('taper-info-box');
+  if(!sel||!TAPER_PLANS[sel]){box.innerHTML='';return;}
+  var plan=TAPER_PLANS[sel];
+  if(sel==='custom'){el('gvhd_taper').value='';box.innerHTML='';return;}
+  el('gvhd_taper').value=plan.text+(plan.steps?'\n'+plan.steps:'');
+  var html='<div style="background:#f9fbfc;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;">';
+  html+='<span class="badge '+plan.badge+'" style="margin-bottom:8px;display:inline-block;">Protokol dipilih</span>';
+  if(plan.steps)html+='<div style="font-size:12px;margin-bottom:6px;"><strong>📋 Langkah:</strong><br><span style="font-family:monospace;font-size:11.5px;">'+esc(plan.steps)+'</span></div>';
+  if(plan.note)html+='<div class="alert alert-yellow" style="margin-bottom:6px;font-size:12px;">'+esc(plan.note)+'</div>';
+  if(plan.ref)html+='<div style="font-size:10.5px;color:#888;font-style:italic;">'+esc(plan.ref)+'</div>';
+  html+='</div>';
+  box.innerHTML=html;
+}
+
+function updateCMV(){
+  var grp=val('cmv_group');
+  var alerts={neg_neg:'<div class="alert alert-success">✅ D–/R– – risiko CMV sangat rendah.</div>',pos_neg:'<div class="alert alert-yellow">⚠️ D+/R– – risiko infeksi primer. PCR ketat.</div>',neg_pos:'<div class="alert alert-yellow">⚠️ D–/R+ – risiko reaktivasi. PCR mingguan.</div>',pos_pos:'<div class="alert alert-warn">⛔ D+/R+ – risiko tinggi. Intensifkan monitoring.</div>'};
+  el('cmv-alert').innerHTML=alerts[grp]||'';
+}
+
+function calcVOD(){
+  var factors=['vod_bu','vod_tbi','vod_liver','vod_bili','vod_2nd','vod_infant','vod_iron','vod_inflam','vod_siro','vod_allohigh','vod_gem','vod_tpn'];
+  var w={vod_bu:2,vod_tbi:2,vod_liver:2,vod_bili:2,vod_2nd:2,vod_infant:1,vod_iron:1,vod_inflam:1,vod_siro:1,vod_allohigh:1,vod_gem:2,vod_tpn:1};
+  var score=0;factors.forEach(function(f){if(checked(f))score+=w[f];});
+  var risk=score===0?'Rendah':score<=3?'Rendah-Sedang':score<=6?'Sedang':score<=9?'Tinggi':'Sangat Tinggi';
+  var cls=score===0?'b-green':score<=3?'b-blue':score<=6?'b-limited':score<=9?'b-orange':'b-highrisk';
+  var pct=score===0?10:score<=3?30:score<=6?55:score<=9?75:90;
+  el('vod-score-box').innerHTML='<div style="margin-bottom:6px;"><span class="badge '+cls+'">VOD/SOS: '+risk+' (Skor: '+score+')</span></div><div class="score-bar"><div class="score-fill" style="width:'+pct+'%;background:'+(score<=3?'var(--green)':score<=6?'var(--orange)':'var(--warn)')+'"></div></div>';
+  checkDefib();
+}
+
+function checkDefib(){
+  var defib=val('vod_defib');
+  var scoreText=(el('vod-score-box')&&el('vod-score-box').textContent)||'';
+  var isHigh=scoreText.includes('Tinggi');
+  el('defib-alert').innerHTML=defib==='no'&&isHigh?'<div class="alert alert-warn">⛔ VOD risiko tinggi TANPA defibrotide. Intensifkan monitoring. Siapkan rencana eskalasi.</div>':defib==='limited'?'<div class="alert alert-orange">⚠️ Akses terbatas. Dokumentasikan rencana compassionate use.</div>':defib==='yes'?'<div class="alert alert-success">✅ Defibrotide tersedia.</div>':'';
+}
+
+function checkBuTDM(){
+  var tdm=val('bu_tdm');
+  el('bu-tdm-alert').innerHTML=tdm==='no'?'<div class="alert alert-warn">⛔ Busulfan fixed-dose tanpa TDM – risiko toksisitas hepatik. Monitor ketat.</div>':'<div class="alert alert-success">✅ TDM tersedia – lakukan PK sampling sesuai protokol.</div>';
+}
+
+function loadRegimen(){
+  var reg=val('cond_regimen');
+  var regimens={
+    FluBu:[{drug:'IV Fludarabine',dose:'30 mg/m²/hari',freq:'OD',notes:'Day -6 s/d -3'},{drug:'IV Busulfan',dose:'4 mg/kg/hari',freq:'OD',notes:'Day -6 s/d -3'}],
+    FluBuThio:[{drug:'IV Fludarabine',dose:'30 mg/m²/hari',freq:'OD',notes:'Day -7 s/d -3'},{drug:'IV Busulfan',dose:'4 mg/kg/hari',freq:'OD',notes:'Day -7 s/d -4'},{drug:'IV Thiotepa',dose:'10 mg/kg/hari',freq:'BD (0800H + 2000H)',notes:'Day -2'}],
+    FluMel:[{drug:'IV Fludarabine',dose:'30 mg/m²/hari',freq:'OD',notes:'Day -6 s/d -2'},{drug:'IV Melphalan',dose:'140 mg/m²',freq:'Single dose',notes:'Day -1'}],
+    BuCy:[{drug:'IV Busulfan',dose:'4 mg/kg/hari',freq:'OD',notes:'Day -6 s/d -4'},{drug:'IV Cyclophosphamide',dose:'60 mg/kg/hari',freq:'OD',notes:'Day -3 dan -2'},{drug:'PO/IV Mesna',dose:'100% dosis Cy (÷3)',freq:'TDS (jam 0, +4, +8)',notes:'Bersama dan setelah Cyclophosphamide'}],
+    TreoFlu:[{drug:'IV Treosulfan',dose:'14 g/m²/hari',freq:'OD (infus 2 jam)',notes:'Day -6 s/d -4'},{drug:'IV Fludarabine',dose:'30 mg/m²/hari',freq:'OD',notes:'Day -6 s/d -2'}],
+    TBI:[{drug:'TBI (Total Body Irradiation)',dose:'12 Gy total (6 fraksi)',freq:'BD (≥6 jam interval)',notes:'Day -7 s/d -5'},{drug:'IV Etoposide (VP-16)',dose:'60 mg/kg (BB)',freq:'Single dose (infus 4–6 jam)',notes:'Day -3'}],
+    FluCy:[{drug:'IV Fludarabine',dose:'25 mg/m²/hari',freq:'OD',notes:'Day -5 s/d -2'},{drug:'IV Cyclophosphamide',dose:'1800 mg/m²/hari (PTCy)',freq:'OD',notes:'Day -5 s/d -2'},{drug:'PO/IV Mesna',dose:'100% dosis Cy (÷3)',freq:'TDS (jam 0, +4, +8)',notes:'Bersama Cyclophosphamide'}],
+    PTCy_haplo:[{drug:'IV Fludarabine',dose:'30 mg/m²/hari',freq:'OD',notes:'Day -6 s/d -2'},{drug:'IV Busulfan',dose:'3.2 mg/kg/hari',freq:'OD',notes:'Day -6 s/d -3'},{drug:'IV Cyclophosphamide',dose:'1800 mg/m²/hari (PTCy)',freq:'OD',notes:'Day +3 dan +4 (PTCy)'},{drug:'PO/IV Mesna',dose:'100% dosis Cy (÷3)',freq:'TDS (jam 0, +4, +8)',notes:'Day +3 dan +4, bersama PTCy'}]
+  };
+  el('cond_rows').innerHTML='';
+  if(regimens[reg])regimens[reg].forEach(function(d){makeCondRow(d);});
+  var badges={FluBu:'<span class="badge b-ideal">✅ FluBu – Standar MAC/RIC pediatrik</span>',FluBuThio:'<span class="badge b-ideal">✅ FluBuThio – Intensified</span>',FluMel:'<span class="badge b-acceptable">🔵 FluMel – RIC</span>',BuCy:'<span class="badge b-acceptable">🔵 BuCy – MAC klasik</span>',TreoFlu:'<span class="badge b-acceptable">🔵 TreoFlu – RIC, hepatotoksisitas rendah</span>',TBI:'<span class="badge b-limited">🟡 TBI-based – perlu fasilitas radioterapi</span>',FluCy:'<span class="badge b-limited">🟡 FluCy – NMA</span>',PTCy_haplo:'<span class="badge b-ideal">✅ PTCy Haplo</span>'};
+  var refs={FluBu:'Ref: EBMT 2024; Jacobsohn DA, Pediatr Blood Cancer 2020.',FluBuThio:'Ref: Dalle JH, BMT 2013; SFGM-TC 2022.',FluMel:'Ref: EBMT 2024.',BuCy:'Ref: EBMT 2024.',TreoFlu:'Ref: Boztug H, BBMT 2015.',TBI:'Ref: Qayed M, Blood 2020.',FluCy:'Ref: EBMT 2024.',PTCy_haplo:'Ref: Luznik L, BBMT 2008.'};
+  el('regimen-badge').innerHTML=badges[reg]||'';
+  el('regimen-ref').textContent=refs[reg]||'';
+}
+
+function updateMonitoring(){
+  var chim=val('mon_chim'),cmv=val('mon_cmv'),irrad=val('mon_irrad'),hepa=val('mon_hepa'),scp=val('mon_scp');
+  var alerts=[];
+  if(chim==='no')alerts.push({t:'Chimerism tidak tersedia – monitor hematologi untuk tanda relaps/graft failure.',l:'high'});
+  if(cmv==='no')alerts.push({t:'CMV PCR tidak tersedia – pertimbangkan universal prophylaxis.',l:'high'});
+  if(irrad==='no')alerts.push({t:'⛔ KRITIS: Produk darah iradiasi TIDAK tersedia. Risiko TA-GvHD fatal.',l:'high'});
+  if(hepa==='no')alerts.push({t:'Ruang HEPA tidak tersedia – intensifkan profilaksis antifungal.',l:'high'});
+  if(scp==='basic')alerts.push({t:'Stem cell processing terbatas – koordinasi ketat hari infus.',l:'medium'});
+  var html='';alerts.forEach(function(a){html+='<div class="alert alert-'+(a.l==='high'?'warn':'orange')+'">'+esc(a.t)+'</div>';});
+  el('monitoring-alerts').innerHTML=html||'<div class="alert alert-success">✅ Tidak ada flag kritis pada resource monitoring.</div>';
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function vodRiskLabel(){
+  var factors=['vod_bu','vod_tbi','vod_liver','vod_bili','vod_2nd','vod_infant','vod_iron','vod_inflam','vod_siro','vod_allohigh','vod_gem','vod_tpn'];
+  var w={vod_bu:2,vod_tbi:2,vod_liver:2,vod_bili:2,vod_2nd:2,vod_infant:1,vod_iron:1,vod_inflam:1,vod_siro:1,vod_allohigh:1,vod_gem:2,vod_tpn:1};
+  var s=0;factors.forEach(function(f){if(checked(f))s+=w[f];});
+  return s===0?'Rendah':s<=3?'Rendah-Sedang':s<=6?'Sedang':s<=9?'Tinggi':'Sangat Tinggi';
+}
+
+function refreshDashboard(){
+  var bsa=val('p_bsa');
+  el('dash-grid').innerHTML=
+    dc('🏷️','Pasien',val('p_code')||'Belum diisi','Kode ID')+
+    dc('🎗️','Diagnosis',val('p_diag')||'—',val('p_status')||'Status belum dipilih')+
+    dc('📐','BB / BSA',(val('p_wt')?val('p_wt')+' kg':'—')+(bsa?' / '+bsa+' m²':''),'Mosteller formula')+
+    dc('🧬','Tipe Donor',val('d_type_cat')||'—',val('d_hla_match')||'HLA belum dipilih')+
+    dc('💊','Conditioning',val('cond_regimen')||'—',val('cond_intensity')||'—')+
+    dc('⚠️','VOD Risk',vodRiskLabel(),'Berdasarkan faktor risiko');
+  var missing=[];
+  if(!val('p_wt'))missing.push('Berat badan');if(!val('p_ht'))missing.push('Tinggi badan');
+  if(!val('p_diag'))missing.push('Diagnosis primer');if(!val('p_status'))missing.push('Status penyakit');
+  if(!val('d_type_cat'))missing.push('Tipe donor');if(!val('d_hla_match'))missing.push('HLA match level');
+  if(!val('cond_regimen'))missing.push('Conditioning regimen');if(!val('gvhd_regimen'))missing.push('GVHD prophylaxis');
+  el('dash-missing').innerHTML=missing.length===0?'<div class="alert alert-success">✅ Semua data kritis terisi.</div>':missing.map(function(m){return'<div class="risk-flag high"><span>❌</span><span>'+esc(m)+'</span></div>';}).join('');
+  var flags=[];
+  if(val('bu_tdm')==='no')flags.push({t:'Busulfan tanpa TDM',l:'high'});
+  if(val('mon_irrad')==='no')flags.push({t:'Produk darah iradiasi tidak tersedia',l:'high'});
+  if(val('mon_hepa')==='no')flags.push({t:'Ruang HEPA tidak tersedia',l:'high'});
+  if(val('d_dsa')==='pos_high')flags.push({t:'DSA positif titer tinggi',l:'high'});
+  if(val('gvhd_trough_avail')==='no')flags.push({t:'Monitoring trough CNI tidak tersedia',l:'high'});
+  if(val('d_hla_match')==='haplo')flags.push({t:'Haploidentical – pastikan GVHD profilaksis',l:'medium'});
+  if(val('cmv_group')==='pos_pos')flags.push({t:'CMV D+/R+ – risiko reaktivasi tinggi',l:'medium'});
+  el('dash-flags').innerHTML=flags.length===0?'<div class="alert alert-success">✅ Tidak ada risk flag kritis.</div>':flags.map(function(f){return'<div class="risk-flag '+f.l+'"><span>'+(f.l==='high'?'🔴':'🟡')+'</span><span>'+esc(f.t)+'</span></div>';}).join('');
+  var ideal=missing.length===0&&flags.filter(function(f){return f.l==='high';}).length===0;
+  el('dash-pathway').innerHTML=ideal?'<div class="alert alert-success"><strong>✅ Ideal Pathway</strong></div>':'<div class="alert alert-orange"><strong>⚠️ Resource-Limited Pathway</strong><br>'+missing.length+' data belum terisi | '+flags.filter(function(f){return f.l==='high';}).length+' flag tinggi.</div>';
+  var apprs=['appr_senior','appr_pharma','appr_ic','appr_ic2','appr_ethics'];
+  var apprLabels={appr_senior:'Dokter senior',appr_pharma:'Farmasi',appr_ic:'Informed consent',appr_ic2:'Donor consent',appr_ethics:'Etik'};
+  var ca=apprs.filter(checked);
+  el('dash-approvals').innerHTML=ca.length?ca.map(function(a){return'<div class="checklist-item"><span>✅</span><span>'+esc(apprLabels[a])+'</span></div>';}).join(''):'<div class="alert alert-info">Belum ada approval yang dicentang.</div>';
+}
+
+function dc(icon,label,v,sub){return'<div class="dash-card"><div class="dc-label">'+icon+' '+label+'</div><div class="dc-val">'+esc(v)+'</div><div class="dc-sub">'+esc(sub)+'</div></div>';}
+
+// ============================================================
+// PRINT / GENERATE SUMMARY
+// ============================================================
+function fdate(s){if(!s)return'';var d=new Date(s);return isNaN(d)?s:d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});}
+function fdateS(s){if(!s)return'';var d=new Date(s);return isNaN(d)?s:d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'2-digit'});}
+
+function drugTbl(rows,cols){
+  cols=cols||['Obat','Dosis','Dosis Aktual','Frekuensi','Hari/Durasi'];
+  var h='<table class="ptbl"><tr>';cols.forEach(function(c){h+='<th>'+c+'</th>';});h+='</tr>';
+  if(!rows||!rows.length)return h+'<tr><td colspan="'+cols.length+'" style="color:#999;font-style:italic;">Belum diisi</td></tr></table>';
+  rows.forEach(function(r){h+='<tr><td>'+esc(r.drug)+'</td><td>'+esc(r.dose)+'</td><td>'+esc(r.actual)+'</td><td>'+esc(r.freq)+'</td><td>'+esc(r.notes)+'</td></tr>';});
+  return h+'</table>';
+}
+function igCell(label,v){return'<div class="igc"><div class="igl">'+label+'</div><div>'+esc(v||'—')+'</div></div>';}
+
+function generatePrint(){
+  var btn=el('generateBtn');
+  btn.disabled=true;btn.textContent='⏳ Menyiapkan...';
+  showToast('📄 Membuat summary...','',1500);
+  setTimeout(function(){
+    try{
+      var today=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
+      var condRows=getCondRows();
+      var wt=parseFloat(val('p_wt')),bsa=parseFloat(val('p_bsa'));
+
+      var p1='<div class="p-hdr"><div><div class="p-title">Pediatric HSCT Protocol Navigator</div><div class="p-sub">'+esc(val('p_diag')||'—')+' · '+esc(val('p_status')||'—')+' · '+esc(val('p_txtype')||'—')+'</div></div><div class="p-brand">drAisyiEduCare</div></div>';
+      p1+='<div class="p-sec">DATA PASIEN</div>';
+      p1+='<div class="ig2">'+igCell('Kode Pasien',val('p_code'))+igCell('Usia / Sex',val('p_age')+' / '+val('p_sex'))+igCell('BB / TB',val('p_wt')+' kg / '+val('p_ht')+' cm')+igCell('BSA',val('p_bsa')+' m²')+igCell('Gol. Darah',val('p_bg'))+igCell('CMV',val('p_cmv'))+igCell('Diagnosis',val('p_diag'))+igCell('Status',val('p_status'))+'</div>';
+      p1+='<div class="p-sec">DONOR – '+esc(val('d_rel')||'')+'</div>';
+      p1+='<div class="ig2">'+igCell('Kode Donor',val('d_code'))+igCell('Hubungan',val('d_rel'))+igCell('HLA Match',val('d_hla_match'))+igCell('Tipe',val('d_type_cat'))+igCell('Gol. Darah',val('d_bg'))+igCell('CMV',val('d_cmv'))+igCell('ABO',val('d_abo'))+igCell('DSA',val('d_dsa'))+'</div>';
+      p1+='<div class="p-sec">CONDITIONING – '+esc(val('cond_regimen')||'—')+' ('+esc(val('cond_intensity')||'—')+')</div>';
+      p1+='<table class="ptbl"><tr><th>Obat</th><th>Dosis</th><th>Kalkulasi (BB/BSA)</th><th>Dosis Aktual</th><th>Frekuensi</th><th>Hari</th></tr>';
+      condRows.forEach(function(r){
+        var db=COND_DB[r.drug];var calcStr='—';
+        if(db&&db.calcFn&&wt&&bsa){var res=db.calcFn(wt,bsa);if(res&&!res.note)calcStr=Object.values(res).join(' | ');else if(res&&res.note)calcStr=res.note;}
+        p1+='<tr><td>'+esc(r.drug)+'</td><td>'+esc(r.dose)+'</td><td style="font-size:6.5pt;color:#555;">'+esc(calcStr)+'</td><td style="font-weight:700;">'+esc(r.actual)+'</td><td>'+esc(r.freq)+'</td><td>'+esc(r.notes)+'</td></tr>';
+      });
+      p1+='</table>';
+      if(val('bu_tdm')==='no')p1+='<div class="p-warn">⛔ Busulfan fixed-dose tanpa TDM. Monitor toksisitas ketat.</div>';
+      if(val('cond_notes'))p1+='<div class="p-note"><strong>Catatan:</strong> '+esc(val('cond_notes'))+'</div>';
+      p1+='<div class="p-sec">GVHD PROPHYLAXIS</div>';
+      p1+=drugTbl(getGVHDRows());
+      p1+='<table class="ptbl"><tr><td><strong>Target trough:</strong> '+esc(val('gvhd_trough_target'))+'</td><td><strong>Monitoring:</strong> '+esc(val('gvhd_trough_avail'))+'</td></tr></table>';
+      if(val('gvhd_taper'))p1+='<div class="p-note"><strong>Tapering:</strong> '+esc(val('gvhd_taper'))+'</div>';
+      p1+='<div class="p-sec">PROFILAKSIS INFEKSI &amp; CMV</div>';
+      p1+=drugTbl(getInfRows(),['Agen','Dosis','Dosis Aktual','Frekuensi','Durasi']);
+      p1+='<table class="ptbl"><tr><th>CMV Group</th><th>Strategi</th><th>PCR</th><th>Threshold</th><th>Pre-emptive</th></tr><tr><td>'+esc(val('cmv_group'))+'</td><td>'+esc(val('cmv_strategy'))+'</td><td>'+esc(val('cmv_pcr_avail'))+'</td><td>'+esc(val('cmv_threshold'))+'</td><td>'+esc(val('cmv_preemptive'))+'</td></tr></table>';
+      p1+='<div class="p-sec">VOD/SOS RISK &amp; PENCEGAHAN</div>';
+      p1+='<table class="ptbl"><tr><th>Risk Level</th><th>UDCA</th><th>Defibrotide</th><th>Monitoring</th></tr><tr><td><strong>'+esc(vodRiskLabel())+'</strong></td><td>'+esc(val('vod_udca'))+'</td><td>'+esc(val('vod_defib'))+'</td><td>'+esc(val('vod_monitor'))+'</td></tr></table>';
+      p1+='<div class="p-footer">Hal. 1/2 · '+today+' · RAHASIA – HANYA UNTUK PENGGUNAAN KLINIS · drAisyiEduCare</div>';
+
+      var p2='<div class="p2"><div class="p-hdr"><div><div class="p-title">Jadwal BMT &amp; Instruksi Pasca Transplant</div><div class="p-sub">'+esc(val('p_code')||'Pasien')+' · '+esc(val('p_diag')||'—')+'</div></div><div class="p-brand">drAisyiEduCare</div></div>';
+      p2+='<div class="p-sec">JADWAL BMT DAY-BY-DAY</div>';
+      p2+='<table class="ptbl"><tr><th style="width:40pt">BMT Day</th><th style="width:36pt">Hari</th><th style="width:55pt">Tanggal</th><th>Prosedur</th></tr>';
+      var sched=getSchedRows();
+      if(!sched.length)p2+='<tr><td colspan="4" style="color:#999;font-style:italic;">Jadwal belum diisi</td></tr>';
+      else sched.forEach(function(r){var isTx=r.bmt==='0';var bg=isTx?' style="background:#fffde7;font-weight:700;"':'';p2+='<tr'+bg+'><td style="text-align:center;font-weight:700;">'+esc(r.bmt)+'</td><td>'+esc(r.day)+'</td><td>'+fdateS(r.date)+'</td><td>'+esc(r.proc).replace(/\n/g,'<br>')+'</td></tr>';});
+      p2+='</table>';
+      p2+='<div class="p-sec">RESOURCE SUMMARY</div>';
+      p2+='<table class="ptbl"><tr><th>Parameter</th><th>Status</th><th>Catatan</th></tr>';
+      [['Chimerism',val('mon_chim'),val('mon_chim')==='no'?'Gunakan FISH/sitogenetik':''],['CMV PCR',val('mon_cmv'),val('mon_cmv')==='no'?'Pertimbangkan universal prophylaxis':''],['Produk Iradiasi',val('mon_irrad'),val('mon_irrad')==='no'?'⛔ KRITIS: Risiko TA-GvHD':''],['Ruang HEPA',val('mon_hepa'),''],['Stem Cell Processing',val('mon_scp'),'']].forEach(function(m){p2+='<tr><td>'+esc(m[0])+'</td><td>'+esc(m[1])+'</td><td>'+esc(m[2])+'</td></tr>';});
+      p2+='</table>';
+      p2+='<div class="p-sec">INSTRUKSI PASCA TRANSPLANT</div>';
+      var pi=getPostItems();
+      p2+='<table class="ptbl">';
+      if(!pi.length)p2+='<tr><td style="color:#999;font-style:italic;">Belum diisi</td></tr>';
+      else pi.forEach(function(item,i){p2+='<tr><td style="width:14pt;text-align:center;">'+(i+1)+'</td><td>'+esc(item)+'</td></tr>';});
+      p2+='</table>';
+      p2+='<table class="ptbl"><tr><th>Chimerism</th><th>CMV</th><th>Transfusi</th></tr><tr><td>'+esc(val('post_chim'))+'</td><td>'+esc(val('post_cmv'))+'</td><td>'+esc(val('post_transfuse'))+'</td></tr></table>';
+      if(val('post_unresolved'))p2+='<div class="p-flag"><strong>⚠️ Masalah Belum Terselesaikan:</strong> '+esc(val('post_unresolved'))+'</div>';
+      if(val('ev_sop'))p2+='<div class="p-note"><strong>SOP Lokal:</strong> '+esc(val('ev_sop'))+'</div>';
+      p2+='<div class="p-sec">REQUIRED APPROVALS</div>';
+      p2+='<table class="ptbl"><tr>';
+      [{id:'appr_senior',l:'Dokter senior'},{id:'appr_pharma',l:'Farmasi'},{id:'appr_ic',l:'Informed consent'},{id:'appr_ic2',l:'Donor consent'},{id:'appr_ethics',l:'Etik'}].forEach(function(a){p2+='<td>'+(checked(a.id)?'✅':'☐')+' '+esc(a.l)+'</td>';});
+      p2+='</tr></table>';
+      p2+='<div style="background:#f8f0d0;border:1pt solid #c0a000;padding:4pt 6pt;font-size:7pt;margin-top:4pt;border-radius:2pt;"><strong>⚠️ PERNYATAAN PENTING:</strong> Dokumen ini adalah <em>clinical decision support</em>. Harus diadaptasi sesuai SOP lokal dan direview oleh dokter transplant senior sebelum implementasi.</div>';
+      p2+='<div class="p-footer">Hal. 2/2 · '+today+' · RAHASIA – HANYA UNTUK PENGGUNAAN KLINIS · drAisyiEduCare · RSKD</div></div>';
+
+      el('printBox').innerHTML=p1+p2;
+      el('printOverlay').classList.add('show');
+      showToast('✅ Summary berhasil dibuat!','success');
+    }catch(err){
+      showToast('❌ Gagal: '+err.message,'error',4000);
+    }
+    btn.disabled=false;btn.textContent='🖨️ Generate Summary';
+  },100);
+}
+
+// ============================================================
+// SAVE / LOAD — perbaikan utama
+// ============================================================
+var STORAGE_KEY='hsct_nav_v3';
+
+function collectAll(){
+  return{
+    v:3,
+    patient:{code:val('p_code'),dob:val('p_dob'),age:val('p_age'),sex:val('p_sex'),wt:val('p_wt'),ht:val('p_ht'),bsa:val('p_bsa'),bg:val('p_bg'),cmv:val('p_cmv'),hla:val('p_hla'),diag:val('p_diag'),status:val('p_status'),risk:val('p_risk'),txtype:val('p_txtype'),ind_notes:val('p_ind_notes')},
+    donor:{code:val('d_code'),rel:val('d_rel'),bg:val('d_bg'),cmv:val('d_cmv'),hla:val('d_hla'),hla_match:val('d_hla_match'),type_cat:val('d_type_cat'),abo:val('d_abo'),dsa:val('d_dsa'),cmv_pair:val('d_cmv_pair'),age_cat:val('d_age_cat'),mitigation:val('d_mitigation'),senior_approve:checked('d_senior_approve')},
+    conditioning:{regimen:val('cond_regimen'),intensity:val('cond_intensity'),drugs:getCondRows(),bu_tdm:val('bu_tdm'),bu_auc:val('bu_auc'),bu_seiz:val('bu_seiz'),notes:val('cond_notes')},
+    gvhd:{regimen:val('gvhd_regimen'),cni:val('gvhd_cni'),drugs:getGVHDRows(),trough_cni_type:val('gvhd_trough_cni_type'),trough_target:val('gvhd_trough_target'),trough_avail:val('gvhd_trough_avail'),taper:val('gvhd_taper'),taper_sel:val('gvhd_taper_sel')},
+    infection:{drugs:getInfRows(),cmv_group:val('cmv_group'),cmv_strategy:val('cmv_strategy'),cmv_pcr_avail:val('cmv_pcr_avail'),cmv_threshold:val('cmv_threshold'),cmv_letermovir:val('cmv_letermovir'),cmv_preemptive:val('cmv_preemptive')},
+    vod:{udca:val('vod_udca'),defib:val('vod_defib'),monitor:val('vod_monitor'),escalation:val('vod_escalation'),factors:['vod_bu','vod_tbi','vod_liver','vod_bili','vod_2nd','vod_infant','vod_iron','vod_inflam','vod_siro','vod_allohigh','vod_gem','vod_tpn'].filter(checked)},
+    monitoring:{chim:val('mon_chim'),cmv:val('mon_cmv'),irrad:val('mon_irrad'),hepa:val('mon_hepa'),scp:val('mon_scp'),chim_sched:val('mon_chim_sched'),tx_hb:val('tx_hb'),tx_plt:val('tx_plt')},
+    schedule:getSchedRows(),
+    post:{items:getPostItems(),chim:val('post_chim'),cmv:val('post_cmv'),transfuse:val('post_transfuse'),unresolved:val('post_unresolved'),appr_senior:checked('appr_senior'),appr_pharma:checked('appr_pharma'),appr_ic:checked('appr_ic'),appr_ic2:checked('appr_ic2'),appr_ethics:checked('appr_ethics')},
+    evidence:{sop:val('ev_sop'),issues:val('ev_issues')},
+    savedAt:new Date().toLocaleString('id-ID')
+  };
+}
+
+function doSave(){
+  var btn=el('saveBtn');
+  btn.disabled=true;
+  try{
+    var data=collectAll();
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+    showToast('💾 Draft tersimpan! ('+data.savedAt+')','success');
+    el('save-indicator').textContent='Terakhir disimpan: '+data.savedAt;
+  }catch(e){
+    showToast('❌ Gagal menyimpan: '+e.message,'error',4000);
+  }
+  btn.disabled=false;
+}
+
+function doLoad(){
+  var raw=localStorage.getItem(STORAGE_KEY);
+  if(!raw){showToast('⚠️ Tidak ada draft tersimpan.','error',3000);return;}
+  try{
+    var D=JSON.parse(raw);
+    // Patient
+    var p=D.patient||{};
+    setVal('p_code',p.code);setVal('p_dob',p.dob);setVal('p_age',p.age);setVal('p_sex',p.sex);
+    setVal('p_wt',p.wt);setVal('p_ht',p.ht);setVal('p_bsa',p.bsa||'');
+    setVal('p_bg',p.bg);setVal('p_cmv',p.cmv);setVal('p_hla',p.hla);
+    setVal('p_diag',p.diag);setVal('p_status',p.status);setVal('p_risk',p.risk);
+    setVal('p_txtype',p.txtype);setVal('p_ind_notes',p.ind_notes);
+    // Update BSA displays
+    el('p_bsa').value=p.bsa||'';
+    el('disp-wt').textContent=p.wt||'—';el('disp-bsa').textContent=p.bsa||'—';
+    if(el('gvhd-disp-wt'))el('gvhd-disp-wt').textContent=p.wt||'—';
+    if(el('gvhd-disp-bsa'))el('gvhd-disp-bsa').textContent=p.bsa||'—';
+    if(el('inf-disp-wt'))el('inf-disp-wt').textContent=p.wt||'—';
+    if(el('inf-disp-bsa'))el('inf-disp-bsa').textContent=p.bsa||'—';
+    // Donor
+    var d=D.donor||{};
+    setVal('d_code',d.code);setVal('d_rel',d.rel);setVal('d_bg',d.bg);setVal('d_cmv',d.cmv);
+    setVal('d_hla',d.hla);setVal('d_hla_match',d.hla_match);setVal('d_type_cat',d.type_cat);
+    setVal('d_abo',d.abo);setVal('d_dsa',d.dsa);setVal('d_cmv_pair',d.cmv_pair);
+    setVal('d_age_cat',d.age_cat);setVal('d_mitigation',d.mitigation);
+    setCheck('d_senior_approve',d.senior_approve);
+    // Conditioning
+    var c=D.conditioning||{};
+    setVal('cond_regimen',c.regimen);setVal('cond_intensity',c.intensity);
+    setVal('bu_tdm',c.bu_tdm);setVal('bu_auc',c.bu_auc);setVal('bu_seiz',c.bu_seiz);
+    setVal('cond_notes',c.notes);
+    // rebuild conditioning regimen badge
+    if(c.regimen){
+      var badges2={FluBu:'<span class="badge b-ideal">✅ FluBu</span>',FluBuThio:'<span class="badge b-ideal">✅ FluBuThio</span>',FluMel:'<span class="badge b-acceptable">🔵 FluMel</span>',BuCy:'<span class="badge b-acceptable">🔵 BuCy</span>',TreoFlu:'<span class="badge b-acceptable">🔵 TreoFlu</span>',TBI:'<span class="badge b-limited">🟡 TBI</span>',FluCy:'<span class="badge b-limited">🟡 FluCy</span>',PTCy_haplo:'<span class="badge b-ideal">✅ PTCy Haplo</span>'};
+      el('regimen-badge').innerHTML=badges2[c.regimen]||'';
+    }
+    el('cond_rows').innerHTML='';
+    (c.drugs||[]).forEach(function(dr){makeCondRow(dr);});
+    // GVHD
+    var g=D.gvhd||{};
+    setVal('gvhd_regimen',g.regimen);setVal('gvhd_cni',g.cni);
+    setVal('gvhd_trough_cni_type',g.trough_cni_type||'');
+    setVal('gvhd_trough_target',g.trough_target);setVal('gvhd_trough_avail',g.trough_avail);
+    setVal('gvhd_taper',g.taper);setVal('gvhd_taper_sel',g.taper_sel||'');
+    el('gvhd_rows').innerHTML='';
+    (g.drugs||[]).forEach(function(dr){makeGVHDRow(dr);});
+    if(g.regimen)updateGVHD();
+    if(g.trough_avail)checkTrough();
+    // Infection
+    var inf=D.infection||{};
+    setVal('cmv_group',inf.cmv_group);setVal('cmv_strategy',inf.cmv_strategy);
+    setVal('cmv_pcr_avail',inf.cmv_pcr_avail);setVal('cmv_threshold',inf.cmv_threshold);
+    setVal('cmv_letermovir',inf.cmv_letermovir);setVal('cmv_preemptive',inf.cmv_preemptive);
+    el('inf_rows').innerHTML='';
+    (inf.drugs||[]).forEach(function(dr){makeInfRow(dr);});
+    if(inf.cmv_group)updateCMV();
+    // VOD
+    var v=D.vod||{};
+    setVal('vod_udca',v.udca);setVal('vod_defib',v.defib);
+    setVal('vod_monitor',v.monitor);setVal('vod_escalation',v.escalation);
+    ['vod_bu','vod_tbi','vod_liver','vod_bili','vod_2nd','vod_infant','vod_iron','vod_inflam','vod_siro','vod_allohigh','vod_gem','vod_tpn'].forEach(function(f){setCheck(f,false);});
+    (v.factors||[]).forEach(function(f){setCheck(f,true);});
+    calcVOD();
+    // Monitoring
+    var m=D.monitoring||{};
+    setVal('mon_chim',m.chim);setVal('mon_cmv',m.cmv);setVal('mon_irrad',m.irrad);
+    setVal('mon_hepa',m.hepa);setVal('mon_scp',m.scp);
+    setVal('mon_chim_sched',m.chim_sched);setVal('tx_hb',m.tx_hb);setVal('tx_plt',m.tx_plt);
+    updateMonitoring();
+    // Schedule
+    el('sched_rows').innerHTML='';
+    (D.schedule||[]).forEach(function(s){makeSchedRow(s);});
+    // Post
+    el('post_items').innerHTML='';
+    var pt=D.post||{};
+    (pt.items||[]).forEach(function(t){addPostItem(t);});
+    setVal('post_chim',pt.chim);setVal('post_cmv',pt.cmv);
+    setVal('post_transfuse',pt.transfuse);setVal('post_unresolved',pt.unresolved);
+    setCheck('appr_senior',pt.appr_senior);setCheck('appr_pharma',pt.appr_pharma);
+    setCheck('appr_ic',pt.appr_ic);setCheck('appr_ic2',pt.appr_ic2);setCheck('appr_ethics',pt.appr_ethics);
+    // Evidence
+    var ev=D.evidence||{};setVal('ev_sop',ev.sop);setVal('ev_issues',ev.issues);
+    // BuTDM & Seizure alerts
+    if(c.bu_tdm)checkBuTDM();
+    // Refresh dashboard
+    refreshDashboard();
+    var savedAt=D.savedAt||'waktu tidak diketahui';
+    showToast('📂 Draft dimuat! (disimpan: '+savedAt+')','success',3500);
+    el('save-indicator').textContent='Dimuat dari: '+savedAt;
+  }catch(e){
+    showToast('❌ Gagal memuat: '+e.message,'error',4000);
+  }
+}
+
+// ============================================================
+// NAV & EVENTS
+// ============================================================
+document.querySelectorAll('.nav-item').forEach(function(n){
+  n.addEventListener('click',function(){
+    document.querySelectorAll('.nav-item').forEach(function(x){x.classList.remove('active');});
+    document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active');});
+    n.classList.add('active');
+    var pg=el('page-'+n.dataset.page);if(pg)pg.classList.add('active');
+  });
+});
+
+document.querySelectorAll('.role-tab').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var parent=btn.closest('.card');
+    parent.querySelectorAll('.role-tab').forEach(function(b){b.classList.remove('active');});
+    parent.querySelectorAll('.role-note').forEach(function(n){n.classList.remove('active');});
+    btn.classList.add('active');
+    var note=el('role-'+btn.dataset.role);if(note)note.classList.add('active');
+  });
+});
+
+el('refreshDash').addEventListener('click',refreshDashboard);
+el('generateBtn').addEventListener('click',generatePrint);
+el('printClose').addEventListener('click',function(){el('printOverlay').classList.remove('show');});
+el('doPrint').addEventListener('click',function(){window.print();});
+
+el('cond_add').addEventListener('click',function(){makeCondRow({});});
+el('gvhd_add').addEventListener('click',function(){makeGVHDRow({});});
+el('inf_add').addEventListener('click',function(){makeInfRow({});});
+el('sched_add').addEventListener('click',function(){makeSchedRow({});});
+el('post_add').addEventListener('click',function(){addPostItem('');});
+
+el('saveBtn').addEventListener('click',doSave);
+el('loadBtn').addEventListener('click',doLoad);
+
+// Wiring select events
+el('p_wt').addEventListener('input',calcBSA);
+el('p_ht').addEventListener('input',calcBSA);
+el('d_cmv_pair').addEventListener('change',updateDonorScore);
+el('d_age_cat').addEventListener('change',updateDonorScore);
+el('cond_regimen').addEventListener('change',loadRegimen);
+el('gvhd_regimen').addEventListener('change',updateGVHD);
+el('gvhd_trough_avail').addEventListener('change',checkTrough);
+el('gvhd_taper_sel').addEventListener('change',loadTaperingPlan);
+el('gvhd_trough_cni_type').addEventListener('change',loadTroughTargets);
+el('gvhd_trough_phase').addEventListener('change',selectTroughPhase);
+el('bu_tdm').addEventListener('change',checkBuTDM);
+el('cmv_group').addEventListener('change',updateCMV);
+['vod_bu','vod_tbi','vod_liver','vod_bili','vod_2nd','vod_infant','vod_iron','vod_inflam','vod_siro','vod_allohigh','vod_gem','vod_tpn'].forEach(function(id){
+  var e=el(id);if(e)e.addEventListener('change',calcVOD);
+});
+['mon_chim','mon_cmv','mon_irrad','mon_hepa','mon_scp'].forEach(function(id){
+  var e=el(id);if(e)e.addEventListener('change',updateMonitoring);
+});
+
+// ============================================================
+// INIT DEFAULTS
+// ============================================================
+window.onload=function(){
+  el('disp-wt').textContent='—';el('disp-bsa').textContent='—';
+  // Default GVHD rows
+  [{drug:'Cyclosporine A (CsA)',dose:'3 mg/kg/hari IV',actual:'',freq:'BD (IV)',notes:'Mulai Day -1, s/d Day +60 lalu taper'},
+   {drug:'Mycophenolate Mofetil (MMF)',dose:'15 mg/kg/dosis TDS',actual:'',freq:'TDS (setiap 8 jam)',notes:'Day +1 s/d Day +30'}
+  ].forEach(function(d){makeGVHDRow(d);});
+  // Default infection rows
+  [{drug:'IV Aciclovir',dose:'10 mg/kg/dosis',actual:'',freq:'TDS',notes:'Mulai Day 0; switch PO bila toleransi'},
+   {drug:'IV Micafungin',dose:'1 mg/kg/hari',actual:'',freq:'OD',notes:'Day 0–engraftment; switch PO Fluconazole'},
+   {drug:'PO Cotrimoxazole (TMP-SMX)',dose:'5 mg/kg/hari TMP 2×/minggu',actual:'',freq:'BD (Sabtu & Minggu)',notes:'Mulai Day +28 s/d Day +180'},
+   {drug:'UDCA (Ursodeoxycholic Acid)',dose:'12–15 mg/kg/hari ÷ TDS',actual:'',freq:'TDS',notes:'Admission s/d Day +30 (VOD profilaksis)'},
+   {drug:'Levetiracetam (seizure px)',dose:'10 mg/kg/dosis BD',actual:'',freq:'BD',notes:'Mulai 24 jam sebelum Busulfan; stop 48 jam setelah Bu terakhir'}
+  ].forEach(function(d){makeInfRow(d);});
+  // Default post items
+  ['FBC, U&E, kreatinin harian; LFT mingguan; Ca, Mg, PO4 2x/minggu',
+   'G-CSF 5 mcg/kg/hari bila ANC ≤0.5×10⁹/L → stop saat ANC >1.0×10⁹/L × 3 hari',
+   'Kultur darah dari kedua lumen CVC harian bila demam; CRP mingguan',
+   'Trough CsA/Tac 2x/minggu (Senin & Kamis); sesuaikan sesuai target',
+   'Semua produk darah HARUS IRADIASI. Tidak ada exception.'
+  ].forEach(addPostItem);
+  refreshDashboard();
+  // Check if there's a previous save
+  try{
+    var raw=localStorage.getItem(STORAGE_KEY);
+    if(raw){var D=JSON.parse(raw);if(D.savedAt)el('save-indicator').textContent='Ada draft: '+D.savedAt;}
+  }catch(e){}
+};
+</script>
+</body>
+</html>

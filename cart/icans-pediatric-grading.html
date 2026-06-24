@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICANS Pediatric Grading – drAisyi EduCare</title>
+<style>
+:root{--teal:#0e7c7b;--teal2:#3aafa9;--teal-l:#e0f4f4;--orange:#e07b39;--orange-l:#fff3ec;--red:#c0392b;--red-l:#fdecea;--yellow:#f39c12;--yellow-l:#fef9e7;--green:#27ae60;--green-l:#eafaf1;--purple:#7c3aed;--purple-l:#f5f3ff;--gray:#6b7280;--bg:#f0f4f7;--white:#fff;--text:#1f2937;--border:#d1d5db;--sh:0 2px 10px rgba(0,0,0,0.09)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+.hdr{background:linear-gradient(135deg,var(--teal),#1a9994);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 10px rgba(14,124,123,.3)}
+.hdr-logo{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;border:2px solid rgba(255,255,255,.4);flex-shrink:0}
+.hdr h1{font-size:16px;font-weight:800}
+.hdr p{font-size:11.5px;opacity:.85;margin-top:2px}
+.badge{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:2px 9px;font-size:11px;margin-top:3px;display:inline-block}
+.nav{display:flex;background:#fff;border-bottom:2px solid var(--border);overflow-x:auto;flex-wrap:nowrap}
+.nb{padding:11px 14px;font-size:12.5px;font-weight:600;border:none;background:none;cursor:pointer;color:var(--gray);white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s}
+.nb.active{color:var(--teal);border-bottom-color:var(--teal)}
+.nb:hover:not(.active){color:var(--teal2);background:var(--teal-l)}
+.panel{display:none;padding:18px;max-width:880px;margin:0 auto}
+.panel.active{display:block}
+.card{background:#fff;border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:var(--sh)}
+.ct{font-size:13.5px;font-weight:700;color:var(--teal);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.ct .ic{font-size:17px}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:4px}
+select,input[type=number],input[type=text]{width:100%;padding:8px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);background:#fff;transition:border .2s}
+select:focus,input:focus{border-color:var(--teal);outline:none}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:11px}
+.fg{margin-bottom:11px}
+.og{display:flex;flex-direction:column;gap:6px}
+.ol{display:flex;align-items:flex-start;gap:8px;padding:8px 11px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;transition:all .15s;line-height:1.4}
+.ol:hover{border-color:var(--teal2);background:var(--teal-l)}
+.ol input{margin-top:2px;accent-color:var(--teal);flex-shrink:0}
+.ol.sel{border-color:var(--teal);background:var(--teal-l)}
+.cg{display:flex;flex-direction:column;gap:6px}
+.cl{display:flex;align-items:flex-start;gap:8px;padding:7px 11px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;transition:all .15s;line-height:1.4}
+.cl:hover{border-color:var(--orange);background:var(--orange-l)}
+.cl input{margin-top:2px;accent-color:var(--orange);flex-shrink:0}
+.cl.chk{border-color:var(--orange);background:var(--orange-l)}
+.sb-wrap{display:flex;gap:5px;flex-wrap:wrap}
+.sb{padding:7px 13px;border:2px solid var(--border);border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;background:#fff;transition:all .15s;min-width:40px;text-align:center}
+.sb:hover{border-color:var(--teal2)}
+.sb.sel{border-color:var(--teal);background:var(--teal);color:#fff}
+.sec{border:1.5px solid var(--border);border-radius:10px;padding:13px;margin-bottom:11px}
+.sec-t{font-size:13px;font-weight:700;color:var(--gray);margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.abtn{width:100%;padding:13px;background:linear-gradient(135deg,var(--teal),var(--teal2));color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;transition:opacity .2s}
+.abtn:hover{opacity:.9}
+.abtn.green{background:linear-gradient(135deg,#27ae60,#2ecc71)}
+.info{background:var(--teal-l);border-left:4px solid var(--teal);border-radius:8px;padding:11px 14px;font-size:12.5px;color:#0a5554;margin-bottom:10px}
+.warn{background:var(--yellow-l);border-left:4px solid var(--yellow);border-radius:8px;padding:11px 14px;font-size:12.5px;color:#7a5700;margin-bottom:10px}
+.danger{background:var(--red-l);border-left:4px solid var(--red);border-radius:8px;padding:11px 14px;font-size:12.5px;color:#7a1a1a;margin-bottom:10px}
+.rg{font-size:26px;font-weight:900;text-align:center;padding:14px;border-radius:10px;margin-bottom:12px;letter-spacing:.5px}
+.g0{background:var(--green-l);color:var(--green);border:2px solid var(--green)}
+.g1{background:var(--yellow-l);color:#b7800a;border:2px solid var(--yellow)}
+.g2{background:#fff3e0;color:#e65100;border:2px solid #ff9800}
+.g3{background:var(--red-l);color:var(--red);border:2px solid var(--red)}
+.g4{background:#1a0000;color:#ff8080;border:2px solid #8b0000}
+.astrip{display:flex;align-items:flex-start;gap:9px;padding:11px 14px;border-radius:9px;margin-bottom:9px;font-size:13px;font-weight:600;line-height:1.45}
+.a-red{background:var(--red-l);color:var(--red);border-left:4px solid var(--red)}
+.a-org{background:var(--orange-l);color:#c0600a;border-left:4px solid var(--orange)}
+.a-yel{background:var(--yellow-l);color:#a07200;border-left:4px solid var(--yellow)}
+.a-grn{background:var(--green-l);color:#1a6b3e;border-left:4px solid var(--green)}
+.a-tea{background:var(--teal-l);color:var(--teal);border-left:4px solid var(--teal)}
+.a-pur{background:var(--purple-l);color:var(--purple);border-left:4px solid var(--purple)}
+.rl{list-style:none;display:flex;flex-direction:column;gap:5px}
+.rl li{font-size:13px;padding:7px 11px;background:var(--bg);border-radius:7px;display:flex;gap:7px;align-items:flex-start;line-height:1.45}
+.rl li::before{content:'→';color:var(--teal);font-weight:700;flex-shrink:0}
+.bt{width:100%;border-collapse:collapse;font-size:12.5px}
+.bt th{background:var(--teal);color:#fff;padding:7px 9px;text-align:left;font-size:12px}
+.bt td{padding:7px 9px;border-bottom:1px solid var(--border);vertical-align:top}
+.bt tr:hover td{background:var(--teal-l)}
+.domain-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.dom-card{border:1.5px solid var(--border);border-radius:9px;padding:11px}
+.dom-card.done{border-color:var(--green);background:var(--green-l)}
+.dom-card.warn-c{border-color:var(--yellow);background:var(--yellow-l)}
+.dom-card.crit{border-color:var(--red);background:var(--red-l)}
+.dom-label{font-size:11.5px;font-weight:700;color:var(--gray);margin-bottom:5px}
+.dom-val{font-size:15px;font-weight:800;color:var(--teal)}
+.trend-row{display:grid;grid-template-columns:auto 1fr 1fr 1fr 1fr;gap:6px;align-items:center;margin-bottom:6px;font-size:12.5px}
+.trend-hdr{font-weight:700;color:var(--gray);border-bottom:2px solid var(--border);padding-bottom:5px;margin-bottom:8px}
+.chip{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11.5px;font-weight:700}
+.chip-0{background:var(--green-l);color:var(--green)}
+.chip-1{background:var(--yellow-l);color:#b7800a}
+.chip-2{background:#fff3e0;color:#e65100}
+.chip-3{background:var(--red-l);color:var(--red)}
+.chip-4{background:#1a0000;color:#ff8080}
+.req-star{color:var(--red);margin-left:2px}
+.val-msg{font-size:12px;color:var(--red);margin-top:5px;display:none}
+.hidden{display:none!important}
+.ftr{text-align:center;padding:16px;font-size:11px;color:var(--gray);border-top:1px solid var(--border);margin-top:16px}
+@media(max-width:600px){.fr,.domain-grid{grid-template-columns:1fr}.hdr h1{font-size:14px}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-logo">dA</div>
+  <div>
+    <h1>🧠 ICANS Pediatric Grading & Neuro-Escalation Assistant</h1>
+    <p>Immune Effector Cell-Associated Neurotoxicity Syndrome · ASTCT 2019</p>
+    <span class="badge">drAisyi EduCare · CAR-T / IEC Therapy · v2.0 · 2025</span>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="nb active" data-tab="pasien">👤 Pasien</button>
+  <button class="nb" data-tab="kognitif">🧩 ICE/CAPD</button>
+  <button class="nb" data-tab="domain">📊 Domain Klinis</button>
+  <button class="nb" data-tab="seizure">⚡ Kejang</button>
+  <button class="nb" data-tab="baseline">📋 Baseline</button>
+  <button class="nb" data-tab="trend">📈 Trend</button>
+  <button class="nb" data-tab="hasil">🎯 Hasil</button>
+  <button class="nb" data-tab="ref">📚 Referensi</button>
+</div>
+
+<!-- ===== TAB: PASIEN ===== -->
+<div class="panel active" id="tab-pasien">
+  <div class="card">
+    <div class="ct"><span class="ic">👤</span> Data Pasien & Konteks Klinis</div>
+    <div class="danger">⚠️ <strong>Penting:</strong> Tool ini didesain untuk <strong>ICANS terkait immune effector cell (IEC) therapy</strong> (CAR-T, bispecific antibody). Untuk HSCT/kemoterapi, gunakan Mode Neurotoxicity Umum (lihat di bawah).</div>
+    <div class="fr">
+      <div class="fg"><label>Berat Badan (kg)<span class="req-star">*</span></label><input type="number" id="bb" min="1" max="120" placeholder="cth: 25"></div>
+      <div class="fg"><label>Usia<span class="req-star">*</span></label><input type="number" id="usia" min="0" max="18" placeholder="cth: 8"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Satuan Usia</label><select id="satuanUsia"><option value="tahun">Tahun</option><option value="bulan">Bulan</option></select></div>
+      <div class="fg"><label>Hari ke- setelah infusi / kondisioning<span class="req-star">*</span></label><input type="number" id="hari" min="0" max="120" placeholder="cth: 7"></div>
+    </div>
+    <div class="fg">
+      <label>Mode Penilaian<span class="req-star">*</span></label>
+      <div class="og" id="modeGrp">
+        <label class="ol"><input type="radio" name="mode" value="icans"> 🔬 <span><strong>Mode ICANS / IEC-related</strong> — CAR-T, bispecific antibody, MAGE-A4 TCR-T, dll.</span></label>
+        <label class="ol"><input type="radio" name="mode" value="neuro"> 🏥 <span><strong>Mode Neurotoxicity Umum</strong> — HSCT, kemoterapi intensif, busulfan, MTX HD, infeksi CNS, PRES, dll.</span></label>
+      </div>
+    </div>
+    <div class="fg" id="terapi-row">
+      <label>Terapi Spesifik</label>
+      <select id="terapi">
+        <option value="cart">CAR-T Cell Therapy (anti-CD19/CD22/BCMA/dll)</option>
+        <option value="bispec">Bispecific antibody (blinatumomab, dll)</option>
+        <option value="hsct-allo">HSCT Alogenik</option>
+        <option value="hsct-auto">HSCT Autologus</option>
+        <option value="chemio">Kemoterapi intensif</option>
+        <option value="lain">Lainnya</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Status CRS bersamaan<span class="req-star">*</span></label>
+      <div class="og" id="crsGrp">
+        <label class="ol"><input type="radio" name="crs" value="0"> ✅ Tidak ada CRS</label>
+        <label class="ol"><input type="radio" name="crs" value="1"> 🟡 CRS Grade 1 (demam saja)</label>
+        <label class="ol"><input type="radio" name="crs" value="2"> 🟠 CRS Grade 2</label>
+        <label class="ol"><input type="radio" name="crs" value="3"> 🔴 CRS Grade 3–4</label>
+      </div>
+    </div>
+    <div class="warn" id="neuro-mode-note" style="display:none">
+      ℹ️ Mode Neurotoxicity Umum: penilaian menggunakan domain klinis yang sama, namun tidak menggunakan grading ICANS ASTCT secara resmi. Output akan berupa <em>neurotoxicity severity assessment</em> dan rekomendasi eskalasi.
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="ic">⚡</span> Quick Symptom Screen</div>
+    <p style="font-size:12.5px;color:var(--gray);margin-bottom:9px">Centang semua yang ada saat ini. Tidak menentukan grade sendiri — digunakan sebagai early warning.</p>
+    <div class="cg" id="qs">
+      <label class="cl"><input type="checkbox" value="headache"> 🤕 Sakit kepala</label>
+      <label class="cl"><input type="checkbox" value="tremor"> 🤲 Tremor / mioklonus ringan</label>
+      <label class="cl"><input type="checkbox" value="aphasia"> 💬 Kesulitan bicara / afasia</label>
+      <label class="cl"><input type="checkbox" value="confuse"> 😵 Kebingungan / disorientasi</label>
+      <label class="cl"><input type="checkbox" value="agitasi"> 😤 Agitasi / gelisah berlebihan</label>
+      <label class="cl"><input type="checkbox" value="somnolent"> 😴 Mengantuk berlebihan</label>
+      <label class="cl"><input type="checkbox" value="seizure_sx"> ⚡ Kejang (lihat tab Kejang)</label>
+      <label class="cl"><input type="checkbox" value="motorik"> 🦿 Kelemahan / defisit motorik</label>
+      <label class="cl"><input type="checkbox" value="inkontinensia"> 💧 Inkontinensia baru</label>
+    </div>
+  </div>
+  <button class="abtn" id="btnNext1">Lanjut ke Penilaian Kognitif →</button>
+</div>
+
+<!-- ===== TAB: KOGNITIF ===== -->
+<div class="panel" id="tab-kognitif">
+  <div class="card">
+    <div class="ct"><span class="ic">🧩</span> Pemilihan Metode Kognitif</div>
+    <div class="info"><strong>Panduan ASTCT:</strong><br>
+    • <strong>≥12 tahun / kooperatif</strong>: ICE Score (10 poin) — domain kognitif saja<br>
+    • <strong>&lt;12 tahun / tidak kooperatif</strong>: CAPD (Cornell Assessment of Pediatric Delirium)<br>
+    • <strong>Level of consciousness dinilai TERPISAH</strong> dari ICE/CAPD (lihat tab Domain Klinis)</div>
+    <div class="fg">
+      <label>Metode yang digunakan<span class="req-star">*</span></label>
+      <div class="og" id="metodeGrp">
+        <label class="ol"><input type="radio" name="metode" value="ice"> 🧩 <strong>ICE Score</strong> — anak ≥12 tahun / kooperatif</label>
+        <label class="ol"><input type="radio" name="metode" value="capd"> 👶 <strong>CAPD</strong> — anak &lt;12 tahun / tidak kooperatif / bayi</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ICE SCORE -->
+  <div class="card" id="ice-section">
+    <div class="ct"><span class="ic">🧩</span> ICE Score (Struktur ASTCT 2019)</div>
+    <div class="warn">ICE Score menilai <strong>fungsi kognitif</strong> saja. Level of consciousness <strong>tidak termasuk</strong> dalam total ICE. Nilai 0–10; skor lebih rendah = lebih berat.</div>
+
+    <div class="sec">
+      <div class="sec-t">1️⃣ Orientasi — 4 poin</div>
+      <p style="font-size:12.5px;margin-bottom:7px">Tanya: tahun berapa? bulan apa? kota apa? di mana kita sekarang? (1 poin tiap jawaban benar)</p>
+      <div class="sb-wrap" id="ice-or"><button class="sb" data-v="0">0</button><button class="sb" data-v="1">1</button><button class="sb" data-v="2">2</button><button class="sb" data-v="3">3</button><button class="sb" data-v="4">4</button></div>
+    </div>
+    <div class="sec">
+      <div class="sec-t">2️⃣ Penamaan (Naming) — 3 poin</div>
+      <p style="font-size:12.5px;margin-bottom:7px">Tunjukkan 3 benda, minta pasien sebutkan namanya (1 poin per benda)</p>
+      <div class="sb-wrap" id="ice-nm"><button class="sb" data-v="0">0</button><button class="sb" data-v="1">1</button><button class="sb" data-v="2">2</button><button class="sb" data-v="3">3</button></div>
+    </div>
+    <div class="sec">
+      <div class="sec-t">3️⃣ Ikuti Perintah (Following Command) — 1 poin</div>
+      <p style="font-size:12.5px;margin-bottom:7px">Berikan perintah sederhana dua langkah (misal: angkat tangan kanan, lalu sentuh hidung)</p>
+      <div class="sb-wrap" id="ice-fc"><button class="sb" data-v="0">0</button><button class="sb" data-v="1">1</button></div>
+    </div>
+    <div class="sec">
+      <div class="sec-t">4️⃣ Menulis Kalimat (Writing) — 1 poin</div>
+      <p style="font-size:12.5px;margin-bottom:7px">Minta pasien menulis satu kalimat sederhana yang bermakna</p>
+      <div class="sb-wrap" id="ice-wr"><button class="sb" data-v="0">0</button><button class="sb" data-v="1">1</button></div>
+      <div style="margin-top:9px">
+        <label style="font-size:12.5px;font-weight:600">Kualitas tulisan vs baseline:</label>
+        <div class="og" id="hwGrp" style="margin-top:5px">
+          <label class="ol"><input type="radio" name="hw" value="normal"> ✅ Normal / sesuai baseline</label>
+          <label class="ol"><input type="radio" name="hw" value="mild"> ⚠️ Memburuk ringan (masih terbaca)</label>
+          <label class="ol"><input type="radio" name="hw" value="severe"> 🚨 Sangat memburuk / tidak dapat menulis</label>
+          <label class="ol"><input type="radio" name="hw" value="na"> 🔵 Tidak dapat dinilai</label>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-t">5️⃣ Atensi / Perhatian — 1 poin</div>
+      <p style="font-size:12.5px;margin-bottom:7px">Hitung mundur dari 100 kelipatan 10 (1 poin bila ≥5 angka benar berurutan)</p>
+      <div class="sb-wrap" id="ice-at"><button class="sb" data-v="0">0</button><button class="sb" data-v="1">1</button></div>
+    </div>
+    <div style="background:var(--teal-l);border-radius:10px;padding:14px;text-align:center;margin-top:5px">
+      <div style="font-size:24px;font-weight:900;color:var(--teal)">ICE Total: <span id="ice-tot">–</span> / 10</div>
+      <div id="ice-interp" style="font-size:13px;margin-top:5px;color:var(--gray)">Lengkapi semua domain</div>
+      <div id="ice-cog-grade" style="font-size:12px;margin-top:3px;color:var(--teal);font-weight:600"></div>
+    </div>
+  </div>
+
+  <!-- CAPD -->
+  <div class="card" id="capd-section" style="display:none">
+    <div class="ct"><span class="ic">👶</span> CAPD – Cornell Assessment of Pediatric Delirium</div>
+    <div class="info">Skor ≥9 = Delirium positif → mendukung ICANS. <strong>Grade final tetap ditentukan bersama domain klinis lain.</strong><br>Skala: 0=Tidak pernah · 1=Jarang · 2=Kadang · 3=Sering · 4=Selalu</div>
+    <div id="capd-items"></div>
+    <div class="sec">
+      <div class="sec-t">Observasi Tambahan (tidak termasuk skor)</div>
+      <div class="cg">
+        <label class="cl"><input type="checkbox" id="capd-kontak"> Kontak mata berkurang signifikan</label>
+        <label class="cl"><input type="checkbox" id="capd-tangis"> Menangis berlebihan tanpa sebab jelas</label>
+        <label class="cl"><input type="checkbox" id="capd-nama"> Tidak merespons panggilan nama</label>
+        <label class="cl"><input type="checkbox" id="capd-stereo"> Gerakan stereotipi / flapping</label>
+      </div>
+    </div>
+    <div style="background:var(--orange-l);border-radius:10px;padding:14px;text-align:center;margin-top:5px">
+      <div style="font-size:24px;font-weight:900;color:var(--orange)">CAPD Total: <span id="capd-tot">–</span> / 32</div>
+      <div id="capd-interp" style="font-size:13px;margin-top:5px;color:var(--gray)">Lengkapi semua item</div>
+    </div>
+  </div>
+
+  <button class="abtn" id="btnNext2">Lanjut ke Domain Klinis →</button>
+</div>
+
+<!-- ===== TAB: DOMAIN KLINIS ===== -->
+<div class="panel" id="tab-domain">
+  <div class="card">
+    <div class="ct"><span class="ic">📊</span> Domain Klinis ASTCT (Terpisah dari ICE/CAPD)</div>
+    <div class="info">Grading ICANS final = <strong>grade tertinggi dari semua domain</strong>: ICE/CAPD + Level of Consciousness + Seizure + Motor + ICP/Edema Serebri</div>
+
+    <!-- LOC -->
+    <div class="sec">
+      <div class="sec-t">🧠 Level of Consciousness (LOC)<span class="req-star">*</span></div>
+      <div class="og" id="locGrp">
+        <label class="ol"><input type="radio" name="loc" value="0"> ✅ Sadar penuh / bangun spontan</label>
+        <label class="ol"><input type="radio" name="loc" value="1"> 🟡 Bangun dengan suara / responsif terhadap suara</label>
+        <label class="ol"><input type="radio" name="loc" value="2"> 🟠 Bangun / responsif dengan sentuhan/rangsang taktil</label>
+        <label class="ol"><input type="radio" name="loc" value="3"> 🔴 Hanya responsif terhadap rangsang nyeri kuat</label>
+        <label class="ol"><input type="radio" name="loc" value="4"> 🚨 Tidak bangun / stupor / koma (unarousable)</label>
+      </div>
+    </div>
+
+    <!-- MOTOR -->
+    <div class="sec">
+      <div class="sec-t">🦿 Motor Weakness / Defisit Fokal<span class="req-star">*</span></div>
+      <div class="og" id="motorGrp">
+        <label class="ol"><input type="radio" name="motor" value="0"> ✅ Tidak ada defisit motorik</label>
+        <label class="ol"><input type="radio" name="motor" value="t"> ⚠️ Tremor / mioklonus ringan saja (bukan grade driver)</label>
+        <label class="ol"><input type="radio" name="motor" value="mild"> 🟡 Kelemahan fokal ringan — perlu evaluasi lebih lanjut</label>
+        <label class="ol"><input type="radio" name="motor" value="hemi"> 🔴 Hemiparesis / paraparesis bermakna → Grade 4</label>
+        <label class="ol"><input type="radio" name="motor" value="postur"> 🚨 Decorticate / Decerebrate posturing → Grade 4</label>
+      </div>
+    </div>
+
+    <!-- ICP/EDEMA -->
+    <div class="sec">
+      <div class="sec-t">💥 Raised ICP / Cerebral Edema Signs<span class="req-star">*</span></div>
+      <div class="cg" id="icpGrp">
+        <label class="cl"><input type="checkbox" value="papilledema"> 👁️ Papilledema</label>
+        <label class="cl"><input type="checkbox" value="cushing"> 🔴 Cushing Triad (bradikardia, hipertensi, bradipnea)</label>
+        <label class="cl"><input type="checkbox" value="cn6"> 👁️‍🗨️ Parese N.VI (lateral gaze palsy)</label>
+        <label class="cl"><input type="checkbox" value="posturing_icp"> 🚨 Decorticate/Decerebrate posturing (terkait ICP)</label>
+        <label class="cl"><input type="checkbox" value="edema_ct"> 🧠 Edema serebri difus pada CT/MRI</label>
+        <label class="cl"><input type="checkbox" value="no_icp"> ✅ Tidak ada tanda ICP tinggi / cerebral edema</label>
+      </div>
+    </div>
+  </div>
+  <button class="abtn" id="btnNext3">Lanjut ke Penilaian Kejang →</button>
+</div>
+
+<!-- ===== TAB: SEIZURE ===== -->
+<div class="panel" id="tab-seizure">
+  <div class="card">
+    <div class="ct"><span class="ic">⚡</span> Penilaian Kejang – Graded</div>
+    <div class="info">Grading seizure untuk ICANS:<br>
+    • Kejang singkat/teratasi = Grade 3 (bila bukan domain lain yang lebih berat)<br>
+    • Status epileptikus / berulang = Grade 4</div>
+
+    <div class="sec">
+      <div class="sec-t">A. Status Kejang Saat Ini<span class="req-star">*</span></div>
+      <div class="og" id="szCurGrp">
+        <label class="ol"><input type="radio" name="szCur" value="0"> ✅ Tidak ada kejang</label>
+        <label class="ol"><input type="radio" name="szCur" value="3a"> ⚡ Kejang singkat, berhenti spontan &lt;5 menit</label>
+        <label class="ol"><input type="radio" name="szCur" value="3b"> ⚡ Non-convulsive seizure di EEG, teratasi dengan intervensi</label>
+        <label class="ol"><input type="radio" name="szCur" value="4a"> 🔴 Kejang &gt;5 menit</label>
+        <label class="ol"><input type="radio" name="szCur" value="4b"> 🚨 Kejang berulang tanpa kembali ke baseline</label>
+        <label class="ol"><input type="radio" name="szCur" value="4c"> 🚨 Status epileptikus</label>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-t">B. Riwayat Kejang Pre-Terapi</div>
+      <div class="cg" id="szPre">
+        <label class="cl"><input type="checkbox" value="pre_sz"> Pernah kejang sebelum terapi</label>
+        <label class="cl"><input type="checkbox" value="pre_epilepsy"> Riwayat epilepsi / sudah mendapat AED</label>
+        <label class="cl"><input type="checkbox" value="pre_febrile"> Riwayat kejang demam</label>
+        <label class="cl"><input type="checkbox" value="pre_eeg"> EEG pre-terapi abnormal</label>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-t">C. Faktor Pencetus Metabolik</div>
+      <div class="cg" id="szMeta">
+        <label class="cl"><input type="checkbox" value="hipona"> Hiponatremia &lt;125 mEq/L</label>
+        <label class="cl"><input type="checkbox" value="demam_t"> Demam tinggi &gt;39.5°C</label>
+        <label class="cl"><input type="checkbox" value="hipoglik"> Hipoglikemia</label>
+        <label class="cl"><input type="checkbox" value="hipertens"> Hipertensi berat</label>
+        <label class="cl"><input type="checkbox" value="obat_neuro"> Obat neurotoksik (busulfan, MTX HD, ciclosporin)</label>
+      </div>
+    </div>
+
+    <div class="sec" style="background:var(--yellow-l);border-color:var(--yellow)">
+      <div class="sec-t" style="color:#a07200">⚠️ Status Profilaksis AED</div>
+      <div class="og" id="prophGrp">
+        <label class="ol"><input type="radio" name="proph" value="yes"> ✅ Sudah mendapat profilaksis AED</label>
+        <label class="ol"><input type="radio" name="proph" value="no"> ❌ Belum mendapat profilaksis AED</label>
+        <label class="ol"><input type="radio" name="proph" value="risk"> ⚠️ Risiko tinggi (riwayat kejang / high burden disease)</label>
+      </div>
+    </div>
+  </div>
+  <button class="abtn" id="btnNext4">Lanjut ke Baseline Neuro →</button>
+</div>
+
+<!-- ===== TAB: BASELINE ===== -->
+<div class="panel" id="tab-baseline">
+  <div class="card">
+    <div class="ct"><span class="ic">📋</span> Baseline Neurologis (Sebelum Terapi)</div>
+    <div class="info">Dokumentasikan SEBELUM infusi CAR-T / kondisioning. Data ini tersimpan di localStorage dan digunakan untuk perbandingan trend.</div>
+    <table class="bt">
+      <thead><tr><th>Domain</th><th>Status Baseline</th></tr></thead>
+      <tbody>
+        <tr><td>Kesadaran</td><td><select id="bl-loc"><option>Compos Mentis</option><option>Somnolen</option><option>Stupor</option><option>Koma</option></select></td></tr>
+        <tr><td>Bahasa / Bicara</td><td><select id="bl-speech"><option>Normal</option><option>Disartri ringan</option><option>Afasia</option><option>Non-verbal</option></select></td></tr>
+        <tr><td>Kemampuan menulis</td><td><select id="bl-write"><option>Normal</option><option>Terbatas (usia)</option><option>Tidak dapat dinilai</option></select></td></tr>
+        <tr><td>Riwayat kejang</td><td><select id="bl-sz"><option>Tidak ada</option><option>Ada, terkontrol</option><option>Ada, tidak terkontrol</option></select></td></tr>
+        <tr><td>Defisit fokal</td><td><select id="bl-focal"><option>Tidak ada</option><option>Ada (dokumentasikan)</option></select></td></tr>
+        <tr><td>ICE Score baseline</td><td><input type="number" id="bl-ice" placeholder="0–10" min="0" max="10"></td></tr>
+        <tr><td>CAPD Score baseline</td><td><input type="number" id="bl-capd" placeholder="0–32" min="0" max="32"></td></tr>
+        <tr><td>Nama penilai</td><td><input type="text" id="bl-rater" placeholder="Nama / inisial"></td></tr>
+        <tr><td>Catatan</td><td><input type="text" id="bl-note" placeholder="opsional..."></td></tr>
+      </tbody>
+    </table>
+    <button class="abtn green" id="btnSaveBaseline" style="margin-top:12px">💾 Simpan Baseline ke Memori</button>
+    <div id="bl-saved" style="display:none;color:var(--green);font-weight:700;text-align:center;margin-top:8px">✅ Baseline tersimpan (localStorage)</div>
+  </div>
+  <div class="card" id="bl-display" style="display:none">
+    <div class="ct"><span class="ic">📂</span> Baseline Tersimpan</div>
+    <div id="bl-content"></div>
+    <button class="abtn" style="background:var(--red);margin-top:10px;font-size:13px;padding:9px" id="btnClearBaseline">🗑️ Hapus Baseline</button>
+  </div>
+</div>
+
+<!-- ===== TAB: TREND ===== -->
+<div class="panel" id="tab-trend">
+  <div class="card">
+    <div class="ct"><span class="ic">📈</span> Serial Trend ICE/CAPD per Shift</div>
+    <div class="info">Catat hasil per shift untuk memantau perkembangan ICANS. ICANS sangat dinamis — perubahan dalam hitungan jam bisa signifikan.</div>
+    <div class="fr">
+      <div class="fg"><label>Shift / Jam</label><input type="text" id="tr-shift" placeholder="cth: Pagi / 08.00"></div>
+      <div class="fg"><label>Penilai</label><input type="text" id="tr-rater" placeholder="Inisial"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>ICE Score (jika berlaku)</label><div class="sb-wrap" id="tr-ice-sb"></div></div>
+      <div class="fg"><label>CAPD Score (jika berlaku)</label><input type="number" id="tr-capd" min="0" max="32" placeholder="0–32"></div>
+    </div>
+    <div class="fg">
+      <label>Grade ICANS saat ini</label>
+      <div class="sb-wrap" id="tr-grade-sb">
+        <button class="sb" data-v="0">Gr 0</button><button class="sb" data-v="1">Gr 1</button><button class="sb" data-v="2">Gr 2</button><button class="sb" data-v="3">Gr 3</button><button class="sb" data-v="4">Gr 4</button>
+      </div>
+    </div>
+    <div class="fg"><label>Catatan Klinis</label><input type="text" id="tr-note" placeholder="opsional: gejala baru, respons terapi..."></div>
+    <button class="abtn" id="btnAddTrend" style="margin-top:8px">➕ Tambah Catatan Shift</button>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="ic">📊</span> Riwayat Trend</div>
+    <div id="trend-table"><p style="color:var(--gray);font-size:13px">Belum ada catatan shift.</p></div>
+    <button class="abtn" style="background:#6b7280;margin-top:10px;font-size:13px;padding:9px" id="btnClearTrend">🗑️ Hapus Semua Trend</button>
+  </div>
+</div>
+
+<!-- ===== TAB: HASIL ===== -->
+<div class="panel" id="tab-hasil">
+  <div id="hasil-placeholder" class="card">
+    <p style="text-align:center;color:var(--gray);padding:20px;font-size:13px">
+      ⬅️ Lengkapi semua tab (Pasien → Kognitif → Domain Klinis → Kejang) lalu klik tombol <strong>Hitung Grade ICANS</strong> di bawah.
+    </p>
+  </div>
+  <div id="hasil-content"></div>
+  <button class="abtn" id="btnHitung" style="margin-top:4px">⚡ Hitung Grade ICANS & Rekomendasi</button>
+  <button class="abtn" id="btnPrint" style="background:#6b7280;margin-top:8px;font-size:13px;padding:10px">🖨️ Print / Export Summary</button>
+  <button class="abtn" id="btnReset" style="background:#7f1d1d;margin-top:8px;font-size:13px;padding:10px">🔄 Reset Semua Data</button>
+</div>
+
+<!-- ===== TAB: REFERENSI ===== -->
+<div class="panel" id="tab-ref">
+  <div class="card">
+    <div class="ct"><span class="ic">📊</span> Grading ICANS ASTCT 2019 – Ringkasan</div>
+    <table class="bt">
+      <thead><tr><th>Grade</th><th>ICE Score</th><th>Level of Consciousness</th><th>Kejang</th><th>Motor</th><th>ICP/Edema</th></tr></thead>
+      <tbody>
+        <tr><td><strong>0</strong></td><td>10</td><td>Sadar penuh</td><td>–</td><td>–</td><td>–</td></tr>
+        <tr><td><strong>1</strong></td><td>7–9</td><td>Bangun spontan</td><td>–</td><td>–</td><td>–</td></tr>
+        <tr><td><strong>2</strong></td><td>3–6</td><td>Bangun dgn suara</td><td>–</td><td>–</td><td>–</td></tr>
+        <tr><td><strong>3</strong></td><td>0–2</td><td>Bangun dgn rangsang taktil / nyeri</td><td>Fokal/singkat/NCS teratasi</td><td>–</td><td>Fokal/lokal</td></tr>
+        <tr><td><strong>4</strong></td><td>0</td><td>Tidak bangun / stupor / koma</td><td>Lama/berulang/Status</td><td>Hemiparesis/paraparesis/posturing</td><td>Difus</td></tr>
+      </tbody>
+    </table>
+    <div class="info" style="margin-top:10px">Grade final = <strong>grade tertinggi</strong> dari semua domain. ICE/CAPD hanya satu komponen, bukan satu-satunya penentu grade.</div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="ic">💊</span> Catatan Klinis Penting</div>
+    <ul class="rl">
+      <li><strong>Tocilizumab TIDAK direkomendasikan untuk ICANS terisolasi</strong> — penetrasi sawar darah otak terbatas. Tocilizumab hanya diberikan bila ada CRS bersamaan sesuai algoritma CRS.</li>
+      <li>Kortikosteroid (dexamethasone) adalah pilar terapi ICANS — mulai sesuai grade dan protokol lokal.</li>
+      <li>Levetiracetam untuk profilaksis kejang dapat dipertimbangkan pada risiko tinggi sesuai protokol produk — bukan rutin untuk semua pasien.</li>
+      <li>Untuk HSCT/kemoterapi: pertimbangkan PRES, neurotoxicity calcineurin inhibitor, busulfan, MTX HD, infeksi CNS, dan komplikasi metabolik sebagai diagnosis banding.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="ic">📚</span> Referensi Utama</div>
+    <ul class="rl">
+      <li>Lee DW et al. ASTCT Consensus Grading for CRS & ICANS. <em>Biol Blood Marrow Transplant.</em> 2019;25(4):625–638.</li>
+      <li>Traube C et al. Cornell Assessment of Pediatric Delirium (CAPD). <em>Crit Care Med.</em> 2014;42(3):656–663.</li>
+      <li>Santomasso B et al. Clinical and biological correlates of ICANS in CAR-T recipients. <em>Cancer Discov.</em> 2019.</li>
+      <li>Smith LS et al. Pediatric ICANS: challenges and management. <em>Pediatr Blood Cancer.</em> 2022.</li>
+      <li>eviQ Cancer Treatments Online – ICANS Management Resource. Updated 2025.</li>
+      <li>NCCN Guidelines: Management of Immunotherapy-Related Toxicities (CAR T). v2.2025.</li>
+    </ul>
+  </div>
+  <div class="warn">⚠️ <strong>Disclaimer:</strong> Tool ini untuk pendidikan klinisi dan pengambilan keputusan awal. Tidak menggantikan penilaian klinis langsung. Dosis obat harus selalu merujuk ke protokol institusi dan dikonfirmasi oleh dokter yang merawat.</div>
+</div>
+
+<div class="ftr">drAisyi EduCare · ICANS Pediatric Grading & Neuro-Escalation Assistant · v2.0 · 2025<br>Berdasarkan ASTCT 2019 Consensus Grading · eviQ 2025 · Untuk Penggunaan Klinis Terpandu</div>
+
+<script>
+// ===== NAV =====
+document.querySelectorAll('.nb').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.nb').forEach(function(x){x.classList.remove('active')});
+    document.querySelectorAll('.panel').forEach(function(x){x.classList.remove('active')});
+    b.classList.add('active');
+    document.getElementById('tab-'+b.dataset.tab).classList.add('active');
+  });
+});
+
+function goTab(t){
+  document.querySelectorAll('.nb').forEach(function(x){x.classList.remove('active')});
+  document.querySelectorAll('.panel').forEach(function(x){x.classList.remove('active')});
+  document.querySelector('[data-tab="'+t+'"]').classList.add('active');
+  document.getElementById('tab-'+t).classList.add('active');
+}
+
+// ===== RADIO/CHECKBOX HIGHLIGHT =====
+function initRadioHighlight(grpId){
+  var grp=document.getElementById(grpId);
+  if(!grp)return;
+  grp.querySelectorAll('input[type=radio]').forEach(function(r){
+    r.addEventListener('change',function(){
+      grp.querySelectorAll('.ol').forEach(function(l){l.classList.remove('sel')});
+      r.closest('.ol').classList.add('sel');
+    });
+  });
+}
+['modeGrp','crsGrp','metodeGrp','hwGrp','locGrp','motorGrp','szCurGrp','prophGrp'].forEach(initRadioHighlight);
+
+document.querySelectorAll('.cg .cl input[type=checkbox]').forEach(function(cb){
+  cb.addEventListener('change',function(){
+    cb.closest('.cl').classList.toggle('chk',cb.checked);
+  });
+});
+
+// ===== MODE TOGGLE =====
+document.querySelectorAll('input[name="mode"]').forEach(function(r){
+  r.addEventListener('change',function(){
+    document.getElementById('neuro-mode-note').style.display=r.value==='neuro'?'block':'none';
+  });
+});
+
+// ===== METODE TOGGLE =====
+document.querySelectorAll('input[name="metode"]').forEach(function(r){
+  r.addEventListener('change',function(){
+    document.getElementById('ice-section').style.display=r.value==='ice'?'block':'none';
+    document.getElementById('capd-section').style.display=r.value==='capd'?'block':'none';
+  });
+});
+
+// ===== ICE SCALE BUTTONS =====
+var iceVals={or:null,nm:null,fc:null,wr:null,at:null};
+['or','nm','fc','wr','at'].forEach(function(k){
+  document.querySelectorAll('#ice-'+k+' .sb').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#ice-'+k+' .sb').forEach(function(x){x.classList.remove('sel')});
+      b.classList.add('sel');
+      iceVals[k]=parseInt(b.dataset.v);
+      updateICE();
+    });
+  });
+});
+
+function updateICE(){
+  var vals=Object.values(iceVals);
+  if(vals.some(function(v){return v===null;})){
+    document.getElementById('ice-tot').textContent='–';
+    document.getElementById('ice-interp').textContent='Lengkapi semua domain';
+    document.getElementById('ice-cog-grade').textContent='';
+    return;
+  }
+  var tot=vals.reduce(function(a,b){return a+b;},0);
+  document.getElementById('ice-tot').textContent=tot;
+  var cg= tot>=7&&tot<=9?1: tot>=3&&tot<=6?2: tot>=1&&tot<=2?3: tot===0?4:0;
+  var labels=['✅ Kognitif normal','⚠️ Defisit kognitif ringan (Grade 1)','🟠 Defisit kognitif sedang (Grade 2)','🔴 Defisit kognitif berat (Grade 3)','🚨 Tidak ada respons kognitif (Grade 4)'];
+  document.getElementById('ice-interp').textContent=tot===10?'✅ Normal':labels[cg];
+  document.getElementById('ice-cog-grade').textContent='Komponen kognitif → Grade '+cg+' (dari ICE saja)';
+}
+
+// ===== CAPD =====
+var capdDefs=[
+  'Apakah anak melakukan kontak mata dengan pengasuh?',
+  'Apakah tindakan anak bertujuan / purposeful?',
+  'Apakah anak sadar akan lingkungannya?',
+  'Apakah anak mengkomunikasikan kebutuhan / keinginan?',
+  'Apakah anak gelisah / agitasi?',
+  'Apakah anak tidak dapat ditenangkan?',
+  'Apakah anak tidak responsif terhadap interaksi sosial?',
+  'Apakah aktivitas anak berubah-ubah tanpa sebab?'
+];
+var capdContainer=document.getElementById('capd-items');
+capdDefs.forEach(function(item,idx){
+  var div=document.createElement('div');
+  div.className='sec';
+  div.innerHTML='<div class="sec-t">'+(idx+1)+'. '+item+'</div>'+
+    '<div class="sb-wrap" id="ci-'+idx+'">'+
+    '<button class="sb" data-v="0">0</button><button class="sb" data-v="1">1</button>'+
+    '<button class="sb" data-v="2">2</button><button class="sb" data-v="3">3</button><button class="sb" data-v="4">4</button></div>';
+  capdContainer.appendChild(div);
+  div.querySelectorAll('.sb').forEach(function(b){
+    b.addEventListener('click',function(){
+      div.querySelectorAll('.sb').forEach(function(x){x.classList.remove('sel')});
+      b.classList.add('sel');
+      updateCAPD();
+    });
+  });
+});
+
+function updateCAPD(){
+  var tot=0;var ok=true;
+  for(var i=0;i<capdDefs.length;i++){
+    var s=document.querySelector('#ci-'+i+' .sb.sel');
+    if(!s){ok=false;break;}
+    tot+=parseInt(s.dataset.v);
+  }
+  if(!ok){document.getElementById('capd-tot').textContent='–';document.getElementById('capd-interp').textContent='Lengkapi semua item';return;}
+  document.getElementById('capd-tot').textContent=tot;
+  var msg=tot<9?'✅ Tidak memenuhi kriteria delirium CAPD':tot<16?'⚠️ Delirium positif (CAPD ≥9) – mendukung ICANS':'🚨 Delirium berat (CAPD ≥16) – sangat mendukung ICANS';
+  document.getElementById('capd-interp').textContent=msg;
+}
+
+// ===== TREND =====
+var trIceSel=null;
+var trGradeSel=null;
+document.querySelectorAll('#tr-ice-sb .sb').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('#tr-ice-sb .sb').forEach(function(x){x.classList.remove('sel')});
+    b.classList.add('sel');trIceSel=b.dataset.v;
+  });
+});
+document.querySelectorAll('#tr-grade-sb .sb').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('#tr-grade-sb .sb').forEach(function(x){x.classList.remove('sel')});
+    b.classList.add('sel');trGradeSel=b.dataset.v;
+  });
+});
+
+// Init trend ICE buttons
+(function(){
+  var sb=document.getElementById('tr-ice-sb');
+  for(var i=0;i<=10;i++){
+    var b=document.createElement('button');
+    b.className='sb';b.dataset.v=i;b.textContent=i;
+    (function(btn){
+      btn.addEventListener('click',function(){
+        document.querySelectorAll('#tr-ice-sb .sb').forEach(function(x){x.classList.remove('sel')});
+        btn.classList.add('sel');trIceSel=btn.dataset.v;
+      });
+    })(b);
+    sb.appendChild(b);
+  }
+})();
+
+var trendData=[];
+try{var td=localStorage.getItem('icans_trend');if(td)trendData=JSON.parse(td);}catch(e){}
+
+function renderTrend(){
+  var el=document.getElementById('trend-table');
+  if(trendData.length===0){el.innerHTML='<p style="color:var(--gray);font-size:13px">Belum ada catatan shift.</p>';return;}
+  var h='<div class="trend-row trend-hdr"><span>Waktu</span><span>Penilai</span><span>ICE/CAPD</span><span>Grade</span><span>Catatan</span></div>';
+  trendData.forEach(function(d){
+    var gc='chip chip-'+d.grade;
+    h+='<div class="trend-row"><span style="font-size:12px">'+d.shift+'</span><span style="font-size:12px">'+d.rater+'</span><span style="font-size:12px">'+d.ice+'</span><span><span class="'+gc+'">Gr '+d.grade+'</span></span><span style="font-size:12px">'+d.note+'</span></div>';
+  });
+  el.innerHTML=h;
+}
+renderTrend();
+
+document.getElementById('btnAddTrend').addEventListener('click',function(){
+  var entry={
+    shift:document.getElementById('tr-shift').value||new Date().toLocaleTimeString('id-ID'),
+    rater:document.getElementById('tr-rater').value||'–',
+    ice:(trIceSel!==null?trIceSel:'–')+(document.getElementById('tr-capd').value?' / '+document.getElementById('tr-capd').value:''),
+    grade:trGradeSel!==null?trGradeSel:'?',
+    note:document.getElementById('tr-note').value||'–'
+  };
+  trendData.push(entry);
+  try{localStorage.setItem('icans_trend',JSON.stringify(trendData));}catch(e){}
+  renderTrend();
+  document.getElementById('tr-shift').value='';
+  document.getElementById('tr-rater').value='';
+  document.getElementById('tr-capd').value='';
+  document.getElementById('tr-note').value='';
+  trIceSel=null;trGradeSel=null;
+  document.querySelectorAll('#tr-ice-sb .sb, #tr-grade-sb .sb').forEach(function(b){b.classList.remove('sel')});
+});
+
+document.getElementById('btnClearTrend').addEventListener('click',function(){
+  if(confirm('Hapus semua data trend?')){trendData=[];try{localStorage.removeItem('icans_trend');}catch(e){}renderTrend();}
+});
+
+// ===== BASELINE =====
+function loadBaseline(){
+  try{var bl=localStorage.getItem('icans_baseline');
+    if(bl){
+      var d=JSON.parse(bl);
+      document.getElementById('bl-display').style.display='block';
+      document.getElementById('bl-content').innerHTML=
+        '<table class="bt"><tr><td>Kesadaran</td><td>'+d.loc+'</td></tr>'+
+        '<tr><td>Bicara</td><td>'+d.speech+'</td></tr>'+
+        '<tr><td>Menulis</td><td>'+d.write+'</td></tr>'+
+        '<tr><td>Riwayat Kejang</td><td>'+d.sz+'</td></tr>'+
+        '<tr><td>ICE Baseline</td><td>'+d.ice+'</td></tr>'+
+        '<tr><td>CAPD Baseline</td><td>'+d.capd+'</td></tr>'+
+        '<tr><td>Penilai</td><td>'+d.rater+'</td></tr>'+
+        '<tr><td>Tersimpan</td><td>'+d.ts+'</td></tr></table>';
+    }
+  }catch(e){}
+}
+loadBaseline();
+
+document.getElementById('btnSaveBaseline').addEventListener('click',function(){
+  var d={
+    loc:document.getElementById('bl-loc').value,
+    speech:document.getElementById('bl-speech').value,
+    write:document.getElementById('bl-write').value,
+    sz:document.getElementById('bl-sz').value,
+    focal:document.getElementById('bl-focal').value,
+    ice:document.getElementById('bl-ice').value||'–',
+    capd:document.getElementById('bl-capd').value||'–',
+    rater:document.getElementById('bl-rater').value||'–',
+    note:document.getElementById('bl-note').value||'–',
+    ts:new Date().toLocaleString('id-ID')
+  };
+  try{localStorage.setItem('icans_baseline',JSON.stringify(d));}catch(e){}
+  document.getElementById('bl-saved').style.display='block';
+  setTimeout(function(){document.getElementById('bl-saved').style.display='none';},2500);
+  loadBaseline();
+});
+
+document.getElementById('btnClearBaseline').addEventListener('click',function(){
+  if(confirm('Hapus baseline?')){
+    try{localStorage.removeItem('icans_baseline');}catch(e){}
+    document.getElementById('bl-display').style.display='none';
+  }
+});
+
+// ===== NEXT BUTTONS =====
+document.getElementById('btnNext1').addEventListener('click',function(){goTab('kognitif')});
+document.getElementById('btnNext2').addEventListener('click',function(){goTab('domain')});
+document.getElementById('btnNext3').addEventListener('click',function(){goTab('seizure')});
+document.getElementById('btnNext4').addEventListener('click',function(){goTab('baseline')});
+
+// ===== GRADE COMPUTATION =====
+document.getElementById('btnHitung').addEventListener('click',function(){
+  computeGrade();
+  goTab('hasil');
+});
+
+document.getElementById('btnPrint').addEventListener('click',function(){
+  window.print();
+});
+
+function getRadioVal(name){
+  var el=document.querySelector('input[name="'+name+'"]:checked');
+  return el?el.value:null;
+}
+function getChecked(grpId){
+  var vals=[];
+  document.querySelectorAll('#'+grpId+' input:checked').forEach(function(cb){vals.push(cb.value)});
+  return vals;
+}
+
+function computeGrade(){
+  var mode=getRadioVal('mode');
+  var metode=getRadioVal('metode');
+  var crs=getRadioVal('crs')||'0';
+  var loc=getRadioVal('loc');
+  var motor=getRadioVal('motor');
+  var szCur=getRadioVal('szCur');
+  var proph=getRadioVal('proph');
+  var qs=getChecked('qs');
+  var icp=getChecked('icpGrp');
+  var szPre=getChecked('szPre');
+  var szMeta=getChecked('szMeta');
+  var hw=getRadioVal('hw');
+
+  // === DOMAIN GRADES ===
+  var reasons=[];
+  var gradeArr=[];
+
+  // 1. Cognitive (ICE or CAPD)
+  var cogGrade=0;
+  if(metode==='ice'){
+    var iceVs=Object.values(iceVals);
+    if(!iceVs.some(function(v){return v===null;})){
+      var iceTot=iceVs.reduce(function(a,b){return a+b;},0);
+      cogGrade=iceTot>=7&&iceTot<=9?1:iceTot>=3&&iceTot<=6?2:iceTot>=1&&iceTot<=2?3:iceTot===0?4:0;
+      if(cogGrade>0){reasons.push('ICE Score '+iceTot+'/10 → kognitif Grade '+cogGrade);}
+    }
+  } else if(metode==='capd'){
+    var capdTot=0;var capdOk=true;
+    for(var i=0;i<capdDefs.length;i++){
+      var cs=document.querySelector('#ci-'+i+' .sb.sel');
+      if(!cs){capdOk=false;break;}
+      capdTot+=parseInt(cs.dataset.v);
+    }
+    if(capdOk){
+      cogGrade=capdTot<9?0:capdTot<16?1:2; // CAPD hanya dukung maks Grade 2 dari CAPD saja
+      if(capdTot>=9)reasons.push('CAPD '+capdTot+'/32 (≥9 = delirium positif) → mendukung Grade ≥1');
+      if(capdTot>=16)reasons.push('CAPD '+capdTot+' berat → mendukung Grade ≥2 (dikonfirmasi domain lain)');
+    }
+  }
+  gradeArr.push(cogGrade);
+
+  // 2. LOC grade
+  var locGrade=0;
+  if(loc==='0')locGrade=0;
+  else if(loc==='1'){locGrade=1;reasons.push('Bangun dgn suara → LOC Grade 1');}
+  else if(loc==='2'){locGrade=2;reasons.push('Bangun dgn rangsang taktil → LOC Grade 2');}
+  else if(loc==='3'){locGrade=3;reasons.push('Hanya responsif nyeri → LOC Grade 3');}
+  else if(loc==='4'){locGrade=4;reasons.push('Stupor/koma (unarousable) → LOC Grade 4');}
+  gradeArr.push(locGrade);
+
+  // 3. Seizure grade
+  var szGrade=0;
+  if(szCur==='3a'||szCur==='3b'){szGrade=3;reasons.push('Kejang singkat/NCS teratasi → Grade 3');}
+  else if(szCur==='4a'||szCur==='4b'||szCur==='4c'){
+    szGrade=4;
+    var szMsg={
+      '4a':'Kejang >5 menit → Grade 4',
+      '4b':'Kejang berulang tanpa kembali baseline → Grade 4',
+      '4c':'Status epileptikus → Grade 4'
+    };
+    reasons.push(szMsg[szCur]);
+  }
+  gradeArr.push(szGrade);
+
+  // 4. Motor grade
+  var motorGrade=0;
+  if(motor==='hemi'||motor==='postur'){motorGrade=4;reasons.push('Hemiparesis/paraparesis atau posturing → Motor Grade 4');}
+  else if(motor==='mild'){reasons.push('Kelemahan fokal ringan — evaluasi lebih lanjut, tidak secara otomatis naik grade');}
+  gradeArr.push(motorGrade);
+
+  // 5. ICP/Cerebral edema grade
+  var hasICP=icp.some(function(v){return v!=='no_icp' && v!==null && v!==undefined;});
+  var icpGrade=0;
+  if(hasICP){icpGrade=4;reasons.push('Tanda raised ICP / cerebral edema → Grade 4');}
+  gradeArr.push(icpGrade);
+
+  // FINAL GRADE = MAX
+  var finalGrade=Math.max.apply(null,gradeArr);
+
+  // ===== BUILD OUTPUT =====
+  var gLabel=['✅ Grade 0 – Normal','⚠️ Grade 1 – Ringan','🟠 Grade 2 – Sedang','🔴 Grade 3 – Berat','🚨 Grade 4 – Sangat Berat'][finalGrade];
+  var gCls='g'+finalGrade;
+
+  var html='<div class="rg '+gCls+'">ICANS '+gLabel+'</div>';
+
+  // Domain summary
+  html+='<div class="domain-grid">';
+  var doms=[
+    {l:'Kognitif (ICE/CAPD)',v:cogGrade},
+    {l:'Level of Consciousness',v:locGrade},
+    {l:'Kejang',v:szGrade},
+    {l:'Motor / ICP',v:Math.max(motorGrade,icpGrade)}
+  ];
+  doms.forEach(function(d){
+    var cls=d.v===0?'done':d.v<=1?'':d.v<=2?'warn-c':'crit';
+    html+='<div class="dom-card '+cls+'"><div class="dom-label">'+d.l+'</div><div class="dom-val">Grade '+d.v+'</div></div>';
+  });
+  html+='</div>';
+
+  // Reasons
+  if(reasons.length>0){
+    html+='<div class="card"><div class="ct" style="color:var(--teal)">🔍 Dasar Penilaian</div><ul class="rl">';
+    reasons.forEach(function(r){html+='<li>'+r+'</li>';});
+    html+='</ul></div>';
+  }
+
+  // Alerts
+  var alerts='';
+  if(finalGrade>=4){
+    alerts+='<div class="astrip a-red">🚨 AKTIVASI CODE NEURO — Panggil Neurologi & ICU SEKARANG</div>';
+    alerts+='<div class="astrip a-red">🔴 Siapkan intubasi / airway management · Hentikan imunosupresan non-esensial</div>';
+    alerts+='<div class="astrip a-red">🔴 CT Kepala CITO — singkirkan perdarahan / herniasi · EEG cito</div>';
+  } else if(finalGrade===3){
+    alerts+='<div class="astrip a-red">🔴 Konsul Neurologi SEGERA · Transfer ke ICU/HDU</div>';
+    alerts+='<div class="astrip a-org">⚠️ Mulai steroid sesuai protokol · Monitor kontinu</div>';
+  } else if(finalGrade===2){
+    alerts+='<div class="astrip a-org">⚠️ Lapor DPJP & tim CAR-T/IEC · Tingkatkan frekuensi monitoring</div>';
+    alerts+='<div class="astrip a-yel">📋 Pertimbangkan mulai steroid sesuai protokol lokal</div>';
+  } else if(finalGrade===1){
+    alerts+='<div class="astrip a-yel">⚠️ Pantau ketat per shift · Dokumentasi perubahan dari baseline</div>';
+  } else {
+    alerts+='<div class="astrip a-grn">✅ Tidak ada ICANS saat ini — lanjutkan monitoring rutin</div>';
+  }
+  if(crs==='3'||crs==='2'){
+    alerts+='<div class="astrip a-pur">🔬 CRS bersamaan grade '+crs+' — waspadai perkembangan ICANS</div>';
+    alerts+='<div class="astrip a-pur">💊 Tocilizumab: berikan HANYA untuk CRS, BUKAN untuk ICANS terisolasi (penetrasi BBB terbatas)</div>';
+  }
+  html+=alerts;
+
+  // Steroid
+  var sterHTML='';
+  if(finalGrade>=4){sterHTML='<li>🚨 <strong>Steroid dosis tinggi segera</strong> — sesuai protokol institusi/produk (misal methylprednisolone atau dexamethasone dosis tinggi)</li><li>Diskusikan dengan Neurologi & tim IEC untuk dosis dan durasi</li><li>Pertimbangkan mannitol/hipertonik saline bila tanda edema serebri</li>';}
+  else if(finalGrade===3){sterHTML='<li>🔴 <strong>Mulai steroid (dexamethasone) segera</strong> — dosis sesuai protokol lokal/produk</li><li>Evaluasi respons dalam 24–48 jam; eskalasi bila perlu</li>';}
+  else if(finalGrade===2){sterHTML='<li>⚠️ <strong>Pertimbangkan steroid</strong> sesuai protokol institusi bila tidak ada kontraindikasi</li><li>Diskusikan timing dengan tim CAR-T/IEC</li>';}
+  else{sterHTML='<li>Steroid tidak diperlukan rutin untuk Grade ≤1</li><li>Siapkan bila terjadi progresi</li>';}
+  html+='<div class="card"><div class="ct"><span class="ic">💊</span> Kortikosteroid</div><ul class="rl">'+sterHTML+'</ul></div>';
+
+  // AED
+  var aedHTML='';
+  var highRiskAED=szPre.includes('pre_epilepsy')||szPre.includes('pre_sz')||szPre.includes('pre_eeg');
+  if(szCur==='4c'){
+    aedHTML='<li>🚨 <strong>STATUS EPILEPTIKUS:</strong> Benzodiazepin IV segera (misal lorazepam / midazolam) sesuai protokol lokal</li>'+
+      '<li>Jika tidak berhenti: AED second-line (levetiracetam atau fosphenytoin IV) — sesuai dosis protokol</li>'+
+      '<li>ICU · EEG cito · Siapkan RSI bila perlu</li>';
+  } else if(szCur==='4a'||szCur==='4b'){
+    aedHTML='<li>🔴 Benzodiazepin rescue + loading AED IV sesuai protokol</li><li>EEG cito · Monitor di ICU</li>';
+  } else if(szCur==='3a'||szCur==='3b'){
+    aedHTML='<li>⚡ Benzodiazepin rescue bila kejang berulang</li><li>Loading AED oral/IV sesuai kondisi</li><li>EEG dalam 24 jam · Pantau ketat</li>';
+  } else if(highRiskAED||finalGrade>=2){
+    aedHTML='<li>⚠️ <strong>Pertimbangkan profilaksis AED</strong> pada pasien risiko tinggi sesuai produk/protokol (misal levetiracetam)</li>'+
+      '<li>Bukan rutin untuk semua pasien ICANS — sesuaikan dengan panduan produk dan protokol institusi</li>';
+  } else {
+    aedHTML='<li>Profilaksis AED tidak diperlukan rutin untuk risiko rendah</li><li>Edukasi keluarga tanda peringatan kejang</li>';
+  }
+  html+='<div class="card"><div class="ct"><span class="ic">⚡</span> Manajemen Antikejang</div><ul class="rl">'+aedHTML+'</ul></div>';
+
+  // Imaging
+  var imgHTML='';
+  if(finalGrade>=4||szCur==='4a'||szCur==='4b'||szCur==='4c'||motor==='hemi'||motor==='postur'||hasICP){
+    imgHTML='<li>🚨 <strong>CT Kepala non-kontras CITO</strong> — perdarahan, herniasi, edema difus</li>'+
+      '<li>🧠 <strong>MRI Otak (FLAIR + DWI + kontras)</strong> dalam 6–12 jam bila stabil — ICANS leukoencephalopathy/PRES</li>'+
+      '<li>⚡ <strong>EEG cito</strong> — curigai NCSE (non-convulsive status epilepticus)</li>';
+  } else if(finalGrade===3||szCur==='3a'||szCur==='3b'){
+    imgHTML='<li>CT Kepala dalam 2–4 jam</li><li>MRI Otak dalam 24 jam (FLAIR)</li><li>EEG dalam 24 jam atau lebih awal bila fluktuasi kesadaran</li>';
+  } else if(finalGrade===2){
+    imgHTML='<li>MRI Otak elektif dalam 24–48 jam bila stabil</li><li>EEG bila ada perubahan kesadaran atau motor activity mencurigakan</li><li>CT hanya bila ada urgensi / tanda fokal baru</li>';
+  } else {
+    imgHTML='<li>Imaging tidak rutin untuk Grade ≤1</li><li>MRI elektif bila gejala tidak membaik atau progresi</li>';
+  }
+  html+='<div class="card"><div class="ct"><span class="ic">🧠</span> Kapan CT / MRI / EEG</div><ul class="rl">'+imgHTML+'</ul></div>';
+
+  // Monitoring
+  var monHTML='';
+  if(finalGrade>=3){monHTML='<li>ICE/CAPD setiap 1–2 jam saat fase akut</li><li>Tanda vital + SpO₂ + GCS kontinu</li><li>Input/output ketat; pertimbangkan retensi cairan</li><li>Paracetamol untuk demam — hindari NSAID</li>';}
+  else if(finalGrade===2){monHTML='<li>ICE/CAPD setiap 4–6 jam</li><li>Tanda vital setiap 2 jam</li><li>Target SpO₂ >95%</li>';}
+  else if(finalGrade===1){monHTML='<li>ICE/CAPD setiap shift (3×/hari)</li><li>Tanda vital setiap 4–6 jam</li><li>Dokumentasi tulisan / speech tiap hari</li>';}
+  else{monHTML='<li>ICE/CAPD 1×/hari sebagai monitoring rutin</li><li>Tanda vital sesuai protokol bangsal</li>';}
+  html+='<div class="card"><div class="ct"><span class="ic">📡</span> Monitoring Lanjutan</div><ul class="rl">'+monHTML+'</ul></div>';
+
+  // Mode note
+  if(mode==='neuro'){
+    html+='<div class="warn">ℹ️ Mode Neurotoxicity Umum aktif. Pertimbangkan PRES, encephalopathy metabolik, neurotoxicity kemoterapi (busulfan, MTX HD, calcineurin inhibitor), infeksi CNS, dan GvHD serebral sebagai diagnosis banding.</div>';
+  }
+
+  html+='<div class="info" style="margin-top:6px">⚠️ Semua rekomendasi harus divalidasi dengan protokol institusi. Konsultasikan neurologi dan tim IEC/HSCT untuk setiap Grade ≥2. Dosis obat tidak dicantumkan spesifik — selalu merujuk ke protokol lokal yang berlaku.</div>';
+
+  document.getElementById('hasil-placeholder').style.display='none';
+  document.getElementById('hasil-content').innerHTML=html;
+}
+
+document.getElementById('btnReset').addEventListener('click',function(){
+  if(!confirm('Reset semua data assessment? Baseline dan trend tersimpan tidak akan dihapus.'))return;
+  // Clear radio selections
+  document.querySelectorAll('input[type=radio]').forEach(function(r){r.checked=false;});
+  document.querySelectorAll('.ol').forEach(function(l){l.classList.remove('sel');});
+  // Clear checkboxes
+  document.querySelectorAll('input[type=checkbox]').forEach(function(cb){cb.checked=false;});
+  document.querySelectorAll('.cl').forEach(function(l){l.classList.remove('chk');});
+  // Clear scale buttons
+  document.querySelectorAll('.sb').forEach(function(b){b.classList.remove('sel');});
+  // Clear ICE vals
+  Object.keys(iceVals).forEach(function(k){iceVals[k]=null;});
+  updateICE();
+  updateCAPD();
+  // Reset ICE/CAPD section visibility
+  document.getElementById('ice-section').style.display='block';
+  document.getElementById('capd-section').style.display='none';
+  document.getElementById('neuro-mode-note').style.display='none';
+  // Clear result
+  document.getElementById('hasil-placeholder').style.display='block';
+  document.getElementById('hasil-content').innerHTML='';
+  goTab('pasien');
+});
+
+window.onload=function(){
+  updateICE();
+  renderTrend();
+  loadBaseline();
+};
+</script>
+</body>
+</html>

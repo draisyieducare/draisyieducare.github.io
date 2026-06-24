@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>drAisyiEduCare | Pediatric Oncology Program Builder</title>
+<style>
+:root{
+  --blue:#1a56a0;--blue2:#2d7dd2;--blue3:#e8f0fb;
+  --green:#16a34a;--green2:#dcfce7;
+  --yellow:#ca8a04;--yellow2:#fef9c3;
+  --red:#dc2626;--red2:#fee2e2;
+  --orange:#ea580c;--orange2:#ffedd5;
+  --purple:#7c3aed;--purple2:#ede9fe;
+  --gray:#6b7280;--gray2:#f3f4f6;--border:#e5e7eb;
+  --white:#fff;--text:#111827;--text2:#374151;
+  --sw:268px;--hh:60px;--r:10px;--sh:0 2px 12px rgba(0,0,0,.1)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f9;color:var(--text);font-size:14px}
+#app{display:flex;height:100vh;overflow:hidden}
+/* SIDEBAR */
+#sb{width:var(--sw);background:linear-gradient(180deg,#0c3672 0%,#1a56a0 100%);color:#fff;display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;transition:.3s;z-index:200}
+#sb.closed{width:0;overflow:hidden}
+.sb-brand{padding:16px;border-bottom:1px solid rgba(255,255,255,.12)}
+.sb-logo{font-size:16px;font-weight:800;color:#fff;line-height:1.2}
+.sb-sub{font-size:10px;color:rgba(255,255,255,.55);margin-top:2px}
+.sb-score{padding:10px;margin:10px;background:rgba(255,255,255,.1);border-radius:8px;text-align:center}
+.sb-sn{font-size:34px;font-weight:800;color:#fff;line-height:1}
+.sb-sl{font-size:10px;color:rgba(255,255,255,.65);margin-top:2px}
+.sb-lv{display:inline-block;margin-top:4px;font-size:10px;font-weight:700;background:rgba(255,255,255,.15);border-radius:20px;padding:2px 10px;color:#fff}
+.sb-sec{font-size:9px;font-weight:700;color:rgba(255,255,255,.4);padding:12px 14px 3px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.sb-nav a{display:flex;align-items:center;gap:8px;padding:7px 14px;color:rgba(255,255,255,.75);text-decoration:none;font-size:12px;cursor:pointer;border-left:3px solid transparent;transition:.15s;white-space:nowrap}
+.sb-nav a:hover,.sb-nav a.on{background:rgba(255,255,255,.1);color:#fff;border-left-color:#60a5fa}
+.sb-nav a .ic{width:18px;text-align:center;font-size:13px;flex-shrink:0}
+/* MAIN */
+#mn{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+#hd{height:var(--hh);background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+#hd .htit{font-size:15px;font-weight:700;color:var(--blue)}
+#hd .hsub{font-size:11px;color:var(--gray);margin-left:2px}
+#hd .hright{margin-left:auto;display:flex;gap:8px;align-items:center}
+.hbtn{padding:6px 13px;border-radius:7px;border:none;cursor:pointer;font-size:12px;font-weight:600}
+.hbtn.p{background:var(--blue);color:#fff}.hbtn.p:hover{background:var(--blue2)}
+.hbtn.s{background:var(--gray2);color:var(--gray)}.hbtn.s:hover{background:var(--border)}
+#ct{flex:1;overflow-y:auto;padding:20px}
+.mbtn{background:none;border:none;font-size:22px;cursor:pointer;color:var(--gray);padding:4px 6px;border-radius:6px}
+.mbtn:hover{background:var(--gray2)}
+/* PAGES */
+.pg{display:none}.pg.on{display:block}
+/* CARDS */
+.card{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);padding:18px;margin-bottom:14px}
+.ctit{font-size:14px;font-weight:700;color:var(--blue);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.cicon{font-size:18px}
+/* SECTION HEADER */
+.sech{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid var(--blue3)}
+.sech .si{font-size:26px}.sech .st{font-size:19px;font-weight:800;color:var(--blue)}.sech .ss{font-size:11px;color:var(--gray);margin-top:2px}
+/* KPI GRID */
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
+.kc{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);padding:16px;border-top:4px solid var(--blue)}
+.kc.g{border-top-color:var(--green)}.kc.y{border-top-color:var(--yellow)}.kc.r{border-top-color:var(--red)}.kc.o{border-top-color:var(--orange)}.kc.v{border-top-color:var(--purple)}
+.kv{font-size:26px;font-weight:800}.kl{font-size:11px;color:var(--gray);margin-top:3px}.ks{font-size:11px;font-weight:600;margin-top:5px}
+/* PROGRESS */
+.pw{background:var(--gray2);border-radius:20px;height:10px;overflow:hidden;margin:5px 0}
+.pb{height:100%;border-radius:20px;transition:width .5s ease}
+.pb.b{background:linear-gradient(90deg,var(--blue),var(--blue2))}
+.pb.g{background:linear-gradient(90deg,var(--green),#22c55e)}
+.pb.y{background:linear-gradient(90deg,var(--yellow),#eab308)}
+.pb.r{background:linear-gradient(90deg,var(--red),#f87171)}
+/* TRAFFIC LIGHT */
+.tl{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px}
+.tl.r{background:var(--red2);color:var(--red)}.tl.y{background:var(--yellow2);color:var(--yellow)}.tl.g{background:var(--green2);color:var(--green)}.tl.b{background:var(--blue3);color:var(--blue)}.tl.v{background:var(--purple2);color:var(--purple)}
+/* CHECKLIST */
+.clg{margin-bottom:14px}
+.clt{font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;padding-bottom:3px;border-bottom:1px solid var(--border)}
+.cli{display:flex;align-items:flex-start;gap:9px;padding:7px 9px;border-radius:7px;cursor:pointer;margin-bottom:2px;transition:.15s}
+.cli:hover{background:var(--blue3)}
+.cli input[type=checkbox]{width:15px;height:15px;accent-color:var(--blue);cursor:pointer;flex-shrink:0;margin-top:1px}
+.cli label{cursor:pointer;flex:1;font-size:13px;line-height:1.4}
+.cli .cw{font-size:10px;color:var(--gray);margin-left:auto;flex-shrink:0}
+/* SELECT */
+.clsel{margin-bottom:2px;padding:7px 9px;border-radius:7px;display:flex;align-items:center;gap:9px;background:var(--gray2)}
+.clsel label{font-size:13px;flex:1}
+.clsel select{font-size:11px;border:1px solid var(--border);border-radius:5px;padding:2px 6px;background:#fff;cursor:pointer}
+/* SCORE RESULT */
+.sres{background:linear-gradient(135deg,var(--blue3),#fff);border:1px solid #c7d8f4;border-radius:var(--r);padding:14px;margin-top:14px}
+.srt{font-size:12px;font-weight:700;color:var(--blue);margin-bottom:9px}
+.srr{display:flex;align-items:center;gap:9px;margin-bottom:5px;font-size:12px}
+.srv{font-weight:700;font-size:14px;color:var(--blue)}
+/* NUM INPUT */
+.nir{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.nir:last-child{border:none}
+.nil{flex:1;font-size:12px;color:var(--text2);line-height:1.4}
+.ni{width:72px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;text-align:center}
+.nst{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap}
+/* MATURITY */
+.mlbar{display:flex;gap:5px;margin:10px 0}
+.mli{flex:1;text-align:center;padding:9px 4px;border-radius:8px;font-size:10px;font-weight:600;border:2px solid transparent;cursor:pointer;transition:.2s;line-height:1.3}
+.mli.l1{background:var(--red2);color:#991b1b}.mli.l2{background:var(--orange2);color:#9a3412}.mli.l3{background:var(--yellow2);color:#854d0e}.mli.l4{background:var(--green2);color:#166534}.mli.l5{background:var(--blue3);color:#1e40af}
+.mli.on{border-color:currentColor;box-shadow:0 0 0 2px rgba(0,0,0,.08)}
+/* CSS BAR CHART */
+.barchart{margin-top:8px}
+.brow{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.blab{width:110px;font-size:11px;color:var(--text2);flex-shrink:0;text-align:right}
+.btrack{flex:1;background:var(--gray2);border-radius:20px;height:20px;overflow:hidden;position:relative}
+.bfill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--blue),var(--blue2));transition:width .5s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:6px}
+.bval{font-size:10px;font-weight:700;color:#fff;white-space:nowrap}
+/* FLOWCHART */
+.flowwrap{display:flex;flex-direction:column;align-items:stretch;gap:0}
+.fnode{padding:12px 16px;border-radius:10px;margin-bottom:0;cursor:pointer;transition:.2s;color:#fff;font-size:13px;font-weight:600}
+.fnode:hover{transform:translateX(4px)}
+.farrow{text-align:center;font-size:20px;color:var(--gray);padding:2px 0}
+.fn1{background:linear-gradient(135deg,#1a56a0,#2d7dd2)}
+.fn2{background:linear-gradient(135deg,#16a34a,#22c55e)}
+.fn3{background:linear-gradient(135deg,#ca8a04,#eab308);color:#1f2937!important}
+.fn4{background:linear-gradient(135deg,#ea580c,#fb923c)}
+.fn5{background:linear-gradient(135deg,#0891b2,#22d3ee)}
+.fn6{background:linear-gradient(135deg,#7c3aed,#a78bfa)}
+.fn7{background:linear-gradient(135deg,#be185d,#f472b6)}
+.fn8{background:linear-gradient(135deg,#0f766e,#14b8a6)}
+.fn9{background:linear-gradient(135deg,#1d4ed8,#60a5fa)}
+.fn10{background:linear-gradient(135deg,#9f1239,#fb7185)}
+/* GAP */
+.gitem{display:flex;align-items:flex-start;gap:9px;padding:9px;border-radius:7px;margin-bottom:7px;font-size:12px}
+.gitem.cr{background:var(--red2);border-left:3px solid var(--red)}
+.gitem.hi{background:var(--orange2);border-left:3px solid var(--orange)}
+.gitem.md{background:var(--yellow2);border-left:3px solid var(--yellow)}
+.gitem.lt{background:var(--blue3);border-left:3px solid var(--blue)}
+.gitem.ok{background:var(--green2);border-left:3px solid var(--green)}
+/* ACTION PLAN */
+.apitem{display:flex;gap:10px;padding:11px;border-radius:8px;background:var(--white);border:1px solid var(--border);margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.apn{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.apn.r{background:var(--red)}.apn.o{background:var(--orange)}.apn.y{background:var(--yellow)}.apn.g{background:var(--green)}
+.apt{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px}
+.apd{font-size:11px;color:var(--gray);line-height:1.5}
+.apkpi{font-size:10px;color:var(--blue);margin-top:4px;font-style:italic}
+/* ROADMAP */
+.rmph{border-left:3px solid var(--blue);padding-left:14px;margin-bottom:18px;position:relative}
+.rmph::before{content:'';width:11px;height:11px;background:var(--blue);border-radius:50%;position:absolute;left:-7px;top:3px}
+.rmph.p2{border-color:var(--green)}.rmph.p2::before{background:var(--green)}
+.rmph.p3{border-color:var(--yellow)}.rmph.p3::before{background:var(--yellow)}
+.rmph.p4{border-color:var(--orange)}.rmph.p4::before{background:var(--orange)}
+.rmph.p5{border-color:var(--purple)}.rmph.p5::before{background:var(--purple)}
+.rmtit{font-size:13px;font-weight:700;margin-bottom:6px}
+.rmitem{display:flex;align-items:flex-start;gap:7px;padding:5px 0;font-size:12px;border-bottom:1px dashed var(--border)}
+.rmitem:last-child{border:none}
+.rmpri{font-size:9px;font-weight:700;padding:2px 5px;border-radius:5px;white-space:nowrap;margin-top:1px}
+.prih{background:var(--red2);color:var(--red)}.prim{background:var(--yellow2);color:var(--yellow)}.pril{background:var(--green2);color:var(--green)}
+/* EXEC */
+.exsec{padding:12px;border-radius:8px;margin-bottom:10px}
+.exsec.str{background:var(--green2);border-left:4px solid var(--green)}
+.exsec.wk{background:var(--red2);border-left:4px solid var(--red)}
+.exsec.op{background:var(--blue3);border-left:4px solid var(--blue)}
+.exsec.pr{background:var(--yellow2);border-left:4px solid var(--yellow)}
+.exsec h4{font-size:12px;font-weight:700;margin-bottom:5px}
+.exsec ul{padding-left:15px;font-size:11px;line-height:1.9}
+/* MATRIX TABLE */
+.mtx{width:100%;border-collapse:collapse;font-size:11px;margin-top:8px}
+.mtx th{background:var(--blue);color:#fff;padding:7px 8px;text-align:left;font-size:10px}
+.mtx td{padding:6px 8px;border-bottom:1px solid var(--border);vertical-align:top}
+.mtx tr:nth-child(even) td{background:var(--gray2)}
+/* QS STEPS */
+.qss{display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--white);border-radius:9px;border:1px solid var(--border);margin-bottom:9px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.qsn{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.qst{font-size:12px;font-weight:700;color:var(--blue);margin-bottom:2px}
+.qsd{font-size:11px;color:var(--gray);line-height:1.5}
+/* ROLE STRIP */
+.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:14px}
+.role{border-radius:var(--r);padding:12px;border:1px solid var(--border);cursor:pointer;transition:.2s}
+.role:hover{border-color:var(--blue);background:var(--blue3)}
+.role.on{border-color:var(--blue);background:var(--blue3)}
+.role h4{font-size:12px;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.role ul{font-size:11px;color:var(--gray);padding-left:14px;line-height:1.8}
+/* SIM WARNING */
+.simwarn{padding:9px 12px;border-radius:7px;font-size:11px;margin-top:8px}
+.simwarn.cr{background:var(--red2);border:1px solid #fca5a5;color:var(--red)}
+.simwarn.ok{background:var(--green2);border:1px solid #86efac;color:var(--green)}
+/* TABS */
+.tabs{display:flex;gap:3px;margin-bottom:14px;border-bottom:2px solid var(--border)}
+.tab{padding:7px 14px;border:none;background:none;font-size:12px;font-weight:600;color:var(--gray);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px}
+.tab.on{color:var(--blue);border-bottom-color:var(--blue)}
+.tabc{display:none}.tabc.on{display:block}
+/* DISCLAIMER */
+.disc{background:var(--yellow2);border:1px solid #fde68a;border-radius:7px;padding:9px 12px;font-size:10px;color:#854d0e;line-height:1.6;margin-top:12px}
+/* PRIVACY */
+.priv{background:var(--blue3);border:1px solid #bfdbfe;border-radius:7px;padding:8px 12px;font-size:10px;color:var(--blue);margin-top:8px}
+/* STND PAGE */
+.stnditem{padding:10px;border-radius:7px;background:var(--gray2);margin-bottom:8px;font-size:12px}
+.stnditem h4{font-size:12px;font-weight:700;color:var(--blue);margin-bottom:4px}
+.stnditem ul{padding-left:16px;line-height:1.8;color:var(--text2)}
+/* BADGE */
+.badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:4px}
+.badge.cr{background:var(--red2);color:var(--red)}.badge.hi{background:var(--orange2);color:var(--orange)}.badge.md{background:var(--yellow2);color:var(--yellow)}.badge.lt{background:var(--blue3);color:var(--blue)}
+/* PRINT */
+@media print{#sb,#hd,.hbtn,.disc,.priv{display:none!important}#app{display:block}#ct{padding:0}.pg{display:block!important}.card{break-inside:avoid;box-shadow:none;border:1px solid #e5e7eb}}
+/* MOBILE */
+@media(max-width:700px){#sb{position:fixed;top:0;left:0;height:100%;transform:translateX(-100%);transition:.3s}#sb.mob{transform:translateX(0)}:root{--sw:240px}#ct{padding:12px}.roles{grid-template-columns:1fr 1fr}.kgrid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div id="app">
+<!-- SIDEBAR -->
+<nav id="sb">
+  <div class="sb-brand">
+    <div class="sb-logo">🏥 drAisyiEduCare</div>
+    <div class="sb-sub">Pediatric Oncology Program Builder</div>
+  </div>
+  <div class="sb-score">
+    <div class="sb-sn" id="sb-score">0</div>
+    <div class="sb-sl">Program Readiness Score</div>
+    <div class="sb-lv" id="sb-lv">🔴 Level 1 — Persiapan</div>
+  </div>
+  <div class="sb-sec">Utama</div>
+  <div class="sb-nav">
+    <a onclick="go('home')" id="n-home" class="on"><span class="ic">🏠</span>Dashboard</a>
+    <a onclick="go('journey')"><span class="ic">🗺️</span>Program Journey</a>
+    <a onclick="go('qs')"><span class="ic">🚀</span>Quick Start</a>
+  </div>
+  <div class="sb-sec">Assessment</div>
+  <div class="sb-nav">
+    <a onclick="go('m1')"><span class="ic">📋</span>1. Program Readiness</a>
+    <a onclick="go('m2')"><span class="ic">👥</span>2. Human Resources</a>
+    <a onclick="go('m3')"><span class="ic">🏥</span>3. Clinical Services</a>
+    <a onclick="go('m4')"><span class="ic">💊</span>4. Chemotherapy</a>
+    <a onclick="go('m5')"><span class="ic">👩‍⚕️</span>5. Nursing</a>
+    <a onclick="go('m6')"><span class="ic">🔬</span>6. Laboratory</a>
+    <a onclick="go('m7')"><span class="ic">🩸</span>7. Blood Bank</a>
+    <a onclick="go('m8')"><span class="ic">💉</span>8. Pharmacy</a>
+    <a onclick="go('m9')"><span class="ic">🚨</span>9. Emergency</a>
+    <a onclick="go('m10')"><span class="ic">✅</span>10. Quality & Safety</a>
+    <a onclick="go('m11')"><span class="ic">📚</span>11. Education</a>
+    <a onclick="go('m12')"><span class="ic">🏗️</span>12. Infrastructure</a>
+    <a onclick="go('m13')"><span class="ic">📊</span>13. Volume Planning</a>
+  </div>
+  <div class="sb-sec">Output</div>
+  <div class="sb-nav">
+    <a onclick="go('m14')"><span class="ic">📡</span>14. Maturity Dashboard</a>
+    <a onclick="go('m15')"><span class="ic">📅</span>15. Strategic Roadmap</a>
+    <a onclick="go('m16')"><span class="ic">🏆</span>16. Accreditation</a>
+    <a onclick="go('gap')"><span class="ic">🔍</span>Gap Analysis</a>
+    <a onclick="go('action')"><span class="ic">⚡</span>Action Plan</a>
+    <a onclick="go('exec')"><span class="ic">📄</span>Executive Summary</a>
+    <a onclick="go('sim')"><span class="ic">🎯</span>Simulation</a>
+    <a onclick="go('stnd')"><span class="ic">📐</span>Standards & Validation</a>
+  </div>
+</nav>
+<!-- MAIN -->
+<div id="mn">
+  <header id="hd">
+    <button class="mbtn" onclick="toggleSB()">☰</button>
+    <div><div class="htit" id="h-tit">Dashboard Utama</div><div class="hsub" id="h-sub">Program Readiness Overview</div></div>
+    <div class="hright">
+      <button class="hbtn s" onclick="doReset()">↺ Reset</button>
+      <button class="hbtn p" onclick="window.print()">🖨️ Cetak/PDF</button>
+    </div>
+  </header>
+  <div id="ct">
+
+<!-- ====== HOME ====== -->
+<div id="pg-home" class="pg on">
+  <div class="sech"><span class="si">🏥</span><div><div class="st">drAisyiEduCare</div><div class="ss">Pediatric Oncology Program Builder — Executive Dashboard</div></div></div>
+  <div class="kgrid">
+    <div class="kc"><div class="kv" id="k-score">0</div><div class="kl">Program Readiness Score</div><div class="ks" id="k-lv" style="color:var(--red)">🔴 Level 1 — Persiapan</div><div class="pw"><div class="pb b" id="k-prog" style="width:0%"></div></div></div>
+    <div class="kc g"><div class="kv" id="k-str">0</div><div class="kl">Strength (item tersedia)</div><div class="ks" style="color:var(--green)" id="k-strsub">dari total item</div></div>
+    <div class="kc r"><div class="kv" id="k-gap">0</div><div class="kl">Gap (item belum ada)</div><div class="ks" style="color:var(--red)" id="k-gapsub">perlu ditindaklanjuti</div></div>
+    <div class="kc o"><div class="kv" id="k-dom">0/13</div><div class="kl">Domain Terisi</div><div class="ks" style="color:var(--orange)">dari 13 domain assessment</div></div>
+  </div>
+  <!-- MATURITY -->
+  <div class="card">
+    <div class="ctit"><span class="cicon">📊</span>Maturity Level</div>
+    <div class="mlbar">
+      <div class="mli l1 on" id="ml1">🔴<br>Level 1<br>Persiapan</div>
+      <div class="mli l2" id="ml2">🟠<br>Level 2<br>Layanan Dasar</div>
+      <div class="mli l3" id="ml3">🟡<br>Level 3<br>Menengah</div>
+      <div class="mli l4" id="ml4">🟢<br>Level 4<br>Komprehensif</div>
+      <div class="mli l5" id="ml5">🔵<br>Level 5<br>CoE</div>
+    </div>
+    <div id="lv-desc" style="font-size:11px;color:var(--gray);padding:8px;background:var(--gray2);border-radius:6px;margin-top:6px">Lengkapi modul assessment untuk menentukan maturity level program Anda.</div>
+  </div>
+  <!-- ROLES -->
+  <div class="card">
+    <div class="ctit"><span class="cicon">👤</span>Role Navigator — Pilih peran Anda</div>
+    <div class="roles" id="role-grid"></div>
+    <div id="role-detail" style="display:none;padding:10px;background:var(--blue3);border-radius:8px;font-size:11px;line-height:1.8;color:var(--blue)"></div>
+  </div>
+  <!-- BAR CHART -->
+  <div class="card">
+    <div class="ctit"><span class="cicon">📊</span>Domain Readiness Overview</div>
+    <div class="barchart" id="bar-chart"></div>
+  </div>
+  <!-- MODULE STATUS -->
+  <div class="card">
+    <div class="ctit"><span class="cicon">📋</span>Status Modul Assessment</div>
+    <div id="mod-ov"></div>
+  </div>
+  <div class="disc">⚠️ <strong>Disclaimer:</strong> Toolkit ini merupakan alat bantu perencanaan program, bukan standar regulatori resmi, bukan akreditasi resmi, dan bukan pengganti site assessment. Implementasi harus disesuaikan dengan regulasi, kapasitas lokal, jejaring rujukan, kebijakan keselamatan pasien, dan audit eksternal bila diperlukan.</div>
+  <div class="priv">🔒 <strong>Privacy Note:</strong> Jangan memasukkan data identitas pasien, staf, atau institusi spesifik ke dalam versi publik tool ini. Gunakan data agregat untuk perencanaan.</div>
+</div>
+
+<!-- ====== JOURNEY ====== -->
+<div id="pg-journey" class="pg">
+  <div class="sech"><span class="si">🗺️</span><div><div class="st">Program Journey</div><div class="ss">Alur 10 domain pengembangan program hematologi-onkologi anak</div></div></div>
+  <div class="card">
+    <div class="ctit"><span class="cicon">🔄</span>Klik setiap node untuk melihat ringkasan domain</div>
+    <div class="flowwrap" id="flow-wrap"></div>
+  </div>
+  <div id="flow-detail" class="card" style="display:none">
+    <div class="ctit" id="fd-tit"></div>
+    <div id="fd-body" style="font-size:12px;color:var(--text2);line-height:1.8"></div>
+  </div>
+  <div class="disc">⚠️ Toolkit ini merupakan alat bantu perencanaan. Implementasi harus mengikuti regulasi dan kapasitas lokal.</div>
+</div>
+
+<!-- ====== QUICK START ====== -->
+<div id="pg-qs" class="pg">
+  <div class="sech"><span class="si">🚀</span><div><div class="st">Quick Start Mode</div><div class="ss">10 Langkah Awal Membangun Program Hematologi-Onkologi Anak</div></div></div>
+  <div class="card" id="qs-card"></div>
+  <div class="disc">⚠️ Toolkit ini merupakan alat bantu perencanaan. Implementasi harus mengikuti regulasi dan kapasitas lokal.</div>
+</div>
+
+<!-- MODULES 1–13 will be injected -->
+<div id="pg-m1" class="pg"></div>
+<div id="pg-m2" class="pg"></div>
+<div id="pg-m3" class="pg"></div>
+<div id="pg-m4" class="pg"></div>
+<div id="pg-m5" class="pg"></div>
+<div id="pg-m6" class="pg"></div>
+<div id="pg-m7" class="pg"></div>
+<div id="pg-m8" class="pg"></div>
+<div id="pg-m9" class="pg"></div>
+<div id="pg-m10" class="pg"></div>
+<div id="pg-m11" class="pg"></div>
+<div id="pg-m12" class="pg"></div>
+<div id="pg-m13" class="pg"></div>
+<div id="pg-m14" class="pg"></div>
+<div id="pg-m15" class="pg"></div>
+<div id="pg-m16" class="pg"></div>
+<div id="pg-gap" class="pg"></div>
+<div id="pg-action" class="pg"></div>
+<div id="pg-exec" class="pg"></div>
+<div id="pg-sim" class="pg"></div>
+<div id="pg-stnd" class="pg"></div>
+
+  </div><!-- /ct -->
+</div><!-- /mn -->
+</div><!-- /app -->
+
+<script>
+// ===========================================
+// DATA DEFINITIONS
+// ===========================================
+const MOD = {
+  m1:{title:'Program Readiness',icon:'📋',sub:'Kesiapan dasar program',groups:[
+    {t:'Governance',items:['Program leader ditetapkan','Clinical coordinator tersedia','SOP program tersedia','Komite/MDT aktif','Alur rujukan jelas','Registry program tersedia']},
+    {t:'Human Resources',items:['Dokter anak terlatih onkologi','Perawat onkologi anak','Farmasis sitostatika','Tenaga laboratorium','Bank darah/transfusi','Nutrisionis','Psikolog/pekerja sosial','Data manager']},
+    {t:'Clinical Services',items:['Poliklinik anak','Rawat inap anak','Day care kemoterapi','Akses IGD','Akses ICU','Akses radiologi','Akses bedah','Akses paliatif']}
+  ]},
+  m3:{title:'Clinical Services',icon:'🏥',sub:'Perencanaan layanan klinis',groups:[
+    {t:'Essential / Basic',items:['Outpatient clinic anak','Inpatient pediatric ward','Jalur rujukan aman','Akses kemoterapi dasar','FN/TLS/sepsis pathway','Dukungan transfusi']},
+    {t:'Intermediate',items:['Day care kemoterapi','BMA/LP pathway','Kemoterapi intratekal (governance)','MDT meeting reguler','Perawatan paliatif','Dukungan nutrisi','Dukungan psikososial']},
+    {t:'Advanced (bila readiness memadai)',items:['Survivorship clinic','Akses molecular diagnostics','HSCT — referral/readiness pathway','CAR-T — referral/readiness pathway','Clinical trial/research registry']}
+  ]},
+  m4:{title:'Chemotherapy Safety',icon:'💊',sub:'Program kemoterapi aman',groups:[
+    {t:'Otorisasi & Protokol',items:['Authorized prescriber ditetapkan','Protocol-based prescribing','BSA/kalkulasi dosis diverifikasi','Double independent verification','Verifikasi farmasi sebelum diberikan']},
+    {t:'Sarana Keselamatan',items:['Area persiapan sitostatika tersedia','PPE lengkap','Spill kit tersedia','Extravasation kit tersedia','Protokol hipersensitivitas ada']},
+    {t:'Administrasi & Dokumentasi',items:['Informed consent kemoterapi','Checklist pemberian kemoterapi','Safe disposal terlaksana','Incident reporting aktif','Rekam kompetensi staf terdokumentasi']}
+  ]},
+  m5:{title:'Nursing Program',icon:'👩‍⚕️',sub:'Kompetensi keperawatan onkologi',groups:[
+    {t:'Kompetensi Dasar',items:['Prinsip dasar onkologi anak','Keselamatan kemoterapi (dasar)','Monitoring febrile neutropenia','Monitoring tumor lysis syndrome','Monitoring transfusi']},
+    {t:'Kompetensi Menengah',items:['Perawatan central line (CVAD)','Respon pertama ekstravasasi','Pengkajian nyeri & gejala','Monitoring nutrisi','Edukasi keluarga/pasien']},
+    {t:'Kompetensi Lanjutan',items:['End-of-life / palliative support','Perawatan pasien HSCT','Manajemen GVHD','Simulasi emergensi onkologi']}
+  ]},
+  m6:{title:'Laboratory',icon:'🔬',sub:'Kesiapan laboratorium diagnostik',groups:[
+    {t:'Basic (wajib ada / akses)',items:['CBC + differential','Fungsi ginjal','Fungsi hati','Elektrolit','Asam urat & LDH','Koagulasi (PT/APTT)','Akses kultur darah']},
+    {t:'Intermediate',items:['Morfologi sumsum tulang (BMA)','Flow cytometry — onsite/referral','Histopatologi','Imunohistokimia']},
+    {t:'Advanced',items:['Sitogenetik','FISH/PCR','MRD (Minimal Residual Disease)','Molecular diagnostics','Biobanking/research support']}
+  ]},
+  m7:{title:'Blood Bank',icon:'🩸',sub:'Kesiapan bank darah',groups:[
+    {t:'Produk Rutin',items:['PRC tersedia','Platelet tersedia','FFP tersedia','Cryoprecipitate tersedia']},
+    {t:'Produk Khusus',items:['Irradiated blood products','Leukoreduced blood products','CMV-negative (bila diindikasikan)','Washed red cells']},
+    {t:'Sistem',items:['Akses darurat 24 jam','Crossmatch turnaround cepat (<1 jam)','Protokol reaksi transfusi','Traceability produk darah','Koordinasi dengan bank darah rujukan']}
+  ]},
+  m8:{title:'Pharmacy Readiness',icon:'💉',sub:'Kesiapan farmasi sitostatika',groups:[
+    {t:'Fasilitas',items:['Area persiapan sitostatika terpisah','BSC/isolator (bila tersedia)','Sistem ventilasi sesuai standar','Cold chain management']},
+    {t:'Keselamatan',items:['PPE farmasi lengkap','CSTD (bila tersedia)','Labeling sitostatika standar','Pembuangan limbah B3']},
+    {t:'Sistem',items:['Independent double check farmasi','Spill response plan','Medication error reporting','Formulary/essential medicines planning','Stock-out mitigation plan']}
+  ]},
+  m9:{title:'Emergency Preparedness',icon:'🚨',sub:'Kesiapan emergensi onkologi',groups:[
+    {t:'Pathway Emergensi',items:['Febrile neutropenia pathway','Sepsis/syok pathway','TLS (tumor lysis syndrome) pathway','DIC/perdarahan pathway','Hyperleukositosis/leukostasis pathway']},
+    {t:'Pathway Spesifik',items:['Spinal cord compression pathway','SVC/mediastinal mass/airway pathway','Reaksi transfusi akut pathway','Anafilaksis pathway','Kriteria rujukan ICU']},
+    {t:'Sistem Respons',items:['Obat & peralatan emergensi tersedia','Jadwal simulasi/drill','Debriefing post-emergency','Eskalasi 24/7 tersedia']}
+  ]},
+  m10:{title:'Quality & Safety',icon:'✅',sub:'Mutu dan keselamatan pasien',groups:[
+    {t:'Indikator Klinis',items:['Time-to-antibiotic FN terpantau','Verifikasi kemoterapi compliance','Insiden ekstravasasi dilaporkan','Laporan reaksi transfusi aktif','Infeksi central line terpantau (bila ada)']},
+    {t:'Monitoring Program',items:['Treatment abandonment rate','Treatment delay rate','Mortality review berjalan','Near miss reporting aktif','M&M meeting reguler']},
+    {t:'Sistem Mutu',items:['Feedback pasien/keluarga dikumpulkan','Siklus review SOP terjadwal','Audit klinis onkologi anak','Clinical audit cycle berjalan']}
+  ]},
+  m11:{title:'Education & Training',icon:'📚',sub:'Pelatihan dan pengembangan SDM',groups:[
+    {t:'Perawat',items:['Training dasar onkologi anak','Training kemoterapi (tersertifikasi)','Training paliatif & EOL','Refreshment training reguler']},
+    {t:'Dokter & Residen',items:['Pelatihan protokol kemoterapi','Fellowship/observasi di pusat rujukan','Journal club & konferensi','Pelatihan emergensi onkologi']},
+    {t:'Farmasi, Lab, Admin',items:['Training penanganan sitostatika','Training flow cytometry/diagnostik','Training data registry/management','Pelatihan manajemen program']}
+  ]},
+  m12:{title:'Infrastructure',icon:'🏗️',sub:'Perencanaan infrastruktur',groups:[
+    {t:'Minimal Safe Start',items:['Area poliklinik anak','Akses bed rawat inap','Area pemberian kemoterapi aman','Akses IGD tersedia','Dukungan farmasi','Dukungan transfusi']},
+    {t:'Intermediate',items:['Day care tersedia','Ruang prosedur (BMA/LP)','Kemampuan isolasi dasar','Ruang konseling keluarga','Fasilitas bermain/edukasi anak']},
+    {t:'Advanced (bila readiness memadai)',items:['Bangsal onkologi anak tersendiri','Ruang isolasi lanjutan','Unit HSCT — hanya bila readiness penuh','CAR-T — hanya melalui jalur advanced/referral']}
+  ]},
+  m16:{title:'Accreditation Readiness',icon:'🏆',sub:'Internal readiness checklist akreditasi',groups:[
+    {t:'Dokumentasi',items:['Kebijakan & panduan program tersedia','SOP lengkap & tervalidasi','Formulir klinis terstandarisasi','Rekam medis terstruktur']},
+    {t:'SDM & Kompetensi',items:['Bukti pelatihan terdokumentasi','Uraian tugas tersedia','Evaluasi kompetensi reguler','Sertifikasi / izin praktik berlaku']},
+    {t:'Mutu & Keselamatan',items:['Indikator mutu ditetapkan','Audit internal terjadwal','Laporan insiden tersimpan','Program perbaikan mutu berjalan']},
+    {t:'Sarana & Referral',items:['Kalibrasi alat terdokumentasi','MOU penunjang eksternal','Manajemen limbah B3','Perjanjian referral terdokumentasi']}
+  ]}
+};
+
+// HR Roles
+const HR_ROLES = [
+  {key:'dok', label:'Dokter anak terlatih onkologi', min:1, ideal:3, rec:'Kirim ke fellowship/pelatihan onkologi anak; bangun jejaring konsultan'},
+  {key:'prw', label:'Perawat onkologi anak', min:3, ideal:10, rec:'Wajib training tersertifikasi; orientasi formal + supervised practice'},
+  {key:'frm', label:'Farmasis sitostatika', min:1, ideal:3, rec:'Training penanganan cytotoxic; periksa fasilitas BSC'},
+  {key:'lab', label:'Tenaga laboratorium', min:2, ideal:5, rec:'Pastikan akses flow cytometry dan histopatologi (onsite/referral)'},
+  {key:'bdk', label:'Tenaga bank darah / transfusi', min:1, ideal:3, rec:'Pastikan produk irradiated & leukoreduced tersedia'},
+  {key:'nut', label:'Nutrisionis klinik', min:1, ideal:2, rec:'Training nutrisi onkologi anak; integrasikan dalam MDT'},
+  {key:'psi', label:'Psikolog / pekerja sosial', min:1, ideal:2, rec:'Psikososial adalah komponen esensial survivorship dan EOL'},
+  {key:'adm', label:'Data manager / admin registry', min:1, ideal:2, rec:'Buat registry sederhana sejak awal; latih pencatatan outcome'}
+];
+
+// Lab: 3-option select
+const LAB_SEL = ['CBC + differential','Fungsi ginjal','Fungsi hati','Elektrolit','Asam urat & LDH','Koagulasi (PT/APTT)','Kultur darah','Morfologi BMA','Flow cytometry','Histopatologi','Imunohistokimia','Sitogenetik','FISH/PCR','MRD','Molecular diagnostics'];
+
+// State
+const S = {chk:{}, num:{m2:{}}, sel:{}, sim:{}};
+function initState(){
+  HR_ROLES.forEach(r=>{if(!S.num.m2[r.key]) S.num.m2[r.key]=0});
+  LAB_SEL.forEach((_,i)=>{if(!S.sel['lab_'+i]) S.sel['lab_'+i]='belum'});
+}
+
+// Scoring
+function mScore(mk){
+  const m=MOD[mk]; if(!m) return {s:0,t:0,p:0};
+  let t=0,s=0;
+  m.groups.forEach((g,gi)=>g.items.forEach((_,ii)=>{t++;if(S.chk[mk+'_'+gi+'_'+ii]) s++;}));
+  return {s,t,p:t>0?Math.round(s/t*100):0};
+}
+function labScore(){
+  let s=0,t=LAB_SEL.length;
+  LAB_SEL.forEach((_,i)=>{if(S.sel['lab_'+i]==='onsite') s+=2; else if(S.sel['lab_'+i]==='referral') s+=1;});
+  return Math.round(s/(t*2)*100);
+}
+function hrScore(){
+  let total=0;
+  HR_ROLES.forEach(r=>{const v=S.num.m2[r.key]||0; if(v>=r.ideal) total+=2; else if(v>=r.min) total+=1;});
+  return Math.round(total/(HR_ROLES.length*2)*100);
+}
+function volScore(){
+  const p=parseInt(S.num.vol||0);
+  if(p===0) return 0; if(p<20) return 20; if(p<50) return 45; if(p<100) return 65; if(p<200) return 80; return 95;
+}
+function domScore(d){
+  if(d==='m2') return hrScore();
+  if(d==='m6') return labScore();
+  if(d==='m13') return volScore();
+  return mScore(d).p;
+}
+const DOMS = ['m1','m2','m3','m4','m5','m6','m7','m8','m9','m10','m11','m12','m13'];
+const DOMNAMES = ['Program Readiness','SDM','Clinical Services','Chemotherapy','Nursing','Laboratory','Blood Bank','Pharmacy','Emergency','Quality & Safety','Education','Infrastructure','Volume/Data'];
+function globalScore(){
+  let t=0; DOMS.forEach(d=>t+=domScore(d)); return Math.round(t/DOMS.length);
+}
+function getLevel(sc){
+  if(sc<20) return {n:1,e:'🔴',l:'Level 1 — Persiapan',c:'l1'};
+  if(sc<40) return {n:2,e:'🟠',l:'Level 2 — Layanan Dasar',c:'l2'};
+  if(sc<60) return {n:3,e:'🟡',l:'Level 3 — Layanan Menengah',c:'l3'};
+  if(sc<80) return {n:4,e:'🟢',l:'Level 4 — Layanan Komprehensif',c:'l4'};
+  return {n:5,e:'🔵',l:'Level 5 — Center of Excellence',c:'l5'};
+}
+function allItems(){
+  let has=[],miss=[];
+  Object.keys(MOD).forEach(mk=>{
+    const m=MOD[mk];
+    m.groups.forEach((g,gi)=>g.items.forEach((it,ii)=>{
+      const k=mk+'_'+gi+'_'+ii;
+      if(S.chk[k]) has.push({mod:m.title,item:it});
+      else miss.push({mod:m.title,item:it,key:k,grp:g.t});
+    }));
+  });
+  return {has,miss};
+}
+
+// ===========================================
+// RENDER CHECKLIST
+// ===========================================
+function renderCL(mk, target){
+  const m=MOD[mk]; if(!m) return;
+  const sc=mScore(mk);
+  const tl=sc.p>=70?'g':sc.p>=40?'y':'r';
+  let h=`<div class="card"><div class="ctit"><span class="cicon">${m.icon}</span>${m.title} — Assessment</div>`;
+  m.groups.forEach((g,gi)=>{
+    h+=`<div class="clg"><div class="clt">${g.t}</div>`;
+    g.items.forEach((it,ii)=>{
+      const k=mk+'_'+gi+'_'+ii; const ck=S.chk[k]?'checked':'';
+      h+=`<div class="cli" onclick="ck('${k}','${mk}')"><input type="checkbox" id="${k}" ${ck} onclick="event.stopPropagation();ck('${k}','${mk}')"><label for="${k}">${it}</label><span class="cw">${ck?'✅':'○'}</span></div>`;
+    });
+    h+='</div>';
+  });
+  h+=`<div class="sres"><div class="srt">📊 Hasil — ${m.title}</div>
+    <div class="srr"><span style="flex:1">Item tersedia</span><span class="srv">${sc.s} / ${sc.t}</span></div>
+    <div class="pw"><div class="pb ${tl}" style="width:${sc.p}%"></div></div>
+    <div class="srr" style="margin-top:6px"><span style="flex:1">Skor domain</span><span class="tl ${tl}">${sc.p}%</span></div>
+  </div></div>`;
+  h+=`<div class="disc">⚠️ Toolkit ini alat bantu perencanaan. Implementasi harus mengikuti regulasi dan kapasitas lokal.</div>`;
+  document.getElementById(target).innerHTML=h;
+}
+function ck(key,mk){
+  S.chk[key]=!S.chk[key];
+  const el=document.getElementById(key); if(el) el.checked=S.chk[key];
+  renderCL(mk,'pg-'+mk);
+  updateGlobal(); save();
+}
+
+// ===========================================
+// MODULE 2 — HR
+// ===========================================
+function renderM2(){
+  let h=`<div class="card"><div class="ctit"><span class="cicon">👥</span>Human Resources Planner</div>
+    <p style="font-size:11px;color:var(--gray);margin-bottom:10px">Masukkan jumlah SDM yang saat ini tersedia. Status: <span style="color:var(--red)">Kurang</span> / <span style="color:var(--yellow)">Cukup</span> / <span style="color:var(--green)">Ideal</span></p>`;
+  HR_ROLES.forEach(r=>{
+    const v=S.num.m2[r.key]||0; let st,cls;
+    if(v>=r.ideal){st='Ideal ✅';cls='g';} else if(v>=r.min){st='Cukup 🟡';cls='y';} else {st='Kurang 🔴';cls='r';}
+    h+=`<div class="nir"><span class="nil">${r.label}<br><span style="font-size:9px;color:#9ca3af">Min: ${r.min} | Ideal: ${r.ideal}</span></span>
+      <input type="number" class="ni" value="${v}" min="0" max="99" oninput="updNum('m2','${r.key}',this.value)">
+      <span class="nst tl ${cls}">${st}</span></div>`;
+  });
+  // Heatmap
+  h+=`<div style="margin-top:14px"><div class="ctit"><span class="cicon">🗺️</span>SDM Heatmap</div><div class="barchart">`;
+  HR_ROLES.forEach(r=>{
+    const v=S.num.m2[r.key]||0; const pct=Math.min(Math.round(v/r.ideal*100),100);
+    const cls=v>=r.ideal?'g':v>=r.min?'y':'r';
+    h+=`<div class="brow"><span class="blab" style="font-size:10px">${r.label.split(' ')[0]}</span><div class="btrack"><div class="bfill pb ${cls}" style="width:${Math.max(pct,3)}%"><span class="bval">${v} org</span></div></div></div>`;
+  });
+  h+=`</div></div>`;
+  // Recommendations
+  h+=`<div style="margin-top:12px;font-size:12px;font-weight:700;color:var(--blue);margin-bottom:6px">📋 Rekomendasi Rekrutmen & Training</div>`;
+  HR_ROLES.forEach(r=>{
+    const v=S.num.m2[r.key]||0; if(v<r.ideal){
+      h+=`<div style="padding:6px 8px;border-radius:6px;background:${v<r.min?'var(--red2)':'var(--yellow2)'};font-size:11px;margin-bottom:4px">
+        <strong>${r.label}:</strong> ${r.rec}</div>`;
+    }
+  });
+  h+=`</div><div class="disc">⚠️ Jangan gunakan gelar personal spesifik dalam komunikasi publik. Gunakan istilah generik.</div>`;
+  document.getElementById('pg-m2').innerHTML=h;
+}
+function updNum(mod,key,val){
+  if(mod==='m2') S.num.m2[key]=parseInt(val)||0;
+  else if(mod==='vol') S.num.vol=parseInt(val)||0;
+  if(mod==='m2') renderM2(); if(mod==='vol') renderM13();
+  updateGlobal(); save();
+}
+
+// ===========================================
+// MODULE 6 — LAB (select)
+// ===========================================
+function renderM6(){
+  let h=`<div class="card"><div class="ctit"><span class="cicon">🔬</span>Laboratory Readiness</div>
+    <p style="font-size:11px;color:var(--gray);margin-bottom:10px">Pilih status ketersediaan setiap pemeriksaan lab.</p>`;
+  const groups=[
+    {t:'Basic',items:LAB_SEL.slice(0,7)},
+    {t:'Intermediate',items:LAB_SEL.slice(7,11)},
+    {t:'Advanced',items:LAB_SEL.slice(11)}
+  ];
+  let idx=0;
+  groups.forEach(g=>{
+    h+=`<div class="clg"><div class="clt">${g.t}</div>`;
+    g.items.forEach(it=>{
+      const k='lab_'+idx; const v=S.sel[k]||'belum';
+      h+=`<div class="clsel"><label>${it}</label>
+        <select onchange="updSel('${k}',this.value)">
+          <option value="belum" ${v==='belum'?'selected':''}>❌ Belum tersedia</option>
+          <option value="referral" ${v==='referral'?'selected':''}>🔄 Referral/MOU</option>
+          <option value="onsite" ${v==='onsite'?'selected':''}>✅ Tersedia onsite</option>
+        </select></div>`;
+      idx++;
+    });
+    h+='</div>';
+  });
+  const sp=labScore(); const tl=sp>=70?'g':sp>=40?'y':'r';
+  h+=`<div class="sres"><div class="srt">📊 Laboratory Capability Level</div>
+    <div class="srr"><span style="flex:1">Skor laboratorium</span><span class="tl ${tl}">${sp}%</span></div>
+    <div class="pw"><div class="pb ${tl}" style="width:${sp}%"></div></div>
+    <div class="srr" style="margin-top:4px;font-size:11px;color:var(--gray)">Onsite = 2 poin, Referral/MOU = 1 poin, Belum = 0</div>
+  </div></div>
+  <div class="disc">⚠️ Pemeriksaan yang tidak tersedia onsite harus memiliki jalur referral/MOU yang terdokumentasi.</div>`;
+  document.getElementById('pg-m6').innerHTML=h;
+}
+function updSel(k,v){S.sel[k]=v; renderM6(); updateGlobal(); save();}
+
+// ===========================================
+// MODULE 13 — VOLUME
+// ===========================================
+function renderM13(){
+  const vf=[
+    {key:'pasien',label:'Estimasi total pasien baru/tahun'},
+    {key:'leukemia',label:'Kasus leukemia/tahun (estimasi)'},
+    {key:'tumor',label:'Kasus tumor padat/tahun (estimasi)'},
+    {key:'kemo',label:'Sesi kemoterapi/tahun (estimasi)'},
+    {key:'ranap',label:'Hari rawat inap/tahun (estimasi)'},
+    {key:'transfusi',label:'Volume transfusi/tahun (estimasi)'}
+  ];
+  let h=`<div class="card"><div class="ctit"><span class="cicon">📊</span>Financial & Volume Planning</div>
+    <p style="font-size:11px;color:var(--gray);margin-bottom:10px">Proyeksi volume layanan — tidak menampilkan nominal finansial sensitif.</p>`;
+  vf.forEach(f=>{
+    const v=S.num[f.key]||0;
+    h+=`<div class="nir"><span class="nil">${f.label}</span><input type="number" class="ni" value="${v}" min="0" oninput="updVol('${f.key}',this.value)"></div>`;
+  });
+  const p=parseInt(S.num.pasien)||0;
+  let vc,vim,vst,vstcls;
+  if(p===0){vc='Belum ada data';vim='Isi estimasi untuk proyeksi';vst='N/A';vstcls='b';}
+  else if(p<20){vc='Sangat Rendah';vim='Program pemula; SDM minimal mungkin cukup untuk tahap awal';vst='⚠️ Perlu penguatan';vstcls='r';}
+  else if(p<50){vc='Rendah–Sedang';vim='Butuh minimal 1 dokter, 3–5 perawat, 1 farmasis';vst='Siap berkembang';vstcls='y';}
+  else if(p<100){vc='Sedang';vim='Butuh tim lengkap; pertimbangkan Day Care & MDT';vst='Program aktif';vstcls='y';}
+  else if(p<200){vc='Tinggi';vim='Butuh bangsal tersendiri, farmasi kuat, registry aktif';vst='Program matang';vstcls='g';}
+  else {vc='Sangat Tinggi';vim='Pertimbangkan pengembangan CoE; dorong riset dan jejaring';vst='Menuju CoE';vstcls='g';}
+  h+=`<div class="sres"><div class="srt">📊 Volume & Resource Projection</div>
+    <div class="srr"><span style="flex:1">Kategori volume</span><span class="tl ${vstcls}">${vc}</span></div>
+    <div class="srr"><span style="flex:1">Implikasi SDM & sumber daya</span></div>
+    <div style="font-size:11px;color:var(--text2);padding:6px 8px;background:var(--gray2);border-radius:6px;line-height:1.6">${vim}</div>
+    <div class="srr" style="margin-top:6px"><span style="flex:1">Status program</span><span class="tl ${vstcls}">${vst}</span></div>
+  </div></div>
+  <div class="disc">⚠️ Gunakan data agregat. Jangan memasukkan identitas pasien atau data sensitif.</div>`;
+  document.getElementById('pg-m13').innerHTML=h;
+}
+function updVol(k,v){S.num[k]=parseInt(v)||0; renderM13(); updateGlobal(); save();}
+
+// ===========================================
+// MODULE 14 — MATURITY DASHBOARD
+// ===========================================
+function renderM14(){
+  const scores=DOMS.map(d=>domScore(d));
+  const avg=Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
+  const lv=getLevel(avg);
+  let h=`<div class="card"><div class="ctit"><span class="cicon">📡</span>Program Maturity Dashboard</div>
+    <div style="text-align:center;padding:14px;background:linear-gradient(135deg,var(--blue3),#fff);border-radius:10px;margin-bottom:14px">
+      <div style="font-size:10px;color:var(--gray);margin-bottom:4px">Program Maturity Index</div>
+      <div style="font-size:44px;font-weight:800;color:var(--blue)">${avg}</div>
+      <div class="sb-lv" style="display:inline-block;background:var(--blue);color:#fff;font-size:12px;margin-top:6px">${lv.e} ${lv.l}</div>
+    </div>
+    <div class="ctit" style="margin-top:4px"><span class="cicon">📊</span>Domain Radar (CSS Bar Chart)</div>
+    <div class="barchart">`;
+  DOMS.forEach((d,i)=>{
+    const sc=scores[i]; const cl=sc>=70?'g':sc>=40?'y':'r';
+    h+=`<div class="brow"><span class="blab">${DOMNAMES[i].length>12?DOMNAMES[i].slice(0,12)+'…':DOMNAMES[i]}</span><div class="btrack"><div class="bfill pb ${cl}" style="width:${Math.max(sc,2)}%"><span class="bval">${sc}%</span></div></div></div>`;
+  });
+  h+=`</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px">`;
+  DOMS.forEach((d,i)=>{
+    const sc=scores[i]; const cl=sc>=70?'g':sc>=40?'y':'r';
+    h+=`<div style="background:var(--gray2);border-radius:8px;padding:8px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--blue)">${sc}</div><div style="font-size:9px;color:var(--gray);margin-top:2px">${DOMNAMES[i]}</div><div class="pw" style="margin-top:4px"><div class="pb ${cl}" style="width:${sc}%"></div></div></div>`;
+  });
+  h+=`</div></div>`;
+  h+=`<div class="disc">⚠️ Dashboard ini refleksi self-assessment internal. Validasi eksternal tetap diperlukan.</div>`;
+  document.getElementById('pg-m14').innerHTML=h;
+}
+
+// ===========================================
+// MODULE 15 — ROADMAP
+// ===========================================
+function renderM15(){
+  const sc=globalScore();
+  const phases=[
+    {cls:'',tit:'0–3 Bulan: Fondasi & Governance',items:[
+      {p:'prih',t:'Tetapkan program leader dan tim inti, buat SK formal',kpi:'Program leader ditetapkan dalam 30 hari'},
+      {p:'prih',t:'Susun SOP minimum: kemoterapi, FN, TLS, transfusi, sepsis',kpi:'5 SOP kritis tersedia dalam 60 hari'},
+      {p:'prih',t:'Buat pathway emergensi FN, TLS, sepsis, dan reaksi transfusi',kpi:'4 pathway tersedia & dikomunikasikan'},
+      {p:'prim',t:'Mulai registry pasien sederhana',kpi:'Registry aktif — minimal data diagnosis & outcome'},
+      {p:'pril',t:'Inventaris SDM dan fasilitas yang sudah ada',kpi:'Inventaris lengkap dalam 14 hari'}
+    ]},
+    {cls:'p2',tit:'3–6 Bulan: SDM & Keselamatan',items:[
+      {p:'prih',t:'Latih perawat inti: kemoterapi, FN, TLS, transfusi monitoring',kpi:'Minimal 3 perawat tersertifikasi'},
+      {p:'prih',t:'Standarisasi keselamatan kemoterapi: double check, spill kit, PPE, extravasation kit',kpi:'Checklist kemoterapi compliance ≥90%'},
+      {p:'prim',t:'Bangun dukungan farmasi sitostatika',kpi:'BSC atau area aman sitostatika tersedia'},
+      {p:'prim',t:'Pastikan akses lab dan bank darah 24 jam',kpi:'CBC, koagulasi, kultur, PRC, trombosit tersedia'},
+      {p:'pril',t:'Mulai incident reporting',kpi:'≥1 laporan per bulan diproses dalam 30 hari'}
+    ]},
+    {cls:'p3',tit:'6–12 Bulan: Penguatan Program',items:[
+      {p:'prih',t:'Aktifkan Day Care kemoterapi dan MDT reguler',kpi:'MDT ≥1x/bulan, Day Care berjalan'},
+      {p:'prim',t:'Mulai audit klinis dan M&M review',kpi:'M&M review ≥1x/kuartal'},
+      {p:'prim',t:'Bangun jejaring rujukan regional yang terdokumentasi',kpi:'MOU dengan ≥1 pusat rujukan tersedia'},
+      {p:'prim',t:'Perkuat supportive care: nutrisi, psikososial, paliatif dasar',kpi:'Nutrisionis & psikolog terlibat dalam MDT'},
+      {p:'pril',t:'Persiapkan akreditasi program (internal readiness checklist)',kpi:'Akreditasi readiness ≥60%'}
+    ]},
+    {cls:'p4',tit:'1–2 Tahun: Layanan Komprehensif',items:[
+      {p:'prih',t:'Kembangkan survivorship clinic dan palliative care terstruktur',kpi:'Survivorship clinic aktif'},
+      {p:'prim',t:'Bangun quality dashboard dan indikator mutu klinis',kpi:'5 indikator mutu dipantau rutin'},
+      {p:'prim',t:'Akses advanced diagnostics (molecular, flow cytometry)',kpi:'Akses onsite atau MOU referral tersedia'},
+      {p:'pril',t:'Evaluasi kesiapan HSCT — hanya sebagai jalur referral',kpi:'MOU dengan pusat HSCT tersedia'}
+    ]},
+    {cls:'p5',tit:'3–5 Tahun: Menuju CoE (bila readiness memadai)',items:[
+      {p:'prim',t:'HSCT atau CAR-T readiness — hanya bila kriteria penuh terpenuhi',kpi:'Kriteria HSCT terpenuhi dan divalidasi eksternal'},
+      {p:'prim',t:'Program riset dan clinical trial registry',kpi:'≥1 studi terdaftar dalam 5 tahun'},
+      {p:'pril',t:'Jadikan pusat pelatihan regional',kpi:'≥1 training eksternal/tahun diselenggarakan'},
+      {p:'pril',t:'Kontribusi ke jejaring onkologi anak nasional',kpi:'Terlibat dalam jejaring nasional/konsorsium'}
+    ]}
+  ];
+  let h=`<div class="card"><div class="ctit"><span class="cicon">📅</span>Strategic Roadmap 0–5 Tahun</div>
+    <div style="background:var(--blue3);padding:9px 12px;border-radius:7px;margin-bottom:14px;font-size:11px;color:var(--blue)">Dihasilkan berdasarkan Program Score: <strong>${sc}/100</strong> — ${getLevel(sc).e} ${getLevel(sc).l}</div>`;
+  phases.forEach(ph=>{
+    h+=`<div class="rmph ${ph.cls}"><div class="rmtit" style="color:${ph.cls===''?'var(--blue)':ph.cls==='p2'?'var(--green)':ph.cls==='p3'?'var(--yellow)':ph.cls==='p4'?'var(--orange)':'var(--purple)'}">${ph.tit}</div>`;
+    ph.items.forEach(it=>h+=`<div class="rmitem"><span class="rmpri ${it.p}">${it.p==='prih'?'🔴 Tinggi':it.p==='prim'?'🟡 Sedang':'🟢 Rendah'}</span><div><span>${it.t}</span><div style="font-size:10px;color:var(--gray);margin-top:2px">KPI: ${it.kpi}</div></div></div>`);
+    h+='</div>';
+  });
+  h+=`</div><div class="disc">⚠️ HSCT dan CAR-T bukan target wajib semua fasilitas. Keduanya hanya roadmap lanjutan bila readiness memadai dan tervalidasi.</div>`;
+  document.getElementById('pg-m15').innerHTML=h;
+}
+
+// ===========================================
+// GAP ANALYSIS
+// ===========================================
+function renderGap(){
+  const {has,miss}=allItems();
+  const crit=['SOP','Protokol','pathway','leader','Farmasi','Transfusi','emergensi','FN','TLS','sepsis'];
+  const hi=['kompetensi','MDT','lab','pelaporan','insiden','registry'];
+  let crits=[],his=[],meds=[],oks=[];
+  miss.forEach(i=>{
+    if(crit.some(k=>i.item.toLowerCase().includes(k.toLowerCase())||i.grp.toLowerCase().includes(k.toLowerCase()))) crits.push(i);
+    else if(hi.some(k=>i.item.toLowerCase().includes(k.toLowerCase()))) his.push(i);
+    else meds.push(i);
+  });
+  has.forEach(i=>oks.push(i));
+  let h=`<div class="card"><div class="ctit"><span class="cicon">🔍</span>Gap Analysis Engine</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px">
+      <div style="background:var(--red2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--red)">${crits.length}</div><div style="font-size:10px;color:#991b1b">Critical Gaps</div></div>
+      <div style="background:var(--orange2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--orange)">${his.length}</div><div style="font-size:10px;color:#9a3412">High Priority</div></div>
+      <div style="background:var(--yellow2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--yellow)">${meds.length}</div><div style="font-size:10px;color:#854d0e">Medium</div></div>
+      <div style="background:var(--green2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--green)">${oks.length}</div><div style="font-size:10px;color:#166534">Strength</div></div>
+    </div>`;
+  if(crits.length){h+=`<div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:6px">🔴 Critical Gaps (atasi segera)</div>`;crits.slice(0,12).forEach(i=>h+=`<div class="gitem cr"><span>⛔</span><div><strong>${i.mod}</strong><br>${i.item}</div></div>`);}
+  if(his.length){h+=`<div style="font-size:12px;font-weight:700;color:var(--orange);margin:10px 0 6px">🟠 High Priority Gaps</div>`;his.slice(0,10).forEach(i=>h+=`<div class="gitem hi"><span>⚠️</span><div><strong>${i.mod}</strong><br>${i.item}</div></div>`);}
+  if(meds.length){h+=`<div style="font-size:12px;font-weight:700;color:var(--yellow);margin:10px 0 6px">🟡 Medium Priority Gaps</div>`;meds.slice(0,8).forEach(i=>h+=`<div class="gitem md"><span>🔔</span><div><strong>${i.mod}</strong><br>${i.item}</div></div>`);}
+  if(oks.length){h+=`<div style="font-size:12px;font-weight:700;color:var(--green);margin:10px 0 6px">✅ Kekuatan Program</div>`;oks.slice(0,10).forEach(i=>h+=`<div class="gitem ok"><span>✓</span><div><strong>${i.mod}</strong><br>${i.item}</div></div>`);if(oks.length>10)h+=`<div style="font-size:11px;color:var(--gray);text-align:center;padding:6px">...dan ${oks.length-10} kekuatan lainnya</div>`;}
+  h+=`</div><div class="disc">⚠️ Gap analysis ini berbasis self-assessment. Validasi dengan site assessment eksternal diperlukan untuk keputusan regulatori.</div>`;
+  document.getElementById('pg-gap').innerHTML=h;
+}
+
+// ===========================================
+// ACTION PLAN
+// ===========================================
+function renderAction(){
+  const sc=globalScore();
+  const lv=getLevel(sc);
+  const phases=[
+    {tit:'30 Hari Pertama',cls:'r',actions:[
+      {pri:'🔴',t:'Tetapkan program leader & buat SK formal',team:'Manajemen / Direktur Medis',out:'SK terbit',kpi:'Program leader aktif dalam 30 hari'},
+      {pri:'🔴',t:'Inventaris lengkap SDM, fasilitas, SOP yang ada',team:'Tim klinik + manajemen',out:'Laporan inventaris',kpi:'Inventaris selesai dalam 14 hari'},
+      {pri:'🔴',t:'Aktifkan 4 pathway emergensi: FN, TLS, sepsis, transfusi reaksi',team:'Dokter anak + perawat inti',out:'4 pathway terdistribusi',kpi:'Semua staf tahu pathway dalam 30 hari'}
+    ]},
+    {tit:'3 Bulan',cls:'o',actions:[
+      {pri:'🟠',t:'Susun & validasi 5 SOP kritis kemoterapi',team:'Dokter + farmasis + perawat',out:'5 SOP tersedia',kpi:'SOP divalidasi dan disosialisasikan'},
+      {pri:'🟠',t:'Mulai training perawat: FN, TLS, transfusi, kemoterapi dasar',team:'Kepala keperawatan',out:'≥3 perawat terlatih',kpi:'Training tersertifikasi selesai'},
+      {pri:'🟡',t:'Aktifkan incident reporting system',team:'Tim mutu',out:'Sistem aktif',kpi:'≥1 laporan/bulan diproses'}
+    ]},
+    {tit:'6 Bulan',cls:'o',actions:[
+      {pri:'🟡',t:'Aktifkan Day Care kemoterapi & MDT reguler',team:'Tim klinik + manajemen',out:'Day Care berjalan',kpi:'MDT ≥1x/bulan'},
+      {pri:'🟡',t:'Pastikan farmasi sitostatika aman (BSC/PPE/spill kit)',team:'Farmasis + K3RS',out:'Audit farmasi passed',kpi:'Zero spill tanpa prosedur'},
+      {pri:'🟢',t:'Bangun registry pasien dengan data outcome dasar',team:'Data manager',out:'Registry aktif',kpi:'100% kasus terdokumentasi'}
+    ]},
+    {tit:'12 Bulan',cls:'g',actions:[
+      {pri:'🟡',t:'Lakukan audit klinis pertama & M&M review',team:'Komite mutu + klinik',out:'Laporan audit',kpi:'Audit ≥1x/kuartal'},
+      {pri:'🟡',t:'Perkuat jejaring rujukan: MOU dengan pusat',team:'Manajemen',out:'MOU tersedia',kpi:'≥1 MOU aktif'},
+      {pri:'🟢',t:'Evaluasi readiness untuk layanan komprehensif berikutnya',team:'Program leader',out:'Gap report diperbarui',kpi:'Score meningkat ≥10 poin'}
+    ]},
+    {tit:'1–2 Tahun',cls:'g',actions:[
+      {pri:'🟢',t:'Survivorship clinic & palliative care terstruktur',team:'Tim multidisiplin',out:'Klinik aktif',kpi:'Pasien survivorship terlayani'},
+      {pri:'🟢',t:'Advanced diagnostics: flow cytometry & molecular access',team:'Lab + manajemen',out:'Akses tersedia',kpi:'MOU atau onsite tersedia'},
+      {pri:'🔵',t:'Evaluasi kesiapan HSCT (hanya referral/readiness pathway)',team:'Program leader + manajemen',out:'Assessment report',kpi:'Kriteria terdefinisi'}
+    ]}
+  ];
+  let h=`<div class="card"><div class="ctit"><span class="cicon">⚡</span>Action Plan Generator</div>
+    <div style="background:var(--blue3);padding:9px 12px;border-radius:7px;margin-bottom:14px;font-size:11px;color:var(--blue)">Score saat ini: <strong>${sc}/100</strong> — ${lv.e} ${lv.l}</div>`;
+  phases.forEach(ph=>{
+    h+=`<div style="margin-bottom:16px"><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;padding:6px 10px;background:var(--gray2);border-radius:6px">📅 ${ph.tit}</div>`;
+    ph.actions.forEach(a=>h+=`<div class="apitem"><div class="apn ${ph.cls}">${a.pri}</div><div class="ap-content"><div class="apt">${a.t}</div><div class="apd">Tim: ${a.team} | Output: ${a.out}</div><div class="apkpi">KPI: ${a.kpi}</div></div></div>`);
+    h+='</div>';
+  });
+  h+=`</div><div class="disc">⚠️ Action plan ini berbasis self-assessment. Sesuaikan dengan kapasitas, regulasi, dan kebijakan lokal institusi Anda.</div>`;
+  document.getElementById('pg-action').innerHTML=h;
+}
+
+// ===========================================
+// EXECUTIVE SUMMARY
+// ===========================================
+function renderExec(){
+  const sc=globalScore(); const lv=getLevel(sc);
+  const {has,miss}=allItems();
+  const strong=DOMS.filter(d=>domScore(d)>=70).map(d=>DOMNAMES[DOMS.indexOf(d)]);
+  const weak=DOMS.filter(d=>domScore(d)<40).map(d=>DOMNAMES[DOMS.indexOf(d)]);
+  let h=`<div class="card">
+    <div style="background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border-radius:10px;padding:18px;text-align:center;margin-bottom:14px">
+      <div style="font-size:10px;opacity:.7;margin-bottom:3px">Program Readiness Score</div>
+      <div style="font-size:48px;font-weight:800">${sc}</div>
+      <div style="font-size:14px;font-weight:700;margin-top:4px">${lv.e} ${lv.l}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+      <div style="background:var(--green2);border-radius:8px;padding:8px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--green)">${has.length}</div><div style="font-size:10px;color:#166534">Kekuatan</div></div>
+      <div style="background:var(--red2);border-radius:8px;padding:8px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--red)">${miss.length}</div><div style="font-size:10px;color:#991b1b">Gap</div></div>
+      <div style="background:var(--blue3);border-radius:8px;padding:8px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--blue)">${DOMS.filter(d=>domScore(d)>0).length}/13</div><div style="font-size:10px;color:var(--blue)">Domain aktif</div></div>
+    </div>
+    <div class="exsec str"><h4>✅ Kekuatan Program</h4><ul>${strong.length?strong.map(s=>`<li>${s} — kesiapan baik (≥70%)</li>`).join(''):'<li>Belum teridentifikasi — lengkapi modul assessment</li>'}</ul></div>
+    <div class="exsec wk"><h4>❌ Area Kritis / Kelemahan</h4><ul>${weak.length?weak.map(w=>`<li>${w} — perlu peningkatan signifikan (<40%)</li>`).join(''):'<li>Tidak ada domain kritis — pertahankan dan tingkatkan</li>'}</ul></div>
+    <div class="exsec op"><h4>🔵 Top 5 Prioritas Strategis</h4><ul>
+      <li>Perkuat governance: program leader, SOP, dan komite aktif</li>
+      <li>Investasi SDM: rekrut dan latih tenaga kritis (perawat, farmasis)</li>
+      <li>Implementasi keselamatan kemoterapi sejak awal</li>
+      <li>Pastikan akses laboratorium, bank darah, dan jejaring darurat</li>
+      <li>Mulai registry dan audit mutu dari hari pertama</li>
+    </ul></div>
+    <div class="exsec pr"><h4>⚠️ Risk Statement</h4><ul>
+      <li>Program yang beroperasi tanpa SOP kemoterapi berisiko tinggi terhadap keselamatan pasien</li>
+      <li>Kekurangan perawat terlatih meningkatkan risiko ekstravasasi dan keterlambatan respons FN</li>
+      <li>HSCT dan CAR-T tidak direkomendasikan tanpa readiness lengkap dan validasi eksternal</li>
+      <li>Tidak ada registry berarti tidak ada data untuk evaluasi dan advokasi program</li>
+    </ul></div>
+    <div class="exsec op"><h4>📌 Minimum Safe Start Requirements</h4><ul>
+      <li>1 program leader + SOP minimum 5 dokumen</li>
+      <li>Minimal 3 perawat terlatih onkologi anak</li>
+      <li>Farmasi sitostatika dengan area aman dan PPE</li>
+      <li>Akses lab CBC + koagulasi + kultur dan bank darah PRC + trombosit</li>
+      <li>4 pathway emergensi aktif (FN, TLS, sepsis, reaksi transfusi)</li>
+    </ul></div>
+    <div style="margin-top:14px;padding:12px;background:var(--gray2);border-radius:8px;font-size:11px">
+      <strong>📋 Keputusan Governance Berikutnya:</strong><br>
+      Presentasikan hasil assessment ini kepada manajemen untuk mendapatkan komitmen sumber daya, SK program leader, dan persetujuan roadmap 12 bulan pertama.
+    </div>
+  </div>`;
+  h+=`<div class="disc">⚠️ Executive Summary ini berbasis self-assessment. Keputusan program harus melalui validasi manajemen, regulasi lokal, dan jika perlu, audit eksternal.</div>`;
+  document.getElementById('pg-exec').innerHTML=h;
+}
+
+// ===========================================
+// SIMULATION
+// ===========================================
+function renderSim(){
+  const si=S.sim||{};
+  let h=`<div class="card"><div class="ctit"><span class="cicon">🎯</span>Interactive Program Simulation</div>
+    <p style="font-size:11px;color:var(--gray);margin-bottom:14px">Masukkan kondisi SDM, fasilitas, dan layanan — sistem akan memprediksi level program yang realistis.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:8px">👥 SDM Tersedia</div>
+        <div class="nir"><span class="nil">Dokter anak terlatih onkologi<br><span style="font-size:9px;color:#9ca3af">Min:1 | Ideal:3</span></span><input type="number" class="ni" id="si-dok" value="${si.dok||0}" min="0" max="20" oninput="runSim()"></div>
+        <div class="nir"><span class="nil">Perawat onkologi anak<br><span style="font-size:9px;color:#9ca3af">Min:3 | Ideal:10</span></span><input type="number" class="ni" id="si-prw" value="${si.prw||0}" min="0" max="50" oninput="runSim()"></div>
+        <div class="nir"><span class="nil">Farmasis sitostatika<br><span style="font-size:9px;color:#9ca3af">Min:1 | Ideal:3</span></span><input type="number" class="ni" id="si-frm" value="${si.frm||0}" min="0" max="10" oninput="runSim()"></div>
+        <div class="nir"><span class="nil">Lab support (onsite/referral)</span><select id="si-lab" onchange="runSim()" style="font-size:11px;border:1px solid var(--border);border-radius:5px;padding:3px 6px"><option value="0" ${(si.lab||0)==0?'selected':''}>❌ Belum</option><option value="1" ${(si.lab||0)==1?'selected':''}>🔄 Referral</option><option value="2" ${(si.lab||0)==2?'selected':''}>✅ Onsite</option></select></div>
+        <div class="nir"><span class="nil">Bank darah support</span><select id="si-bdk" onchange="runSim()" style="font-size:11px;border:1px solid var(--border);border-radius:5px;padding:3px 6px"><option value="0" ${(si.bdk||0)==0?'selected':''}>❌ Belum</option><option value="1" ${(si.bdk||0)==1?'selected':''}>🔄 Referral</option><option value="2" ${(si.bdk||0)==2?'selected':''}>✅ Onsite</option></select></div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:8px">🏥 Fasilitas & Layanan</div>`;
+  const simFacs=[['si-pol','Poliklinik anak'],['si-ran','Rawat inap anak'],['si-dc','Day Care kemoterapi'],['si-iso','Ruang isolasi'],['si-bsc','BSC Farmasi'],['si-icu','Akses ICU'],['si-kemo','Kemoterapi berjalan'],['si-mdt','MDT aktif'],['si-sop','SOP kemoterapi ada'],['si-em','Emergency pathway aktif']];
+  simFacs.forEach(([id,lbl])=>h+=`<div class="cli"><input type="checkbox" id="${id}" ${si[id]?'checked':''} onchange="runSim()"><label>${lbl}</label></div>`);
+  h+=`      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:8px">🎯 Ambisi Layanan Lanjutan</div>
+        <div class="cli"><input type="checkbox" id="si-hsct" ${si['si-hsct']?'checked':''} onchange="runSim()"><label>HSCT (ambisi)</label></div>
+        <div class="cli"><input type="checkbox" id="si-cart" ${si['si-cart']?'checked':''} onchange="runSim()"><label>CAR-T (ambisi)</label></div>
+        <div style="font-size:10px;color:var(--orange);padding:8px;background:var(--orange2);border-radius:6px;margin-top:8px;line-height:1.5">⚠️ HSCT dan CAR-T hanya bisa dicapai bila seluruh readiness terpenuhi dan tervalidasi eksternal.</div>
+      </div>
+    </div>
+    <div id="sim-out" style="margin-top:14px"></div>
+  </div>`;
+  h+=`<div class="disc">⚠️ Simulasi ini alat bantu prediksi. Implementasi harus mengikuti regulasi, kapasitas lokal, dan validasi eksternal.</div>`;
+  document.getElementById('pg-sim').innerHTML=h;
+  setTimeout(runSim,100);
+}
+function runSim(){
+  const g=id=>document.getElementById(id);
+  const dok=parseInt(g('si-dok')?.value)||0;
+  const prw=parseInt(g('si-prw')?.value)||0;
+  const frm=parseInt(g('si-frm')?.value)||0;
+  const lab=parseInt(g('si-lab')?.value)||0;
+  const bdk=parseInt(g('si-bdk')?.value)||0;
+  const facs=['si-pol','si-ran','si-dc','si-iso','si-bsc','si-icu'].filter(id=>g(id)?.checked).length;
+  const svcs=['si-kemo','si-mdt','si-sop','si-em'].filter(id=>g(id)?.checked).length;
+  const hsct=g('si-hsct')?.checked; const cart=g('si-cart')?.checked;
+  const sop=g('si-sop')?.checked; const em=g('si-em')?.checked;
+
+  // GATING logic
+  let maxLv=1;
+  if(dok>=1) maxLv=2;
+  if(dok>=2 && prw>=3 && frm>=1 && sop) maxLv=3;
+  if(dok>=3 && prw>=6 && frm>=2 && lab>=1 && bdk>=1 && em) maxLv=4;
+  if(dok>=4 && prw>=8 && frm>=2 && lab>=2 && bdk>=2 && svcs>=4) maxLv=5;
+  if(prw<3 && g('si-kemo')?.checked) maxLv=Math.min(maxLv,2);
+  if(!sop) maxLv=Math.min(maxLv,2);
+  if(!em) maxLv=Math.min(maxLv,3);
+
+  // Scoring
+  let pts=0;
+  if(dok>=1)pts+=15; if(dok>=2)pts+=10; if(dok>=3)pts+=8; if(dok>=5)pts+=5;
+  if(prw>=3)pts+=8; if(prw>=6)pts+=6; if(prw>=10)pts+=4;
+  if(frm>=1)pts+=8; if(frm>=2)pts+=4;
+  pts+=lab*5; pts+=bdk*5;
+  pts+=facs*4; pts+=svcs*5;
+  pts=Math.min(pts,100);
+  const cap=[19,39,59,79,100]; pts=Math.min(pts,cap[maxLv-1]);
+
+  const lv=getLevel(pts);
+  const warns=[];
+  if(dok===0) warns.push({t:'cr',m:'❌ Tidak ada dokter — program tidak dapat beroperasi secara klinis.'});
+  else if(dok===1) warns.push({t:'md',m:'⚠️ Hanya 1 dokter — rentan bila dokter tidak hadir. Target minimal 2.'});
+  if(g('si-kemo')?.checked && prw<3) warns.push({t:'cr',m:'❌ Kemoterapi tanpa minimal 3 perawat terlatih = risiko keselamatan tinggi.'});
+  if(g('si-kemo')?.checked && frm<1) warns.push({t:'cr',m:'❌ Tidak ada farmasis sitostatika — kemoterapi tidak aman.'});
+  if(!sop && g('si-kemo')?.checked) warns.push({t:'cr',m:'❌ SOP kemoterapi belum ada — jangan mulai kemoterapi tanpa SOP.'});
+  if(!em) warns.push({t:'hi',m:'⚠️ Emergency pathway belum aktif — wajib sebelum mulai kemoterapi.'});
+  if(hsct && (dok<3||prw<8||!g('si-iso')?.checked)) warns.push({t:'cr',m:'❌ HSCT membutuhkan ≥3 dokter, ≥8 perawat, dan ruang isolasi — readiness belum memadai.'});
+  if(cart && maxLv<4) warns.push({t:'cr',m:'❌ CAR-T tidak realistis untuk program level <4. Fokus pada penguatan fondasi terlebih dahulu.'});
+
+  const descs={1:'Program dalam tahap persiapan. Fokus: governance, rekrut dokter, susun SOP, aktifkan emergency pathway.',2:'Layanan dasar bisa dimulai. Perkuat perawat, farmasi, lab, bank darah, dan emergency pathway.',3:'Program berkembang. Kembangkan Day Care, MDT, dan supportive care.',4:'Program komprehensif. Tingkatkan mutu, audit, survivorship, dan evaluasi HSCT referral pathway.',5:'Mendekati Center of Excellence. Kembangkan riset, pelatihan, dan jejaring.'}
+
+  const el=document.getElementById('sim-out'); if(!el) return;
+  let out=`<div style="background:linear-gradient(135deg,var(--blue3),#fff);border:1px solid #c7d8f4;border-radius:10px;padding:16px">
+    <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:6px">📊 Prediksi Level Program</div>
+    <div style="font-size:24px;font-weight:800;color:var(--blue);text-align:center;padding:10px 0">${lv.e} ${lv.l}</div>
+    <div class="pw"><div class="pb b" style="width:${pts}%"></div></div>
+    <div style="font-size:11px;color:var(--gray);margin-top:8px;line-height:1.6">${descs[lv.n]}</div>`;
+  if(warns.length){out+=`<div style="margin-top:10px">`;warns.forEach(w=>out+=`<div class="simwarn ${w.t==='cr'?'cr':'ok'}" style="${w.t!=='cr'?'background:var(--yellow2);border-color:#fde68a;color:var(--yellow)':''}">${w.m}</div>`);out+='</div>';}
+  out+=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px;text-align:center">
+    <div style="background:#fff;border-radius:7px;padding:7px;border:1px solid ${dok===0?'#fca5a5':'var(--border)'}"><div style="font-size:16px;font-weight:800;color:${dok===0?'var(--red)':'var(--blue)'}">${dok}</div><div style="font-size:9px;color:var(--gray)">Dokter</div>${dok===0?'<div style="font-size:8px;color:var(--red);font-weight:700">KRITIS</div>':''}</div>
+    <div style="background:#fff;border-radius:7px;padding:7px;border:1px solid var(--border)"><div style="font-size:16px;font-weight:800;color:var(--blue)">${prw}</div><div style="font-size:9px;color:var(--gray)">Perawat</div></div>
+    <div style="background:#fff;border-radius:7px;padding:7px;border:1px solid var(--border)"><div style="font-size:16px;font-weight:800;color:var(--blue)">${facs}/6</div><div style="font-size:9px;color:var(--gray)">Fasilitas</div></div>
+    <div style="background:#fff;border-radius:7px;padding:7px;border:1px solid var(--border)"><div style="font-size:16px;font-weight:800;color:var(--blue)">${svcs}/4</div><div style="font-size:9px;color:var(--gray)">Layanan</div></div>
+  </div></div>`;
+  el.innerHTML=out;
+}
+
+// ===========================================
+// STANDARDS & VALIDATION
+// ===========================================
+function renderStnd(){
+  const checks=['Tidak ada identitas personal','Tidak ada identitas institusi','Tidak ada dependensi eksternal','Scoring mencakup checklist dan domain numerik','Layanan advanced (HSCT/CAR-T) memiliki caveat wajib','Print mode berfungsi','Caveat regulasi lokal tersedia','Privacy note tersedia di dashboard','Gap analysis mengkategorikan tingkat keparahan','Action plan mencakup KPI per tindakan'];
+  let h=`<div class="card"><div class="ctit"><span class="cicon">📐</span>Standards & Framework Referensi</div>
+    <div class="stnditem"><h4>🌍 WHO CureAll-Style Framework</h4><ul>
+      <li>Resource-adapted pediatric oncology care untuk setting terbatas</li>
+      <li>Centers of excellence dan care networks</li>
+      <li>Universal access dan financial protection</li>
+      <li>Regimen/protocol quality dan standardisasi</li>
+      <li>Evaluation, monitoring, registry, dan outcome tracking</li>
+    </ul></div>
+    <div class="stnditem"><h4>👩‍⚕️ Nursing Competency Standards</h4><ul>
+      <li>Basic: onkologi anak dasar, monitoring FN/TLS/transfusi</li>
+      <li>Intermediate: central line care, ekstravasasi, edukasi keluarga</li>
+      <li>Advanced: paliatif EOL, HSCT care, simulasi emergensi</li>
+      <li>Orientasi formal → teori → skill training → supervised practice → competency assessment</li>
+    </ul></div>
+    <div class="stnditem"><h4>🔒 Quality & Safety Priorities</h4><ul>
+      <li>Time-to-antibiotic FN ≤60 menit (target internasional)</li>
+      <li>Chemotherapy double verification wajib di setiap pemberian</li>
+      <li>Near miss dan incident reporting budaya non-punitive</li>
+      <li>M&M review ≥1x/kuartal</li>
+    </ul></div>
+    <div class="stnditem"><h4>📊 Data Registry & Monitoring</h4><ul>
+      <li>Registry minimum: diagnosis, tanggal mulai terapi, outcome, status akhir</li>
+      <li>Treatment abandonment rate sebagai indikator akses</li>
+      <li>Survival rate sebagai indikator outcome jangka panjang</li>
+    </ul></div>
+    <div class="stnditem"><h4>⚠️ Keterbatasan Tool Ini</h4><ul>
+      <li>Bukan standar akreditasi resmi dari lembaga manapun</li>
+      <li>Bukan pengganti site assessment lapangan</li>
+      <li>Tidak memuat keputusan klinis individual</li>
+      <li>Tidak dapat digunakan sebagai satu-satunya dasar keputusan regulatori</li>
+    </ul></div>
+  </div>
+  <div class="card"><div class="ctit"><span class="cicon">✅</span>Internal Validation Checklist</div>`;
+  checks.forEach((c,i)=>h+=`<div class="cli" style="background:var(--green2);border-radius:6px;margin-bottom:4px"><input type="checkbox" checked disabled><label style="color:#166534">✅ ${c}</label></div>`);
+  h+=`</div><div class="disc">⚠️ Toolkit ini merupakan alat bantu perencanaan program, bukan standar regulatori resmi, bukan akreditasi resmi, dan bukan pengganti site assessment.</div>
+  <div class="priv">🔒 Jangan memasukkan data identitas pasien, staf, atau institusi spesifik ke dalam versi publik tool ini.</div>`;
+  document.getElementById('pg-stnd').innerHTML=h;
+}
+
+// ===========================================
+// JOURNEY
+// ===========================================
+const JOURNEY=[
+  {cls:'fn1',tit:'1. Governance & Leadership',desc:'Program leader, clinical coordinator, komite aktif, SK program, alur rujukan, registry, dan kebijakan program ditetapkan. Ini adalah fondasi yang tidak bisa dilewati.'},
+  {cls:'fn2',tit:'2. Core Clinical Services',desc:'Poliklinik anak, rawat inap, akses IGD, referral pathway aman. Layanan dasar harus berjalan sebelum kemoterapi dimulai.'},
+  {cls:'fn3',tit:'3. Chemotherapy Safety',desc:'Authorized prescriber, protocol-based, double verification, pharmacy check, PPE, spill kit, extravasation kit, consent, dan safe disposal.'},
+  {cls:'fn4',tit:'4. Supportive Care',desc:'Nutrisi, psikososial, paliatif, manajemen nyeri, dan edukasi keluarga. Integral dalam setiap fase terapi, bukan opsional.'},
+  {cls:'fn5',tit:'5. Nursing Competency',desc:'Dari monitoring dasar (FN, TLS, transfusi) hingga central line care, ekstravasasi, edukasi keluarga, dan akhirnya paliatif dan HSCT care.'},
+  {cls:'fn6',tit:'6. Laboratory & Blood Bank',desc:'Lab dari CBC hingga flow cytometry, MRD, dan molecular diagnostics. Bank darah dari PRC hingga produk irradiated & leukoreduced.'},
+  {cls:'fn7',tit:'7. Quality & Safety',desc:'Indikator klinis, near miss, M&M review, clinical audit, feedback pasien, dan siklus peningkatan mutu berkelanjutan.'},
+  {cls:'fn8',tit:'8. Education & Training',desc:'Matrix training untuk semua peran: perawat, dokter, farmasis, lab, admin. Basic → intermediate → advanced + refreshment.'},
+  {cls:'fn9',tit:'9. Data Registry & Audit',desc:'Registry mulai dari diagnosis, terapi, outcome. Audit klinis, treatment abandonment, survival tracking, dan kontribusi ke data nasional.'},
+  {cls:'fn10',tit:'10. Advanced Services Roadmap',desc:'Survivorship clinic, HSCT, CAR-T, molecular oncology, dan clinical trials — hanya bila readiness lengkap dan tervalidasi eksternal.'}
+];
+function renderJourney(){
+  let h='';
+  JOURNEY.forEach((j,i)=>{
+    h+=`<div class="fnode ${j.cls}" onclick="showFlow(${i})">${j.tit}<span style="font-size:10px;font-weight:400;opacity:.8;margin-left:6px">▶ detail</span></div>`;
+    if(i<JOURNEY.length-1) h+=`<div class="farrow">↓</div>`;
+  });
+  document.getElementById('flow-wrap').innerHTML=h;
+}
+function showFlow(i){
+  const el=document.getElementById('flow-detail');
+  document.getElementById('fd-tit').innerHTML=`<span class="cicon">🔎</span>${JOURNEY[i].tit}`;
+  document.getElementById('fd-body').textContent=JOURNEY[i].desc;
+  el.style.display='block'; el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ===========================================
+// QUICK START
+// ===========================================
+const QS=[
+  {t:'Tetapkan program leader dan tim inti',d:'Tunjuk dokter anak terlatih onkologi sebagai program leader. Buat SK formal. Tanpa kepemimpinan jelas, program tidak akan berkembang.'},
+  {t:'Petakan layanan yang sudah ada',d:'Inventaris dokter, perawat, farmasis, lab, bank darah, dan fasilitas yang tersedia. Jadikan baseline assessment.'},
+  {t:'Buat SOP minimum',d:'Prioritaskan 5 SOP: pemberian kemoterapi, febrile neutropenia, TLS, transfusi, dan identifikasi pasien.'},
+  {t:'Buat pathway emergensi FN, TLS, sepsis, transfusi reaksi',d:'4 pathway ini wajib ada sebelum program kemoterapi dimulai. Sosialisasikan ke semua staf yang terlibat.'},
+  {t:'Latih perawat dasar onkologi anak',d:'Minimal 3 perawat inti harus tersertifikasi kemoterapi. Lakukan orientasi formal, teori, skill training, dan supervised practice.'},
+  {t:'Standarisasi kemoterapi aman',d:'Double verification, PPE, spill kit, extravasation kit, dan checklist pemberian. Jangan mulai kemoterapi tanpa keselamatan dasar ini.'},
+  {t:'Bangun dukungan farmasi sitostatika',d:'Area persiapan aman (minimal BSC), PPE farmasi, cold chain, dan labeling. Farmasis harus terlibat dalam setiap siklus kemoterapi.'},
+  {t:'Pastikan akses lab dan bank darah',d:'CBC, koagulasi, kultur darah, dan LDH/asam urat harus bisa diakses 24 jam. Produk darah (PRC, trombosit) harus selalu tersedia.'},
+  {t:'Buat registry sederhana',d:'Mulai pencatatan: nama inisial, diagnosis, tanggal mulai terapi, siklus, dan outcome. Data ini adalah aset program jangka panjang.'},
+  {t:'Mulai audit mutu bulanan',d:'Tinjau: keterlambatan kemoterapi, insiden ekstravasasi, waktu antibiotic FN, dan laporan near miss. Budaya mutu dibangun sejak hari pertama.'}
+];
+function renderQS(){
+  let h='';
+  QS.forEach((q,i)=>h+=`<div class="qss"><div class="qsn">${i+1}</div><div><div class="qst">${q.t}</div><div class="qsd">${q.d}</div></div></div>`);
+  document.getElementById('qs-card').innerHTML=`<div class="ctit"><span class="cicon">💡</span>Quick Start: 10 Langkah Awal</div>${h}`;
+}
+
+// ===========================================
+// ROLE STRIP
+// ===========================================
+const ROLES=[
+  {ic:'👩‍⚕️',t:'Perawat',items:['Nursing readiness assessment','Chemotherapy safety','Transfusion monitoring','Family education','Emergency escalation']},
+  {ic:'🏥',t:'Dokter Umum / IGD',items:['Referral pathway','Emergency stabilization','FN/TLS/sepsis response','Escalation criteria']},
+  {ic:'👨‍⚕️',t:'Dokter Anak / Tim Klinik',items:['Clinical pathway & SOP','MDT & protokol kemoterapi','Supportive care','Audit klinis']},
+  {ic:'📊',t:'Konsultan / Manajemen',items:['Governance & roadmap','SDM & akreditasi','Mutu & pembiayaan','Jejaring rujukan']}
+];
+function renderRoles(){
+  let h='';
+  ROLES.forEach((r,i)=>h+=`<div class="role" onclick="showRole(${i})"><h4>${r.ic} ${r.t}</h4><ul>${r.items.map(it=>`<li>${it}</li>`).join('')}</ul></div>`);
+  document.getElementById('role-grid').innerHTML=h;
+}
+function showRole(i){
+  const r=ROLES[i]; const el=document.getElementById('role-detail');
+  el.innerHTML=`<strong>${r.ic} ${r.t}</strong> — Fokus Anda: ${r.items.join(' · ')}`;
+  el.style.display='block';
+  document.querySelectorAll('.role').forEach((e,j)=>e.classList.toggle('on',j===i));
+}
+
+// ===========================================
+// GLOBAL UPDATE
+// ===========================================
+function updateGlobal(){
+  const sc=globalScore(); const lv=getLevel(sc);
+  document.getElementById('sb-score').textContent=sc;
+  document.getElementById('sb-lv').textContent=lv.e+' '+lv.l;
+  document.getElementById('k-score').textContent=sc;
+  document.getElementById('k-lv').textContent=lv.e+' '+lv.l;
+  document.getElementById('k-lv').style.color=lv.n<=1?'var(--red)':lv.n===2?'var(--orange)':lv.n===3?'var(--yellow)':lv.n===4?'var(--green)':'var(--blue)';
+  document.getElementById('k-prog').style.width=sc+'%';
+  [1,2,3,4,5].forEach(i=>document.getElementById('ml'+i)?.classList.toggle('on',lv.n===i));
+  const lvdescs={1:'🔴 Level 1 — Persiapan: Governance, program leader, dan SOP dasar adalah prioritas utama.',2:'🟠 Level 2 — Layanan Dasar: Poliklinik, rawat inap, dan pathway emergensi mulai tersedia.',3:'🟡 Level 3 — Layanan Menengah: Kemoterapi aktif, MDT berjalan, nursing competency meningkat.',4:'🟢 Level 4 — Komprehensif: Program matang, mutu terjaga, survivorship berkembang.',5:'🔵 Level 5 — Center of Excellence: Pusat pelatihan, riset, dan layanan advanced.'};
+  const lvd=document.getElementById('lv-desc'); if(lvd) lvd.textContent=lvdescs[lv.n];
+  const {has,miss}=allItems();
+  document.getElementById('k-str').textContent=has.length;
+  document.getElementById('k-strsub').textContent=`dari ${has.length+miss.length} total item`;
+  document.getElementById('k-gap').textContent=miss.length;
+  const dom=DOMS.filter(d=>domScore(d)>0).length;
+  document.getElementById('k-dom').textContent=dom+'/13';
+  renderBarChart(); renderModOv();
+}
+function renderBarChart(){
+  const el=document.getElementById('bar-chart'); if(!el) return;
+  let h='';
+  DOMS.forEach((d,i)=>{const sc=domScore(d);const cl=sc>=70?'g':sc>=40?'y':'r';h+=`<div class="brow"><span class="blab">${DOMNAMES[i].length>13?DOMNAMES[i].slice(0,13)+'…':DOMNAMES[i]}</span><div class="btrack"><div class="bfill pb ${cl}" style="width:${Math.max(sc,2)}%"><span class="bval">${sc}%</span></div></div></div>`;});
+  el.innerHTML=h;
+}
+function renderModOv(){
+  const el=document.getElementById('mod-ov'); if(!el) return;
+  let h='';
+  DOMS.forEach((d,i)=>{const sc=domScore(d);const cl=sc>=70?'g':sc>=40?'y':'r';h+=`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px">${Object.values(MOD)[i]?.icon||'📊'}</span><span style="flex:1;font-size:11px">${DOMNAMES[i]}</span><div class="pw" style="width:100px;margin:0"><div class="pb ${cl}" style="width:${sc}%"></div></div><span class="tl ${cl}" style="width:40px;justify-content:center">${sc}%</span></div>`;});
+  el.innerHTML=h;
+}
+
+// ===========================================
+// NAV
+// ===========================================
+const PAGES={
+  home:{tit:'Dashboard Utama',sub:'Program Readiness Overview'},
+  journey:{tit:'Program Journey',sub:'Alur 10 Domain Pengembangan'},
+  qs:{tit:'Quick Start Mode',sub:'10 Langkah Awal'},
+  m1:{tit:'Modul 1: Program Readiness',sub:'Assessment kesiapan program'},
+  m2:{tit:'Modul 2: Human Resources',sub:'Perencanaan SDM'},
+  m3:{tit:'Modul 3: Clinical Services',sub:'Perencanaan layanan klinis'},
+  m4:{tit:'Modul 4: Chemotherapy Safety',sub:'Program kemoterapi aman'},
+  m5:{tit:'Modul 5: Nursing Program',sub:'Kompetensi keperawatan onkologi'},
+  m6:{tit:'Modul 6: Laboratory',sub:'Kesiapan laboratorium diagnostik'},
+  m7:{tit:'Modul 7: Blood Bank',sub:'Kesiapan bank darah'},
+  m8:{tit:'Modul 8: Pharmacy',sub:'Kesiapan farmasi sitostatika'},
+  m9:{tit:'Modul 9: Emergency',sub:'Kesiapan emergensi onkologi'},
+  m10:{tit:'Modul 10: Quality & Safety',sub:'Mutu dan keselamatan pasien'},
+  m11:{tit:'Modul 11: Education & Training',sub:'Pelatihan dan pengembangan SDM'},
+  m12:{tit:'Modul 12: Infrastructure',sub:'Perencanaan infrastruktur'},
+  m13:{tit:'Modul 13: Volume Planning',sub:'Proyeksi volume layanan'},
+  m14:{tit:'Modul 14: Maturity Dashboard',sub:'Dashboard kematangan program'},
+  m15:{tit:'Modul 15: Strategic Roadmap',sub:'Peta jalan 0–5 tahun'},
+  m16:{tit:'Modul 16: Accreditation',sub:'Internal readiness checklist'},
+  gap:{tit:'Gap Analysis',sub:'Identifikasi gap otomatis'},
+  action:{tit:'Action Plan Generator',sub:'Prioritas tindakan dengan KPI'},
+  exec:{tit:'Executive Summary',sub:'Ringkasan eksekutif program'},
+  sim:{tit:'Program Simulation',sub:'Prediksi level program interaktif'},
+  stnd:{tit:'Standards & Validation',sub:'Framework dan validasi internal'}
+};
+let curPg='home';
+function go(pg){
+  document.querySelectorAll('.pg').forEach(e=>e.classList.remove('on'));
+  document.querySelectorAll('.sb-nav a').forEach(e=>e.classList.remove('on'));
+  const el=document.getElementById('pg-'+pg); if(el) el.classList.add('on');
+  const nav=document.getElementById('n-'+pg); if(nav) nav.classList.add('on');
+  if(PAGES[pg]){document.getElementById('h-tit').textContent=PAGES[pg].tit;document.getElementById('h-sub').textContent=PAGES[pg].sub;}
+  curPg=pg;
+  if(pg==='m2') renderM2();
+  else if(pg==='m6') renderM6();
+  else if(pg==='m13') renderM13();
+  else if(pg==='m14') renderM14();
+  else if(pg==='m15') renderM15();
+  else if(pg==='gap') renderGap();
+  else if(pg==='action') renderAction();
+  else if(pg==='exec') renderExec();
+  else if(pg==='sim') renderSim();
+  else if(pg==='stnd') renderStnd();
+  else if(pg==='home') updateGlobal();
+  else if(MOD[pg]) renderCL(pg,'pg-'+pg);
+  if(window.innerWidth<=700) document.getElementById('sb').classList.remove('mob');
+}
+function toggleSB(){const sb=document.getElementById('sb');if(window.innerWidth<=700)sb.classList.toggle('mob');else sb.classList.toggle('closed');}
+function doReset(){if(!confirm('Reset semua data? Tindakan ini tidak dapat dibatalkan.'))return;Object.keys(S.chk).forEach(k=>S.chk[k]=false);HR_ROLES.forEach(r=>S.num.m2[r.key]=0);LAB_SEL.forEach((_,i)=>S.sel['lab_'+i]='belum');Object.keys(S.num).forEach(k=>{if(k!=='m2')delete S.num[k];});localStorage.removeItem('draisyi_v2');go('home');}
+
+// ===========================================
+// PERSIST
+// ===========================================
+function save(){try{localStorage.setItem('draisyi_v2',JSON.stringify({chk:S.chk,num:S.num,sel:S.sel}));}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem('draisyi_v2')||'{}');if(d.chk)Object.assign(S.chk,d.chk);if(d.num){if(d.num.m2)Object.assign(S.num.m2,d.num.m2);Object.keys(d.num).forEach(k=>{if(k!=='m2')S.num[k]=d.num[k];});}if(d.sel)Object.assign(S.sel,d.sel);}catch(e){}}
+
+// ===========================================
+// INIT
+// ===========================================
+window.addEventListener('DOMContentLoaded',()=>{
+  initState(); load();
+  renderJourney(); renderQS(); renderRoles();
+  // Add sec-header wrappers to module pages
+  const metas={m1:'📋',m3:'🏥',m4:'💊',m5:'👩‍⚕️',m7:'🩸',m8:'💉',m9:'🚨',m10:'✅',m11:'📚',m12:'🏗️',m16:'🏆'};
+  Object.keys(MOD).forEach(mk=>{
+    const pg=document.getElementById('pg-'+mk); if(!pg||pg.innerHTML.trim()) return;
+    pg.innerHTML=`<div class="sech"><span class="si">${MOD[mk].icon}</span><div><div class="st">${MOD[mk].title}</div><div class="ss">${MOD[mk].sub}</div></div></div><div id="${mk}-card"></div>`;
+    renderCL(mk, mk+'-card');
+  });
+  // m2, m6, m13 header
+  ['m2','m6','m13'].forEach(mk=>{
+    const pg=document.getElementById('pg-'+mk);
+    const m={m2:{icon:'👥',title:'Human Resources Planner',sub:'Analisis kecukupan SDM'},m6:{icon:'🔬',title:'Laboratory Readiness',sub:'Kesiapan laboratorium diagnostik'},m13:{icon:'📊',title:'Volume Planning',sub:'Proyeksi volume layanan'}};
+    if(pg&&!pg.innerHTML.trim()){pg.innerHTML=`<div class="sech"><span class="si">${m[mk].icon}</span><div><div class="st">${m[mk].title}</div><div class="ss">${m[mk].sub}</div></div></div><div id="${mk}-main"></div>`;}
+  });
+  renderM2(); renderM6(); renderM13();
+  updateGlobal();
+});
+</script>
+</body>
+</html>

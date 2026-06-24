@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anemia Anak Navigator v2</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#f7f6f3;color:#1a1a1a;min-height:100vh;font-size:14px}
+.brand{background:#1e3a5f;color:#fff;padding:12px 20px;display:flex;align-items:center;gap:10px}
+.brand-icon{width:34px;height:34px;background:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center}
+.brand-icon i{color:#1e3a5f;font-size:18px}
+.brand-title{font-size:14px;font-weight:600}
+.brand-sub{font-size:11px;opacity:.7;margin-top:1px}
+.disclaimer-top{background:#fff8e1;border-bottom:1.5px solid #f5d08a;padding:9px 20px;font-size:12px;color:#7a5800;display:flex;align-items:flex-start;gap:7px}
+.disclaimer-top i{margin-top:1px;flex-shrink:0}
+.container{max-width:740px;margin:0 auto;padding:16px}
+.page-title{font-size:19px;font-weight:700;color:#1e3a5f;margin-bottom:2px}
+.page-sub{font-size:12px;color:#666;margin-bottom:16px}
+.card{background:#fff;border-radius:11px;border:0.5px solid #ddd;padding:16px 18px;margin-bottom:12px}
+.card-title{font-size:12px;font-weight:700;color:#1e3a5f;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.form-grid.three{grid-template-columns:1fr 1fr 1fr}
+.form-grid.four{grid-template-columns:1fr 1fr 1fr 1fr}
+.fg label{font-size:11px;color:#555;display:block;margin-bottom:3px;font-weight:600}
+.fg input,.fg select{width:100%;padding:7px 9px;border:0.5px solid #ccc;border-radius:6px;font-size:13px;background:#fff;color:#1a1a1a;outline:none}
+.fg input:focus,.fg select:focus{border-color:#1e3a5f}
+.fg .hint{font-size:10px;color:#888;margin-top:2px}
+.section-label{font-size:10px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:10px 0 6px}
+.chk-group{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:2px}
+.chk-item{display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;background:#f5f4f0;padding:5px 9px;border-radius:6px;border:0.5px solid #ddd;user-select:none;transition:background .12s}
+.chk-item:hover{background:#eae8e2}
+.chk-item input{margin:0;accent-color:#1e3a5f}
+.chk-item.exclusive{border-color:#c0a060;background:#fdf7e8}
+.divider{height:0.5px;background:#eee;margin:12px 0}
+.btn-analyze{width:100%;background:#1e3a5f;color:#fff;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px}
+.btn-analyze:hover{background:#163050}
+/* RESULTS */
+.result-section{display:none}
+.r-card{border-radius:10px;border:0.5px solid;padding:14px 16px;margin-bottom:10px}
+.r-card.emerg{border:1.5px solid #e24b4a;background:#fff5f5}
+.r-card.warn{border-color:#f0d080;background:#fffcf5}
+.r-card.info{border-color:#a0c4e8;background:#f5f9ff}
+.r-card.ok{border-color:#9fd4a3;background:#f5fff6}
+.r-card.neutral{border-color:#ccc;background:#fafaf8}
+.rh{font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.3px}
+.rh.emerg{color:#a32d2d}
+.rh.warn{color:#854f0b}
+.rh.info{color:#185fa5}
+.rh.ok{color:#3b6d11}
+.rh.neutral{color:#444}
+/* Status badge */
+.anemia-status{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600}
+.anemia-status.severe{background:#fde8e8;color:#a32d2d;border:1px solid #f5a0a0}
+.anemia-status.moderate{background:#fff3e0;color:#854f0b;border:1px solid #f5d08a}
+.anemia-status.mild{background:#fff8e1;color:#7a5800;border:1px solid #f0d060}
+.anemia-status.normal{background:#e8f5e9;color:#3b6d11;border:1px solid #9fd4a3}
+.anemia-status.unknown{background:#f5f4f0;color:#555;border:0.5px solid #ddd}
+/* Pattern cards */
+.pattern-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
+.p-card{border-radius:8px;padding:10px 12px;border:0.5px solid}
+.p-card.primary{border-color:#185fa5;background:#f0f6fd}
+.p-card.secondary{border-color:#ddd;background:#fafaf8}
+.p-card.must-not-miss{border-color:#e24b4a;background:#fff5f5}
+.p-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.p-label.primary{color:#185fa5}
+.p-label.secondary{color:#666}
+.p-label.must-not-miss{color:#a32d2d}
+.p-value{font-size:13px;font-weight:600;color:#1a1a1a;line-height:1.4}
+.p-sub{font-size:11px;color:#666;margin-top:3px;line-height:1.4}
+/* Lists */
+.rlist{list-style:none;margin-top:6px}
+.rlist li{font-size:12px;color:#333;padding:3px 0 3px 14px;position:relative;line-height:1.5}
+.rlist li::before{content:"•";position:absolute;left:3px;color:#1e3a5f}
+.rlist li.red::before{content:"⚠";left:0;font-size:11px}
+.rlist li.red{padding-left:16px;color:#a32d2d}
+/* Badges */
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;margin:2px}
+.badge-danger{background:#fde8e8;color:#a32d2d}
+.badge-warning{background:#fef3d8;color:#854f0b}
+.badge-info{background:#e0eefa;color:#185fa5}
+.badge-ok{background:#e4f4e5;color:#3b6d11}
+.badge-gray{background:#eceae4;color:#444}
+/* Action buttons */
+.action-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.btn-sm{background:transparent;border:0.5px solid #ccc;border-radius:7px;padding:7px 13px;font-size:12px;cursor:pointer;color:#555;display:flex;align-items:center;gap:5px;transition:background .12s}
+.btn-sm:hover{background:#f0ede7}
+.btn-reset{background:#1e3a5f;color:#fff;border:none}
+.btn-reset:hover{background:#163050;color:#fff}
+/* Print */
+@media print{.brand,.disclaimer-top,.action-row{display:none}.result-section{display:block!important}.card{display:none}}
+@media(max-width:500px){.form-grid{grid-template-columns:1fr}.form-grid.three,.form-grid.four{grid-template-columns:1fr 1fr}.pattern-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="brand">
+  <div class="brand-icon"><i class="ti ti-activity-heartbeat"></i></div>
+  <div>
+    <div class="brand-title">drAisyi EduCare</div>
+    <div class="brand-sub">Clinical Decision Support · Pediatric Hematology</div>
+  </div>
+</div>
+<div class="disclaimer-top">
+  <i class="ti ti-info-circle"></i>
+  <span>Alat ini adalah <strong>anemia pattern screener</strong> — pendukung keputusan klinis, bukan kalkulator probabilitas diagnosis. Hasil harus diinterpretasikan bersama penilaian klinis lengkap dan pemeriksaan penunjang. Tidak menggantikan diagnosis dokter.</span>
+</div>
+
+<div class="container">
+  <div class="page-title">🩸 Anemia Anak Navigator</div>
+  <p class="page-sub">Microcytic · Normocytic · Macrocytic Pathway — Skrining pola anemia pediatrik</p>
+
+  <div id="formSection">
+    <!-- BLOCK 1: Demografi -->
+    <div class="card">
+      <div class="card-title"><i class="ti ti-user-circle"></i> Data Pasien</div>
+      <div class="form-grid three">
+        <div class="fg">
+          <label>Kelompok Usia</label>
+          <select id="usia">
+            <option value="">-- Pilih --</option>
+            <option value="neo">Neonatus (0–28 hari)</option>
+            <option value="infant_early">Bayi muda (1–3 bulan)</option>
+            <option value="infant">Bayi (4–11 bulan)</option>
+            <option value="toddler">Toddler (1–5 tahun)</option>
+            <option value="child">Anak (6–11 tahun)</option>
+            <option value="teen_f">Remaja perempuan (≥12 thn)</option>
+            <option value="teen_m">Remaja laki-laki (≥12 thn)</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Berat Badan (kg)</label>
+          <input type="number" id="bb" placeholder="cth: 14" step="0.1" min="1" max="100">
+        </div>
+        <div class="fg">
+          <label>Hb (g/dL)</label>
+          <input type="number" id="hb" placeholder="cth: 8.5" step="0.1" min="1" max="22">
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOCK 2: CBC -->
+    <div class="card">
+      <div class="card-title"><i class="ti ti-flask"></i> CBC Lengkap</div>
+      <div class="form-grid four">
+        <div class="fg">
+          <label>MCV (fL)</label>
+          <input type="number" id="mcv" placeholder="cth: 65" step="0.1" min="40" max="130">
+        </div>
+        <div class="fg">
+          <label>RDW (%)</label>
+          <input type="number" id="rdw" placeholder="cth: 16.5" step="0.1" min="10" max="30">
+          <div class="hint">Normal: &lt;14%</div>
+        </div>
+        <div class="fg">
+          <label>RBC (×10⁶/µL)</label>
+          <input type="number" id="rbc" placeholder="cth: 3.8" step="0.1" min="0.5" max="8">
+        </div>
+        <div class="fg">
+          <label>Retikulosit (%)</label>
+          <input type="number" id="retic" placeholder="cth: 2.5" step="0.1" min="0" max="30">
+          <div class="hint">Normal: 0.5–2%</div>
+        </div>
+      </div>
+      <div class="form-grid four">
+        <div class="fg">
+          <label>WBC (×10³/µL)</label>
+          <input type="number" id="wbc" placeholder="cth: 8.2" step="0.1" min="0.5" max="100">
+        </div>
+        <div class="fg">
+          <label>ANC (×10³/µL)</label>
+          <input type="number" id="anc" placeholder="cth: 2.8" step="0.1" min="0" max="50">
+          <div class="hint">Normal: &gt;1.5</div>
+        </div>
+        <div class="fg">
+          <label>Platelet (×10³/µL)</label>
+          <input type="number" id="plt" placeholder="cth: 250" step="1" min="1" max="1500">
+        </div>
+        <div class="fg">
+          <label>MCH (pg) <span style="font-size:10px;color:#aaa">opsional</span></label>
+          <input type="number" id="mch" placeholder="cth: 22" step="0.1" min="10" max="45">
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOCK 3: Iron & Inflammation -->
+    <div class="card">
+      <div class="card-title"><i class="ti ti-test-pipe"></i> Iron Studies & Inflamasi</div>
+      <div class="form-grid four">
+        <div class="fg">
+          <label>Ferritin (ng/mL)</label>
+          <input type="number" id="ferritin" placeholder="opsional" step="1" min="0">
+          <div class="hint">Normal: 12–150</div>
+        </div>
+        <div class="fg">
+          <label>CRP (mg/L)</label>
+          <input type="number" id="crp" placeholder="opsional" step="0.1" min="0">
+          <div class="hint">Normal: &lt;5</div>
+        </div>
+        <div class="fg">
+          <label>TSAT (%)</label>
+          <input type="number" id="tsat" placeholder="opsional" step="1" min="0" max="100">
+          <div class="hint">Normal: 20–45%</div>
+        </div>
+        <div class="fg">
+          <label>TIBC (µg/dL)</label>
+          <input type="number" id="tibc" placeholder="opsional" step="1" min="0">
+          <div class="hint">Normal: 250–400</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOCK 4: Hemolysis markers -->
+    <div class="card">
+      <div class="card-title"><i class="ti ti-droplet-half"></i> Marker Hemolisis <span style="font-size:10px;font-weight:400;color:#888;margin-left:4px">— isi bila tersedia / ada kecurigaan</span></div>
+      <div class="form-grid four">
+        <div class="fg">
+          <label>Bilirubin indirek (mg/dL)</label>
+          <input type="number" id="bili" placeholder="opsional" step="0.1" min="0">
+        </div>
+        <div class="fg">
+          <label>LDH (U/L)</label>
+          <input type="number" id="ldh" placeholder="opsional" step="1" min="0">
+          <div class="hint">Normal: 120–330</div>
+        </div>
+        <div class="fg">
+          <label>Haptoglobin (mg/dL)</label>
+          <input type="number" id="haptogl" placeholder="opsional" step="1" min="0">
+          <div class="hint">Normal: 30–200</div>
+        </div>
+        <div class="fg">
+          <label>DAT/Coombs</label>
+          <select id="dat">
+            <option value="">Belum diperiksa</option>
+            <option value="pos">Positif</option>
+            <option value="neg">Negatif</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOCK 5: Riwayat Klinis -->
+    <div class="card">
+      <div class="card-title"><i class="ti ti-notes-medical"></i> Riwayat Klinis</div>
+
+      <div class="section-label">Riwayat diet</div>
+      <div class="chk-group" id="diet">
+        <label class="chk-item"><input type="checkbox" value="susu">Konsumsi susu sapi berlebih</label>
+        <label class="chk-item"><input type="checkbox" value="veg">Vegetarian / vegan</label>
+        <label class="chk-item"><input type="checkbox" value="picky">Picky eater / kurang daging merah</label>
+        <label class="chk-item"><input type="checkbox" value="asi">ASI eksklusif &gt;6 bln tanpa MPASI</label>
+        <label class="chk-item exclusive"><input type="checkbox" value="none_diet" data-exc="diet">Tidak ada masalah diet</label>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">Riwayat perdarahan</div>
+      <div class="chk-group" id="bleed">
+        <label class="chk-item"><input type="checkbox" value="gi">Perdarahan saluran cerna</label>
+        <label class="chk-item"><input type="checkbox" value="mens">Menstruasi berat</label>
+        <label class="chk-item"><input type="checkbox" value="other_bleed">Perdarahan lain</label>
+        <label class="chk-item exclusive"><input type="checkbox" value="none_bleed" data-exc="bleed">Tidak ada perdarahan</label>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">Infeksi / penyakit kronik</div>
+      <div class="chk-group" id="chronic">
+        <label class="chk-item"><input type="checkbox" value="tb_hiv">Infeksi kronik (TB, HIV, dll)</label>
+        <label class="chk-item"><input type="checkbox" value="ckd_jia">Penyakit kronik (CKD, JIA, IBD, dll)</label>
+        <label class="chk-item"><input type="checkbox" value="akut_inf">Infeksi akut saat ini</label>
+        <label class="chk-item exclusive"><input type="checkbox" value="none_chronic" data-exc="chronic">Tidak ada</label>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">Riwayat keluarga</div>
+      <div class="chk-group" id="family">
+        <label class="chk-item"><input type="checkbox" value="thal_fam">Thalassemia dalam keluarga</label>
+        <label class="chk-item"><input type="checkbox" value="anemia_fam">Anemia kronik / sering transfusi</label>
+        <label class="chk-item"><input type="checkbox" value="ikterus_fam">Ikterus / batu empedu dini</label>
+        <label class="chk-item exclusive"><input type="checkbox" value="none_family" data-exc="family">Tidak ada riwayat</label>
+      </div>
+    </div>
+
+    <!-- BLOCK 6: Tanda Klinis -->
+    <div class="card">
+      <div class="card-title"><i class="ti ti-stethoscope"></i> Tanda Klinis Saat Ini</div>
+      <div class="section-label">Tanda umum</div>
+      <div class="chk-group" id="signs">
+        <label class="chk-item"><input type="checkbox" value="pucat">Pucat berat</label>
+        <label class="chk-item"><input type="checkbox" value="takikardi">Takikardia / sesak</label>
+        <label class="chk-item"><input type="checkbox" value="pica">Pica (makan es/tanah)</label>
+        <label class="chk-item"><input type="checkbox" value="ikterus">Ikterus / urin gelap</label>
+        <label class="chk-item"><input type="checkbox" value="splenomegali">Splenomegali</label>
+        <label class="chk-item"><input type="checkbox" value="hepatomegali">Hepatomegali</label>
+        <label class="chk-item"><input type="checkbox" value="tulang">Facies thalassemia</label>
+        <label class="chk-item"><input type="checkbox" value="gagal_tumbuh">Gagal tumbuh</label>
+        <label class="chk-item"><input type="checkbox" value="perdarahan_aktif">Perdarahan aktif</label>
+      </div>
+      <div class="divider"></div>
+      <div class="section-label" style="color:#a32d2d">Red flags keganasan / kegagalan sumsum tulang</div>
+      <div class="chk-group" id="redflags">
+        <label class="chk-item" style="border-color:#f5a0a0;background:#fff5f5"><input type="checkbox" value="nyeri_tulang">Nyeri tulang</label>
+        <label class="chk-item" style="border-color:#f5a0a0;background:#fff5f5"><input type="checkbox" value="lnn">Limfadenopati</label>
+        <label class="chk-item" style="border-color:#f5a0a0;background:#fff5f5"><input type="checkbox" value="demam_lama">Demam lama (&gt;2 minggu)</label>
+        <label class="chk-item" style="border-color:#f5a0a0;background:#fff5f5"><input type="checkbox" value="bb_turun">Penurunan BB signifikan</label>
+        <label class="chk-item" style="border-color:#f5a0a0;background:#fff5f5"><input type="checkbox" value="blast_nrbc">Blast / NRBC di apusan</label>
+        <label class="chk-item exclusive" style="border-color:#ccc;background:#f5f4f0"><input type="checkbox" value="none_rf" data-exc="redflags">Tidak ada red flag</label>
+      </div>
+    </div>
+
+    <div class="card" style="background:#fffcf0;border-color:#e0c870">
+      <div class="card-title" style="color:#7a5800"><i class="ti ti-microscope"></i> Apusan Darah Tepi <span style="font-size:10px;font-weight:400;color:#888;margin-left:4px">— opsional, isi bila sudah ada hasil</span></div>
+      <div class="chk-group" id="smear">
+        <label class="chk-item"><input type="checkbox" value="mikrositik_hipokrom">Mikrositik hipokrom</label>
+        <label class="chk-item"><input type="checkbox" value="target_cell">Target cell</label>
+        <label class="chk-item"><input type="checkbox" value="fragmentosit">Fragmentosit / schistosit</label>
+        <label class="chk-item"><input type="checkbox" value="sferosit">Sferositosis</label>
+        <label class="chk-item"><input type="checkbox" value="makrositik">Makrositik</label>
+        <label class="chk-item"><input type="checkbox" value="blast_smear">Blast sel</label>
+        <label class="chk-item"><input type="checkbox" value="normositik">Normositik normokrom</label>
+        <label class="chk-item"><input type="checkbox" value="belum_apusan">Belum dilakukan</label>
+      </div>
+    </div>
+
+    <button class="btn-analyze" onclick="analyze()">
+      <i class="ti ti-search"></i> Analisis Pola Anemia
+    </button>
+  </div>
+
+  <!-- RESULT -->
+  <div id="resultSection" class="result-section">
+
+    <div id="emergBox" class="r-card emerg" style="display:none">
+      <div class="rh emerg"><i class="ti ti-urgent"></i> EMERGENSI / RUJUK SEGERA</div>
+      <ul class="rlist" id="emergList"></ul>
+    </div>
+
+    <div id="malignBox" class="r-card emerg" style="display:none">
+      <div class="rh emerg"><i class="ti ti-alert-triangle"></i> JANGAN LEWATKAN: Keganasan / Kegagalan Sumsum Tulang</div>
+      <ul class="rlist" id="malignList"></ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-chart-dots"></i> Status Anemia</div>
+      <div id="anemiaStatus"></div>
+      <div id="patternGrid" class="pattern-grid"></div>
+      <div id="narrativeBox" style="margin-top:10px;font-size:12px;color:#444;line-height:1.7;padding:10px 12px;background:#f7f6f3;border-radius:8px"></div>
+    </div>
+
+    <div class="r-card info">
+      <div class="rh info"><i class="ti ti-flask"></i> Pemeriksaan Lanjutan yang Dianjurkan</div>
+      <ul class="rlist" id="workupList"></ul>
+    </div>
+
+    <div id="ironTherapyCard" class="r-card ok" style="display:none">
+      <div class="rh ok"><i class="ti ti-pill"></i> Pertimbangan Terapi Besi</div>
+      <div id="ironContent"></div>
+    </div>
+
+    <div id="vitaminWarnCard" class="r-card emerg" style="display:none">
+      <div class="rh emerg"><i class="ti ti-hand-stop"></i> Jangan Hanya Beri Vitamin / Suplemen Besi</div>
+      <ul class="rlist" id="vitaminList"></ul>
+    </div>
+
+    <div class="r-card warn">
+      <div class="rh warn"><i class="ti ti-info-circle"></i> Catatan Interpretasi</div>
+      <ul class="rlist">
+        <li>Alat ini menampilkan <strong>pola</strong> yang paling mendukung berdasarkan data yang dimasukkan — bukan probabilitas diagnosis tervalidasi.</li>
+        <li>MCV perlu diinterpretasikan sesuai usia; nilai di sini mengacu rentang usia yang dipilih.</li>
+        <li>Ferritin adalah acute phase reactant — selalu nilai bersama CRP/inflamasi.</li>
+        <li>Konfirmasi diagnosis memerlukan korelasi klinis, apusan darah tepi, dan pemeriksaan spesifik.</li>
+      </ul>
+    </div>
+
+    <div class="action-row">
+      <button class="btn-sm btn-reset" onclick="reset()"><i class="ti ti-refresh"></i> Data Baru</button>
+      <button class="btn-sm" onclick="window.print()"><i class="ti ti-printer"></i> Cetak Ringkasan</button>
+      <button class="btn-sm" id="copyBtn" onclick="copyResult()"><i class="ti ti-copy"></i> Salin Hasil</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Exclusive checkboxes
+document.addEventListener('change',function(e){
+  const el=e.target;
+  if(!el.dataset.exc)return;
+  const grp=document.getElementById(el.dataset.exc);
+  const others=grp.querySelectorAll('input:not([data-exc])');
+  if(el.checked)others.forEach(c=>c.checked=false);
+});
+document.addEventListener('change',function(e){
+  const el=e.target;
+  if(el.dataset.exc)return;
+  const grp=el.closest('.chk-group');
+  if(!grp)return;
+  const excl=grp.querySelector('input[data-exc]');
+  if(excl&&el.checked)excl.checked=false;
+});
+
+function gc(id){return[...document.querySelectorAll(`#${id} input:checked`)].map(c=>c.value)}
+
+// Age-specific Hb cutoffs (WHO/RCH)
+const HB_CUTOFF={
+  neo:14.0, infant_early:9.0, infant:10.5, toddler:11.0,
+  child:11.5, teen_f:12.0, teen_m:13.0
+};
+// Age-specific MCV reference (lower limit)
+const MCV_LOW={
+  neo:100, infant_early:85, infant:70, toddler:70,
+  child:75, teen_f:80, teen_m:80
+};
+const MCV_HIGH={
+  neo:130, infant_early:110, infant:90, toddler:82,
+  child:90, teen_f:100, teen_m:100
+};
+
+function analyze(){
+  const usia=document.getElementById('usia').value;
+  const hbRaw=document.getElementById('hb').value;
+  const mcvRaw=document.getElementById('mcv').value;
+  if(!usia||!hbRaw){alert('Mohon isi kelompok usia dan Hb terlebih dahulu.');return;}
+
+  const hb=parseFloat(hbRaw);
+  const mcv=mcvRaw?parseFloat(mcvRaw):null;
+  const rdw=document.getElementById('rdw').value?parseFloat(document.getElementById('rdw').value):null;
+  const rbc=document.getElementById('rbc').value?parseFloat(document.getElementById('rbc').value):null;
+  const retic=document.getElementById('retic').value?parseFloat(document.getElementById('retic').value):null;
+  const wbc=document.getElementById('wbc').value?parseFloat(document.getElementById('wbc').value):null;
+  const anc=document.getElementById('anc').value?parseFloat(document.getElementById('anc').value):null;
+  const plt=document.getElementById('plt').value?parseFloat(document.getElementById('plt').value):null;
+  const ferritin=document.getElementById('ferritin').value?parseFloat(document.getElementById('ferritin').value):null;
+  const crp=document.getElementById('crp').value?parseFloat(document.getElementById('crp').value):null;
+  const tsat=document.getElementById('tsat').value?parseFloat(document.getElementById('tsat').value):null;
+  const tibc=document.getElementById('tibc').value?parseFloat(document.getElementById('tibc').value):null;
+  const bili=document.getElementById('bili').value?parseFloat(document.getElementById('bili').value):null;
+  const ldh=document.getElementById('ldh').value?parseFloat(document.getElementById('ldh').value):null;
+  const haptogl=document.getElementById('haptogl').value?parseFloat(document.getElementById('haptogl').value):null;
+  const dat=document.getElementById('dat').value;
+  const bb=document.getElementById('bb').value?parseFloat(document.getElementById('bb').value):null;
+
+  const diet=gc('diet'),bleed=gc('bleed'),chronic=gc('chronic'),family=gc('family');
+  const signs=gc('signs'),rf=gc('redflags'),smear=gc('smear');
+
+  const cutoff=HB_CUTOFF[usia];
+  const mcvLow=MCV_LOW[usia], mcvHigh=MCV_HIGH[usia];
+  const inflam=(chronic.includes('tb_hiv')||chronic.includes('ckd_jia')||chronic.includes('akut_inf'))||
+               (crp!==null&&crp>5)||(signs.includes('demam_lama'));
+
+  // === ANEMIA STATUS ===
+  let anemSev='', anemLabel='';
+  if(hb<cutoff){
+    const def=cutoff-hb;
+    if(def>=4||(hb<7))anemSev='severe';
+    else if(def>=2)anemSev='moderate';
+    else anemSev='mild';
+    const sev={severe:'Berat',moderate:'Sedang',mild:'Ringan'};
+    anemLabel=`Anemia ${sev[anemSev]} terkonfirmasi (Hb ${hb.toFixed(1)} g/dL; cut-off usia: ${cutoff} g/dL)`;
+  } else {
+    anemSev='normal';
+    anemLabel=`Hb tidak memenuhi definisi anemia untuk usia ini (Hb ${hb.toFixed(1)} g/dL; cut-off: ${cutoff} g/dL). Evaluasi klinis tetap diperlukan bila ada gejala.`;
+  }
+  const sevIcon={severe:'ti-alert-octagon',moderate:'ti-alert-triangle',mild:'ti-info-circle',normal:'ti-circle-check'};
+  document.getElementById('anemiaStatus').innerHTML=`<div class="anemia-status ${anemSev}"><i class="ti ${sevIcon[anemSev]}"></i> ${anemLabel}</div>`;
+
+  // === MCV CLASSIFICATION ===
+  let mcvClass='unknown', mcvLabel='MCV tidak dimasukkan';
+  if(mcv!==null){
+    if(mcv<mcvLow){mcvClass='micro';mcvLabel=`Mikrositik (MCV ${mcv} fL; batas bawah usia ini: ${mcvLow} fL)`;}
+    else if(mcv>mcvHigh){mcvClass='macro';mcvLabel=`Makrositik (MCV ${mcv} fL; batas atas: ${mcvHigh} fL)`;}
+    else{mcvClass='normo';mcvLabel=`Normositik (MCV ${mcv} fL; rentang usia: ${mcvLow}–${mcvHigh} fL)`;}
+  }
+
+  // === MENTZER INDEX ===
+  let mentzer=null, mentzerNote='';
+  if(mcv!==null&&rbc!==null&&rbc>0){
+    mentzer=parseFloat((mcv/rbc).toFixed(1));
+    mentzerNote=mentzer<13?`Mentzer index ${mentzer} → mendukung thalassemia trait (vs IDA)`:`Mentzer index ${mentzer} → lebih mendukung ADB daripada thalassemia trait`;
+  }
+
+  // === RETIC STATUS ===
+  let reticClass='', reticNote='';
+  if(retic!==null){
+    if(retic<0.5)reticClass='low';
+    else if(retic>2)reticClass='high';
+    else reticClass='normal';
+    reticNote={low:'Retikulositopenia — curiga hipoproliferatif (aplasia, infiltrasi, defisiensi)',high:'Retikulositosis — mendukung hemolisis atau perdarahan aktif',normal:'Retikulosit normal'}[reticClass];
+  }
+
+  // === PATTERN SCORING ===
+  let sc={IDA:0,THAL:0,ACI:0,HEMOL:0,APLASIA:0,LAIN:0};
+
+  if(mcv!==null){
+    if(mcvClass==='micro'){sc.IDA+=20;sc.THAL+=25;}
+    else if(mcvClass==='normo'){sc.ACI+=15;sc.HEMOL+=10;sc.APLASIA+=10;}
+    else if(mcvClass==='macro'){sc.LAIN+=20;}
+  }
+  if(rdw!==null){
+    if(rdw>14.5){sc.IDA+=15;sc.HEMOL+=5;}
+    else{sc.THAL+=10;}
+  }
+  if(retic!==null){
+    if(reticClass==='high'){sc.HEMOL+=25;}
+    else if(reticClass==='low'){sc.APLASIA+=25;}
+  }
+  if(ferritin!==null){
+    const ferCutoff=(inflam&&crp!==null&&crp>5)?30:12;
+    if(ferritin<ferCutoff){sc.IDA+=30;sc.THAL-=15;}
+    else if(ferritin>=ferCutoff&&ferritin<=50&&!inflam){sc.IDA+=10;}
+    else if(ferritin>100){sc.ACI+=20;sc.IDA-=15;}
+  }
+  if(tsat!==null){
+    if(tsat<15){sc.IDA+=20;}
+    else if(tsat<20){sc.IDA+=10;sc.ACI+=5;}
+  }
+  if(tibc!==null&&tibc>400)sc.IDA+=10;
+  if(inflam)sc.ACI+=20;
+  if(family.includes('thal_fam'))sc.THAL+=20;
+  if(mentzer!==null&&mentzer<13)sc.THAL+=15;
+  if(diet.includes('susu')||diet.includes('veg')||diet.includes('picky')||diet.includes('asi'))sc.IDA+=15;
+  if(bleed.includes('gi')||bleed.includes('mens')||bleed.includes('other_bleed'))sc.IDA+=15;
+  if(signs.includes('pica'))sc.IDA+=10;
+  if(signs.includes('tulang')||signs.includes('splenomegali'))sc.THAL+=10;
+  if(signs.includes('gagal_tumbuh'))sc.THAL+=5;
+  if(signs.includes('ikterus')||family.includes('ikterus_fam')||family.includes('anemia_fam')){sc.HEMOL+=20;}
+  if(bili!==null&&bili>1.5)sc.HEMOL+=20;
+  if(ldh!==null&&ldh>400)sc.HEMOL+=15;
+  if(haptogl!==null&&haptogl<20)sc.HEMOL+=20;
+  if(dat==='pos')sc.HEMOL+=25;
+  if(smear.includes('target_cell'))sc.THAL+=15;
+  if(smear.includes('sferosit'))sc.HEMOL+=25;
+  if(smear.includes('fragmentosit'))sc.HEMOL+=20;
+  if(smear.includes('mikrositik_hipokrom')){sc.IDA+=10;sc.THAL+=10;}
+  if(smear.includes('blast_smear'))sc.APLASIA+=30;
+
+  // Clamp
+  Object.keys(sc).forEach(k=>{if(sc[k]<0)sc[k]=0;});
+  const sorted=Object.entries(sc).sort((a,b)=>b[1]-a[1]);
+  const topK=sorted[0][0];
+  const secondK=sorted.length>1&&sorted[1][1]>0?sorted[1][0]:null;
+
+  const pNames={IDA:'Anemia defisiensi besi (ADB)',THAL:'Thalassemia trait / hemoglobinopati',ACI:'Anemia inflamasi / penyakit kronik',HEMOL:'Anemia hemolitik',APLASIA:'Hipoproliferatif / aplasia / infiltrasi',LAIN:'Perlu evaluasi lebih lanjut'};
+  const pFactors={
+    IDA:'Mikrositik, ferritin rendah, diet kurang Fe, perdarahan, pica, TSAT rendah',
+    THAL:'Mikrositik, Mentzer <13, target cell, riwayat keluarga, splenomegali, facies thalassemia',
+    ACI:'Normositik, infeksi/penyakit kronik, ferritin normal/tinggi, CRP tinggi',
+    HEMOL:'Retikulositosis, ikterus, LDH naik, haptoglobin rendah, DAT positif, sferosit/fragmentosit',
+    APLASIA:'Retikulositopenia, sitopenia multipel, blast',
+    LAIN:'Data belum cukup untuk klasifikasi pola definitif'
+  };
+
+  // Build pattern grid
+  let pgHTML='';
+  if(topK&&sc[topK]>0){
+    pgHTML+=`<div class="p-card primary"><div class="p-label primary"><i class="ti ti-arrow-badge-right"></i> Pola paling menonjol</div><div class="p-value">${pNames[topK]}</div><div class="p-sub">${pFactors[topK]}</div></div>`;
+  }
+  if(secondK&&sc[secondK]>0){
+    pgHTML+=`<div class="p-card secondary"><div class="p-label secondary"><i class="ti ti-arrows-shuffle"></i> Perlu disingkirkan</div><div class="p-value">${pNames[secondK]}</div><div class="p-sub">${pFactors[secondK]}</div></div>`;
+  }
+  // Must not miss
+  const mustNotMiss=[];
+  if((plt!==null&&plt<100)||(anc!==null&&anc<1.5)||rf.some(x=>!x.startsWith('none'))||smear.includes('blast_smear')){
+    mustNotMiss.push('Keganasan / kegagalan sumsum tulang');
+  }
+  if(smear.includes('fragmentosit')||(bili!==null&&bili>3&&plt!==null&&plt<100)){
+    mustNotMiss.push('TMA / HUS / TTP');
+  }
+  if(mustNotMiss.length>0){
+    mustNotMiss.forEach(m=>{pgHTML+=`<div class="p-card must-not-miss"><div class="p-label must-not-miss"><i class="ti ti-eye"></i> Jangan lewatkan</div><div class="p-value">${m}</div></div>`;});
+  }
+  document.getElementById('patternGrid').innerHTML=pgHTML;
+
+  // Narrative
+  let narr='';
+  if(mcv!==null)narr+=`${mcvLabel}. `;
+  if(mentzerNote)narr+=`${mentzerNote}. `;
+  if(reticNote)narr+=`${reticNote}. `;
+  if(ferritin!==null&&crp!==null&&crp>5)narr+=`Ferritin ${ferritin} ng/mL pada kondisi inflamasi (CRP ${crp} mg/L) — gunakan threshold &lt;30 ng/mL untuk mendukung defisiensi besi. `;
+  else if(ferritin!==null)narr+=`Ferritin ${ferritin} ng/mL. `;
+  if(topK==='THAL'&&secondK==='IDA')narr+=`Mikrositosis dengan pola thalassemia trait; defisiensi besi bersamaan (coexisting IDA) tetap perlu disingkirkan dengan ferritin/TSAT dan Hb elektroforesis.`;
+  if(!narr)narr='Lengkapi data laboratorium untuk narasi yang lebih spesifik.';
+  document.getElementById('narrativeBox').innerHTML=narr;
+
+  // === WORKUP ===
+  const wu=new Set();
+  wu.add('Apusan darah tepi dengan hitung jenis');
+  if(mcv===null)wu.add('CBC lengkap termasuk MCV, RDW, RBC count');
+  if(retic===null)wu.add('Hitung retikulosit (% dan ARC)');
+  if(plt===null||wbc===null||anc===null)wu.add('Hitung jenis leukosit dan trombosit');
+  if(ferritin===null)wu.add('Ferritin serum');
+  if(crp===null)wu.add('CRP (untuk interpretasi ferritin)');
+  if(tsat===null||tibc===null)wu.add('Serum iron, TIBC, saturasi transferin (TSAT)');
+  if(mcvClass==='micro'||(mentzer!==null&&mentzer<13)||signs.includes('tulang')||family.includes('thal_fam')){
+    wu.add('Hb elektroforesis / HPLC (untuk thalassemia dan hemoglobinopati)');
+  }
+  if(signs.includes('ikterus')||dat===''||reticClass==='high'){
+    wu.add('Retikulosit, bilirubin indirek, LDH, haptoglobin');
+    if(dat!=='pos'&&dat!=='neg')wu.add('Direct Antiglobulin Test (DAT/Coombs)');
+  }
+  if(bili===null&&signs.includes('ikterus'))wu.add('Bilirubin total dan indirek');
+  if(inflam)wu.add('LED, fungsi ginjal/hepar, skrining penyakit dasar');
+  if(plt!==null&&plt<100)wu.add('Evaluasi morfologi darah tepi dan bila perlu aspirasi sumsum tulang');
+  if(mustNotMiss.includes('Keganasan / kegagalan sumsum tulang'))wu.add('Konsultasi / rujuk hematologi anak — curiga keganasan atau aplasia');
+  if(bleed.includes('gi'))wu.add('Pemeriksaan feses (darah samar, cacing) ± evaluasi gastroenterologi');
+  if(signs.includes('splenomegali')||signs.includes('hepatomegali'))wu.add('USG abdomen');
+
+  let wuHTML='';
+  wu.forEach(w=>{wuHTML+=`<li>${w}</li>`;});
+  document.getElementById('workupList').innerHTML=wuHTML;
+
+  // === IRON THERAPY ===
+  const idaStrongSignal=topK==='IDA'&&sc.IDA>20&&sc.THAL<20&&sc.APLASIA<10;
+  const noContraIron=!inflam||((ferritin!==null&&ferritin<30)&&(crp===null||crp>5));
+  if(idaStrongSignal&&noContraIron&&anemSev!=='normal'){
+    document.getElementById('ironTherapyCard').style.display='block';
+    let ironHTML=`<ul class="rlist">`;
+    ironHTML+=`<li>Besi elemental oral: 3–6 mg/kg/hari dibagi 1–2 dosis</li>`;
+    if(bb){const lo=Math.round(3*bb),hi=Math.round(6*bb);ironHTML+=`<li>Estimasi dosis untuk BB ${bb} kg: ${lo}–${hi} mg/hari besi elemental</li>`;}
+    else ironHTML+=`<li>Masukkan berat badan untuk estimasi dosis</li>`;
+    ironHTML+=`<li>Berikan 30–60 menit sebelum makan; hindari bersama susu/antasida/kalsium</li>`;
+    ironHTML+=`<li>Pantau respons 2–4 minggu: Hb diharapkan naik ≥1 g/dL</li>`;
+    ironHTML+=`<li>Durasi: sampai Hb normal + 2–3 bulan untuk mengisi cadangan besi</li>`;
+    ironHTML+=`<li>Konfirmasi ADB dengan ferritin/TSAT sebelum atau bila respons kurang baik</li>`;
+    ironHTML+=`</ul>`;
+    document.getElementById('ironContent').innerHTML=ironHTML;
+  } else {
+    document.getElementById('ironTherapyCard').style.display='none';
+  }
+
+  // === VITAMIN WARNING ===
+  const vw=[];
+  if(topK==='THAL'||sc.THAL>15)vw.push('Pola mendukung thalassemia trait — hindari suplementasi besi jangka panjang tanpa bukti defisiensi besi (ferritin/TSAT). Anak dengan thalassemia trait tetap bisa mengalami defisiensi besi bersamaan; buktikan dulu dengan pemeriksaan iron studies.');
+  if(topK==='HEMOL'||sc.HEMOL>20)vw.push('Curiga anemia hemolitik — identifikasi penyebab hemolisis sebelum memberi suplemen apapun; besi tidak bermanfaat pada hemolisis.');
+  if(topK==='ACI'||sc.ACI>20)vw.push('Pola anemia inflamasi — terapi besi tidak efektif tanpa penanganan penyakit dasar. Ferritin tinggi pada kondisi ini bukan berarti cadangan besi cukup.');
+  if(topK==='APLASIA')vw.push('Curiga hipoproliferatif/aplasia — suplemen besi atau vitamin tidak akan memperbaiki kondisi ini; perlu evaluasi sumsum tulang segera.');
+  if(hb<7)vw.push('Hb sangat rendah — suplemen oral saja tidak cukup; evaluasi dokter segera diperlukan.');
+  if(signs.includes('perdarahan_aktif'))vw.push('Perdarahan aktif — suplemen oral tidak mengatasi perdarahan; penyebab harus ditangani terlebih dahulu.');
+  if(mustNotMiss.length>0)vw.push('Tanda "must-not-miss" terdeteksi — jangan tunda rujukan hanya karena memberikan vitamin atau besi.');
+
+  if(vw.length>0){
+    document.getElementById('vitaminWarnCard').style.display='block';
+    document.getElementById('vitaminList').innerHTML=vw.map(w=>`<li class="red">${w}</li>`).join('');
+  } else {
+    document.getElementById('vitaminWarnCard').style.display='none';
+  }
+
+  // === EMERGENCY FLAGS ===
+  const em=[];
+  if(hb<6||(anemSev==='severe'&&signs.includes('takikardi')))em.push('Hb kritis atau tanda decompensated anemia — evaluasi transfusi segera');
+  if(signs.includes('takikardi'))em.push('Takikardia / sesak napas — tanda kegawatan kardiorespirasi, butuh evaluasi segera');
+  if(signs.includes('perdarahan_aktif'))em.push('Perdarahan aktif — tangani sumber perdarahan segera');
+  if(plt!==null&&plt<20)em.push('Trombositopenia berat (plt <20.000) — risiko perdarahan spontan');
+  if(anc!==null&&anc<0.5)em.push('Neutropenia berat (ANC <500) — risiko infeksi berat / sepsis');
+  const eb=document.getElementById('emergBox');
+  if(em.length>0){eb.style.display='block';document.getElementById('emergList').innerHTML=em.map(e=>`<li class="red">${e}</li>`).join('');}
+  else eb.style.display='none';
+
+  // === MALIGNANCY FLAGS ===
+  const ml=[];
+  if(rf.some(x=>!x.startsWith('none'))||smear.includes('blast_smear')){
+    if(rf.includes('nyeri_tulang'))ml.push('Nyeri tulang + anemia → skrining leukemia / infiltrasi sumsum tulang');
+    if(rf.includes('lnn'))ml.push('Limfadenopati + anemia → skrining keganasan hematologi');
+    if(rf.includes('demam_lama'))ml.push('Demam lama + anemia → skrining infeksi kronik dan keganasan');
+    if(rf.includes('bb_turun'))ml.push('Penurunan BB + anemia → tanda B-symptom, skrining keganasan');
+    if(rf.includes('blast_nrbc')||smear.includes('blast_smear'))ml.push('Blast / NRBC di apusan → RUJUK SEGERA ke hematologi anak');
+  }
+  if(plt!==null&&plt<100&&(wbc!==null&&(wbc<2||wbc>30)))ml.push('Bisitopenia / pansitopenia — curiga aplasia atau keganasan, rujuk segera');
+  const mb=document.getElementById('malignBox');
+  if(ml.length>0){mb.style.display='block';document.getElementById('malignList').innerHTML=ml.map(m=>`<li class="red">${m}</li>`).join('');}
+  else mb.style.display='none';
+
+  // Show result
+  document.getElementById('formSection').style.display='none';
+  document.getElementById('resultSection').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function reset(){
+  document.getElementById('formSection').style.display='block';
+  document.getElementById('resultSection').style.display='none';
+  document.querySelectorAll('input[type=number],select').forEach(el=>el.value='');
+  document.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.checked=false);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function copyResult(){
+  const r=document.getElementById('resultSection');
+  const txt=[...r.querySelectorAll('.anemia-status,.p-value,.p-sub,.rlist li,.narrativeBox')].map(el=>el.innerText).filter(Boolean).join('\n');
+  navigator.clipboard.writeText('Anemia Anak Navigator - drAisyi EduCare\n\n'+txt)
+    .then(()=>{const b=document.getElementById('copyBtn');b.innerHTML='<i class="ti ti-check"></i> Tersalin';setTimeout(()=>b.innerHTML='<i class="ti ti-copy"></i> Salin Hasil',2000);});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fever After CAR-T | drAisyi EduCare</title>
+<style>
+:root{--primary:#1a3a5c;--accent:#e63946;--gold:#f4a261;--teal:#2a9d8f;--warn:#e9c46a;--danger:#e63946;--safe:#2a9d8f;--overlap:#f4a261;--hlh:#8b5cf6;--gray:#6c757d;--border:#dee2e6;--light:#f8fafc}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#eef2f7;color:#1a1a2e;min-height:100vh}
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#1a3a5c,#0d2137);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 3px 12px rgba(0,0,0,.3)}
+.logo{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#f4a261,#e63946);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;flex-shrink:0}
+.hdr-t h1{font-size:15px;font-weight:800;letter-spacing:.2px}
+.hdr-t p{font-size:11px;opacity:.7;margin-top:2px}
+.brand{margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;color:#f4a261;white-space:nowrap}
+/* DISCLAIMER */
+.disc{background:#fff3cd;border-left:4px solid #e9c46a;padding:10px 16px;font-size:12px;color:#664d03;display:flex;gap:8px;align-items:flex-start}
+/* LAYOUT */
+.wrap{max-width:980px;margin:0 auto;padding:18px 14px 60px}
+/* SECTION TITLES */
+.sec-title{font-size:12px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.8px;margin:16px 0 8px;display:flex;align-items:center;gap:6px}
+/* CARD */
+.card{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07);overflow:hidden;margin-bottom:14px}
+.card-hd{background:var(--primary);color:#fff;padding:11px 16px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card-bd{padding:14px 16px}
+/* PATHWAY HEADER COLORS */
+.card-hd.crs-hd{background:#c1121f}
+.card-hd.inf-hd{background:#1a6b5f}
+.card-hd.hlh-hd{background:#6d28d9}
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr}}
+/* FORM */
+.field{margin-bottom:12px}
+label.lbl{display:block;font-size:12px;font-weight:600;color:#444;margin-bottom:4px}
+select,input[type=number]{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:#fafafa;transition:border-color .2s}
+select:focus,input:focus{outline:none;border-color:var(--primary);background:#fff}
+.radio-g{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.radio-g label{display:flex;align-items:center;gap:5px;cursor:pointer;background:#f8f9fa;border:1.5px solid var(--border);border-radius:20px;padding:5px 11px;font-size:12px;font-weight:500;color:#555;transition:all .15s}
+.radio-g input{display:none}
+.radio-g label.sel{border-color:var(--primary);background:#e8f0f8;color:var(--primary);font-weight:700}
+.opt-badge{display:inline-block;background:#e8f0f8;color:var(--primary);border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700;margin-left:4px}
+/* WARNING PILLS */
+.warn-pill{background:#fff3cd;border:1px solid #f4a261;border-radius:6px;padding:5px 10px;font-size:11px;color:#664d03;margin-top:6px;display:none}
+.warn-pill.show{display:block}
+/* BUTTONS */
+.btn-calc{width:100%;padding:13px;background:linear-gradient(135deg,#c1121f,#e63946);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;margin-top:8px;box-shadow:0 3px 10px rgba(230,57,70,.3);transition:all .2s}
+.btn-calc:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(230,57,70,.4)}
+.btn-reset{width:100%;padding:8px;background:#fff;color:var(--gray);border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;margin-top:6px;transition:all .2s}
+.btn-reset:hover{background:#f8f9fa}
+/* OUTPUT */
+#output{display:none}
+/* HARD RULE BOX */
+.hard-rule{background:#fff0f0;border:2px solid var(--danger);border-radius:10px;padding:13px 16px;margin-bottom:14px;font-size:13px;font-weight:700;color:#9b1c1c;display:flex;gap:10px;align-items:flex-start}
+/* PATHWAY CARDS */
+.pathway{border-radius:12px;padding:14px 16px;margin-bottom:12px;animation:fadeIn .4s ease}
+.pathway.crs-p{background:#fff5f5;border:2px solid #e63946}
+.pathway.inf-p{background:#f0fdf9;border:2px solid #2a9d8f}
+.pathway.hlh-p{background:#f5f3ff;border:2px solid #8b5cf6}
+.pathway.overlap-p{background:#fffbeb;border:2px solid #f4a261}
+.pathway-title{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.pathway-title.crs-t{color:#c1121f}
+.pathway-title.inf-t{color:#1a6b5f}
+.pathway-title.hlh-t{color:#6d28d9}
+.pathway-title.ov-t{color:#c8680a}
+.pathway-sub{font-size:12px;color:#555;line-height:1.5}
+/* PATTERN BADGES */
+.pattern-row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.badge{border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700}
+.badge-red{background:#fee2e2;color:#991b1b}
+.badge-green{background:#d1fae5;color:#065f46}
+.badge-purple{background:#ede9fe;color:#5b21b6}
+.badge-orange{background:#ffedd5;color:#9a3412}
+.badge-blue{background:#dbeafe;color:#1e40af}
+.badge-gray{background:#f3f4f6;color:#374151}
+/* ALERT BOXES */
+.alert{border-radius:10px;padding:11px 14px;margin-bottom:10px;font-size:13px;font-weight:600;display:flex;gap:10px;align-items:flex-start}
+.alert-red{background:#fff0f0;border:1.5px solid var(--danger);color:#9b1c1c}
+.alert-blue{background:#eff6ff;border:1.5px solid #3b82f6;color:#1e40af}
+.alert-orange{background:#fff8ee;border:1.5px solid #f4a261;color:#9a3412}
+.alert-purple{background:#f5f3ff;border:1.5px solid #8b5cf6;color:#5b21b6}
+.alert-i{font-size:18px;flex-shrink:0}
+/* TABS */
+.tabs{display:flex;border-bottom:2px solid #e9ecef;margin-bottom:14px;flex-wrap:wrap}
+.tab{padding:8px 14px;font-size:12px;font-weight:700;color:var(--gray);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;white-space:nowrap}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab-c{display:none}
+.tab-c.active{display:block;animation:fadeIn .3s ease}
+/* LIST ITEMS */
+.rlist{list-style:none;padding:0}
+.rlist li{padding:7px 0;font-size:13px;border-bottom:1px dashed #f0f0f0;display:flex;align-items:flex-start;gap:8px;line-height:1.4}
+.rlist li:last-child{border-bottom:none}
+.dot{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:1px}
+.d-blue{background:#dbeafe;color:#1d4ed8}
+.d-red{background:#fee2e2;color:#dc2626}
+.d-green{background:#d1fae5;color:#065f46}
+.d-orange{background:#ffedd5;color:#9a3412}
+.d-purple{background:#ede9fe;color:#7c3aed}
+/* NOTE BOX */
+.note-box{background:#f8fafc;border-left:3px solid #94a3b8;border-radius:0 8px 8px 0;padding:8px 12px;font-size:12px;color:#64748b;margin-top:8px;line-height:1.5}
+/* PRINT */
+.print-btn{width:100%;padding:9px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;margin-top:6px}
+/* CONSISTENCY WARNING */
+.consist-warn{background:#fef9c3;border:1.5px solid #ca8a04;border-radius:8px;padding:10px 14px;font-size:12px;color:#713f12;margin-bottom:12px}
+/* REASSESS BOX */
+.reassess{background:linear-gradient(135deg,#1a3a5c,#0d2137);color:#fff;border-radius:10px;padding:14px 16px;margin-top:4px}
+.reassess h4{font-size:13px;font-weight:700;margin-bottom:8px;color:#f4a261}
+.reassess ul{list-style:none;padding:0}
+.reassess ul li{font-size:12px;padding:4px 0;color:#e2e8f0;display:flex;gap:8px}
+.reassess ul li::before{content:"▸";color:#f4a261;flex-shrink:0}
+/* PRINT STYLES */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media print{
+  .hdr,.disc,.card:first-child,.btn-calc,.btn-reset,.print-btn{display:none!important}
+  body{background:#fff}
+  .wrap{padding:0;max-width:100%}
+  #output{display:block!important}
+  .pathway,.alert,.hard-rule{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="logo">dA</div>
+  <div class="hdr-t">
+    <h1>🌡️ Fever After CAR-T: CRS – Infection – IEC-HS Parallel Pathway Assistant</h1>
+    <p>Triage Demam Pasca Infus CAR-T · Tiga Jalur Paralel · drAisyi EduCare v2.0</p>
+  </div>
+  <div class="brand">drAisyi EduCare</div>
+</div>
+
+<div class="disc">
+  <span>⚠️</span>
+  <div>Alat bantu pendidikan klinik berbasis ASTCT 2019, IDSA Neutropenia Guidelines, EBMT/EHA CAR-T Handbook 2023. <strong>Bukan pengganti penilaian klinis.</strong> CRS dan infeksi pasca-CAR-T sering tidak dapat dibedakan secara klinis — tangani <em>keduanya secara paralel</em>.</div>
+</div>
+
+<div class="wrap">
+
+<!-- ========== INPUT ========== -->
+<div class="card">
+  <div class="card-hd">📋 Data Klinis</div>
+  <div class="card-bd">
+
+    <div class="sec-title">⏱ Waktu & Demam</div>
+    <div class="grid2">
+      <div class="field">
+        <label class="lbl">Hari Pasca Infus CAR-T</label>
+        <input type="number" id="hariPost" min="0" max="180" placeholder="0, 1, 2, ...">
+      </div>
+      <div class="field">
+        <label class="lbl">Durasi Demam</label>
+        <select id="durasi">
+          <option value="">-- Pilih --</option>
+          <option value="0">Baru onset (&lt;6 jam)</option>
+          <option value="1">6–24 jam</option>
+          <option value="2">1–3 hari</option>
+          <option value="3">≥4 hari (demam persisten)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="lbl">Suhu Tertinggi</label>
+        <select id="suhu">
+          <option value="">-- Pilih --</option>
+          <option value="0">&lt;38.0°C (Tidak demam)</option>
+          <option value="1">38.0–38.2°C (&lt;1 jam)</option>
+          <option value="2">≥38.3°C (tunggal) atau ≥38.0°C menetap ≥1 jam</option>
+          <option value="3">≥39.0°C</option>
+          <option value="4">≥40.0°C</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="lbl">Sudah dapat antipiretik/tocilizumab/steroid?</label>
+        <select id="premedic">
+          <option value="0">Tidak / Belum</option>
+          <option value="1">Antipiretik saja</option>
+          <option value="2">Tocilizumab sudah diberikan</option>
+          <option value="3">Steroid sudah diberikan</option>
+          <option value="4">Tocilizumab + Steroid keduanya</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sec-title">🩸 Hematologi & Hemodinamik</div>
+    <div class="grid2">
+      <div class="field">
+        <label class="lbl">ANC (sel/µL)</label>
+        <select id="anc">
+          <option value="">-- Pilih --</option>
+          <option value="0">&lt;100 (Neutropenia sangat berat)</option>
+          <option value="1">100–499 (Neutropenia berat)</option>
+          <option value="2">500–999</option>
+          <option value="3">≥1000</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="lbl">Hemodinamik</label>
+        <div class="radio-g" id="rg-hemo">
+          <label><input type="radio" name="hemo" value="stabil"><span>Stabil</span></label>
+          <label><input type="radio" name="hemo" value="hipotensi"><span>Hipotensi respons cairan</span></label>
+          <label><input type="radio" name="hemo" value="vasopressor"><span>Vasopressor 1</span></label>
+          <label><input type="radio" name="hemo" value="shock"><span>Vasopressor multipel / Syok berat</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">Kebutuhan Oksigen</label>
+        <select id="oksigen">
+          <option value="0">Tidak ada (SpO₂ ≥94% room air)</option>
+          <option value="1">Low-flow nasal kanul ≤6 LPM</option>
+          <option value="2">High-flow / Facemask / NRM / Venturi</option>
+          <option value="3">NIV (BiPAP/CPAP) atau ventilasi mekanik</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="lbl">Laktat (mmol/L) <span class="opt-badge">Opsional</span></label>
+        <select id="laktat">
+          <option value="">-- Tidak diperiksa --</option>
+          <option value="0">&lt;2</option>
+          <option value="1">2.0–3.9</option>
+          <option value="2">≥4</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sec-title">🔥 CRS Assessment (ASTCT 2019)</div>
+    <div class="field">
+      <label class="lbl">Grade CRS</label>
+      <select id="crsGrade">
+        <option value="">-- Belum dinilai / Tidak tahu --</option>
+        <option value="0">Grade 0 – Tidak ada gejala CRS</option>
+        <option value="1">Grade 1 – Demam saja (≥38°C)</option>
+        <option value="2">Grade 2 – Hipotensi respons cairan / Low-flow O₂</option>
+        <option value="3">Grade 3 – 1 vasopressor / High-flow, Facemask, NRM, atau Venturi</option>
+        <option value="4">Grade 4 – Vasopressor multipel / NIV atau Ventilasi mekanik</option>
+      </select>
+      <div id="warnCRS" class="warn-pill">⚠️ Grade CRS belum dinilai — output pathway CRS bersifat estimasi. Disarankan lakukan grading ASTCT 2019 terlebih dahulu.</div>
+    </div>
+
+    <div class="sec-title">🦠 Infeksi & Kultur</div>
+    <div class="grid2">
+      <div class="field">
+        <label class="lbl">Hasil Kultur</label>
+        <select id="kultur">
+          <option value="0">Belum ada / Negatif</option>
+          <option value="1">Gram positif (belum sensitivitas)</option>
+          <option value="2">Gram negatif (belum sensitivitas)</option>
+          <option value="3">Jamur (confirmed / suspected)</option>
+          <option value="4">Polimikroba</option>
+          <option value="5">MDR organism (ESBL / KPC / MRSA)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="lbl">Fokus Infeksi Klinis</label>
+        <select id="fokus">
+          <option value="0">Tidak ada fokus jelas</option>
+          <option value="1">Mukositis berat</option>
+          <option value="2">Pneumonia / Infiltrat paru</option>
+          <option value="3">Infeksi CVC / Kateter</option>
+          <option value="4">Infeksi saluran kemih</option>
+          <option value="5">Cellulitis / Infeksi kulit</option>
+          <option value="6">Diare / GI (C. difficile?)</option>
+          <option value="7">Gejala SSP</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="lbl">Prokalsitonin (ng/mL) <span class="opt-badge">Opsional</span></label>
+        <select id="pct">
+          <option value="">-- Tidak diperiksa --</option>
+          <option value="0">&lt;0.5</option>
+          <option value="1">0.5–2.0</option>
+          <option value="2">2.1–10.0</option>
+          <option value="3">&gt;10.0</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="lbl">Riwayat kolonisasi MDRO / infeksi prior</label>
+        <select id="mdro">
+          <option value="0">Tidak ada / Tidak diketahui</option>
+          <option value="1">Ada (MRSA / ESBL / KPC sebelumnya)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sec-title">📊 Biomarker Inflamasi & Organ</div>
+    <div class="grid3">
+      <div class="field">
+        <label class="lbl">Ferritin (ng/mL) <span class="opt-badge">Opsional</span></label>
+        <select id="ferritin">
+          <option value="">-- Tidak diperiksa --</option>
+          <option value="0">&lt;500</option>
+          <option value="1">500–2000</option>
+          <option value="2">2001–10000</option>
+          <option value="3">&gt;10000</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="lbl">CRP (mg/L) <span class="opt-badge">Opsional</span></label>
+        <select id="crp">
+          <option value="">-- Tidak diperiksa --</option>
+          <option value="0">&lt;10</option>
+          <option value="1">10–50</option>
+          <option value="2">51–150</option>
+          <option value="3">&gt;150</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="lbl">Fibrinogen (mg/dL) <span class="opt-badge">Opsional</span></label>
+        <select id="fibri">
+          <option value="">-- Tidak diperiksa --</option>
+          <option value="0">Normal (≥200)</option>
+          <option value="1">Menurun (100–199)</option>
+          <option value="2">Rendah (&lt;100)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="lbl">Transaminase AST/ALT <span class="opt-badge">Opsional</span></label>
+        <select id="ast">
+          <option value="">-- Tidak diperiksa --</option>
+          <option value="0">Normal</option>
+          <option value="1">&lt;5× ULN</option>
+          <option value="2">≥5× ULN</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="lbl">LDH <span class="opt-badge">Opsional</span></label>
+        <select id="ldh">
+          <option value="">-- Tidak diperiksa --</option>
+          <option value="0">Normal</option>
+          <option value="1">Meningkat (&lt;2× ULN)</option>
+          <option value="2">Sangat tinggi (≥2× ULN)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="lbl">Sitopenia memburuk? <span class="opt-badge">Opsional</span></label>
+        <select id="sitopenia">
+          <option value="">-- Tidak diperiksa --</option>
+          <option value="0">Tidak / Stabil</option>
+          <option value="1">Memburuk (2 dari 3 lineage)</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn-calc" id="btnCalc">🔍 Analisis Tiga Jalur Paralel</button>
+    <button class="btn-reset" id="btnReset">↺ Reset</button>
+  </div>
+</div>
+
+<!-- ========== OUTPUT ========== -->
+<div id="output">
+  <div id="consistDiv"></div>
+  <div id="hardRuleDiv"></div>
+  <div id="pathwayDiv"></div>
+
+  <!-- MANAGEMENT TABS -->
+  <div class="card">
+    <div class="card-hd">📊 Rekomendasi Manajemen Paralel</div>
+    <div class="card-bd" style="padding:12px 14px 8px">
+      <div class="tabs">
+        <div class="tab active" data-tab="W">🔬 Workup</div>
+        <div class="tab" data-tab="A">💊 Antibiotik</div>
+        <div class="tab" data-tab="C">🔥 CRS Terapi</div>
+        <div class="tab" data-tab="H">🟣 IEC-HS/HLH</div>
+        <div class="tab" data-tab="I">🩺 ID Consult</div>
+        <div class="tab" data-tab="U">🏥 Eskalasi ICU</div>
+      </div>
+      <div id="tabW" class="tab-c active"></div>
+      <div id="tabA" class="tab-c"></div>
+      <div id="tabC" class="tab-c"></div>
+      <div id="tabH" class="tab-c"></div>
+      <div id="tabI" class="tab-c"></div>
+      <div id="tabU" class="tab-c"></div>
+    </div>
+  </div>
+
+  <div id="reassessDiv"></div>
+  <button class="print-btn" id="btnPrint">🖨️ Cetak / Simpan PDF</button>
+</div>
+
+<!-- REFERENCE -->
+<div class="card" style="margin-top:16px">
+  <div class="card-hd">📚 Dasar Pedoman</div>
+  <div class="card-bd" style="font-size:12px;color:#555;line-height:1.8">
+    <p>• <strong>ASTCT Consensus CRS Grading 2019</strong> – Lee DW et al. BBMT 2019</p>
+    <p>• <strong>ASTCT Infection Best Practice Guidance 2020</strong> – Taplitz RA et al: Demam pasca-CAR-T memerlukan infectious workup segera + antibiotik broad-spectrum; terapi CRS dapat menutupi demam infeksi</p>
+    <p>• <strong>IDSA Febrile Neutropenia Guidelines 2023 Update</strong> – Antibiotik empiris dalam ≤60 menit dari triage</p>
+    <p>• <strong>EBMT/EHA CAR-T Cell Therapy Handbook 2023</strong> – Frere P et al: Differential diagnosis komplikasi CAR-T</p>
+    <p>• <strong>IEC-HS / HLH-like toxicity after CAR-T</strong> – Henter JI, Neth J Haematol 2007 (HScore); EBMT consensus on IEC-HS 2022</p>
+    <div style="margin-top:8px;padding:8px 12px;background:#fff3cd;border-radius:6px;color:#664d03">
+      ⚠️ <strong>Prinsip utama ASTCT:</strong> Karena tocilizumab dan kortikosteroid dapat menekan demam dan CRP, kecurigaan infeksi harus tetap tinggi meskipun pasien tampak responsif terhadap terapi CRS. PCT dan kultur adalah pemandu utama, bukan CRP semata.
+    </div>
+  </div>
+</div>
+
+</div><!-- end wrap -->
+
+<script>
+(function(){
+'use strict';
+
+// === RADIO GROUP HELPER ===
+function initRadio(groupId){
+  var g = document.getElementById(groupId);
+  if(!g) return;
+  g.querySelectorAll('input[type=radio]').forEach(function(r){
+    r.addEventListener('change', function(){
+      g.querySelectorAll('label').forEach(function(l){ l.classList.remove('sel'); });
+      r.parentElement.classList.add('sel');
+    });
+  });
+}
+initRadio('rg-hemo');
+
+// === TABS ===
+document.addEventListener('click', function(e){
+  if(e.target.classList.contains('tab')){
+    var key = e.target.getAttribute('data-tab');
+    e.target.closest('.tabs').querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+    e.target.classList.add('active');
+    document.querySelectorAll('.tab-c').forEach(function(c){ c.classList.remove('active'); });
+    var tc = document.getElementById('tab'+key);
+    if(tc) tc.classList.add('active');
+  }
+});
+
+// === PRINT ===
+document.getElementById('btnPrint').addEventListener('click', function(){ window.print(); });
+
+// === RESET ===
+document.getElementById('btnReset').addEventListener('click', function(){
+  ['hariPost','durasi','suhu','premedic','anc','oksigen','laktat','crsGrade','kultur','fokus','pct','mdro','ferritin','crp','fibri','ast','ldh','sitopenia'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(!el) return;
+    if(el.tagName === 'INPUT') el.value = '';
+    else el.selectedIndex = 0;
+  });
+  document.querySelectorAll('input[name="hemo"]').forEach(function(r){ r.checked = false; });
+  document.querySelectorAll('.radio-g label').forEach(function(l){ l.classList.remove('sel'); });
+  document.getElementById('output').style.display = 'none';
+  document.getElementById('warnCRS').classList.remove('show');
+});
+
+// === CRS warning hint ===
+document.getElementById('crsGrade').addEventListener('change', function(){
+  document.getElementById('warnCRS').classList.toggle('show', this.value === '');
+});
+
+// === MAIN CALCULATE ===
+document.getElementById('btnCalc').addEventListener('click', calculate);
+
+function getVal(id){ return document.getElementById(id).value; }
+function getRadio(name){ var el = document.querySelector('input[name="'+name+'"]:checked'); return el ? el.value : ''; }
+
+function calculate(){
+  var rawHari = document.getElementById('hariPost').value;
+  var hari = rawHari === '' ? -1 : parseInt(rawHari, 10);
+  var anc = getVal('anc');
+  var suhu = getVal('suhu');
+  var hemo = getRadio('hemo');
+
+  if(hari < 0 || anc === '' || suhu === '' || hemo === ''){
+    alert('Mohon lengkapi: Hari pasca infus, ANC, Suhu, dan Hemodinamik.');
+    return;
+  }
+
+  var durasi = getVal('durasi');
+  var premedic = getVal('premedic');
+  var oksigen = getVal('oksigen');
+  var laktat = getVal('laktat');
+  var crsGrade = getVal('crsGrade');
+  var kultur = getVal('kultur');
+  var fokus = getVal('fokus');
+  var pct = getVal('pct');
+  var mdro = getVal('mdro');
+  var ferritin = getVal('ferritin');
+  var crp = getVal('crp');
+  var fibri = getVal('fibri');
+  var ast = getVal('ast');
+  var ldh = getVal('ldh');
+  var sitopenia = getVal('sitopenia');
+
+  // === CONSISTENCY CHECKS ===
+  var consists = [];
+  if(suhu === '0' && crsGrade !== '' && crsGrade !== '0')
+    consists.push('Suhu &lt;38°C tidak konsisten dengan CRS grade ≥1. Periksa kembali apakah sudah mendapat antipiretik/tocilizumab yang menekan demam.');
+  if((hemo === 'shock' || hemo === 'vasopressor') && crsGrade === '0')
+    consists.push('Syok / vasopressor tidak konsisten dengan CRS Grade 0. Pertimbangkan re-grading atau septic shock.');
+  if(hari > 28 && crsGrade !== '' && parseInt(crsGrade) >= 2)
+    consists.push('CRS grade ≥2 setelah hari ke-28 tidak biasa. Pertimbangkan delayed CRS, IEC-HS/HLH, atau infeksi berat.');
+  if(kultur !== '0' && suhu === '0')
+    consists.push('Kultur positif dengan suhu &lt;38°C — mungkin defervesced setelah terapi, atau pasien imunokompromis berat. Lanjutkan antibiotik sesuai kultur.');
+  if((premedic === '2' || premedic === '4') && crp === '0')
+    consists.push('CRP rendah setelah tocilizumab adalah expected — gunakan PCT dan klinis sebagai panduan utama, bukan CRP.');
+
+  // === IEC-HS / HLH SCORE ===
+  var hlhScore = 0;
+  if(ferritin === '3') hlhScore += 4;
+  else if(ferritin === '2') hlhScore += 3;
+  else if(ferritin === '1') hlhScore += 1;
+  if(fibri === '2') hlhScore += 3;
+  else if(fibri === '1') hlhScore += 1;
+  if(ast === '2') hlhScore += 2;
+  else if(ast === '1') hlhScore += 1;
+  if(ldh === '2') hlhScore += 2;
+  else if(ldh === '1') hlhScore += 1;
+  if(sitopenia === '1') hlhScore += 2;
+  if(durasi === '3') hlhScore += 1;
+  var hlhAlert = hlhScore >= 5;
+
+  // === CRS PATTERN ===
+  var crsPattern = 0;
+  if(crsGrade === '1') crsPattern += 2;
+  else if(crsGrade === '2') crsPattern += 3;
+  else if(crsGrade === '3' || crsGrade === '4') crsPattern += 5;
+  if(hari >= 1 && hari <= 14) crsPattern += 3;
+  else if(hari >= 15 && hari <= 28) crsPattern += 1;
+  if(ferritin === '3') crsPattern += 2;
+  else if(ferritin === '2') crsPattern += 1;
+
+  // === INFECTION PATTERN ===
+  var infPattern = 0;
+  if(anc === '0') infPattern += 3;
+  else if(anc === '1') infPattern += 2;
+  if(kultur !== '0') infPattern += 6;
+  if(fokus !== '0') infPattern += 3;
+  if(pct === '3') infPattern += 4;
+  else if(pct === '2') infPattern += 3;
+  else if(pct === '1') infPattern += 1;
+  if(hari > 28) infPattern += 3;
+  if(laktat === '2') infPattern += 2;
+  else if(laktat === '1') infPattern += 1;
+  if(mdro === '1') infPattern += 1;
+
+  // === DETERMINE PRIMARY PATTERN ===
+  var isNeutropenia = (anc === '0' || anc === '1');
+  var hemoShock = (hemo === 'shock' || hemo === 'vasopressor');
+  var kulturPos = (kultur !== '0');
+  var crsActive = (crsGrade !== '' && crsGrade !== '0');
+  var isSepticShock = (kulturPos && hemoShock);
+  var isCRSHigh = (crsGrade === '3' || crsGrade === '4');
+
+  // Pattern label (no percentage)
+  var pathwayLabel, pathwayClass;
+  if(isSepticShock){
+    pathwayLabel = '🚨 SEPSIS / SEPTIC SHOCK — Emergensi';
+    pathwayClass = 'overlap-p';
+  } else if(kulturPos && crsActive){
+    pathwayLabel = '⚡ OVERLAP TERKONFIRMASI: Infeksi + CRS';
+    pathwayClass = 'overlap-p';
+  } else if(hlhAlert){
+    pathwayLabel = '🟣 IEC-HS / HLH-like Toxicity — Perhatian Tinggi';
+    pathwayClass = 'hlh-p';
+  } else if(crsPattern > infPattern && crsPattern > 3){
+    pathwayLabel = '🔥 Pattern CRS Lebih Menonjol';
+    pathwayClass = 'crs-p';
+  } else if(infPattern > crsPattern && infPattern > 3){
+    pathwayLabel = '🦠 Pattern Infeksi Lebih Menonjol';
+    pathwayClass = 'inf-p';
+  } else {
+    pathwayLabel = '⚡ OVERLAP / INDETERMINATE — Tangani Keduanya';
+    pathwayClass = 'overlap-p';
+  }
+
+  // === BUILD OUTPUT ===
+  var out = document.getElementById('output');
+  out.style.display = 'block';
+
+  // CONSISTENCY
+  var cHtml = '';
+  if(consists.length){
+    cHtml = '<div class="consist-warn">⚠️ <strong>Periksa Konsistensi Input:</strong><br>';
+    consists.forEach(function(c){ cHtml += '• '+c+'<br>'; });
+    cHtml += '</div>';
+  }
+  document.getElementById('consistDiv').innerHTML = cHtml;
+
+  // HARD RULE
+  var hrHtml = '';
+  if(isNeutropenia){
+    hrHtml += '<div class="hard-rule"><span style="font-size:20px">🚨</span><div>ATURAN KEAMANAN WAJIB: Pasien dengan febrile neutropenia (ANC &lt;500, demam ≥38.3°C atau ≥38.0°C menetap ≥1 jam) harus mendapat antibiotik empiris anti-pseudomonal dalam <strong>≤60 menit</strong> dari triage, tanpa menunggu konfirmasi CRS atau hasil kultur (IDSA 2023).</div></div>';
+  }
+  if(premedic === '2' || premedic === '4'){
+    hrHtml += '<div class="hard-rule" style="background:#f0f9ff;border-color:#3b82f6;color:#1e40af"><span style="font-size:20px">⚡</span><div>Pasien sudah mendapat tocilizumab/steroid: CRP dan demam bisa tertekan. Gunakan PCT, laktat, kultur, dan klinis sebagai panduan utama. Kecurigaan infeksi harus tetap tinggi.</div></div>';
+  }
+  document.getElementById('hardRuleDiv').innerHTML = hrHtml;
+
+  // PATHWAYS
+  var pHtml = '';
+
+  // --- A: PRIMARY VERDICT ---
+  pHtml += '<div class="pathway '+pathwayClass+'">';
+  pHtml += '<div class="pathway-title"><span style="font-size:22px">🎯</span><span class="pathway-title ov-t">'+pathwayLabel+'</span></div>';
+  pHtml += '<div class="pattern-row">';
+  if(crsActive) pHtml += '<span class="badge badge-red">CRS '+['','Grade 1','Grade 2','Grade 3','Grade 4'][parseInt(crsGrade)]+' Aktif</span>';
+  if(kulturPos) pHtml += '<span class="badge badge-green">Kultur Positif</span>';
+  if(isNeutropenia) pHtml += '<span class="badge badge-orange">Neutropenia '+(anc==='0'?'Sangat Berat':'Berat')+'</span>';
+  if(hlhAlert) pHtml += '<span class="badge badge-purple">IEC-HS/HLH Risk</span>';
+  if(hemoShock) pHtml += '<span class="badge badge-red">Hemodinamik Tidak Stabil</span>';
+  if(hari > 28) pHtml += '<span class="badge badge-gray">Hari >28 Pasca Infus</span>';
+  pHtml += '</div>';
+  pHtml += '<p class="pathway-sub">⚠️ CRS dan infeksi pasca-CAR-T sering tidak dapat dibedakan secara klinis. Tangani <strong>ketiga jalur (CRS, Infeksi, IEC-HS) secara paralel</strong> — jangan tunda satu sambil menunggu konfirmasi lainnya.</p>';
+  pHtml += '</div>';
+
+  // --- B: PATHWAY CRS ---
+  pHtml += '<div class="pathway crs-p">';
+  pHtml += '<div class="pathway-title crs-t">🔥 Pathway A — CRS Assessment</div>';
+  if(crsGrade === ''){
+    pHtml += '<div class="alert alert-orange"><div class="alert-i">⚠️</div><div>CRS belum dinilai. Lakukan CRS grading ASTCT 2019 berdasarkan: suhu, kebutuhan vasopressor, dan kebutuhan oksigen.</div></div>';
+  } else if(crsGrade === '0'){
+    pHtml += '<div class="alert alert-blue"><div class="alert-i">✅</div><div>Tidak ada gejala CRS saat ini. Monitor ketat — CRS bisa muncul hingga 2 minggu pasca infus.</div></div>';
+  } else {
+    var crsMsg = {
+      '1':'Grade 1 – Demam saja: Monitoring ketat, hidrasi, antipiretik. Pertimbangkan tocilizumab jika demam ≥38°C ≥3 hari atau skor risiko tinggi.',
+      '2':'Grade 2 – Hipotensi/Low-flow O₂: Tocilizumab dosis standar. Kortikosteroid bila tidak respons 24 jam. Monitoring ICU step-down.',
+      '3':'Grade 3 – 1 Vasopressor/High-flow O₂: ICU segera. Tocilizumab + Kortikosteroid. Pertimbangkan siltuximab bila refrakter.',
+      '4':'Grade 4 – Ventilasi/Multiple vasopressor: ICU emergensi. Tocilizumab + Kortikosteroid dosis tinggi. Tim intensif.'
+    };
+    pHtml += '<div class="alert alert-red"><div class="alert-i">🔥</div><div>'+crsMsg[crsGrade]+'</div></div>';
+    if(premedic === '2' || premedic === '4'){
+      pHtml += '<div class="note-box">Tocilizumab/steroid sudah diberikan — evaluasi respons dalam 2–6 jam. Bila tidak respons, pertimbangkan second-line CRS therapy dan evaluasi ulang etiologi (IEC-HS? Infeksi?).</div>';
+    }
+  }
+  pHtml += '</div>';
+
+  // --- C: PATHWAY INFECTION ---
+  pHtml += '<div class="pathway inf-p">';
+  pHtml += '<div class="pathway-title inf-t">🦠 Pathway B — Infeksi / Sepsis Assessment</div>';
+  if(isNeutropenia){
+    pHtml += '<div class="alert alert-red"><div class="alert-i">🦠</div><div><strong>Febrile Neutropenia:</strong> Antibiotik empiris anti-pseudomonal wajib dalam ≤60 menit. Jangan tunda menunggu CRS grading atau kultur.</div></div>';
+  }
+  if(kulturPos){
+    var kultMsg = {
+      '1':'Gram positif terisolasi: evaluasi kebutuhan Vankomisin/Teikoplanin. De-eskalasi setelah sensitivitas tersedia.',
+      '2':'Gram negatif terisolasi: pastikan Meropenem aktif, cek ESBL/KPC. Cari sumber (CVC, GI, paru, urin).',
+      '3':'Jamur: mulai Micafungin/Liposomal AmB segera. Konsul ID darurat. CT thorax untuk IPA.',
+      '4':'Polimikroba: Meropenem + Vankomisin + review sumber (GI perforation? CVC sepsis?)',
+      '5':'MDR organism: konsul ID emergensi untuk panduan terapi — pertimbangkan kombinasi sesuai sensitivitas lokal.'
+    };
+    pHtml += '<div class="alert alert-red"><div class="alert-i">🧫</div><div><strong>Kultur Positif:</strong> '+kultMsg[kultur]+'</div></div>';
+    if(!crsActive){
+      pHtml += '<div class="note-box">Kultur positif tanpa gejala CRS → Infeksi terkonfirmasi. Bukan Overlap. Fokus manajemen pada terapi antibiotik terarah.</div>';
+    }
+  }
+  if(fokus !== '0'){
+    var fokusMsg = {
+      '1':'Mukositis berat: risiko Streptococcus dan gram negatif — pertimbangkan tambahan cakupan Gram+ bila belum.',
+      '2':'Pneumonia/infiltrat paru: CT thorax, bronkoskopi BAL bila aman, tambahkan galactomannan, CMV PCR.',
+      '3':'Infeksi CVC: cabut/ganti kateter bila perlu, Vankomisin, cek endokarditis bila bakteremia persisten.',
+      '4':'ISK: kultur urin, pertimbangkan Gram negatif urinary source — sesuaikan antibiotik.',
+      '5':'Cellulitis: cakupan gram positif (Vankomisin/Teikoplanin bila MRSA risk).',
+      '6':'Diare GI: kultur feses, C. difficile toxin PCR, pertimbangkan Metronidazole/Vankomisin PO.',
+      '7':'Gejala SSP: CT/MRI kepala urgent + LCS (hitung sel, kultur, viral PCR) — singkirkan ICANS sebelum LP bila ada koagulopati.'
+    };
+    pHtml += '<div class="alert alert-orange"><div class="alert-i">🎯</div><div><strong>Fokus Infeksi – '+['','Mukositis','Pneumonia','Infeksi CVC','ISK','Cellulitis','Diare/GI','Gejala SSP'][parseInt(fokus)]+':</strong> '+fokusMsg[fokus]+'</div></div>';
+  }
+  if(pct !== '' && parseInt(pct) >= 2){
+    pHtml += '<div class="note-box">PCT ≥2.1 ng/mL mendukung kemungkinan infeksi bakteri. Namun PCT bukan pemisah absolut — tetap lakukan kultur dan penilaian klinis menyeluruh. CRS juga dapat menyebabkan PCT moderat meningkat.</div>';
+  }
+  pHtml += '</div>';
+
+  // --- D: PATHWAY IEC-HS/HLH ---
+  pHtml += '<div class="pathway hlh-p">';
+  pHtml += '<div class="pathway-title hlh-t">🟣 Pathway C — IEC-HS / HLH-like Toxicity Screening</div>';
+  if(hlhAlert){
+    pHtml += '<div class="alert alert-purple"><div class="alert-i">🟣</div><div><strong>PERHATIAN – Risiko IEC-HS/HLH Terdeteksi:</strong> Kombinasi ferritin sangat tinggi, fibrinogen rendah, transaminitis, sitopenia memburuk, atau demam persisten mengarah ke immune effector cell-associated HLH-like syndrome (IEC-HS). Konsul segera tim CAR-T dan Hematologi.</div></div>';
+    pHtml += '<ul class="rlist"><li><span class="dot d-purple">▸</span>Periksa: fibrinogen serial, D-dimer, ferritin serial, LDH, TG, bilirubin, LCS</li>';
+    pHtml += '<li><span class="dot d-purple">▸</span>HScore bila tersedia untuk estimasi probabilitas HLH</li>';
+    pHtml += '<li><span class="dot d-purple">▸</span>Terapi: kortikosteroid dosis tinggi (± etoposide pada kasus refrakter) — hanya setelah diskusi tim</li>';
+    pHtml += '<li><span class="dot d-purple">▸</span>Bedakan dari CRS: IEC-HS sering terjadi setelah CRS membaik, atau bisa bersamaan</li>';
+    pHtml += '<li><span class="dot d-purple">▸</span>Jangan tunda terapi infeksi meski curiga IEC-HS</li></ul>';
+  } else {
+    pHtml += '<div class="alert alert-blue"><div class="alert-i">🔍</div><div>Tidak ada tanda IEC-HS/HLH yang menonjol saat ini. Monitor bila demam persisten ≥3 hari + ferritin meningkat progresif + sitopenia memburuk + organ dysfunction.</div></div>';
+    pHtml += '<div class="note-box">Periksa fibrinogen, D-dimer, LDH, dan transaminase bila belum — terutama bila demam tidak responsif terhadap antibiotik DAN CRS therapy.</div>';
+  }
+  pHtml += '</div>';
+
+  document.getElementById('pathwayDiv').innerHTML = pHtml;
+
+  // === TAB CONTENTS ===
+
+  // WORKUP
+  var wItems = [
+    {d:'d-blue',t:'Darah lengkap + hitung jenis (segera, ulang tiap 24–48 jam)'},
+    {d:'d-blue',t:'Kultur darah ×2 set: perifer + dari setiap lumen CVC'},
+    {d:'d-blue',t:'Kultur urin (mid-stream atau kateter)'},
+    {d:'d-blue',t:'CRP, Prokalsitonin, Ferritin, Fibrinogen, D-dimer'},
+    {d:'d-blue',t:'LFT (AST/ALT/Bilirubin), RFT, Elektrolit, Laktat serial'},
+    {d:'d-blue',t:'LDH, Trigliserida (bila curiga IEC-HS/HLH)'},
+    {d:'d-blue',t:'Blood gas arteri/vena bila distress respirasi atau syok'},
+    {d:'d-blue',t:'Urinalisis + mikroskopi'},
+  ];
+  if(fokus === '2' || hari <= 28) wItems.push({d:'d-orange',t:'Rontgen thorax → CT Thorax kontras bila infiltrat / pneumonia'});
+  if(fokus === '2') wItems.push({d:'d-orange',t:'BAL via bronkoskopi bila aman (PCP, Aspergillus, CMV, RSV)'});
+  if(fokus === '7') wItems.push({d:'d-red',t:'MRI kepala segera + LCS (singkirkan ICANS sebelum LP bila koagulopati)'});
+  if(fokus === '6') wItems.push({d:'d-orange',t:'Kultur feses + C. difficile PCR toxin'});
+  if(anc === '0' || anc === '1') wItems.push({d:'d-purple',t:'Beta-D-glucan + Galactomannan (serial bila neutropenia ≥5 hari)'});
+  if(hari <= 14) wItems.push({d:'d-green',t:'IL-6 serum bila tersedia — mendukung evaluasi aktivitas CRS'});
+  wItems.push({d:'d-blue',t:'Respiratory viral PCR panel (RSV, Influenza, SARS-CoV-2, Adenovirus)'});
+  wItems.push({d:'d-blue',t:'CMV PCR darah + EBV PCR (terutama bila hari >14)'});
+  wItems.push({d:'d-orange',t:'IgG serum (bila infeksi berulang → pertimbangkan hypogammaglobulinemia pasca CAR-T)'});
+  wItems.push({d:'d-green',t:'Review status profilaksis: antiviral (asiklovir), antijamur (flukonazol/posakonazol), PCP (kotrimoksazol), dan obat terbaru'});
+  wItems.push({d:'d-blue',t:'EKG + Ekokardiografi bila CRS grade ≥2 atau gangguan kardiak'});
+  document.getElementById('tabW').innerHTML = buildList(wItems);
+
+  // ANTIBIOTIK
+  var aItems = [];
+  if(isNeutropenia){
+    aItems = [
+      {d:'d-red',t:'<strong>Lini 1 – Anti-pseudomonal sesuai protokol lokal:</strong> Piperasilin-Tazobaktam ATAU Cefepime ATAU Meropenem — pilihan berdasarkan pola resistensi lokal, risiko ESBL, dan kondisi klinis'},
+      {d:'d-red',t:'Eskalasi ke <strong>Meropenem</strong> bila: syok, ESBL risk, riwayat MDR, atau tidak respons 48–72 jam dengan lini 1'},
+      {d:'d-orange',t:'<strong>Tambahkan Vankomisin/Teikoplanin</strong> bila: syok/hemodinamik instabil, infeksi CVC, mukositis berat + sepsis, pneumonia berat, kultur Gram+ prior, kolonisasi MRSA — bukan sebagai rutin'},
+      {d:'d-orange',t:'<strong>Antijamur empiris</strong> (Micafungin 2 mg/kg/hr atau L-AmB) bila: demam persisten ≥4–7 hari antibiotik spektrum luas + neutropenia berkepanjangan tanpa sumber jelas (IDSA 2023)'},
+      {d:'d-blue',t:'De-eskalasi antibiotik dalam 48–72 jam sesuai hasil kultur dan sensitivitas'},
+      {d:'d-green',t:'Catatan dosis: sesuaikan dengan BB aktual, fungsi ginjal (GFR), dan panduan farmasi lokal. Dosis pediatri berbeda dari dewasa.'},
+    ];
+    if(mdro === '1') aItems.push({d:'d-red',t:'Riwayat MDR: konsul ID segera untuk pemilihan regimen empiris — pertimbangkan Colistin/Ceftazidim-Avibactam/Ceftolozane-Tazobaktam sesuai MDR profile'});
+  } else {
+    aItems = [
+      {d:'d-green',t:'ANC ≥500: risiko lebih rendah. Evaluasi CRS sebagai penyebab utama demam.'},
+      {d:'d-blue',t:'Bila ada fokus infeksi jelas: antibiotik terarah sesuai fokus dan sensitivitas'},
+      {d:'d-orange',t:'Bila overlap atau ragu: mulai antibiotik empiris broad-spectrum sambil menunggu kultur'},
+      {d:'d-blue',t:'Review dalam 48–72 jam dan de-eskalasi bila stabil + kultur negatif'},
+    ];
+  }
+  if(kultur === '2' || kultur === '5') aItems.push({d:'d-red',t:'Gram negatif / MDR terkonfirmasi: pastikan agen aktif sesuai MIC + konsul ID segera'});
+  if(kultur === '3') aItems.push({d:'d-red',t:'Kultur jamur: Micafungin / L-AmB segera + konsul ID + CT thorax untuk IPA'});
+  document.getElementById('tabA').innerHTML = buildList(aItems);
+
+  // CRS THERAPY
+  var cItems = [
+    {d:'d-red',t:'Grade 1: Antipiretik, hidrasi IV, monitoring ketat. Tocilizumab bila demam ≥3 hari atau risiko tinggi progresi.'},
+    {d:'d-red',t:'Grade 2: Tocilizumab standar (8 mg/kg IV, maks 800 mg). Kortikosteroid bila tidak respons 24 jam.'},
+    {d:'d-red',t:'Grade 3–4: ICU segera. Tocilizumab + Deksametason/Metilprednisolon. Pertimbangkan siltuximab bila refrakter.'},
+    {d:'d-orange',t:'Bila infeksi aktif bersamaan: hindari imunosupresi berlebihan — diskusikan tim CRS vs risiko infeksi.'},
+    {d:'d-blue',t:'Evaluasi respons tocilizumab/steroid dalam 2–6 jam: bila demam menetap, kecurigaan infeksi harus meningkat.'},
+    {d:'d-green',t:'Setelah tocilizumab: CRP bisa turun secara non-spesifik — gunakan PCT dan klinis sebagai penanda respons.'},
+  ];
+  document.getElementById('tabC').innerHTML = buildList(cItems);
+
+  // HLH
+  var hItems = [
+    {d:'d-purple',t:'IEC-HS = Immune Effector Cell-associated HLH-like Syndrome. Dapat muncul bersamaan atau setelah CRS.'},
+    {d:'d-purple',t:'Tanda khas: ferritin >10.000, fibrinogen menurun, sitopenia memburuk, transaminitis, splenomegali, demam persisten'},
+    {d:'d-purple',t:'Periksa HScore bila tersedia (meliputi: suhu, organomegali, sitopenia, ferritin, TG, fibrinogen, hemofagositosis, imunosupresi, aktivitas NK)'},
+    {d:'d-purple',t:'Bila curiga IEC-HS: konsul Hematologi dan tim CAR-T segera. Pertimbangkan kortikosteroid dosis tinggi ± etoposide.'},
+    {d:'d-blue',t:'Bedakan dari CRS grade tinggi: IEC-HS sering terjadi setelah CRS awal membaik, bisa delayed (hari 7–21+)'},
+    {d:'d-orange',t:'Jangan tunda terapi infeksi sambil evaluasi IEC-HS — keduanya bisa bersamaan'},
+    {d:'d-green',t:'Monitor serial: ferritin, fibrinogen, D-dimer, LDH, transaminase setiap 48–72 jam pada kasus berat'},
+  ];
+  document.getElementById('tabH').innerHTML = buildList(hItems);
+
+  // ID CONSULT
+  var iItems = [
+    {d:'d-blue',t:'<strong>Konsul ID dalam 24 jam</strong> bila: demam >72 jam, neutropenia berat, atau kultur positif'},
+    {d:'d-red',t:'<strong>Konsul ID EMERGENSI</strong> bila: syok septik, MDR organism, infeksi jamur invasif'},
+    {d:'d-orange',t:'Co-management ID + Tim CAR-T bila: CRS grade ≥2 bersamaan infeksi aktif'},
+    {d:'d-blue',t:'ID membantu: de-eskalasi aman, panduan antijamur, identifikasi sumber tersembunyi, durasi antibiotik'},
+    {d:'d-blue',t:'Bila infeksi viral (CMV, Adenovirus, EBV reactivation): ID + Virologi untuk strategi antiviralterapi'},
+  ];
+  if(fokus === '7') iItems.push({d:'d-red',t:'Gejala SSP: Neurologi + Infeksi CNS workup — bedakan ICANS dari meningitis/ensefalitis'});
+  document.getElementById('tabI').innerHTML = buildList(iItems);
+
+  // ICU ESCALATION
+  var uItems = [];
+  if(hemo === 'shock' || isCRSHigh){
+    uItems.push({d:'d-red',t:'🚨 INDIKASI ICU SAAT INI: Transfer/aktivasi ICU/PICU segera.'});
+  }
+  uItems = uItems.concat([
+    {d:'d-red',t:'ICU bila: vasopressor needed, SpO₂ <92% atau FiO₂ >40%, laktat ≥4 mmol/L, perubahan kesadaran (ICANS?)'},
+    {d:'d-red',t:'ICU bila: aritmia baru, disfungsi LV, oliguria/AKI, capillary leak berat, koagulopati berat'},
+    {d:'d-orange',t:'Pertimbangkan ICU dini bila: CRS grade 2 + infeksi aktif + tidak respons terapi dalam 4–6 jam'},
+    {d:'d-blue',t:'Monitoring fase akut: nadi, TD, SpO₂, laju napas, urin output, GCS — tiap 1–2 jam'},
+    {d:'d-blue',t:'Laktat serial tiap 2–4 jam bila awal meningkat'},
+    {d:'d-green',t:'Kriteria down-step dari ICU: hemodinamik stabil tanpa vasopressor ≥24 jam, SpO₂ stabil, demam terkontrol'},
+  ]);
+  document.getElementById('tabU').innerHTML = buildList(uItems);
+
+  // REASSESSMENT
+  var rHtml = '<div class="reassess"><h4>🔄 Titik Reassessment</h4><ul>';
+  rHtml += '<li>1–2 jam: respons hemodinamik setelah resusitasi cairan dan antibiotik pertama</li>';
+  rHtml += '<li>4–6 jam: respons demam setelah tocilizumab (bila diberikan) — bila tidak membaik, tingkatkan kecurigaan infeksi</li>';
+  rHtml += '<li>24 jam: review kultur interim, reassess CRS grade, tanda IEC-HS</li>';
+  rHtml += '<li>48–72 jam: de-eskalasi antibiotik bila kultur negatif dan klinis membaik; review antijamur</li>';
+  rHtml += '<li>Hari 5–7: bila demam persisten tanpa sumber → evaluasi IEC-HS + antijamur empiris</li>';
+  rHtml += '</ul></div>';
+  document.getElementById('reassessDiv').innerHTML = rHtml;
+
+  setTimeout(function(){ out.scrollIntoView({behavior:'smooth',block:'start'}); }, 100);
+}
+
+function buildList(items){
+  var h = '<ul class="rlist">';
+  items.forEach(function(it){
+    h += '<li><span class="dot '+it.d+'">●</span><span>'+it.t+'</span></li>';
+  });
+  return h + '</ul>';
+}
+
+})();
+</script>
+</body>
+</html>

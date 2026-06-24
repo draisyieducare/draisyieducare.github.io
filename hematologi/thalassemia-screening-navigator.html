@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thalassemia & Hemoglobinopathy Screening Navigator v2.0 – drAisyi EduCare</title>
+<style>
+:root {
+  --teal:#0d9488;--teal-dark:#0f766e;--teal-light:#ccfbf1;--teal-mid:#5eead4;
+  --amber:#d97706;--amber-light:#fef3c7;--red:#dc2626;--red-light:#fee2e2;
+  --green:#16a34a;--green-light:#dcfce7;--blue:#2563eb;--blue-light:#dbeafe;
+  --purple:#7c3aed;--purple-light:#ede9fe;--gray:#374151;--gray-light:#f9fafb;
+  --gray-border:#e5e7eb;--shadow:0 4px 20px rgba(0,0,0,0.08);--radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(135deg,#f0fdfa,#f8fafc);color:var(--gray);min-height:100vh;}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,var(--teal-dark),#134e4a);color:white;padding:20px 24px 16px;text-align:center;position:relative;overflow:hidden;}
+.header::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,0.06);}
+.brand{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--teal-mid);font-weight:600;margin-bottom:6px;}
+.brand span{color:white;}
+.header h1{font-size:20px;font-weight:700;margin-bottom:2px;}
+.header .sub{font-size:12px;opacity:0.7;margin-bottom:4px;}
+.version-badge{display:inline-block;background:rgba(255,255,255,0.15);border-radius:20px;padding:2px 10px;font-size:10px;letter-spacing:1px;}
+
+/* TABS */
+.tab-bar{display:flex;background:#134e4a;border-bottom:2px solid rgba(255,255,255,0.1);}
+.tab-btn{flex:1;padding:10px 6px;background:none;border:none;color:rgba(255,255,255,0.6);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;letter-spacing:0.5px;}
+.tab-btn.active{color:var(--teal-mid);border-bottom:3px solid var(--teal-mid);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+.main{max-width:860px;margin:0 auto;padding:16px 14px 40px;}
+
+/* CARD */
+.card{background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:14px;border:1px solid var(--gray-border);}
+.card-title{font-size:13px;font-weight:700;color:var(--teal-dark);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+
+/* FORM */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;}
+.field{display:flex;flex-direction:column;gap:4px;}
+label{font-size:12px;font-weight:600;color:#4b5563;}
+label span{font-weight:400;color:#9ca3af;}
+input[type=number],input[type=text],select,textarea{padding:8px 11px;border:1.5px solid var(--gray-border);border-radius:8px;font-size:13px;color:var(--gray);background:var(--gray-light);transition:border-color 0.2s,box-shadow 0.2s;width:100%;outline:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,0.12);background:white;}
+textarea{resize:vertical;min-height:65px;}
+.checkbox-group{display:flex;flex-wrap:wrap;gap:9px;}
+.check-item{display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;color:#4b5563;}
+.check-item input{width:15px;height:15px;cursor:pointer;accent-color:var(--teal);}
+
+/* INFO BOX */
+.info-tip{background:var(--teal-light);border-left:3px solid var(--teal);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--teal-dark);margin-top:8px;line-height:1.5;}
+
+/* BUTTONS */
+.btn-analyze{width:100%;padding:13px;background:linear-gradient(135deg,var(--teal),var(--teal-dark));color:white;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(13,148,136,0.35);transition:transform 0.15s,box-shadow 0.15s;margin-top:4px;}
+.btn-analyze:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(13,148,136,0.4);}
+.btn-sm{padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;}
+.btn-ghost{background:white;color:#6b7280;border:1.5px solid var(--gray-border);}
+.btn-ghost:hover{background:var(--gray-light);}
+.btn-purple{background:var(--purple-light);color:var(--purple);}
+.btn-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+
+/* OUTPUT */
+.section-title{font-size:13px;font-weight:700;color:var(--teal-dark);text-transform:uppercase;letter-spacing:1px;padding-bottom:8px;border-bottom:2px solid var(--teal-light);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+
+/* VERDICT */
+.verdict-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px;}
+.verdict-box{border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:5px;}
+.verdict-box .v-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;opacity:0.65;}
+.verdict-box .v-val{font-size:14px;font-weight:700;line-height:1.3;}
+.verdict-box .v-sub{font-size:11px;opacity:0.75;}
+.vb-blue{background:var(--blue-light);color:var(--blue);}
+.vb-teal{background:var(--teal-light);color:var(--teal-dark);}
+.vb-amber{background:var(--amber-light);color:var(--amber);}
+.vb-red{background:var(--red-light);color:var(--red);}
+.vb-green{background:var(--green-light);color:var(--green);}
+.vb-purple{background:var(--purple-light);color:var(--purple);}
+
+/* CLASSIFICATION PILLS */
+.cls-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:8px;}
+.cls-green{background:var(--green-light);color:var(--green);}
+.cls-amber{background:var(--amber-light);color:var(--amber);}
+.cls-red{background:var(--red-light);color:var(--red);}
+.cls-purple{background:var(--purple-light);color:var(--purple);}
+.cls-blue{background:var(--blue-light);color:var(--blue);}
+
+/* TABLE */
+.sum-table{width:100%;border-collapse:collapse;font-size:12px;}
+.sum-table th{background:var(--teal-dark);color:white;padding:8px 10px;text-align:left;font-size:11px;}
+.sum-table td{padding:8px 10px;border-bottom:1px solid var(--gray-border);}
+.sum-table tr:hover td{background:var(--gray-light);}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;}
+.badge-normal{background:var(--green-light);color:var(--green);}
+.badge-low{background:var(--red-light);color:var(--red);}
+.badge-high{background:var(--amber-light);color:var(--amber);}
+.badge-borderline{background:var(--blue-light);color:var(--blue);}
+.badge-warn{background:var(--purple-light);color:var(--purple);}
+
+/* ALERT */
+.alert-box{border-radius:var(--radius);padding:13px 15px;display:flex;gap:11px;align-items:flex-start;margin-bottom:12px;}
+.alert-icon{font-size:18px;flex-shrink:0;}
+.alert-text{font-size:12px;line-height:1.65;}
+.alert-text strong{display:block;font-size:13px;margin-bottom:3px;}
+.alert-red{background:var(--red-light);border-left:4px solid var(--red);}
+.alert-amber{background:var(--amber-light);border-left:4px solid var(--amber);}
+.alert-teal{background:var(--teal-light);border-left:4px solid var(--teal);}
+.alert-purple{background:var(--purple-light);border-left:4px solid var(--purple);}
+.alert-blue{background:var(--blue-light);border-left:4px solid var(--blue);}
+
+/* REC LIST */
+.rec-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.rec-item{display:flex;gap:9px;align-items:flex-start;padding:9px 12px;border-radius:8px;font-size:12px;line-height:1.55;}
+.rec-item .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.rec-info{background:var(--blue-light);color:#1d4ed8;}
+.rec-warn{background:var(--amber-light);color:#92400e;}
+.rec-danger{background:var(--red-light);color:#991b1b;}
+.rec-ok{background:var(--green-light);color:#14532d;}
+.rec-purple{background:var(--purple-light);color:#4c1d95;}
+.rec-info .dot{background:var(--blue);}
+.rec-warn .dot{background:var(--amber);}
+.rec-danger .dot{background:var(--red);}
+.rec-ok .dot{background:var(--green);}
+.rec-purple .dot{background:var(--purple);}
+
+/* MENTZER */
+.mentzer-bar-wrap{background:#e5e7eb;border-radius:20px;height:11px;overflow:hidden;margin:6px 0;}
+.mentzer-bar{height:100%;border-radius:20px;transition:width 0.6s ease;}
+.mentzer-scale{display:flex;justify-content:space-between;font-size:10px;color:#9ca3af;margin-top:3px;}
+
+/* PRINT */
+@media print{
+  .no-print{display:none!important;}
+  .header{background:#0f766e!important;-webkit-print-color-adjust:exact;}
+  body{background:white;}
+}
+
+/* FOOTER */
+.footer{text-align:center;font-size:11px;color:#9ca3af;margin-top:22px;padding:14px;border-top:1px solid var(--gray-border);}
+.footer strong{color:var(--teal-dark);}
+
+@media(max-width:560px){
+  .grid-2,.grid-3,.grid-4,.verdict-grid{grid-template-columns:1fr;}
+  .header h1{font-size:17px;}
+  .tab-btn{font-size:10px;padding:9px 4px;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">drAisyi <span>EduCare</span></div>
+  <h1>🧬 Thalassemia & Hemoglobinopathy Screening Navigator</h1>
+  <div class="sub">Alat bantu skrining berbasis bukti untuk tenaga kesehatan</div>
+  <span class="version-badge">v2.0 · PNPK Kemenkes · TIF Guidelines · BSH · WHO</span>
+</div>
+
+<!-- TABS -->
+<div class="tab-bar no-print">
+  <button class="tab-btn active" onclick="switchTab('anak')">👶 Anak / Umum</button>
+  <button class="tab-btn" onclick="switchTab('pranikah')">💍 Pranikah / Antenatal</button>
+  <button class="tab-btn" onclick="switchTab('cascade')">👨‍👩‍👧 Cascade Keluarga</button>
+</div>
+
+<div class="main">
+
+<!-- =================== INPUT SECTION =================== -->
+<div id="inputSection">
+
+  <!-- TAB: ANAK/UMUM -->
+  <div id="tab-anak" class="tab-panel active">
+
+    <!-- HEMATOLOGI -->
+    <div class="card">
+      <div class="card-title">🩸 Parameter Hematologi</div>
+      <div class="grid-2" style="margin-bottom:11px">
+        <div class="field">
+          <label>Usia <span>(tahun; 0 = neonatus)</span></label>
+          <input type="number" id="usia" placeholder="cth: 8" min="0" max="100" step="0.1" oninput="updateAgeRef()">
+        </div>
+        <div class="field">
+          <label>Jenis Kelamin</label>
+          <select id="jk" onchange="updateAgeRef()">
+            <option value="">-- Pilih --</option>
+            <option value="L">Laki-laki</option>
+            <option value="P">Perempuan</option>
+          </select>
+        </div>
+      </div>
+      <div id="ageRefBox" class="info-tip" style="display:none;margin-bottom:11px"></div>
+      <div class="grid-3">
+        <div class="field"><label>Hb <span>(g/dL)</span></label><input type="number" id="hb" step="0.1" placeholder="cth: 9.5" min="0" max="25"></div>
+        <div class="field"><label>MCV <span>(fL)</span></label><input type="number" id="mcv" step="0.1" placeholder="cth: 62" min="0" max="130"></div>
+        <div class="field"><label>MCH <span>(pg)</span></label><input type="number" id="mch" step="0.1" placeholder="cth: 19" min="0" max="50"></div>
+        <div class="field"><label>RBC Count <span>(×10⁶/µL)</span></label><input type="number" id="rbc" step="0.01" placeholder="cth: 5.2" min="0" max="10"></div>
+        <div class="field"><label>RDW <span>(%)</span></label><input type="number" id="rdw" step="0.1" placeholder="cth: 14" min="0" max="40"></div>
+        <div class="field"><label>Retikulosit <span>(%, opsional)</span></label><input type="number" id="retik" step="0.1" placeholder="cth: 2.5" min="0" max="30"></div>
+      </div>
+    </div>
+
+    <!-- STATUS BESI -->
+    <div class="card">
+      <div class="card-title">🔩 Status Besi</div>
+      <div class="grid-4">
+        <div class="field"><label>Ferritin <span>(ng/mL)</span></label><input type="number" id="ferritin" step="0.1" placeholder="cth: 25" min="0"></div>
+        <div class="field"><label>Serum Iron <span>(µg/dL, opt)</span></label><input type="number" id="si" step="1" placeholder="cth: 60" min="0"></div>
+        <div class="field"><label>TIBC <span>(µg/dL, opt)</span></label><input type="number" id="tibc" step="1" placeholder="cth: 380" min="0"></div>
+        <div class="field"><label>CRP <span>(mg/L, opt)</span></label><input type="number" id="crp" step="0.1" placeholder="cth: 5" min="0"></div>
+      </div>
+      <div class="info-tip" style="margin-top:10px">⚠️ Ferritin adalah acute-phase reactant. Ferritin normal/tinggi tidak menyingkirkan defisiensi besi bila CRP meningkat (inflamasi). TSAT &lt;16% + CRP tinggi = kemungkinan defisiensi besi fungsional.</div>
+    </div>
+
+    <!-- RIWAYAT KELUARGA -->
+    <div class="card">
+      <div class="card-title">👨‍👩‍👧 Riwayat Keluarga</div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Status Ibu</label>
+          <select id="ibustatus">
+            <option value="">-- Pilih --</option>
+            <option value="carrier">Carrier / Trait terkonfirmasi</option>
+            <option value="major">Thalassemia major/TDT</option>
+            <option value="unknown">Tidak diketahui</option>
+            <option value="normal">Normal (sudah diperiksa)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Status Ayah</label>
+          <select id="ayahstatus">
+            <option value="">-- Pilih --</option>
+            <option value="carrier">Carrier / Trait terkonfirmasi</option>
+            <option value="major">Thalassemia major/TDT</option>
+            <option value="unknown">Tidak diketahui</option>
+            <option value="normal">Normal (sudah diperiksa)</option>
+          </select>
+        </div>
+      </div>
+      <div class="checkbox-group" style="margin-top:10px">
+        <label class="check-item"><input type="checkbox" id="rk_sibling"> Saudara kandung thalassemia major</label>
+        <label class="check-item"><input type="checkbox" id="rk_hydrops"> Riwayat hydrops fetalis dalam keluarga</label>
+        <label class="check-item"><input type="checkbox" id="rk_transfusi_kel"> Anggota keluarga transfusi berulang</label>
+        <label class="check-item"><input type="checkbox" id="rk_pasangan"> Pasangan (partner) diketahui carrier</label>
+      </div>
+    </div>
+
+    <!-- ASAL POPULASI -->
+    <div class="card">
+      <div class="card-title">🌏 Asal Keluarga / Populasi</div>
+      <div class="field">
+        <select id="etnis">
+          <option value="">-- Pilih --</option>
+          <option value="tinggi">Risiko tinggi: Asia Tenggara (Melayu, Jawa, Sunda, Bugis, Minang, Tionghoa-Indonesia)</option>
+          <option value="sedang">Risiko sedang: Asia Selatan, Timur Tengah, Afrika, Mediterania, Dayak, Flores, Minahasa</option>
+          <option value="rendah">Risiko rendah / tidak diketahui / campuran</option>
+        </select>
+      </div>
+      <div class="info-tip" style="margin-top:8px">Ini adalah faktor epidemiologi, bukan diagnostik. Prevalensi thalassemia di Indonesia bervariasi ~1–8% per kelompok populasi.</div>
+    </div>
+
+    <!-- GEJALA -->
+    <div class="card">
+      <div class="card-title">🏥 Gejala & Tanda Klinis</div>
+      <div class="checkbox-group">
+        <label class="check-item"><input type="checkbox" id="sp_spleen"> Splenomegali</label>
+        <label class="check-item"><input type="checkbox" id="sp_hepar"> Hepatomegali</label>
+        <label class="check-item"><input type="checkbox" id="sp_fasies"> Fasies Cooley</label>
+        <label class="check-item"><input type="checkbox" id="sp_ikterus"> Ikterus / jaundice</label>
+        <label class="check-item"><input type="checkbox" id="sp_tumbuh"> Gagal tumbuh / keterlambatan</label>
+        <label class="check-item"><input type="checkbox" id="sp_transfusi"> Riwayat transfusi sebelumnya</label>
+        <label class="check-item"><input type="checkbox" id="sp_hamil"> Kondisi kehamilan (pasien/pasangan)</label>
+        <label class="check-item"><input type="checkbox" id="sp_tulang"> Deformitas tulang wajah/tengkorak</label>
+      </div>
+    </div>
+
+    <!-- HB ELEKTROFORESIS / HPLC -->
+    <div class="card">
+      <div class="card-title">📊 Hasil Hb Elektroforesis / HPLC <span style="font-weight:400;font-size:11px;color:#9ca3af">(kosongkan jika belum ada)</span></div>
+      <div id="neoWarning" style="display:none" class="alert-box alert-amber" style="margin-bottom:10px">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-text"><strong>Perhatian: Usia &lt;1 Tahun</strong> Interpretasi Hb elektroforesis pada bayi &lt;1 tahun memerlukan kehati-hatian karena switching HbF→HbA belum stabil. Diagnosis β-thalassemia tidak dapat disimpulkan dari HbA2 pada neonatus. Ulangi sesuai usia dan konsultasikan ke hematologi/lab hemoglobinopati.</div>
+      </div>
+      <div class="grid-3">
+        <div class="field"><label>HbA <span>(%)</span></label><input type="number" id="hba" step="0.1" placeholder="Normal >95" min="0" max="100"></div>
+        <div class="field"><label>HbA2 <span>(%)</span></label><input type="number" id="hba2" step="0.1" placeholder="Normal 1.5–3.5" min="0" max="20"></div>
+        <div class="field"><label>HbF <span>(%)</span></label><input type="number" id="hbf" step="0.1" placeholder="Normal &lt;1 (dewasa)" min="0" max="100"></div>
+        <div class="field"><label>HbE <span>(%)</span></label><input type="number" id="hbe" step="0.1" placeholder="0 jika tidak ada" min="0" max="100"></div>
+        <div class="field"><label>HbH / Bart's <span>(%)</span></label><input type="number" id="hbh" step="0.1" placeholder="0 jika tidak ada" min="0" max="100"></div>
+        <div class="field"><label>Band Abnormal <span>(lain)</span></label><input type="text" id="hbother" placeholder="cth: HbS, HbC, HbD"></div>
+      </div>
+    </div>
+
+    <!-- CATATAN -->
+    <div class="card">
+      <div class="card-title">📝 Catatan Klinis <span style="font-weight:400;font-size:11px;color:#9ca3af">(opsional)</span></div>
+      <textarea id="catatan" placeholder="cth: Sudah suplementasi besi 3 bulan tanpa respons, MCV tetap rendah..."></textarea>
+    </div>
+
+    <button class="btn-analyze" onclick="analyze()">🔍 Analisis Skrining Thalassemia</button>
+    <div class="btn-row no-print">
+      <button class="btn-sm btn-ghost" onclick="resetForm()">↺ Reset Form</button>
+    </div>
+  </div><!-- end tab-anak -->
+
+  <!-- TAB: PRANIKAH / ANTENATAL -->
+  <div id="tab-pranikah" class="tab-panel">
+    <div class="card">
+      <div class="card-title">💍 Mode Skrining Pranikah / Antenatal</div>
+      <div class="alert-box alert-teal"><div class="alert-icon">ℹ️</div><div class="alert-text">
+        <strong>Panduan Skrining Pranikah / Antenatal</strong>
+        Gunakan tab <em>Anak/Umum</em> untuk memasukkan data laboratorium masing-masing pasangan. Mode ini memberikan panduan alur konseling genetik berdasarkan kombinasi status kedua pasangan.
+      </div></div>
+      <div class="grid-2" style="margin-bottom:12px">
+        <div class="field"><label>Status Hb Elektroforesis — Pasangan 1</label>
+          <select id="p1status">
+            <option value="">-- Pilih --</option>
+            <option value="normal">Normal</option>
+            <option value="bthal">β-Thalassemia Trait (HbA2 ≥3.5%)</option>
+            <option value="athal">α-Thalassemia Trait (suspek/DNA)</option>
+            <option value="hbe">HbE Carrier</option>
+            <option value="hbs">HbS / Sickle Trait</option>
+            <option value="major">Thalassemia Major/TDT</option>
+            <option value="unknown">Belum diperiksa</option>
+          </select>
+        </div>
+        <div class="field"><label>Status Hb Elektroforesis — Pasangan 2</label>
+          <select id="p2status">
+            <option value="">-- Pilih --</option>
+            <option value="normal">Normal</option>
+            <option value="bthal">β-Thalassemia Trait (HbA2 ≥3.5%)</option>
+            <option value="athal">α-Thalassemia Trait (suspek/DNA)</option>
+            <option value="hbe">HbE Carrier</option>
+            <option value="hbs">HbS / Sickle Trait</option>
+            <option value="major">Thalassemia Major/TDT</option>
+            <option value="unknown">Belum diperiksa</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:10px">
+        <label>Usia Kehamilan (jika sudah hamil)</label>
+        <select id="usiahamil">
+          <option value="">Belum hamil / tidak diketahui</option>
+          <option value="early">Trimester 1 (&lt;14 minggu)</option>
+          <option value="mid">Trimester 2 (14–28 minggu)</option>
+          <option value="late">Trimester 3 (&gt;28 minggu)</option>
+        </select>
+      </div>
+      <button class="btn-analyze" onclick="analyzePranikah()">🔍 Analisis Risiko Genetik Pasangan</button>
+    </div>
+    <div id="pranikahOutput" style="display:none"></div>
+  </div>
+
+  <!-- TAB: CASCADE KELUARGA -->
+  <div id="tab-cascade" class="tab-panel">
+    <div class="card">
+      <div class="card-title">👨‍👩‍👧 Cascade Screening Keluarga</div>
+      <div class="alert-box alert-teal"><div class="alert-icon">ℹ️</div><div class="alert-text">
+        <strong>Panduan Cascade Screening</strong>
+        Jika seorang individu (index case) teridentifikasi carrier atau penderita thalassemia, berikut panduan skrining anggota keluarga yang perlu diprioritaskan.
+      </div></div>
+      <div class="field" style="margin-bottom:12px">
+        <label>Status Index Case</label>
+        <select id="cascadeIndex">
+          <option value="">-- Pilih --</option>
+          <option value="bthal_trait">β-Thalassemia Trait</option>
+          <option value="athal_trait">α-Thalassemia Trait</option>
+          <option value="hbh">HbH Disease</option>
+          <option value="hbe_trait">HbE Carrier</option>
+          <option value="hbe_bthal">HbE/β-Thalassemia</option>
+          <option value="major">Thalassemia Major / TDT</option>
+        </select>
+      </div>
+      <button class="btn-analyze" onclick="analyzeCascade()">🔍 Tampilkan Panduan Cascade</button>
+    </div>
+    <div id="cascadeOutput" style="display:none"></div>
+  </div>
+
+</div><!-- end inputSection -->
+
+<!-- =================== OUTPUT SECTION =================== -->
+<div id="output" style="display:none">
+
+  <div style="background:linear-gradient(135deg,#134e4a,var(--teal-dark));color:white;border-radius:var(--radius);padding:16px 20px;margin-bottom:14px;text-align:center">
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:0.65;margin-bottom:4px">drAisyi EduCare — Laporan Analisis</div>
+    <h2 style="font-size:17px;margin-bottom:3px">🧬 Laporan Skrining Thalassemia & Hemoglobinopati</h2>
+    <p id="outDate" style="font-size:12px;opacity:0.75"></p>
+  </div>
+
+  <!-- KLASIFIKASI UTAMA -->
+  <div class="card">
+    <div class="section-title">🎯 Klasifikasi Klinis</div>
+    <div id="classOutput"></div>
+  </div>
+
+  <!-- RINGKASAN PARAMETER -->
+  <div class="card">
+    <div class="section-title">📋 Ringkasan Parameter</div>
+    <div style="overflow-x:auto"><table class="sum-table" id="summaryTable">
+      <thead><tr><th>Parameter</th><th>Nilai</th><th>Referensi (usia-spesifik)</th><th>Status</th></tr></thead>
+      <tbody id="summaryBody"></tbody>
+    </table></div>
+  </div>
+
+  <!-- MENTZER -->
+  <div class="card" id="mentzerCard">
+    <div class="section-title">📐 Mentzer Index</div>
+    <div id="mentzerContent"></div>
+  </div>
+
+  <!-- STATUS BESI -->
+  <div class="card" id="ironCard" style="display:none">
+    <div class="section-title">🔩 Analisis Status Besi</div>
+    <div id="ironContent"></div>
+  </div>
+
+  <!-- VERDICT -->
+  <div class="verdict-grid" id="verdictGrid"></div>
+
+  <!-- MAIN CONCLUSION -->
+  <div class="card">
+    <div class="section-title">💬 Kesan Klinis</div>
+    <div id="mainConclusion"></div>
+  </div>
+
+  <!-- REKOMENDASI -->
+  <div class="card">
+    <div class="section-title">📌 Rekomendasi & Langkah Selanjutnya</div>
+    <ul class="rec-list" id="recList"></ul>
+  </div>
+
+  <!-- YANG TIDAK BOLEH DILAKUKAN -->
+  <div class="card">
+    <div class="section-title">🚫 Yang Tidak Boleh Dilakukan</div>
+    <ul class="rec-list" id="dontList"></ul>
+  </div>
+
+  <!-- ELEKTROFORESIS -->
+  <div class="card" id="elektCard" style="display:none">
+    <div class="section-title">🔬 Interpretasi Hb Elektroforesis / HPLC</div>
+    <div id="elektContent"></div>
+  </div>
+
+  <!-- KONSELING GENETIK -->
+  <div class="card">
+    <div class="section-title">🧬 Indikasi & Panduan Konseling Genetik</div>
+    <div id="geneticCounseling"></div>
+  </div>
+
+  <!-- CATATAN -->
+  <div id="catatanBox"></div>
+
+  <!-- ACTION BUTTONS -->
+  <div class="btn-row no-print">
+    <button class="btn-sm btn-ghost" onclick="backToForm()">← Kembali & Edit</button>
+    <button class="btn-sm btn-purple" onclick="window.print()">🖨️ Cetak Laporan</button>
+    <button class="btn-sm" style="background:var(--teal-light);color:var(--teal-dark)" onclick="copyReport()">📋 Salin Ringkasan</button>
+  </div>
+  <div id="copyMsg" style="display:none;color:var(--green);font-size:12px;margin-top:6px;text-align:center">✅ Ringkasan berhasil disalin!</div>
+
+  <div class="footer">
+    <strong>drAisyi EduCare</strong> — Thalassemia & Hemoglobinopathy Screening Navigator v2.0<br>
+    Alat bantu klinis untuk tenaga kesehatan. Tidak menggantikan penilaian klinis dokter.<br>
+    Referensi: PNPK Thalassemia Kemenkes RI · TIF Guidelines 2023 · BSH Guidelines · WHO Thalassemia Report
+  </div>
+</div><!-- end output -->
+
+</div><!-- end main -->
+
+<script>
+// ===================== UTILS =====================
+function numOrNull(id) {
+  const raw = document.getElementById(id).value;
+  return raw === '' ? null : Number(raw);
+}
+function escapeHTML(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  const tabs = ['anak','pranikah','cascade'];
+  document.querySelectorAll('.tab-btn')[tabs.indexOf(name)].classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+// ===================== AGE-SPECIFIC REFS =====================
+function getPedRef(ageYears, sex) {
+  // Returns {hbLow, mcvLow, mchLow, mcvHigh, label}
+  if (ageYears < 0.08) return {hbLow:14.0,mcvLow:95,mchLow:30,mcvHigh:115,mcvRef:'95–115',mchRef:'30–37',hbRef:'14–20',label:'Neonatus'};
+  if (ageYears < 0.5)  return {hbLow:9.5, mcvLow:74,mchLow:26,mcvHigh:108,mcvRef:'74–108',mchRef:'26–34',hbRef:'9.5–14',label:'1–6 bulan'};
+  if (ageYears < 1)    return {hbLow:10.0,mcvLow:70,mchLow:23,mcvHigh:84, mcvRef:'70–84', mchRef:'23–30',hbRef:'10–13',label:'6–12 bulan'};
+  if (ageYears < 2)    return {hbLow:10.5,mcvLow:71,mchLow:23,mcvHigh:84, mcvRef:'71–84', mchRef:'23–30',hbRef:'10.5–13',label:'1–2 tahun'};
+  if (ageYears < 5)    return {hbLow:11.0,mcvLow:73,mchLow:24,mcvHigh:85, mcvRef:'73–85', mchRef:'24–30',hbRef:'11–14',label:'2–5 tahun'};
+  if (ageYears < 12)   return {hbLow:11.5,mcvLow:77,mchLow:25,mcvHigh:87, mcvRef:'77–87', mchRef:'25–31',hbRef:'11.5–14.5',label:'5–12 tahun'};
+  if (ageYears < 15)   return {hbLow:12.0,mcvLow:78,mchLow:25,mcvHigh:88, mcvRef:'78–88', mchRef:'25–32',hbRef:'12–16',label:'12–15 tahun'};
+  // Adult
+  if (sex==='L') return {hbLow:13.0,mcvLow:80,mchLow:27,mcvHigh:100,mcvRef:'80–100',mchRef:'27–32',hbRef:'13–17',label:'Dewasa L'};
+  if (sex==='P') return {hbLow:12.0,mcvLow:80,mchLow:27,mcvHigh:100,mcvRef:'80–100',mchRef:'27–32',hbRef:'12–16',label:'Dewasa P'};
+  return {hbLow:12.0,mcvLow:80,mchLow:27,mcvHigh:100,mcvRef:'80–100',mchRef:'27–32',hbRef:'12–16',label:'Dewasa'};
+}
+
+function updateAgeRef() {
+  const age = numOrNull('usia'); const sex = document.getElementById('jk').value;
+  const neoWarn = document.getElementById('neoWarning');
+  const refBox = document.getElementById('ageRefBox');
+  if (age === null) { refBox.style.display='none'; neoWarn.style.display='none'; return; }
+  const ref = getPedRef(age, sex);
+  refBox.style.display = 'block';
+  refBox.innerHTML = `📊 <strong>Referensi ${ref.label}:</strong> Hb ≥${ref.hbLow} g/dL · MCV ${ref.mcvRef} fL · MCH ${ref.mchRef} pg`;
+  neoWarn.style.display = age < 1 ? 'flex' : 'none';
+}
+
+// ===================== MAIN ANALYZE =====================
+function analyze() {
+  const hb=numOrNull('hb'), mcv=numOrNull('mcv'), mch=numOrNull('mch');
+  const rbc=numOrNull('rbc'), rdw=numOrNull('rdw'), retik=numOrNull('retik');
+  const ferritin=numOrNull('ferritin'), si=numOrNull('si'), tibc=numOrNull('tibc'), crp=numOrNull('crp');
+  const usia=numOrNull('usia'); const jk=document.getElementById('jk').value;
+  const etnis=document.getElementById('etnis').value;
+  const catatan=document.getElementById('catatan').value.trim();
+
+  const ibustatus=document.getElementById('ibustatus').value;
+  const ayahstatus=document.getElementById('ayahstatus').value;
+  const rk_sibling=document.getElementById('rk_sibling').checked;
+  const rk_hydrops=document.getElementById('rk_hydrops').checked;
+  const rk_transfusi_kel=document.getElementById('rk_transfusi_kel').checked;
+  const rk_pasangan=document.getElementById('rk_pasangan').checked;
+  const bothParentsCarrier = ibustatus==='carrier' && ayahstatus==='carrier';
+
+  const sp_spleen=document.getElementById('sp_spleen').checked;
+  const sp_hepar=document.getElementById('sp_hepar').checked;
+  const sp_fasies=document.getElementById('sp_fasies').checked;
+  const sp_ikterus=document.getElementById('sp_ikterus').checked;
+  const sp_tumbuh=document.getElementById('sp_tumbuh').checked;
+  const sp_transfusi=document.getElementById('sp_transfusi').checked;
+  const sp_hamil=document.getElementById('sp_hamil').checked;
+  const sp_tulang=document.getElementById('sp_tulang').checked;
+
+  const hba2_raw=document.getElementById('hba2').value;
+  const hbf_raw=document.getElementById('hbf').value;
+  const hbe_raw=document.getElementById('hbe').value;
+  const hbh_raw=document.getElementById('hbh').value;
+  const hba2=hba2_raw!==''?Number(hba2_raw):null;
+  const hbf=hbf_raw!==''?Number(hbf_raw):null;
+  const hbe=hbe_raw!==''?Number(hbe_raw):null;
+  const hbh=hbh_raw!==''?Number(hbh_raw):null;
+  const hbother=escapeHTML(document.getElementById('hbother').value.trim());
+
+  const hasElektro = [hba2,hbf,hbe,hbh].some(v=>v!==null) || hbother!=='';
+
+  if (!hb && !mcv && !mch && !rbc) {
+    alert('⚠️ Masukkan minimal Hb, MCV, MCH, atau RBC untuk analisis.'); return;
+  }
+
+  const ref = getPedRef(usia!==null?usia:15, jk);
+  const isNeo = usia!==null && usia<1;
+  const tsat = (si&&tibc) ? (si/tibc*100) : null;
+
+  // --- STATUS BESI ---
+  let ironStatus = 'unknown'; // 'ada', 'mungkin', 'bukan', 'inflamasi', 'unknown'
+  let ironMsg = '';
+  if (ferritin!==null) {
+    if (ferritin<12) { ironStatus='ada'; ironMsg='Ferritin &lt;12: ADB terkonfirmasi secara biokimia.'; }
+    else if (ferritin<30 && (!crp || crp<5)) { ironStatus='mungkin'; ironMsg='Ferritin 12–30 tanpa inflamasi: kemungkinan borderline defisiensi besi.'; }
+    else if (ferritin>=30 && (!crp||crp<5)) { ironStatus='bukan'; ironMsg='Ferritin ≥30 tanpa inflamasi: defisiensi besi kurang didukung.'; }
+    else if (crp && crp>=5 && ferritin<100) { ironStatus='inflamasi'; ironMsg='Ferritin mungkin meningkat semu oleh inflamasi (CRP tinggi). ADB belum dapat disingkirkan.'; }
+    else if (crp && crp>=5) { ironStatus='inflamasi'; ironMsg='Ferritin tinggi + CRP tinggi: interpretasi status besi memerlukan pemeriksaan tambahan (TSAT, reseptor transferin terlarut).'; }
+  }
+  if (tsat!==null && tsat<16) { ironMsg += ` TSAT ${tsat.toFixed(1)}% (rendah) mendukung defisiensi besi.`; if (ironStatus==='bukan'||ironStatus==='inflamasi') ironStatus='mungkin'; }
+
+  // --- SCORING ---
+  let thalScore=0, adbScore=0;
+  if (mcv!==null) {
+    if (mcv<ref.mcvLow-10) thalScore+=3;
+    else if (mcv<ref.mcvLow) thalScore+=1;
+    if (mcv<ref.mcvLow) adbScore+=1;
+  }
+  if (mch!==null) {
+    if (mch<21) thalScore+=2;
+    else if (mch<ref.mchLow) thalScore+=1;
+    if (mch<ref.mchLow) adbScore+=1;
+  }
+  if (rbc!==null && rbc>5.0) thalScore+=2;
+  if (rdw!==null) {
+    if (rdw<=14.5) thalScore+=2;
+    if (rdw>14.5) adbScore+=2;
+  }
+  if (etnis==='tinggi') thalScore+=2;
+  if (etnis==='sedang') thalScore+=1;
+  if (ibustatus==='carrier'||ayahstatus==='carrier') thalScore+=2;
+  if (bothParentsCarrier) thalScore+=3;
+  if (rk_sibling||rk_hydrops) thalScore+=2;
+  if (rk_transfusi_kel) thalScore+=1;
+  if (sp_spleen||sp_hepar) thalScore+=1;
+  if (sp_fasies||sp_tulang) thalScore+=3;
+  if (sp_tumbuh) thalScore+=2;
+  if (sp_transfusi) thalScore+=2;
+  if (ironStatus==='ada') adbScore+=3;
+  if (ironStatus==='mungkin') adbScore+=2;
+
+  // Major/Intermedia triggers
+  const majorTrigger = (hb!==null&&hb<7)||(sp_fasies)||(sp_tumbuh&&thalScore>=5)||(sp_transfusi&&thalScore>=5)||(hbh!==null&&hbh>0)||(hbf!==null&&hbf>30);
+  const hbhDisease = hbh!==null && hbh>0;
+  const hbePresent = hbe!==null && hbe>5;
+  const betaThalTrait = hba2!==null && hba2>=3.5;
+  const alphaSuspect = hba2!==null && hba2<2.5 && mcv!==null && mcv<ref.mcvLow && ironStatus!=='ada';
+
+  // Overlap check FIRST
+  let mainDiagnosis='', mainClass='', classCode='';
+  if (hbhDisease) {
+    mainDiagnosis='HbH Disease (α-Thalassemia Intermedia)';mainClass='vb-red';classCode='hbh';
+  } else if (hbePresent && (betaThalTrait||thalScore>=5)) {
+    mainDiagnosis='Kemungkinan HbE/β-Thalassemia — evaluasi lanjut diperlukan';mainClass='vb-red';classCode='hbe_bthal';
+  } else if (thalScore>=5 && (ironStatus==='ada'||ironStatus==='mungkin')) {
+    mainDiagnosis='Kemungkinan Thalassemia Trait + Defisiensi Besi (Overlap)';mainClass='vb-purple';classCode='overlap';
+  } else if (majorTrigger && thalScore>=5) {
+    mainDiagnosis='Curiga Thalassemia Intermedia / Major (NTDT/TDT) — rujuk segera';mainClass='vb-red';classCode='major';
+  } else if (thalScore>=8 || betaThalTrait) {
+    mainDiagnosis='Sangat Curiga Thalassemia Trait/Carrier';mainClass='vb-amber';classCode='trait';
+  } else if (thalScore>=5) {
+    mainDiagnosis='Curiga Thalassemia Trait';mainClass='vb-amber';classCode='trait';
+  } else if (ironStatus==='ada'||(adbScore>=3&&thalScore<5)) {
+    mainDiagnosis='Curiga Anemia Defisiensi Besi (ADB)';mainClass='vb-blue';classCode='adb';
+  } else if (thalScore>=3&&adbScore>=2) {
+    mainDiagnosis='Gambaran Campuran — Perlu Konfirmasi';mainClass='vb-purple';classCode='mixed';
+  } else if (alphaSuspect) {
+    mainDiagnosis='Curiga α-Thalassemia Trait — perlu analisis DNA';mainClass='vb-amber';classCode='alpha';
+  } else {
+    mainDiagnosis='Tidak Memenuhi Kriteria Kuat — Evaluasi Lebih Lanjut';mainClass='vb-teal';classCode='none';
+  }
+
+  // --- CLASSIFICATION PILL ---
+  const pillMap = {
+    hbh:    ['cls-red','🔴','HbH Disease · α-Thalassemia Intermedia'],
+    hbe_bthal:['cls-red','🔴','HbE/β-Thalassemia — Evaluasi Segera'],
+    overlap:['cls-purple','🟣','Carrier Thalassemia + Defisiensi Besi'],
+    major:  ['cls-red','🔴','Thalassemia Intermedia/Major — Rujuk Hematologi'],
+    trait:  ['cls-amber','🟡','Thalassemia Trait / Carrier'],
+    adb:    ['cls-blue','🔵','Anemia Defisiensi Besi'],
+    mixed:  ['cls-purple','🟣','Gambaran Campuran — Perlu Konfirmasi'],
+    alpha:  ['cls-amber','🟡','Suspek α-Thalassemia Trait'],
+    none:   ['cls-green','🟢','Tidak Khas Thalassemia / Perlu Data Lebih'],
+  };
+  const [pc,pi,pt] = pillMap[classCode]||pillMap['none'];
+  let classHtml = `<div class="cls-pill ${pc}">${pi} ${pt}</div>`;
+  classHtml += `<div style="font-size:12px;color:#6b7280;margin-top:6px">Skor Thalassemia: <strong>${thalScore}</strong> · Skor ADB: <strong>${adbScore}</strong> · Status Besi: <strong>${ironStatus==='ada'?'Defisien':ironStatus==='mungkin'?'Borderline':ironStatus==='bukan'?'Normal':ironStatus==='inflamasi'?'Sulit dinilai (inflamasi)':'Belum dinilai'}</strong></div>`;
+  document.getElementById('classOutput').innerHTML = classHtml;
+
+  // --- SUMMARY TABLE ---
+  const rows=[];
+  if (hb!==null) {
+    const low = hb<ref.hbLow;
+    rows.push(['Hemoglobin (Hb)',`${hb} g/dL`,`≥${ref.hbLow} g/dL (${ref.label})`,low?'Rendah':'Normal',low?'badge-low':'badge-normal']);
+  }
+  if (mcv!==null) {
+    const st = mcv<ref.mcvLow?'badge-low':mcv>ref.mcvHigh?'badge-high':'badge-normal';
+    const lbl = mcv<ref.mcvLow?'Mikrositik':mcv>ref.mcvHigh?'Makrositik':'Normal';
+    rows.push(['MCV',`${mcv} fL`,`${ref.mcvRef} fL (${ref.label})`,lbl,st]);
+  }
+  if (mch!==null) {
+    const low=mch<ref.mchLow; rows.push(['MCH',`${mch} pg`,`${ref.mchRef} pg`,low?'Hipokrom':'Normal',low?'badge-low':'badge-normal']);
+  }
+  if (rbc!==null) {
+    const hi=rbc>5.5,lo=rbc<4.0;
+    rows.push(['RBC Count',`${rbc} ×10⁶/µL`,'4.0–5.5',lo?'Rendah':hi?'Tinggi':'Normal',lo?'badge-low':hi?'badge-high':'badge-normal']);
+  }
+  if (rdw!==null) {
+    const hi=rdw>14.5;
+    rows.push(['RDW',`${rdw} %`,'≤14.5 %',hi?'Tinggi (anisositosis)':'Normal',hi?'badge-high':'badge-normal']);
+  }
+  if (ferritin!==null) {
+    const lbl=ferritin<12?'Rendah–ADB':ferritin<30?'Borderline':'Normal';
+    const bc=ferritin<12?'badge-low':ferritin<30?'badge-borderline':'badge-normal';
+    let fRef = '>12 ng/mL';
+    if (crp&&crp>=5) fRef+=' (⚠️ CRP tinggi, nilai mungkin semu)';
+    rows.push(['Ferritin',`${ferritin} ng/mL`,fRef,lbl,bc]);
+  }
+  if (tsat!==null) rows.push(['TSAT',`${tsat.toFixed(1)} %`,'>16 %',tsat<16?'Rendah–ADB':'Normal',tsat<16?'badge-low':'badge-normal']);
+  if (crp!==null) rows.push(['CRP',`${crp} mg/L`,'<5 mg/L',crp>=5?'Inflamasi':'Normal',crp>=5?'badge-warn':'badge-normal']);
+  if (hba2!==null) {
+    const hi=hba2>=3.5;
+    rows.push(['HbA2',`${hba2} %`,'1.5–3.5 %',hi?'Tinggi → β-Thal Trait':hba2<1.5?'Rendah':'Normal',hi?'badge-high':hba2<1.5?'badge-low':'badge-normal']);
+  }
+  if (hbf!==null) {
+    const hi=hbf>1;
+    rows.push(['HbF',`${hbf} %`,'<1 % (dewasa)',hi?'Meningkat':'Normal',hi?'badge-high':'badge-normal']);
+  }
+  if (hbe!==null&&hbe>0) rows.push(['HbE',`${hbe} %`,'0 (normal)','Terdeteksi','badge-warn']);
+  if (hbh!==null&&hbh>0) rows.push(['HbH / Bart\'s',`${hbh} %`,'0 (normal)','Terdeteksi — HbH Disease','badge-low']);
+
+  document.getElementById('summaryBody').innerHTML = rows.map(r=>`
+    <tr><td><strong>${r[0]}</strong></td><td>${r[1]}</td><td style="color:#6b7280">${r[2]}</td><td><span class="badge ${r[4]}">${r[3]}</span></td></tr>`).join('');
+
+  // --- MENTZER ---
+  let mentzerHtml='';
+  if (mcv!==null&&rbc!==null&&rbc>0) {
+    const mi=(mcv/rbc);
+    const thalSide=mi<13;
+    const bar=Math.min(mi/20,1)*100;
+    const col=thalSide?'#d97706':'#2563eb';
+    mentzerHtml=`
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
+        <div style="font-size:30px;font-weight:800;color:${col}">${mi.toFixed(2)}</div>
+        <div>
+          <div style="font-weight:700;color:${col};font-size:14px">${thalSide?'Curiga Thalassemia Trait':'Curiga Anemia Defisiensi Besi'}</div>
+          <div style="font-size:11px;color:#6b7280">MCV (${mcv} fL) ÷ RBC (${rbc}) · Cutoff &lt;13 = thalassemia</div>
+        </div>
+      </div>
+      <div class="mentzer-bar-wrap"><div class="mentzer-bar" style="width:${bar}%;background:${col}"></div></div>
+      <div class="mentzer-scale"><span>0</span><span style="color:#d97706">← &lt;13 Thalassemia</span><span style="color:#2563eb">≥13 ADB →</span><span>20</span></div>
+      <div class="info-tip" style="margin-top:8px">Mentzer Index adalah alat skrining sederhana; akurasinya bervariasi menurut usia dan populasi, dan tidak menggantikan ferritin, Hb elektroforesis/HPLC, serta pemeriksaan molekuler bila diperlukan.</div>`;
+  } else {
+    mentzerHtml=`<div class="rec-item rec-warn"><div class="dot" style="background:var(--amber)"></div>Masukkan MCV dan RBC Count untuk menghitung Mentzer Index otomatis.</div>`;
+  }
+  document.getElementById('mentzerContent').innerHTML=mentzerHtml;
+
+  // --- IRON CARD ---
+  if (ferritin!==null||si!==null||crp!==null) {
+    document.getElementById('ironCard').style.display='block';
+    let icls = ironStatus==='ada'?'alert-teal':ironStatus==='inflamasi'?'alert-amber':'alert-blue';
+    document.getElementById('ironContent').innerHTML=`<div class="alert-box ${icls}"><div class="alert-icon">${ironStatus==='ada'?'🔵':ironStatus==='inflamasi'?'⚠️':'✅'}</div><div class="alert-text">${ironMsg}</div></div>`;
+  } else {
+    document.getElementById('ironCard').style.display='none';
+  }
+
+  // --- VERDICTS ---
+  const vlist=[
+    {label:'Kesan Utama',val:mainDiagnosis,sub:`Skor Thal ${thalScore} · ADB ${adbScore}`,cls:mainClass},
+    {label:'Asal Populasi',val:etnis==='tinggi'?'⚠️ Risiko Tinggi':etnis==='sedang'?'🔶 Risiko Sedang':etnis?'✅ Risiko Rendah':'—',sub:'Faktor epidemiologi, bukan diagnostik',cls:etnis==='tinggi'?'vb-amber':'vb-teal'},
+    {label:'Riwayat Orang Tua',val:bothParentsCarrier?'🔴 Kedua Carrier':(ibustatus==='carrier'||ayahstatus==='carrier')?'🟡 Satu Carrier':ibustatus==='normal'&&ayahstatus==='normal'?'✅ Keduanya Normal':'— Tidak Diketahui',sub:bothParentsCarrier?'Risiko major 25% tiap kehamilan':'',cls:bothParentsCarrier?'vb-red':(ibustatus==='carrier'||ayahstatus==='carrier')?'vb-amber':'vb-green'},
+    {label:'Status Besi',val:ironStatus==='ada'?'🔵 Defisien':ironStatus==='mungkin'?'🟡 Borderline':ironStatus==='bukan'?'✅ Normal':ironStatus==='inflamasi'?'⚠️ Sulit Dinilai':'— Belum Diperiksa',sub:'',cls:ironStatus==='ada'?'vb-blue':ironStatus==='inflamasi'?'vb-amber':'vb-teal'},
+  ];
+  document.getElementById('verdictGrid').innerHTML=vlist.map(v=>`
+    <div class="verdict-box ${v.cls}">
+      <div class="v-label">${v.label}</div>
+      <div class="v-val">${v.val}</div>
+      ${v.sub?`<div class="v-sub">${v.sub}</div>`:''}
+    </div>`).join('');
+
+  // --- MAIN CONCLUSION ---
+  const concMap = {
+    hbh:    ['alert-red','🔴','HbH Disease — α-Thalassemia Intermedia Terkonfirmasi','HbH terdeteksi dalam elektroforesis. Ini adalah bentuk α-thalassemia yang memerlukan monitoring ketat, evaluasi splenomegali, dan kemungkinan transfusi intermiten. Rujuk ke hematologi anak segera.'],
+    hbe_bthal:['alert-red','🔴','Kemungkinan HbE/β-Thalassemia','Kombinasi HbE dengan gambaran mikrositik hipokromik dan/atau riwayat thalassemia dapat menghasilkan fenotipe berat mirip thalassemia major. Diperlukan analisis molekuler dan evaluasi hematologi segera.'],
+    overlap:['alert-purple','🟣','Overlap: Thalassemia Trait + Defisiensi Besi','Profil darah tepi menunjukkan gambaran thalassemia trait namun status besi juga defisien. Perbaiki status besi terlebih dahulu, lalu ulangi Hb elektroforesis untuk interpretasi yang lebih akurat.'],
+    major:  ['alert-red','🔴','Curiga Thalassemia Intermedia / Major — Rujuk Hematologi','Gambaran klinis dan laboratorium mendukung kemungkinan thalassemia dependent-transfusi (TDT) atau non-dependent (NTDT). Keputusan transfusi harus berdasarkan evaluasi serial hematologi: Hb, pertumbuhan, aktivitas, splenomegali, perubahan tulang, dan komplikasi.'],
+    trait:  ['alert-amber','🟡','Curiga Thalassemia Trait / Carrier','Profil hematologi menunjukkan gambaran khas thalassemia trait: mikrositik hipokromik dengan RBC count relatif tinggi dan RDW normal. Konfirmasi dengan Hb elektroforesis/HPLC jika belum dilakukan. Pasien umumnya asimtomatik; tidak memerlukan terapi khusus.'],
+    adb:    ['alert-teal','🔵','Gambaran Sesuai Anemia Defisiensi Besi','Parameter besi mendukung ADB. Namun perlu waspada terhadap kemungkinan thalassemia trait yang berdampingan, terutama jika MCV/MCH sangat rendah tidak proporsional atau tidak respons terhadap suplemen besi.'],
+    mixed:  ['alert-purple','🟣','Gambaran Campuran — Perlu Konfirmasi Lebih Lanjut','Tidak ada pola tunggal yang dominan. Pertimbangkan pemeriksaan ferritin, Hb elektroforesis, dan evaluasi ulang setelah koreksi status besi.'],
+    alpha:  ['alert-amber','🟡','Suspek α-Thalassemia Trait','HbA2 normal/rendah dengan mikrositosis menetap dan status besi normal mengarah ke α-thalassemia trait. Hb elektroforesis sering normal pada kondisi ini. Konfirmasi memerlukan analisis DNA gen α-globin.'],
+    none:   ['alert-teal','✅','Data Belum Memenuhi Kriteria Spesifik','Pertimbangkan anemia jenis lain. Lakukan pemeriksaan darah tepi lengkap dan lengkapi parameter yang belum tersedia.'],
+  };
+  const [cc,ci,ct,ctext]=concMap[classCode]||concMap['none'];
+  document.getElementById('mainConclusion').innerHTML=`<div class="alert-box ${cc}"><div class="alert-icon">${ci}</div><div class="alert-text"><strong>${ct}</strong>${ctext}</div></div>`;
+
+  // --- REKOMENDASI ---
+  const recs=[];
+  const needElektro = !hasElektro && (thalScore>=5 || (mcv!==null&&mcv<ref.mcvLow&&rdw!==null&&rdw<=14.5) || rk_sibling || rk_hydrops || bothParentsCarrier);
+  if (needElektro) recs.push({cls:'rec-danger',t:'<strong>Hb Elektroforesis / HPLC segera diindikasikan</strong> untuk konfirmasi dan klasifikasi subtipe (α/β/δβ/HbE). Pastikan status besi normal sebelum pemeriksaan (defisiensi besi dapat menyebabkan HbA2 falsely low).'});
+  else if (!hasElektro) recs.push({cls:'rec-warn',t:'<strong>Pertimbangkan Hb Elektroforesis</strong> jika MCV/MCH tetap rendah setelah suplementasi besi 3 bulan, atau terdapat riwayat keluarga.'});
+
+  if (alphaSuspect||classCode==='alpha') recs.push({cls:'rec-purple',t:'<strong>α-Thalassemia — Analisis Molekuler DNA α-globin:</strong> Hb elektroforesis normal TIDAK menyingkirkan α-thalassemia trait. Pemeriksaan PCR/MLPA gen α-globin diperlukan untuk konfirmasi carrier status.'});
+
+  if (ferritin===null) recs.push({cls:'rec-info',t:'<strong>Periksa Serum Ferritin + CRP</strong> untuk membedakan ADB dari thalassemia trait. Ferritin harus diinterpretasikan bersama CRP/marker inflamasi.'});
+  else if (ironStatus==='ada') recs.push({cls:'rec-warn',t:`<strong>ADB Terkonfirmasi:</strong> Suplementasi besi elemental 3–6 mg/kg/hari, evaluasi Hb dalam 4–8 minggu. Bila MCV/MCH tetap rendah setelah koreksi besi → lakukan Hb elektroforesis ulang.`});
+  else if (ironStatus==='inflamasi') recs.push({cls:'rec-warn',t:'<strong>Status Besi Sulit Dinilai (Inflamasi):</strong> Pertimbangkan reseptor transferin terlarut (sTfR) atau indeks sTfR/log ferritin untuk menilai defisiensi besi di tengah inflamasi.'});
+
+  if (isNeo) recs.push({cls:'rec-purple',t:'<strong>Usia &lt;1 Tahun:</strong> Interpretasi HbA2/HbF harus dilakukan dengan sangat hati-hati karena switching hemoglobin belum stabil. Konsultasikan ke laboratorium hemoglobinopati dan hematologi anak.'});
+
+  if (sp_hamil||bothParentsCarrier||rk_pasangan) recs.push({cls:'rec-danger',t:'<strong>Fast-Track Genetic Counseling:</strong> Kondisi kehamilan atau kedua orang tua carrier memerlukan konseling genetik segera. Tawarkan prenatal diagnosis: CVS (10–13 minggu) atau amniosintesis (15–18 minggu) dengan konseling non-direktif.'});
+  else if (thalScore>=5||(ibustatus==='carrier'||ayahstatus==='carrier')) recs.push({cls:'rec-purple',t:'<strong>Konseling Genetik dianjurkan</strong> untuk pasien/keluarga usia reproduktif yang teridentifikasi carrier. Skrining pasangan diperlukan sebelum atau awal kehamilan.'});
+
+  recs.push({cls:'rec-info',t:'<strong>Apusan Darah Tepi:</strong> Target cells, sel pensil, ovalosit, dan eritroblast mendukung thalassemia. Anisositosis berat + pensil sel lebih khas ADB.'});
+
+  document.getElementById('recList').innerHTML=recs.map(r=>`<li class="rec-item ${r.cls}"><div class="dot"></div><div>${r.t}</div></li>`).join('');
+
+  // --- JANGAN DILAKUKAN ---
+  const donts=[
+    {cls:'rec-danger',t:'<strong>JANGAN transfusi rutin</strong> pada thalassemia trait/minor tanpa indikasi klinis yang jelas. Trait biasanya tidak memerlukan transfusi sepanjang hidup.'},
+    {cls:'rec-danger',t:'<strong>JANGAN berikan suplemen besi empiris jangka panjang</strong> pada thalassemia trait tanpa bukti biokimia defisiensi besi (risiko iron overload).'},
+    {cls:'rec-warn',t:'<strong>JANGAN menyimpulkan α-thalassemia negatif</strong> hanya dari Hb elektroforesis normal. α-thalassemia trait sering tidak terdeteksi tanpa analisis DNA.'},
+    {cls:'rec-warn',t:'<strong>JANGAN gunakan Mentzer Index sebagai diagnosis final.</strong> Hanya alat skrining awal; perlu konfirmasi dengan ferritin dan Hb elektroforesis.'},
+    {cls:'rec-warn',t:'<strong>JANGAN tunda konseling pasangan</strong> bila pasien usia reproduktif sudah teridentifikasi carrier, terutama jika pasangan sedang hamil atau merencanakan kehamilan.'},
+    {cls:'rec-info',t:'<strong>Pada thalassemia intermedia/major:</strong> Keputusan transfusi reguler TIDAK hanya berdasarkan Hb &lt;7 g/dL — harus mempertimbangkan pertumbuhan, aktivitas, splenomegali, perubahan tulang, dan komplikasi jangka panjang.'},
+  ];
+  document.getElementById('dontList').innerHTML=donts.map(d=>`<li class="rec-item ${d.cls}"><div class="dot"></div><div>${d.t}</div></li>`).join('');
+
+  // --- ELEKTROFORESIS ---
+  if (hasElektro) {
+    document.getElementById('elektCard').style.display='block';
+    let eHtml='';
+    if (isNeo) eHtml+=`<div class="alert-box alert-amber"><div class="alert-icon">⚠️</div><div class="alert-text"><strong>Usia &lt;1 Tahun — Interpretasi Terbatas</strong>Switching HbF→HbA belum lengkap. HbA2 dan HbF tidak dapat diinterpretasikan sama seperti dewasa. Ulangi pemeriksaan setelah usia 12 bulan.</div></div>`;
+
+    if (hba2!==null && !isNeo) {
+      if (hba2>=3.5 && mch!==null && mch<27) eHtml+=`<div class="alert-box alert-amber"><div class="alert-icon">🟡</div><div class="alert-text"><strong>HbA2 ≥3.5% + MCH &lt;27 pg → β-Thalassemia Carrier Terkonfirmasi (BSH)</strong>Ini adalah kombinasi diagnostik yang kuat. Skrining pasangan diperlukan.</div></div>`;
+      else if (hba2>=3.5) eHtml+=`<div class="alert-box alert-amber"><div class="alert-icon">🟡</div><div class="alert-text"><strong>HbA2 ≥3.5% → Curiga β-Thalassemia Trait</strong>Pastikan status besi normal (defisiensi besi dapat menurunkan HbA2 palsu). Jika ferritin rendah, ulangi setelah koreksi besi.</div></div>`;
+      else if (hba2<2.5 && mcv!==null && mcv<ref.mcvLow) eHtml+=`<div class="alert-box alert-blue"><div class="alert-icon">🔵</div><div class="alert-text"><strong>HbA2 Rendah + Mikrositosis → Curiga α-Thalassemia atau ADB</strong>α-thal trait dan ADB keduanya dapat menunjukkan HbA2 rendah/normal. Perlu analisis DNA gen α-globin jika status besi normal.</div></div>`;
+      else if (hba2>=2.5&&hba2<3.5) eHtml+=`<div class="alert-box alert-teal"><div class="alert-icon">✅</div><div class="alert-text"><strong>HbA2 Normal (${hba2}%)</strong>Tidak memenuhi kriteria β-thal trait. Pertimbangkan α-thal trait atau varian lain jika mikrositosis menetap.</div></div>`;
+    }
+
+    if (hbh!==null&&hbh>0) eHtml+=`<div class="alert-box alert-red"><div class="alert-icon">🔴</div><div class="alert-text"><strong>HbH Terdeteksi (${hbh}%) → HbH Disease (α-Thalassemia Intermedia)</strong>Monitoring ketat diperlukan: hitung darah serial, splenomegali, hepatomegali, kadar besi (risiko iron overload tanpa transfusi). Rujuk hematologi anak.</div></div>`;
+    if (hbe!==null&&hbe>5) eHtml+=`<div class="alert-box alert-amber"><div class="alert-icon">🟡</div><div class="alert-text"><strong>HbE Terdeteksi (${hbe}%) → HbE Carrier</strong>HbE trait umumnya asimtomatik. Jika dikombinasi dengan β-thal carrier (HbE/β-thalassemia), fenotipe dapat bervariasi dari ringan hingga berat seperti major. Skrining pasangan wajib.</div></div>`;
+    if (hbf!==null&&hbf>5&&!isNeo) eHtml+=`<div class="alert-box alert-purple"><div class="alert-icon">🟣</div><div class="alert-text"><strong>HbF Meningkat (${hbf}%) pada Non-Neonatus</strong>Peningkatan HbF bermakna pada dewasa/anak >2 tahun dapat ditemukan pada β-thal major/intermedia, δβ-thalassemia, atau HPFH (Hereditary Persistence of Fetal Hemoglobin). Korelasikan dengan gambaran klinis.</div></div>`;
+    if (hbother) eHtml+=`<div class="alert-box alert-purple"><div class="alert-icon">🔬</div><div class="alert-text"><strong>Band Abnormal: ${hbother}</strong>Evaluasi lebih lanjut oleh laboratorium hematologi dan konsultasi spesialis diperlukan untuk varian ini.</div></div>`;
+    if (!eHtml) eHtml=`<div class="rec-item rec-info"><div class="dot" style="background:var(--blue)"></div>Data elektroforesis tersedia tetapi tidak ada temuan signifikan berdasarkan nilai yang dimasukkan. Verifikasi dengan laporan laboratorium asli.</div>`;
+    document.getElementById('elektContent').innerHTML=eHtml;
+  } else {
+    document.getElementById('elektCard').style.display='none';
+  }
+
+  // --- GENETIC COUNSELING ---
+  const gclist=[];
+  if (bothParentsCarrier) gclist.push('Kedua orang tua carrier → risiko thalassemia major 25%, carrier 50%, normal 25% per kehamilan — konseling non-direktif wajib');
+  if (ibustatus==='carrier'&&ayahstatus!=='carrier') gclist.push('Ibu carrier — skrining ayah diperlukan sebelum menyimpulkan risiko anak');
+  if (ayahstatus==='carrier'&&ibustatus!=='carrier') gclist.push('Ayah carrier — skrining ibu diperlukan sebelum menyimpulkan risiko anak');
+  if (rk_sibling) gclist.push('Saudara kandung thalassemia major — skrining saudara lain dan evaluasi orang tua');
+  if (rk_hydrops) gclist.push('Riwayat hydrops fetalis — kemungkinan α-thalassemia homozigot, perlu analisis molekuler');
+  if (thalScore>=5) gclist.push('Individu carrier thalassemia usia reproduktif — skrining pasangan diperlukan');
+  if (sp_hamil) gclist.push('Kondisi kehamilan — fast-track prenatal diagnosis (CVS 10–13 mgg atau amniosintesis 15–18 mgg)');
+  if (betaThalTrait) gclist.push('β-Thalassemia trait terkonfirmasi (HbA2 ≥3.5%) — skrining pasangan obligat');
+  if (hbhDisease) gclist.push('HbH Disease — analisis molekuler α-globin untuk konfirmasi genotipe dan konseling keluarga');
+  if (hbePresent) gclist.push('HbE Carrier — risiko HbE/β-thalassemia berat jika pasangan β-thal carrier');
+  if (rk_pasangan) gclist.push('Pasangan diketahui carrier — risiko genetik perlu dievaluasi bersama');
+
+  let gcHtml='';
+  if (gclist.length>0) {
+    gcHtml=`<div class="alert-box alert-purple"><div class="alert-icon">🧬</div><div class="alert-text"><strong>Indikasi Konseling Genetik Teridentifikasi</strong><ul style="margin-top:8px;padding-left:16px;display:flex;flex-direction:column;gap:4px">${gclist.map(g=>`<li style="font-size:12px">${g}</li>`).join('')}</ul></div></div>
+    <div class="rec-item rec-purple" style="margin-top:8px"><div class="dot" style="background:var(--purple)"></div><strong>Skrining Pasangan Obligat</strong> untuk semua carrier thalassemia yang merencanakan kehamilan atau sudah hamil.</div>`;
+  } else {
+    gcHtml=`<div class="rec-item rec-ok"><div class="dot" style="background:var(--green)"></div>Berdasarkan data tersedia, belum ada indikasi kuat konseling genetik saat ini. Konseling tetap dianjurkan jika hasil elektroforesis mengkonfirmasi carrier status di kemudian hari.</div>`;
+  }
+  document.getElementById('geneticCounseling').innerHTML=gcHtml;
+
+  // --- CATATAN ---
+  if (catatan) {
+    document.getElementById('catatanBox').innerHTML=`<div class="card"><div class="section-title">📝 Catatan Klinis</div><div style="font-size:12px;line-height:1.7;background:var(--gray-light);padding:12px;border-radius:8px">${escapeHTML(catatan)}</div></div>`;
+  } else document.getElementById('catatanBox').innerHTML='';
+
+  const now=new Date();
+  document.getElementById('outDate').textContent=`${now.toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} · ${now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}`;
+  document.getElementById('inputSection').style.display='none';
+  document.getElementById('output').style.display='block';
+  window.scrollTo(0,0);
+}
+
+// ===================== PRANIKAH =====================
+function analyzePranikah() {
+  const p1=document.getElementById('p1status').value;
+  const p2=document.getElementById('p2status').value;
+  const hamil=document.getElementById('usiahamil').value;
+  if (!p1||!p2) { alert('Pilih status kedua pasangan.'); return; }
+
+  let riskLevel='', riskMsg='', riskDetail='', riskClass='';
+  const highRisk = (p1==='bthal'&&p2==='bthal')||(p1==='athal'&&p2==='athal')||
+    (p1==='hbe'&&p2==='bthal')||(p1==='bthal'&&p2==='hbe')||
+    (p1==='hbs'&&p2==='hbs')||(p1==='major'||p2==='major');
+
+  if (highRisk) {
+    riskLevel='RISIKO TINGGI'; riskClass='alert-red';
+    if (p1==='bthal'&&p2==='bthal') riskDetail='β-thalassemia major 25% · carrier 50% · normal 25%';
+    else if ((p1==='hbe'&&p2==='bthal')||(p1==='bthal'&&p2==='hbe')) riskDetail='HbE/β-thalassemia 25% (fenotipe bervariasi ringan–berat) · carrier 50%';
+    else if (p1==='athal'&&p2==='athal') riskDetail='α-thalassemia major (Hb Bart\'s / hydrops) 25% · HbH disease 50%';
+    riskMsg='Konseling genetik segera. Tawarkan prenatal diagnosis.';
+  } else if ((p1!=='normal'&&p1!=='unknown')&&p2==='unknown') {
+    riskLevel='PASANGAN BELUM DIPERIKSA'; riskClass='alert-amber'; riskMsg='Skrining Hb elektroforesis pasangan diperlukan sebelum dapat menilai risiko anak.';
+  } else if (p1==='unknown'||p2==='unknown') {
+    riskLevel='DATA TIDAK LENGKAP'; riskClass='alert-amber'; riskMsg='Lakukan Hb elektroforesis pada pasangan yang belum diperiksa.';
+  } else {
+    riskLevel='RISIKO RENDAH'; riskClass='alert-teal'; riskMsg='Tidak ada risiko tinggi yang teridentifikasi berdasarkan kombinasi status saat ini.';
+  }
+
+  let hamilMsg='';
+  if (hamil==='early') hamilMsg=`<div class="alert-box alert-red" style="margin-top:10px"><div class="alert-icon">🚨</div><div class="alert-text"><strong>Trimester 1 — Window CVS Terbuka</strong>CVS (Chorionic Villus Sampling) dapat dilakukan pada usia gestasi 10–13 minggu untuk analisis DNA janin. Rujuk segera ke fetomaternal/genetika medis.</div></div>`;
+  else if (hamil==='mid') hamilMsg=`<div class="alert-box alert-amber" style="margin-top:10px"><div class="alert-icon">⚠️</div><div class="alert-text"><strong>Trimester 2</strong>Amniosintesis dapat dilakukan pada 15–18 minggu. Konseling non-direktif dan dukungan psikologis penting pada tahap ini.</div></div>`;
+  else if (hamil==='late') hamilMsg=`<div class="alert-box alert-amber" style="margin-top:10px"><div class="alert-icon">⚠️</div><div class="alert-text"><strong>Trimester 3</strong>Prenatal diagnosis invasif sudah terlambat untuk kehamilan ini. Fokus pada persiapan tata laksana neonatus bila diperlukan, dan konseling untuk kehamilan berikutnya.</div></div>`;
+
+  document.getElementById('pranikahOutput').style.display='block';
+  document.getElementById('pranikahOutput').innerHTML=`
+    <div class="card">
+      <div class="section-title">📊 Hasil Analisis Risiko Pasangan</div>
+      <div class="alert-box ${riskClass}">
+        <div class="alert-icon">${riskLevel==='RISIKO TINGGI'?'🔴':riskLevel==='RISIKO RENDAH'?'✅':'⚠️'}</div>
+        <div class="alert-text">
+          <strong>${riskLevel}</strong>${riskMsg}
+          ${riskDetail?`<div style="margin-top:4px;font-size:12px">Distribusi risiko per kehamilan: ${riskDetail}</div>`:''}
+        </div>
+      </div>
+      ${hamilMsg}
+      <div class="rec-item rec-info" style="margin-top:8px"><div class="dot" style="background:var(--blue)"></div>Konseling genetik harus bersifat non-direktif: menyampaikan informasi objektif tentang risiko, pilihan, dan implikasi — tanpa mengarahkan keputusan pasangan.</div>
+    </div>`;
+}
+
+// ===================== CASCADE =====================
+function analyzeCascade() {
+  const idx=document.getElementById('cascadeIndex').value;
+  if (!idx) { alert('Pilih status index case.'); return; }
+  const cascadeMap = {
+    bthal_trait:{title:'β-Thalassemia Trait (Index Case)',who:['Kedua orang tua (skrining Hb elektroforesis)','Semua saudara kandung','Pasangan index case (terutama usia reproduktif)'],risk:'Jika satu orang tua trait: risiko anak trait 50%. Jika kedua orang tua trait: risiko major 25%.'},
+    athal_trait:{title:'α-Thalassemia Trait (Index Case)',who:['Kedua orang tua (analisis DNA α-globin)','Saudara kandung','Pasangan index case'],risk:'α-thalassemia trait sering tidak terdeteksi Hb elektroforesis; perlu PCR/MLPA gen α-globin untuk keluarga.'},
+    hbh:{title:'HbH Disease (Index Case)',who:['Kedua orang tua (analisis molekuler α-globin)','Semua saudara kandung','Pasangan index case jika usia reproduktif'],risk:'Orang tua umumnya carrier α-thalassemia. Risiko anak HbH disease 25% jika kedua orang tua carrier.'},
+    hbe_trait:{title:'HbE Carrier (Index Case)',who:['Pasangan index case (Hb elektroforesis)','Orang tua (jika belum diperiksa)','Saudara kandung (opsional)'],risk:'Jika pasangan β-thal trait: risiko HbE/β-thalassemia 25% (fenotipe dapat berat).'},
+    hbe_bthal:{title:'HbE/β-Thalassemia (Index Case)',who:['Kedua orang tua (Hb elektroforesis + jika perlu DNA)','Semua saudara kandung','Pasangan index case — prioritas tinggi'],risk:'Kedua orang tua masing-masing carrier salah satu varian. Risiko saudara kandung terpengaruh 25%.'},
+    major:{title:'Thalassemia Major / TDT (Index Case)',who:['Kedua orang tua wajib dievaluasi (biasanya keduanya carrier)','Semua saudara kandung (Hb elektroforesis)','Pasangan orang tua (jika merencanakan kehamilan berikutnya)','Kakek-nenek jika informasi orang tua tidak tersedia'],risk:'25% risiko major pada setiap kehamilan berikutnya jika kedua orang tua carrier.'},
+  };
+  const c=cascadeMap[idx];
+  document.getElementById('cascadeOutput').style.display='block';
+  document.getElementById('cascadeOutput').innerHTML=`
+    <div class="card">
+      <div class="section-title">👨‍👩‍👧 Panduan Cascade Screening: ${c.title}</div>
+      <div class="alert-box alert-teal"><div class="alert-icon">🔍</div><div class="alert-text"><strong>Anggota Keluarga yang Perlu Diperiksa</strong><ul style="margin-top:8px;padding-left:16px;display:flex;flex-direction:column;gap:4px">${c.who.map(w=>`<li style="font-size:12px">${w}</li>`).join('')}</ul></div></div>
+      <div class="rec-item rec-purple"><div class="dot" style="background:var(--purple)"></div>${c.risk}</div>
+      <div class="rec-item rec-info"><div class="dot" style="background:var(--blue)"></div>Semua skrining harus disertai konseling genetik non-direktif sebelum dan sesudah pemeriksaan.</div>
+    </div>`;
+}
+
+// ===================== COPY REPORT =====================
+function copyReport() {
+  const txt = document.getElementById('classOutput').innerText + '\n\n' +
+    document.getElementById('summaryBody').innerText + '\n\n' +
+    document.getElementById('mainConclusion').innerText + '\n\n' +
+    document.getElementById('recList').innerText;
+  navigator.clipboard.writeText(txt).then(()=>{
+    document.getElementById('copyMsg').style.display='block';
+    setTimeout(()=>document.getElementById('copyMsg').style.display='none',2500);
+  });
+}
+
+function backToForm() {
+  document.getElementById('inputSection').style.display='block';
+  document.getElementById('output').style.display='none';
+  window.scrollTo(0,0);
+}
+function resetForm() {
+  document.querySelectorAll('input,select,textarea').forEach(el=>{
+    if(el.type==='checkbox')el.checked=false; else el.value='';
+  });
+  document.getElementById('ageRefBox').style.display='none';
+  document.getElementById('neoWarning').style.display='none';
+}
+</script>
+</body>
+</html>

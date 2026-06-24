@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAR-T Readiness v2.0 | drAisyiEduCare</title>
+<style>
+:root{
+  --primary:#1a3a5c;--accent:#e63946;--teal:#2a9d8f;--amber:#e9c46a;
+  --green:#2dc653;--red:#e63946;--orange:#f4a261;--blue:#457b9d;
+  --purple:#7b2d8b;--bg:#f0f4f8;--card:#fff;--border:#dde3ea;
+  --text:#1d2d44;--muted:#6b7a8d;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:13px}
+/* HEADER */
+header{background:linear-gradient(135deg,#1a3a5c,#2a5298);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.hlogo{font-size:17px;font-weight:800}
+.hsub{font-size:11px;opacity:.8;margin-top:2px}
+.hbadge{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.hbadge span{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:16px;padding:3px 10px;font-size:11px}
+/* META BAR */
+.meta-bar{background:#fff;border-bottom:1px solid var(--border);padding:8px 24px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.meta-bar label{font-size:11px;font-weight:700;color:var(--muted);margin-right:3px}
+.meta-bar input,.meta-bar select{padding:4px 8px;border:1px solid var(--border);border-radius:5px;font-size:12px;background:#fafbfc}
+.meta-bar input{width:180px}
+/* TABS */
+.tabs{display:flex;background:#fff;border-bottom:2px solid var(--border);overflow-x:auto}
+.tab{padding:10px 16px;cursor:pointer;font-weight:600;font-size:12px;white-space:nowrap;border-bottom:3px solid transparent;transition:.2s;color:var(--muted);display:flex;align-items:center;gap:5px}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab:hover:not(.active){color:var(--primary);background:#f5f8fc}
+.tab .tc{font-size:10px;background:#e9ecef;color:var(--muted);border-radius:10px;padding:1px 6px;font-weight:700}
+.tab .tc.bad{background:#ffeaea;color:#c0392b}
+.tab .tc.warn{background:#fff3e0;color:#e65100}
+.tab .tc.ok{background:#e8f5e9;color:#2e7d32}
+/* SECTIONS */
+.section{display:none;padding:20px 24px;max-width:1150px;margin:0 auto}
+.section.active{display:block}
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px}
+.card h3{font-size:12px;font-weight:800;color:var(--primary);margin-bottom:12px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.4px}
+/* DOMAIN HEADER */
+.dh{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin:14px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+/* ITEM ROW */
+.irow{display:grid;grid-template-columns:1fr 160px 100px 120px;gap:8px;align-items:center;padding:7px 10px;border-radius:7px;margin-bottom:5px;border:1px solid var(--border);background:#fafbfc}
+.irow:hover{background:#f0f4f8}
+.irow .ilabel{font-size:12px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.irow .ilabel .crit{color:var(--accent);font-size:9px;font-weight:800;background:#fff0f0;border:1px solid #ffc9c9;border-radius:3px;padding:1px 4px}
+.irow .ilabel .hg{color:var(--purple);font-size:9px;font-weight:800;background:#f5eafa;border:1px solid #d9b8f0;border-radius:3px;padding:1px 4px}
+.irow select{padding:4px 6px;border-radius:5px;border:1px solid var(--border);font-size:11px;background:#fff;cursor:pointer;width:100%}
+.irow input[type=text]{padding:4px 7px;border-radius:5px;border:1px solid var(--border);font-size:11px;width:100%}
+@media(max-width:720px){.irow{grid-template-columns:1fr;gap:5px}}
+/* HARD GATE BADGE */
+.hg-banner{background:linear-gradient(135deg,#fff0f0,#ffeaea);border:2px solid var(--accent);border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px}
+.hg-banner .icon{font-size:20px;flex-shrink:0}
+.hg-banner h4{font-size:12px;font-weight:800;color:#c0392b;margin-bottom:4px}
+.hg-banner p{font-size:11px;color:#7b1e1e}
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:700px){.g2,.g3{grid-template-columns:1fr}}
+/* STATUS LEVELS */
+.slevel{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.sbadge{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:30px;font-weight:800;font-size:16px}
+.s-stop{background:#ffeaea;color:#c0392b;border:2px solid #e74c3c}
+.s-mock{background:#f5eafa;color:#7b2d8b;border:2px solid #9b59b6}
+.s-audit-int{background:#fff3e0;color:#e65100;border:2px solid #f4a261}
+.s-limited{background:#e8f5e9;color:#1a7a2a;border:2px solid #2dc653}
+.s-full{background:#e3f2fd;color:#1565c0;border:2px solid #457b9d}
+/* SCORE BAR */
+.sbar-wrap{background:#e9ecef;border-radius:20px;height:16px;overflow:hidden;margin:8px 0}
+.sbar{height:100%;border-radius:20px;transition:width .6s;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:10px;font-weight:800;color:#fff;min-width:24px}
+.dbar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px}
+.dbar-row .dn{width:160px;font-weight:600;font-size:11px}
+.dbar-row .dbw{flex:1;background:#e9ecef;border-radius:8px;height:12px;overflow:hidden}
+.dbar-row .db{height:100%;border-radius:8px;transition:width .6s}
+.dbar-row .dp{width:34px;text-align:right;font-weight:800;font-size:11px}
+/* HARD GATE TABLE */
+.hg-table{width:100%;border-collapse:collapse;font-size:11px}
+.hg-table th{background:#f5f7fa;padding:7px 10px;text-align:left;font-weight:700;border:1px solid var(--border)}
+.hg-table td{padding:6px 10px;border:1px solid var(--border);vertical-align:middle}
+.hg-pass{color:#2e7d32;font-weight:700}
+.hg-fail{color:#c0392b;font-weight:700}
+.hg-warn{color:#e65100;font-weight:700}
+/* GAP */
+.gap-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-radius:7px;margin-bottom:7px;border-left:4px solid}
+.gc{background:#fff5f5;border-color:#e63946}
+.gm{background:#fff8f0;border-color:#f4a261}
+.gl{background:#f0faf0;border-color:#2dc653}
+.gap-item .gt{font-weight:700;font-size:12px}
+.gap-item .gd{font-size:11px;color:var(--muted);margin-top:2px}
+.ptag{font-size:9px;font-weight:800;border-radius:3px;padding:2px 5px;margin-left:5px}
+.p30{background:#ffeaea;color:#c0392b}
+.p60{background:#fff3e0;color:#e65100}
+.p90{background:#e3f2fd;color:#1565c0}
+/* TIMELINE */
+.tcol{border-radius:10px;padding:14px;border:2px solid}
+.t30{background:#fff5f5;border-color:#e63946}
+.t60{background:#fff8f0;border-color:#f4a261}
+.t90{background:#e3f2fd;border-color:#457b9d}
+.tcol h4{font-size:12px;font-weight:800;margin-bottom:10px}
+.tli{display:flex;align-items:flex-start;gap:6px;margin-bottom:6px;font-size:11px}
+.tli::before{content:'▸';color:var(--muted);flex-shrink:0;margin-top:1px}
+/* SOP */
+.sop-item{padding:8px 12px;border-radius:7px;margin-bottom:6px;border:1px solid var(--border);display:flex;align-items:center;gap:8px;background:#fff}
+.sop-item .si{font-size:16px}
+.sop-item .sn{font-weight:600;font-size:12px;flex:1}
+.sop-item .sd{font-size:10px;color:var(--muted)}
+.sop-item .sp{font-size:10px;font-weight:800;padding:2px 7px;border-radius:3px}
+.pw{background:#ffeaea;color:#c0392b}
+.pp{background:#fff3e0;color:#e65100}
+.pd{background:#e3f2fd;color:#1565c0}
+.sop-item.done{opacity:.5;text-decoration:line-through}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 18px;border-radius:7px;font-weight:700;font-size:12px;cursor:pointer;border:none;transition:.2s}
+.btn-p{background:var(--primary);color:#fff}
+.btn-p:hover{background:#2a5298}
+.btn-t{background:var(--teal);color:#fff}
+.btn-t:hover{background:#21867a}
+.btn-o{background:#f4a261;color:#fff}
+.btn-o:hover{background:#e08c4a}
+.btn-g{background:#e9ecef;color:var(--text)}
+.btn-row{padding:12px 24px;background:#fff;border-top:1px solid var(--border);position:sticky;bottom:0;z-index:100;display:flex;gap:8px;flex-wrap:wrap}
+/* DISCLAIMER */
+.disclaimer{background:#fffbe6;border:1px solid #f0d060;border-radius:8px;padding:10px 14px;font-size:11px;color:#7a5c00;margin-bottom:14px}
+/* PRINT */
+@media print{
+  .tabs,.btn-row,.meta-bar,.no-print{display:none!important}
+  .section{display:block!important;padding:10px 16px}
+  header{padding:10px 16px}
+  .card{break-inside:avoid;margin-bottom:10px}
+  body{font-size:11px}
+}
+/* TRAFFIC LIGHT */
+.tl{display:inline-flex;align-items:center;gap:4px;font-weight:700;font-size:11px}
+.tl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+/* ASSESSOR STAMP */
+.stamp{background:#f8f9fa;border:1px dashed var(--border);border-radius:8px;padding:10px 14px;font-size:11px;color:var(--muted);margin-bottom:14px}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="hlogo">🧬 CAR-T Program Readiness Dashboard</div>
+    <div class="hsub">drAisyiEduCare · Clinical Governance & Accreditation Assessment Tool · v2.0</div>
+  </div>
+  <div class="hbadge">
+    <span id="modeTag">Mode: Institusi</span>
+    <span>FACT-JACIE · ASTCT 2019 · BPOM 2025</span>
+    <span id="tsTag">—</span>
+  </div>
+</header>
+
+<!-- META BAR -->
+<div class="meta-bar">
+  <div><label>Nama Asesor</label><input type="text" id="meta-assessor" placeholder="dr. Nama / Tim"></div>
+  <div><label>Institusi</label><input type="text" id="meta-inst" placeholder="Nama Rumah Sakit"></div>
+  <div><label>Tanggal</label><input type="date" id="meta-date"></div>
+  <div>
+    <label>Mode</label>
+    <select id="meta-mode">
+      <option value="inst">Internal Hospital</option>
+      <option value="edu">Publik / Edukasi</option>
+      <option value="anon">Anonim</option>
+    </select>
+  </div>
+  <div style="margin-left:auto;display:flex;gap:6px">
+    <button class="btn btn-o no-print" id="exportBtn">⬇ Export JSON</button>
+    <button class="btn btn-g no-print" id="importBtn">⬆ Import JSON</button>
+    <input type="file" id="importFile" accept=".json" style="display:none">
+  </div>
+</div>
+
+<div class="tabs" id="tabBar">
+  <div class="tab active" data-tab="t-sdm">👤 SDM <span class="tc" id="tc-sdm">—</span></div>
+  <div class="tab" data-tab="t-fas">🏥 Fasilitas <span class="tc" id="tc-fas">—</span></div>
+  <div class="tab" data-tab="t-obat">💊 Obat <span class="tc" id="tc-obat">—</span></div>
+  <div class="tab" data-tab="t-sop">📋 SOP <span class="tc" id="tc-sop">—</span></div>
+  <div class="tab" data-tab="t-mou">🤝 MoU <span class="tc" id="tc-mou">—</span></div>
+  <div class="tab" data-tab="t-chain">🔗 CoI/CoC <span class="tc" id="tc-chain">—</span></div>
+  <div class="tab" data-tab="t-qms">⚙️ QMS <span class="tc" id="tc-qms">—</span></div>
+  <div class="tab" data-tab="t-reg">🇮🇩 Regulasi <span class="tc" id="tc-reg">—</span></div>
+  <div class="tab" data-tab="t-path">🔬 Pathway Klinis <span class="tc" id="tc-path">—</span></div>
+  <div class="tab" data-tab="t-result">📊 Hasil</div>
+</div>
+
+<!-- ===== DOMAIN SECTIONS ===== -->
+<div class="section active" id="t-sdm"></div>
+<div class="section" id="t-fas"></div>
+<div class="section" id="t-obat"></div>
+<div class="section" id="t-sop"></div>
+<div class="section" id="t-mou"></div>
+<div class="section" id="t-chain"></div>
+<div class="section" id="t-qms"></div>
+<div class="section" id="t-reg"></div>
+<div class="section" id="t-path"></div>
+
+<!-- ===== RESULT ===== -->
+<div class="section" id="t-result">
+  <div id="res-empty" style="text-align:center;padding:50px;color:var(--muted)">
+    <div style="font-size:48px;margin-bottom:12px">📋</div>
+    <div style="font-weight:700;font-size:15px;margin-bottom:6px">Belum Ada Penilaian</div>
+    <div>Lengkapi semua domain lalu klik <strong>⚡ Hitung Kesiapan</strong></div>
+  </div>
+  <div id="res-content" style="display:none">
+
+    <div class="disclaimer">
+      ⚠️ <strong>Disclaimer Klinis:</strong> Tool ini adalah alat bantu penilaian internal. Tidak menggantikan penilaian akreditasi resmi FACT-JACIE, audit BPOM, atau proses persetujuan regulasi. Keputusan untuk memulai program CAR-T pada pasien pertama harus melibatkan Clinical Director, Medical Director, Quality Manager, dan persetujuan etik resmi.
+    </div>
+
+    <div id="res-stamp" class="stamp"></div>
+
+    <div class="g2">
+      <div class="card">
+        <h3>🎯 Status Kesiapan Program</h3>
+        <div id="res-badge"></div>
+        <div id="res-score-bar"></div>
+        <div id="res-gate-summary" style="margin-top:10px"></div>
+      </div>
+      <div class="card">
+        <h3>📈 Skor per Domain</h3>
+        <div id="res-domain-bars"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🛑 Hard Gate — Kondisi Wajib Sebelum Pasien Pertama</h3>
+      <div id="res-hardgate"></div>
+    </div>
+
+    <div class="card">
+      <h3>⚠️ Gap Aktual & Prioritas Aksi</h3>
+      <div id="res-gaps"></div>
+    </div>
+
+    <div class="g3">
+      <div class="tcol t30"><h4>🔴 0–30 Hari</h4><div id="p30"></div></div>
+      <div class="tcol t60"><h4>🟠 31–60 Hari</h4><div id="p60"></div></div>
+      <div class="tcol t90"><h4>🔵 61–90 Hari</h4><div id="p90"></div></div>
+    </div>
+    <div style="margin-top:14px"></div>
+
+    <div class="card">
+      <h3>📄 SOP yang Harus Dibuat / Dilengkapi</h3>
+      <div id="res-sop"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="btn-row no-print">
+  <button class="btn btn-p" id="calcBtn">⚡ Hitung Kesiapan</button>
+  <button class="btn btn-t" id="printBtn">🖨️ Cetak / PDF</button>
+  <button class="btn btn-g" id="saveBtn">💾 Simpan Draft</button>
+  <button class="btn btn-g" id="resetBtn">🔄 Reset</button>
+  <span id="save-msg" style="font-size:11px;color:var(--teal);align-self:center"></span>
+</div>
+
+<script>
+// ================================================================
+// STATUS OPTIONS (4 tingkat + N/A)
+// ================================================================
+var OPTS = [
+  {v:'na',    lbl:'Belum Ada',              score:0,   color:'#e63946'},
+  {v:'draft', lbl:'Draft / Direncanakan',   score:0.2, color:'#f4a261'},
+  {v:'ada',   lbl:'Ada, Belum Tervalidasi', score:0.6, color:'#e9c46a'},
+  {v:'valid', lbl:'Ada & Tervalidasi',      score:1.0, color:'#2dc653'},
+  {v:'nr',    lbl:'Tidak Relevan (N/A)',    score:null, color:'#adb5bd'},
+];
+function scoreV(v){var o=OPTS.find(function(x){return x.v===v});return o?o.score:0;}
+function lblV(v){var o=OPTS.find(function(x){return x.v===v});return o?o.lbl:v;}
+
+// ================================================================
+// DOMAIN DATA
+// ================================================================
+var DOMAINS = [
+{id:'sdm', tab:'t-sdm', label:'SDM', weight:18, groups:[
+  {title:'Tim Klinis Inti', items:[
+    {id:'s1',  lbl:'Dokter HOA / CAR-T Lead tersertifikasi & available 24/7', crit:true, hg:true},
+    {id:'s2',  lbl:'Dokter PICU terlatih CRS/ICANS management', crit:true, hg:true},
+    {id:'s3',  lbl:'Konsultan Neurologi (ICANS, pediatric neuro)', crit:true, hg:false},
+    {id:'s4',  lbl:'Dokter Penyakit Infeksi (ID physician)', crit:false, hg:false},
+    {id:'s5',  lbl:'Dokter Rehabilitasi Medik', crit:false, hg:false},
+  ]},
+  {title:'Tim Pendukung Spesialistik', items:[
+    {id:'s6',  lbl:'Apoteker klinis onkologi terlatih CAR-T', crit:true, hg:false},
+    {id:'s7',  lbl:'Dokter / petugas unit transfusi darah', crit:true, hg:false},
+    {id:'s8',  lbl:'Operator Apheresis tersertifikasi', crit:true, hg:false},
+    {id:'s9',  lbl:'Cell Processing Scientist (GMP-certified)', crit:true, hg:true},
+    {id:'s10', lbl:'Psikolog / konselor anak onkologi', crit:false, hg:false},
+    {id:'s11', lbl:'Child-life specialist / terapis bermain', crit:false, hg:false},
+  ]},
+  {title:'Tim Keperawatan & Teknis', items:[
+    {id:'s12', lbl:'Perawat onkologi terlatih CAR-T (≥2 orang)', crit:true, hg:true},
+    {id:'s13', lbl:'Perawat PICU terlatih ICANS & neuro-monitoring', crit:true, hg:false},
+    {id:'s14', lbl:'Perawat apheresis', crit:true, hg:false},
+    {id:'s15', lbl:'Koordinator klinis / data manager CAR-T', crit:false, hg:false},
+  ]},
+]},
+{id:'fas', tab:'t-fas', label:'Fasilitas', weight:16, groups:[
+  {title:'Area Rawat Pasien', items:[
+    {id:'f1',  lbl:'Ruang rawat isolasi HEPA (aliran udara positif/negatif terkontrol)', crit:true, hg:true},
+    {id:'f2',  lbl:'PICU dengan kapasitas neurotoxicity monitoring 24/7', crit:true, hg:true},
+    {id:'f3',  lbl:'Fasilitas apheresis (mesin tervalidasi + ruangan sesuai standar)', crit:true, hg:false},
+    {id:'f4',  lbl:'Ruang infusi CAR-T (monitoring intensif, akses crash cart)', crit:true, hg:false},
+  ]},
+  {title:'Laboratorium & Prosesing', items:[
+    {id:'f5',  lbl:'Laboratorium GMP / cell processing facility', crit:true, hg:true},
+    {id:'f6',  lbl:'Cryostorage LN₂ (≥ -150°C, monitored + alarm)', crit:true, hg:true},
+    {id:'f7',  lbl:'Laboratorium flow cytometry (CD19, MRD)', crit:true, hg:false},
+    {id:'f8',  lbl:'Laboratorium PCR / molecular monitoring (EBV, CMV, CAR-T persistence)', crit:false, hg:false},
+    {id:'f9',  lbl:'Laboratorium koagulasi lengkap (DIC panel, fibrinogen)', crit:false, hg:false},
+  ]},
+  {title:'Farmasi & Respons Darurat', items:[
+    {id:'f10', lbl:'Farmasi dengan cryogenic storage tervalidasi', crit:true, hg:true},
+    {id:'f11', lbl:'Emergency cart CRS/ICANS khusus (stok tocilizumab, steroid, antikejang)', crit:true, hg:true},
+    {id:'f12', lbl:'Sistem thawing produk CAR-T tervalidasi (waterbath/device)', crit:true, hg:false},
+    {id:'f13', lbl:'Data logger suhu real-time (cryostorage + transport)', crit:false, hg:false},
+  ]},
+]},
+{id:'obat', tab:'t-obat', label:'Obat & Farmasi', weight:12, groups:[
+  {title:'Wajib — CRS Management', items:[
+    {id:'o1',  lbl:'Tocilizumab IV (stok ≥2 dosis/pasien, akses 24/7)', crit:true, hg:true},
+    {id:'o2',  lbl:'Kortikosteroid IV (deksametason + metilprednisolon)', crit:true, hg:true},
+    {id:'o3',  lbl:'Siltuximab (bila tersedia, sebagai alternatif)', crit:false, hg:false},
+    {id:'o4',  lbl:'Anakinra (refractory CRS/ICANS, IEC-HS protocol)', crit:false, hg:false},
+  ]},
+  {title:'Wajib — ICANS & Neuro Management', items:[
+    {id:'o5',  lbl:'Levetiracetam IV (profilaksis + terapi kejang)', crit:true, hg:true},
+    {id:'o6',  lbl:'Diazepam IV / midazolam (emergency seizure)', crit:true, hg:false},
+    {id:'o7',  lbl:'IVIG (Imunoglobulin Intravena, terapi & profilaksis)', crit:true, hg:false},
+  ]},
+  {title:'Antimikroba & Profilaksis', items:[
+    {id:'o8',  lbl:'Antijamur profilaksis mold-active (vorikonazol / mikafungin)', crit:true, hg:false},
+    {id:'o9',  lbl:'Antiviral asiklovir (HSV/VZV profilaksis)', crit:true, hg:false},
+    {id:'o10', lbl:'CMV strategi (gansiklovir / valgansiklovir / letermovir)', crit:false, hg:false},
+    {id:'o11', lbl:'HBV profilaksis (entekavir) bila HBsAg/anti-HBc positif', crit:false, hg:false},
+    {id:'o12', lbl:'PCP profilaksis (kotrimoksazol / pentamidin)', crit:true, hg:false},
+    {id:'o13', lbl:'Antibiotik spektrum luas IV (meropenem, piperasilin-tazobaktam)', crit:true, hg:false},
+  ]},
+  {title:'Pendukung Komplikasi Lain', items:[
+    {id:'o14', lbl:'Rasburicase / allopurinol (TLS management)', crit:false, hg:false},
+    {id:'o15', lbl:'Fibrinogen / kryopresipitat (DIC/koagulopati)', crit:false, hg:false},
+    {id:'o16', lbl:'Vasopressor bundle (norepinefrin, dopamin, fenilefrin)', crit:true, hg:false},
+    {id:'o17', lbl:'Produk darah CMV-safe, irradiated, leukoreduced', crit:false, hg:false},
+  ]},
+]},
+{id:'sop', tab:'t-sop', label:'SOP / PPK', weight:14, groups:[
+  {title:'SOP Klinis Inti (Hard Gate)', items:[
+    {id:'sp1', lbl:'PPK CAR-T Therapy – Protokol Klinis Lengkap (disahkan)', crit:true, hg:true},
+    {id:'sp2', lbl:'SOP Manajemen CRS Grade 1–4 (ASTCT 2019, disahkan)', crit:true, hg:true},
+    {id:'sp3', lbl:'SOP Manajemen ICANS (ASTCT grading, pediatric ICE/CAPD, disahkan)', crit:true, hg:true},
+    {id:'sp4', lbl:'SOP Informed Consent CAR-T (dewasa, anak, bahasa awam Indonesia)', crit:true, hg:true},
+    {id:'sp5', lbl:'SOP Kriteria Seleksi & Eligibilitas Pasien CAR-T', crit:true, hg:false},
+    {id:'sp6', lbl:'SOP Bridging Therapy & Steroid Washout', crit:true, hg:false},
+    {id:'sp7', lbl:'SOP Lymphodepletion (regimen Flu/Cy, dosis, penyesuaian renal)', crit:true, hg:true},
+  ]},
+  {title:'SOP Teknis & Keperawatan', items:[
+    {id:'sp8',  lbl:'SOP Leukapheresis – Prosedur, ALC target, akses vena', crit:true, hg:false},
+    {id:'sp9',  lbl:'SOP Thawing Produk CAR-T (kriogenik, validasi suhu)', crit:true, hg:true},
+    {id:'sp10', lbl:'SOP Administrasi & Infusi Produk CAR-T', crit:true, hg:true},
+    {id:'sp11', lbl:'SOP Monitoring Pre/During/Post Infusi (checklist H-1, H0)', crit:true, hg:false},
+    {id:'sp12', lbl:'SOP Pediatric ICANS Assessment (ICE score anak besar, CAPD anak kecil)', crit:true, hg:false},
+    {id:'sp13', lbl:'SOP Penanganan Komplikasi Lanjut (IEC-HS, prolonged cytopenia, TLS)', crit:false, hg:false},
+  ]},
+  {title:'SOP Regulasi & Administratif', items:[
+    {id:'sp14', lbl:'SOP Pelaporan KTD / SAE (SUSAR ke BPOM)', crit:true, hg:false},
+    {id:'sp15', lbl:'SOP Farmakovigilans Produk CAR-T', crit:false, hg:false},
+    {id:'sp16', lbl:'SOP Penanganan Product Failure / Penolakan Produk', crit:false, hg:false},
+    {id:'sp17', lbl:'SOP Pembiayaan, Verifikasi Asuransi, Persetujuan Administratif', crit:false, hg:false},
+    {id:'sp18', lbl:'SOP Discharge Planning & Follow-up Pasca CAR-T', crit:false, hg:false},
+    {id:'sp19', lbl:'SOP Edukasi Keluarga & Caregiver (demam, kejang, tanda bahaya)', crit:true, hg:false},
+    {id:'sp20', lbl:'SOP Informed Assent Anak (usia cukup untuk assent)', crit:false, hg:false},
+  ]},
+]},
+{id:'mou', tab:'t-mou', label:'MoU & Kerjasama', weight:10, groups:[
+  {title:'Produsen & Distribusi', items:[
+    {id:'m1', lbl:'MoU dengan manufacturer CAR-T – sertifikasi Authorized Treatment Center (ATC)', crit:true, hg:true},
+    {id:'m2', lbl:'MoU logistik cold-chain (distributor kriogenik tersertifikasi)', crit:true, hg:true},
+    {id:'m3', lbl:'Kontak darurat 24/7 manufacturer untuk product issue', crit:true, hg:false},
+  ]},
+  {title:'Laboratorium & Prosesing', items:[
+    {id:'m4', lbl:'MoU laboratorium GMP / cell processing (bila outsource)', crit:true, hg:true},
+    {id:'m5', lbl:'MoU QC release testing & Certificate of Analysis', crit:true, hg:false},
+    {id:'m6', lbl:'MoU backup cryostorage (disaster recovery, RS lain / fasilitas backup)', crit:false, hg:false},
+  ]},
+  {title:'Kerjasama Klinis & Regulasi', items:[
+    {id:'m7', lbl:'Persetujuan Komite Etik Penelitian (bila clinical trial / compassionate use)', crit:true, hg:true},
+    {id:'m8', lbl:'Izin BPOM untuk penggunaan produk CAR-T (import / ATC approval)', crit:true, hg:true},
+    {id:'m9', lbl:'Surat izin / notifikasi Kemenkes (bila diperlukan)', crit:false, hg:false},
+    {id:'m10',lbl:'MoU RS jejaring (backup ICU, rujukan komplikasi)', crit:false, hg:false},
+  ]},
+]},
+{id:'chain', tab:'t-chain', label:'CoI / CoC', weight:12, groups:[
+  {title:'Chain of Identity (CoI)', items:[
+    {id:'c1', lbl:'Prosedur verifikasi identitas 2-faktor (pre-apheresis & pre-infusi)', crit:true, hg:true},
+    {id:'c2', lbl:'Pelabelan sampel/produk ISBT 128 atau standar setara', crit:true, hg:true},
+    {id:'c3', lbl:'Double-check independent sebelum infusi CAR-T (2 perawat/dokter)', crit:true, hg:true},
+    {id:'c4', lbl:'Barcode / RFID tracking pasien sepanjang siklus terapi', crit:false, hg:false},
+  ]},
+  {title:'Chain of Custody (CoC)', items:[
+    {id:'c5', lbl:'Manifest produk (collection → processing → release → delivery)', crit:true, hg:true},
+    {id:'c6', lbl:'Data logger suhu selama pengiriman kriogenik (continuous recording)', crit:true, hg:true},
+    {id:'c7', lbl:'SOP temperature excursion (deviasi suhu, eskalasi ke manufacturer)', crit:true, hg:false},
+    {id:'c8', lbl:'Certificate of Release / Certificate of Analysis tersedia sebelum infusi', crit:true, hg:true},
+    {id:'c9', lbl:'Dokumentasi penanganan produk cacat / tidak memenuhi spesifikasi', crit:false, hg:false},
+  ]},
+  {title:'Sistem Digital & Traceability', items:[
+    {id:'c10',lbl:'Software tracking CoI/CoC terintegrasi (atau sistem manual tervalidasi)', crit:false, hg:false},
+    {id:'c11',lbl:'Rekam medis elektronik dengan modul CAR-T atau integrasi terstruktur', crit:false, hg:false},
+    {id:'c12',lbl:'Audit trail digital setiap transfer produk (dari GMP ke RS ke farmasi ke pasien)', crit:false, hg:false},
+  ]},
+]},
+{id:'qms', tab:'t-qms', label:'QMS', weight:10, groups:[
+  {title:'Struktur Organisasi & Kepemimpinan Program', items:[
+    {id:'q1', lbl:'Program Director CAR-T ditetapkan (SK resmi)', crit:true, hg:true},
+    {id:'q2', lbl:'Medical Director CAR-T ditetapkan', crit:true, hg:true},
+    {id:'q3', lbl:'Quality Manager ditetapkan & bertanggung jawab langsung ke direktur', crit:true, hg:false},
+    {id:'q4', lbl:'Struktur TIM & job description terdokumentasi', crit:false, hg:false},
+  ]},
+  {title:'Sistem Dokumen & Pelatihan', items:[
+    {id:'q5', lbl:'Document control system (versi SOP, persetujuan, distribusi)', crit:true, hg:false},
+    {id:'q6', lbl:'Training & competency record seluruh staf CAR-T (terkini)', crit:true, hg:false},
+    {id:'q7', lbl:'Program orientasi & re-training tahunan tersedia', crit:false, hg:false},
+  ]},
+  {title:'Manajemen Deviasi & Peningkatan Mutu', items:[
+    {id:'q8',  lbl:'Sistem pelaporan deviasi (deviation report) terstandar', crit:true, hg:false},
+    {id:'q9',  lbl:'Root cause analysis (RCA) untuk setiap KTD serius', crit:true, hg:false},
+    {id:'q10', lbl:'Corrective & Preventive Action (CAPA) dengan tracking terselesaikan', crit:false, hg:false},
+    {id:'q11', lbl:'Internal audit schedule (≥ 1x/tahun untuk CAR-T program)', crit:false, hg:false},
+    {id:'q12', lbl:'Morbidity-Mortality review CAR-T (periodik, terdokumentasi)', crit:false, hg:false},
+  ]},
+  {title:'Kontinuitas & Governance', items:[
+    {id:'q13', lbl:'Vendor qualification (GMP lab, distributor, peralatan)', crit:false, hg:false},
+    {id:'q14', lbl:'Disaster recovery / business continuity plan (gangguan cryostorage, dll)', crit:false, hg:false},
+    {id:'q15', lbl:'CAR-T outcomes registry / dashboard (PFS, OS, CRS, ICANS)', crit:false, hg:false},
+    {id:'q16', lbl:'Rencana audit eksternal / akreditasi FACT-JACIE atau setara', crit:false, hg:false},
+  ]},
+]},
+{id:'reg', tab:'t-reg', label:'Regulasi Indonesia', weight:8, groups:[
+  {title:'Status Produk & Izin BPOM', items:[
+    {id:'r1', lbl:'Status produk jelas: impor komersial / uji klinik / compassionate use / in-house', crit:true, hg:true},
+    {id:'r2', lbl:'Izin edar BPOM (untuk produk ATMP manipulasi non-minimal, Peraturan BPOM No.8/2025)', crit:true, hg:true},
+    {id:'r3', lbl:'Import permit + customs clearance + cold-chain permit tersedia', crit:true, hg:false},
+    {id:'r4', lbl:'CPOB / GMP facility sesuai regulasi BPOM (bila prosesing in-house)', crit:false, hg:false},
+  ]},
+  {title:'Etik & Kelembagaan', items:[
+    {id:'r5', lbl:'Persetujuan Komite Etik Penelitian (Uji Klinik / Compassionate Use)', crit:true, hg:true},
+    {id:'r6', lbl:'Institutional Biosafety Committee (IBC) – bila mengandung viral vector', crit:false, hg:false},
+    {id:'r7', lbl:'Persetujuan Direktur RS & Direksi untuk aktivasi program', crit:true, hg:false},
+  ]},
+  {title:'Farmakovigilans & Privasi Data', items:[
+    {id:'r8',  lbl:'Pharmacovigilance plan sesuai BPOM (KIPI / SUSAR reporting)', crit:true, hg:false},
+    {id:'r9',  lbl:'SAE / SUSAR reporting pathway ke manufacturer & BPOM jelas', crit:true, hg:false},
+    {id:'r10', lbl:'Informed consent memenuhi syarat bahasa awam Indonesia (UU PK)', crit:true, hg:false},
+    {id:'r11', lbl:'Perlindungan data pasien & rekam medis (sesuai UU PDP)', crit:false, hg:false},
+    {id:'r12', lbl:'Pembiayaan: alur BPJS / asuransi / out-of-pocket terdokumentasi', crit:false, hg:false},
+  ]},
+]},
+{id:'path', tab:'t-path', label:'Pathway Klinis', weight:10, groups:[
+  {title:'Seleksi & Pre-CAR-T Workup', items:[
+    {id:'p1', lbl:'Kriteria diagnosis & indikasi CAR-T terdokumentasi (mis. ALL r/r, CD19+)', crit:true, hg:false},
+    {id:'p2', lbl:'Konfirmasi ekspresi antigen target (CD19 / CD22 – flow cytometry)', crit:true, hg:false},
+    {id:'p3', lbl:'Penilaian disease burden & MRD pre-CAR-T', crit:true, hg:false},
+    {id:'p4', lbl:'Skrining infeksi aktif (HBV, HCV, HIV, CMV, EBV)', crit:true, hg:false},
+    {id:'p5', lbl:'Fungsi organ: jantung (echocardiography), ginjal, hati, paru', crit:true, hg:false},
+    {id:'p6', lbl:'Lansky / Karnofsky performance status tercatat', crit:false, hg:false},
+    {id:'p7', lbl:'Fertility counseling (bila relevan, remaja)', crit:false, hg:false},
+    {id:'p8', lbl:'Caregiver assessment & akses transportasi pasien ke RS', crit:false, hg:false},
+  ]},
+  {title:'Apheresis & Manufacturing', items:[
+    {id:'p9',  lbl:'Eligibilitas apheresis: target ALC/leukosit, akses vena sentral', crit:true, hg:false},
+    {id:'p10', lbl:'Transfusion target pre-apheresis terdefinisi (Hb, platelet threshold)', crit:false, hg:false},
+    {id:'p11', lbl:'Collection kit + shipping kit tersedia & tervalidasi', crit:true, hg:false},
+    {id:'p12', lbl:'Manufacturing slot dikonfirmasi dengan manufacturer', crit:true, hg:false},
+    {id:'p13', lbl:'Backup plan tersedia bila manufacturing failure / product failure', crit:true, hg:false},
+    {id:'p14', lbl:'Release criteria produk (CoA/CoR) dipahami tim klinis', crit:true, hg:false},
+  ]},
+  {title:'Lymphodepletion & Infusi', items:[
+    {id:'p15', lbl:'Bridging therapy decision documented (pre-LD)', crit:false, hg:false},
+    {id:'p16', lbl:'Steroid washout protocol jelas (≥48–72 jam sebelum LD)', crit:true, hg:false},
+    {id:'p17', lbl:'Regimen lymphodepletion (Flu/Cy) terstandardisasi sesuai produk', crit:true, hg:false},
+    {id:'p18', lbl:'Pre-infusion checklist H-1 dan H0 tersedia dan dijalani', crit:true, hg:false},
+    {id:'p19', lbl:'Pregnancy test remaja perempuan (bila relevan, pre-LD)', crit:false, hg:false},
+  ]},
+  {title:'Monitoring Toksisitas Pediatrik', items:[
+    {id:'p20', lbl:'ICANS assessment pediatrik: ICE score (anak besar ≥12th) tersedia', crit:true, hg:false},
+    {id:'p21', lbl:'CAPD score (anak kecil / non-verbal) diketahui & dipraktikkan tim', crit:true, hg:false},
+    {id:'p22', lbl:'Protokol eskalasi IEC-HS / HLH-like syndrome tersedia', crit:false, hg:false},
+    {id:'p23', lbl:'Surveilans prolonged cytopenia, B-cell aplasia, infeksi lanjut', crit:false, hg:false},
+    {id:'p24', lbl:'Follow-up late effects: tumbuh kembang, pubertas, survivorship', crit:false, hg:false},
+  ]},
+]},
+];
+
+// HARD GATES — harus 'valid' sebelum Siap Aktivasi Klinis
+var ALL_HARD_GATES = (function(){
+  var hgs=[];
+  DOMAINS.forEach(function(d){d.groups.forEach(function(g){g.items.forEach(function(it){if(it.hg)hgs.push(it);});});});
+  return hgs;
+})();
+
+// ================================================================
+// SOP LIST
+// ================================================================
+var SOP_LIST=[
+  {n:'PPK CAR-T Therapy – Protokol Klinis Lengkap',p:'wajib',i:'📘',domain:'Klinis'},
+  {n:'SOP Manajemen CRS Grade 1–4 (ASTCT 2019)',p:'wajib',i:'🚨',domain:'Klinis'},
+  {n:'SOP Manajemen ICANS (ASTCT, ICE/CAPD pediatrik)',p:'wajib',i:'🧠',domain:'Klinis'},
+  {n:'SOP Informed Consent CAR-T (bahasa awam Indonesia)',p:'wajib',i:'✍️',domain:'Klinis'},
+  {n:'SOP Informed Assent Anak',p:'penting',i:'🧒',domain:'Klinis'},
+  {n:'SOP Kriteria Seleksi & Eligibilitas Pasien CAR-T',p:'wajib',i:'🎯',domain:'Klinis'},
+  {n:'SOP Bridging Therapy & Steroid Washout',p:'wajib',i:'💊',domain:'Klinis'},
+  {n:'SOP Lymphodepletion – Regimen Flu/Cy, Dosis, Renal Adjustment',p:'wajib',i:'⚗️',domain:'Klinis'},
+  {n:'SOP Pre-Infusion Checklist (H-1 dan H0)',p:'wajib',i:'✅',domain:'Klinis'},
+  {n:'SOP Leukapheresis – Prosedur, ALC Target, Akses Vena',p:'wajib',i:'🩸',domain:'Teknis'},
+  {n:'SOP Thawing Produk CAR-T Kriogenik (validasi suhu)',p:'wajib',i:'❄️',domain:'Teknis'},
+  {n:'SOP Administrasi & Infusi Produk CAR-T',p:'wajib',i:'💉',domain:'Klinis'},
+  {n:'SOP Monitoring Pre/During/Post Infusi CAR-T',p:'wajib',i:'📊',domain:'Keperawatan'},
+  {n:'SOP Chain of Identity – Verifikasi 2-Faktor',p:'wajib',i:'🔐',domain:'CoI/CoC'},
+  {n:'SOP Chain of Custody – Manifest & Tracking Produk',p:'wajib',i:'📦',domain:'CoI/CoC'},
+  {n:'SOP Temperature Excursion (Deviasi Suhu Kriogenik)',p:'wajib',i:'🌡️',domain:'CoI/CoC'},
+  {n:'SOP Pelaporan KTD / SAE / SUSAR ke BPOM & Manufacturer',p:'wajib',i:'⚠️',domain:'Regulasi'},
+  {n:'SOP Farmakovigilans Produk CAR-T',p:'penting',i:'📑',domain:'Regulasi'},
+  {n:'SOP Product Failure / Penolakan Produk',p:'penting',i:'🚫',domain:'Teknis'},
+  {n:'SOP Edukasi Keluarga & Caregiver (tanda bahaya pasca CAR-T)',p:'wajib',i:'📚',domain:'Edukasi'},
+  {n:'SOP Discharge Planning & Follow-up Pasca CAR-T',p:'penting',i:'🏠',domain:'Klinis'},
+  {n:'SOP IEC-HS / HLH-like Syndrome Management',p:'penting',i:'🔥',domain:'Klinis'},
+  {n:'SOP Prolonged Cytopenia & B-cell Aplasia Management',p:'penting',i:'🔬',domain:'Klinis'},
+  {n:'SOP Pembiayaan & Persetujuan Asuransi',p:'penting',i:'💳',domain:'Admin'},
+  {n:'SOP Document Control (versi SOP, persetujuan, distribusi)',p:'penting',i:'📁',domain:'QMS'},
+  {n:'SOP Pelaporan Deviasi & CAPA',p:'penting',i:'🔧',domain:'QMS'},
+  {n:'SOP Internal Audit Program CAR-T',p:'dianjurkan',i:'🔍',domain:'QMS'},
+  {n:'SOP Rekrutmen & Pelatihan Staf CAR-T',p:'dianjurkan',i:'🎓',domain:'SDM'},
+  {n:'SOP Pemeliharaan Cryostorage & Kalibrasi Peralatan',p:'dianjurkan',i:'⚙️',domain:'Teknis'},
+  {n:'SOP Late Effects & Survivorship Monitoring Pediatrik',p:'dianjurkan',i:'🌱',domain:'Klinis'},
+];
+
+// ================================================================
+// BUILD INPUT UI
+// ================================================================
+function buildSel(id,val){
+  var s=document.createElement('select');
+  s.id='v_'+id; s.setAttribute('data-id',id);
+  OPTS.forEach(function(o){
+    var opt=document.createElement('option');
+    opt.value=o.v; opt.textContent=o.lbl;
+    if(o.v===val) opt.selected=true;
+    s.appendChild(opt);
+  });
+  s.addEventListener('change',function(){onAnyChange();autoSave();});
+  return s;
+}
+function buildPIC(id,val){
+  var inp=document.createElement('input');
+  inp.type='text'; inp.id='pic_'+id; inp.placeholder='PIC';
+  inp.setAttribute('data-pic',id); inp.value=val||'';
+  inp.addEventListener('input',function(){autoSave();});
+  return inp;
+}
+function buildNote(id,val){
+  var inp=document.createElement('input');
+  inp.type='text'; inp.id='note_'+id; inp.placeholder='Catatan / Gap detail';
+  inp.setAttribute('data-note',id); inp.value=val||'';
+  inp.addEventListener('input',function(){autoSave();});
+  return inp;
+}
+
+function buildDomain(dom, saved){
+  var sec=document.getElementById(dom.tab);
+  if(!sec) return;
+  sec.innerHTML='';
+  var hasCrit=dom.groups.some(function(g){return g.items.some(function(i){return i.hg;});});
+  if(hasCrit){
+    sec.innerHTML='<div class="hg-banner"><div class="icon">🛑</div><div><h4>Domain ini mengandung item HARD GATE</h4><p>Item berlabel <span style="background:#f5eafa;border:1px solid #d9b8f0;border-radius:3px;padding:0 4px;font-size:10px;font-weight:700;color:#7b2d8b">HARD GATE</span> harus berstatus <strong>"Ada & Tervalidasi"</strong> sebelum program boleh menerima pasien pertama.</p></div></div>';
+  }
+  var card=document.createElement('div');
+  card.className='card';
+  // header row
+  var hrow=document.createElement('div');
+  hrow.className='irow';
+  hrow.style.background='#f0f4f8';
+  hrow.style.fontWeight='700';
+  hrow.style.fontSize='10px';
+  hrow.style.color='var(--muted)';
+  hrow.innerHTML='<div>Item Penilaian</div><div>Status</div><div>PIC</div><div>Catatan</div>';
+  card.appendChild(hrow);
+  dom.groups.forEach(function(g){
+    var dh=document.createElement('div'); dh.className='dh'; dh.textContent=g.title;
+    card.appendChild(dh);
+    g.items.forEach(function(it){
+      var sv=saved&&saved[it.id]?saved[it.id]:{};
+      var row=document.createElement('div'); row.className='irow';
+      var lbl=document.createElement('div'); lbl.className='ilabel';
+      lbl.textContent=it.lbl;
+      if(it.crit){var b=document.createElement('span');b.className='crit';b.textContent='WAJIB';lbl.appendChild(b);}
+      if(it.hg){var h=document.createElement('span');h.className='hg';h.textContent='HARD GATE';lbl.appendChild(h);}
+      row.appendChild(lbl);
+      row.appendChild(buildSel(it.id, sv.v||'na'));
+      row.appendChild(buildPIC(it.id, sv.pic||''));
+      row.appendChild(buildNote(it.id, sv.note||''));
+      card.appendChild(row);
+    });
+  });
+  sec.appendChild(card);
+}
+
+function buildAll(saved){
+  DOMAINS.forEach(function(d){buildDomain(d,saved||{});});
+}
+
+// ================================================================
+// COLLECT DATA
+// ================================================================
+function collectAll(){
+  var data={};
+  DOMAINS.forEach(function(d){
+    d.groups.forEach(function(g){
+      g.items.forEach(function(it){
+        var sel=document.getElementById('v_'+it.id);
+        var pic=document.getElementById('pic_'+it.id);
+        var note=document.getElementById('note_'+it.id);
+        if(sel) data[it.id]={v:sel.value, pic:pic?pic.value:'', note:note?note.value:''};
+      });
+    });
+  });
+  return data;
+}
+
+// ================================================================
+// SCORE
+// ================================================================
+function calcScores(data){
+  var ds={};
+  DOMAINS.forEach(function(d){
+    var tot=0,mx=0,gaps=[],critFails=0,hgFails=[];
+    d.groups.forEach(function(g){
+      g.items.forEach(function(it){
+        var v=(data[it.id]||{}).v||'na';
+        if(v==='nr') return; // skip N/A
+        var s=scoreV(v); tot+=s; mx++;
+        if(v!=='valid'){
+          var sev=it.hg?'hg':it.crit?'crit':v==='na'?'mod':'low';
+          gaps.push({it:it,v:v,sev:sev,domain:d.label,
+            pic:(data[it.id]||{}).pic||'',note:(data[it.id]||{}).note||''});
+          if(it.crit&&(v==='na'||v==='draft')) critFails++;
+          if(it.hg&&v!=='valid') hgFails.push(it);
+        }
+      });
+    });
+    ds[d.id]={pct:mx>0?Math.round(tot/mx*100):0,gaps:gaps,critFails:critFails,hgFails:hgFails,weight:d.weight};
+  });
+  return ds;
+}
+
+function getStatus(ds,data){
+  var totalW=0,totalS=0,allHGFails=[];
+  Object.keys(ds).forEach(function(dk){
+    var s=ds[dk];
+    totalW+=s.weight; totalS+=s.pct*s.weight/100;
+    allHGFails=allHGFails.concat(s.hgFails);
+  });
+  var overall=Math.round(totalS/totalW*100);
+  var hgFailCount=allHGFails.length;
+  var totalCritFails=0;
+  Object.keys(ds).forEach(function(dk){totalCritFails+=ds[dk].critFails;});
+
+  var status,cls,emoji,desc,action;
+  if(hgFailCount>=5||overall<35){
+    status='Hard Stop — Belum Siap untuk Pasien';cls='s-stop';emoji='🛑';
+    desc='Terlalu banyak Hard Gate belum terpenuhi. Program tidak boleh menerima pasien. Fokus pada pemenuhan semua Hard Gate terlebih dahulu.';
+    action='dry-run only';
+  } else if(hgFailCount>=2){
+    status='Siap Simulasi / Mock Run';cls='s-mock';emoji='🟣';
+    desc='Beberapa Hard Gate masih belum terpenuhi. Hanya boleh melakukan simulasi tabletop/mock drill, belum boleh infusi pasien.';
+    action='mock-drill';
+  } else if(hgFailCount===1||totalCritFails>=3){
+    status='Siap Audit Internal';cls='s-audit-int';emoji='🟠';
+    desc='Hampir memenuhi syarat. Selesaikan Hard Gate terakhir dan item kritis sebelum mengaktifkan program klinis.';
+    action='internal-audit';
+  } else if(hgFailCount===0&&overall>=70){
+    status='Siap Aktivasi Klinis';cls='s-limited';emoji='🟢';
+    desc='Semua Hard Gate terpenuhi. Program dapat diaktifkan secara klinis. Lakukan dry-run internal sebelum pasien pertama.';
+    action='clinical-ready';
+  } else {
+    status='Hard Stop — Belum Siap untuk Pasien';cls='s-stop';emoji='🛑';
+    desc='Skor keseluruhan belum memadai. Penuhi item kritis yang masih kurang.';
+    action='dry-run only';
+  }
+  if(hgFailCount===0&&overall>=90){
+    status='Siap Operasional Penuh / Siap Audit Eksternal';cls='s-full';emoji='🔵';
+    desc='Program memenuhi semua syarat untuk audit eksternal atau akreditasi. Pertahankan konsistensi dokumentasi.';
+    action='audit-ready';
+  }
+  return {overall:overall,status:status,cls:cls,emoji:emoji,desc:desc,action:action,hgFails:allHGFails,critFails:totalCritFails};
+}
+
+// ================================================================
+// TAB COUNTERS
+// ================================================================
+function updateTabCounters(ds){
+  DOMAINS.forEach(function(d){
+    var tc=document.getElementById('tc-'+d.id);
+    if(!tc) return;
+    var s=ds[d.id];
+    var pct=s.pct;
+    tc.textContent=pct+'%';
+    tc.className='tc '+(pct>=80?'ok':pct>=50?'warn':'bad');
+  });
+}
+
+// ================================================================
+// RENDER RESULT
+// ================================================================
+function renderResult(){
+  var data=collectAll();
+  var ds=calcScores(data);
+  var st=getStatus(ds,data);
+
+  document.getElementById('res-empty').style.display='none';
+  document.getElementById('res-content').style.display='block';
+
+  // STAMP
+  var asm=document.getElementById('meta-assessor').value;
+  var inst=document.getElementById('meta-inst').value;
+  var dt=document.getElementById('meta-date').value;
+  var mode=document.getElementById('meta-mode').value;
+  var stamp=document.getElementById('res-stamp');
+  if(mode==='anon'){stamp.style.display='none';}
+  else{stamp.style.display='';
+    stamp.innerHTML='📋 <strong>Asesor:</strong> '+(asm||'—')+' &nbsp;|&nbsp; <strong>Institusi:</strong> '+(mode==='inst'?inst||'—':'[Anonim]')+' &nbsp;|&nbsp; <strong>Tanggal:</strong> '+(dt||'—')+' &nbsp;|&nbsp; <strong>Total Skor:</strong> '+st.overall+'%';
+  }
+
+  // BADGE
+  var barC=st.overall>=80?'#2dc653':st.overall>=60?'#f4a261':'#e63946';
+  document.getElementById('res-badge').innerHTML=
+    '<div class="sbadge '+st.cls+'">'+st.emoji+' '+st.status+'</div>'
+    +'<p style="font-size:11px;color:var(--muted);margin:6px 0 4px">Hard Gate belum terpenuhi: <strong style="color:'+(st.hgFails.length>0?'#c0392b':'#2e7d32')+'">'+st.hgFails.length+'</strong> &nbsp;|&nbsp; Item kritis belum final: <strong>'+st.critFails+'</strong></p>'
+    +'<p style="font-size:11px;color:var(--muted);font-style:italic">'+st.desc+'</p>';
+
+  document.getElementById('res-score-bar').innerHTML=
+    '<div class="sbar-wrap" style="margin-top:10px"><div class="sbar" style="width:'+st.overall+'%;background:'+barC+'">'+st.overall+'%</div></div>';
+
+  // DOMAIN BARS
+  var db=document.getElementById('res-domain-bars'); db.innerHTML='';
+  DOMAINS.forEach(function(d){
+    var s=ds[d.id]; var pct=s.pct;
+    var bc=pct>=80?'#2dc653':pct>=60?'#f4a261':'#e63946';
+    db.innerHTML+='<div class="dbar-row"><div class="dn">'+d.label+' <small style="color:var(--muted);font-size:9px">('+d.weight+'%)</small></div><div class="dbw"><div class="db" style="width:'+pct+'%;background:'+bc+'"></div></div><div class="dp" style="color:'+bc+'">'+pct+'%</div></div>';
+  });
+
+  // HARD GATE TABLE
+  var hgt=document.getElementById('res-hardgate');
+  var tbl='<table class="hg-table"><thead><tr><th>Item Hard Gate</th><th>Domain</th><th>Status</th><th>PIC</th><th>Catatan</th></tr></thead><tbody>';
+  ALL_HARD_GATES.forEach(function(it){
+    var v=(data[it.id]||{}).v||'na';
+    var pic=(data[it.id]||{}).pic||'—';
+    var note=(data[it.id]||{}).note||'—';
+    var pass=v==='valid';
+    var warn=v==='ada'||v==='draft';
+    var stClass=pass?'hg-pass':warn?'hg-warn':'hg-fail';
+    var stIcon=pass?'✅':warn?'⚠️':'🛑';
+    var dom=DOMAINS.find(function(d){return d.groups.some(function(g){return g.items.some(function(i){return i.id===it.id;});});});
+    tbl+='<tr><td>'+it.lbl+'</td><td>'+(dom?dom.label:'—')+'</td><td class="'+stClass+'">'+stIcon+' '+lblV(v)+'</td><td>'+pic+'</td><td>'+note+'</td></tr>';
+  });
+  tbl+='</tbody></table>';
+  hgt.innerHTML=tbl;
+
+  // GAPS — DYNAMIC 30/60/90
+  var allGaps=[];
+  Object.keys(ds).forEach(function(dk){ds[dk].gaps.forEach(function(g){allGaps.push(g);});});
+  allGaps.sort(function(a,b){
+    var rank=function(g){return (g.it.hg?100:0)+(g.it.crit?50:0)+(g.v==='na'?10:g.v==='draft'?5:1);};
+    return rank(b)-rank(a);
+  });
+  var plan30=[],plan60=[],plan90=[];
+  var gl=document.getElementById('res-gaps');
+  gl.innerHTML='';
+  allGaps.forEach(function(g){
+    var pday,ptag,cls;
+    if(g.it.hg&&(g.v==='na'||g.v==='draft')){pday='30';ptag='p30';cls='gc';}
+    else if(g.it.crit&&g.v==='na'){pday='30';ptag='p30';cls='gc';}
+    else if(g.it.crit&&g.v==='draft'){pday='60';ptag='p60';cls='gm';}
+    else if(!g.it.crit&&g.v==='na'){pday='60';ptag='p60';cls='gm';}
+    else{pday='90';ptag='p90';cls='gl';}
+    gl.innerHTML+='<div class="gap-item '+cls+'"><div><div class="gt">'+g.it.lbl+'<span class="ptag '+ptag+'">'+pday+' Hari</span>'+(g.it.hg?'<span class="ptag" style="background:#f5eafa;color:#7b2d8b">HG</span>':'')+'</div><div class="gd">['+g.domain+'] Status: '+lblV(g.v)+(g.pic?' · PIC: '+g.pic:'')+(g.note?' · '+g.note:'')+'</div></div></div>';
+    if(pday==='30') plan30.push(g.it.lbl);
+    else if(pday==='60') plan60.push(g.it.lbl);
+    else plan90.push(g.it.lbl);
+  });
+  if(allGaps.length===0) gl.innerHTML='<div style="color:var(--teal);font-weight:700;padding:12px">✅ Tidak ada gap terdeteksi — Program Siap Penuh!</div>';
+
+  // DYNAMIC 30-60-90
+  function fillPlan(elId,items){
+    var el=document.getElementById(elId); el.innerHTML='';
+    if(items.length===0){el.innerHTML='<div class="tli" style="color:var(--muted);font-style:italic">Tidak ada aksi mendesak</div>';return;}
+    items.forEach(function(t){el.innerHTML+='<div class="tli">'+t+'</div>';});
+  }
+  fillPlan('p30',plan30);
+  fillPlan('p60',plan60);
+  fillPlan('p90',plan90);
+
+  // SOP — only show not-'valid' items that have corresponding SOP, always show wajib
+  var rs=document.getElementById('res-sop'); rs.innerHTML='';
+  // check which SOP domains have gaps
+  SOP_LIST.forEach(function(sop){
+    var pcls=sop.p==='wajib'?'pw':sop.p==='penting'?'pp':'pd';
+    var plbl=sop.p==='wajib'?'WAJIB':sop.p==='penting'?'PENTING':'DIANJURKAN';
+    rs.innerHTML+='<div class="sop-item"><span class="si">'+sop.i+'</span>'
+      +'<span class="sn">'+sop.n+' <span class="sd">['+sop.domain+']</span></span>'
+      +'<span class="sp '+pcls+'">'+plbl+'</span></div>';
+  });
+
+  updateTabCounters(ds);
+  showTab('t-result');
+}
+
+// ================================================================
+// TABS
+// ================================================================
+function showTab(id){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  var sec=document.getElementById(id); if(sec) sec.classList.add('active');
+  var tab=document.querySelector('[data-tab="'+id+'"]'); if(tab) tab.classList.add('active');
+}
+
+// ================================================================
+// AUTO SAVE / LOAD (localStorage)
+// ================================================================
+var SAVE_KEY='cartv2_draft';
+function autoSave(){
+  try{
+    var payload={meta:{a:document.getElementById('meta-assessor').value,i:document.getElementById('meta-inst').value,d:document.getElementById('meta-date').value,m:document.getElementById('meta-mode').value},data:collectAll()};
+    localStorage.setItem(SAVE_KEY,JSON.stringify(payload));
+    var sm=document.getElementById('save-msg'); sm.textContent='Draft tersimpan otomatis ✓';
+    setTimeout(function(){sm.textContent='';},2000);
+  }catch(e){}
+}
+function loadDraft(payload){
+  if(payload.meta){
+    document.getElementById('meta-assessor').value=payload.meta.a||'';
+    document.getElementById('meta-inst').value=payload.meta.i||'';
+    document.getElementById('meta-date').value=payload.meta.d||'';
+    document.getElementById('meta-mode').value=payload.meta.m||'inst';
+  }
+  buildAll(payload.data||{});
+}
+
+// ================================================================
+// EXPORT / IMPORT JSON
+// ================================================================
+function exportJSON(){
+  var payload={meta:{a:document.getElementById('meta-assessor').value,i:document.getElementById('meta-inst').value,d:document.getElementById('meta-date').value,m:document.getElementById('meta-mode').value,ts:new Date().toISOString()},data:collectAll()};
+  var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a'); a.href=url; a.download='cart_readiness_'+((payload.meta.d||'').replace(/-/g,''))+'_'+((payload.meta.i||'RS').replace(/\s/g,'_'))+'.json';
+  a.click(); URL.revokeObjectURL(url);
+}
+function importJSON(file){
+  var r=new FileReader();
+  r.onload=function(e){
+    try{
+      var p=JSON.parse(e.target.result);
+      loadDraft(p);
+      document.getElementById('save-msg').textContent='✅ Data berhasil diimpor';
+      setTimeout(function(){document.getElementById('save-msg').textContent='';},2500);
+    }catch(ex){alert('File tidak valid atau format salah.');}
+  };
+  r.readAsText(file);
+}
+
+// ================================================================
+// ON ANY CHANGE — live update tab counters
+// ================================================================
+function onAnyChange(){
+  var data=collectAll();
+  var ds=calcScores(data);
+  updateTabCounters(ds);
+}
+
+// ================================================================
+// PRINT
+// ================================================================
+function doPrint(){
+  // show all sections for print
+  document.querySelectorAll('.section').forEach(function(s){s.style.display='block';});
+  window.print();
+  document.querySelectorAll('.section').forEach(function(s){s.style.display='';});
+  showTab('t-result');
+}
+
+// ================================================================
+// INIT
+// ================================================================
+window.addEventListener('load',function(){
+  // set today
+  document.getElementById('meta-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('tsTag').textContent=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+
+  // load saved
+  var saved=null;
+  try{var s=localStorage.getItem(SAVE_KEY);if(s)saved=JSON.parse(s);}catch(e){}
+  if(saved){loadDraft(saved);}else{buildAll(null);}
+
+  // tabs
+  document.querySelectorAll('.tab').forEach(function(t){
+    t.addEventListener('click',function(){showTab(t.getAttribute('data-tab'));});
+  });
+
+  // meta changes
+  ['meta-assessor','meta-inst','meta-date','meta-mode'].forEach(function(id){
+    document.getElementById(id).addEventListener('change',function(){autoSave();});
+  });
+  document.getElementById('meta-mode').addEventListener('change',function(){
+    document.getElementById('modeTag').textContent='Mode: '+(['inst','edu','anon'][['inst','edu','anon'].indexOf(this.value)]||'');
+  });
+
+  document.getElementById('calcBtn').addEventListener('click',renderResult);
+  document.getElementById('printBtn').addEventListener('click',doPrint);
+  document.getElementById('saveBtn').addEventListener('click',function(){autoSave();});
+  document.getElementById('resetBtn').addEventListener('click',function(){
+    if(!confirm('Reset semua data? Data tidak tersimpan akan hilang.'))return;
+    localStorage.removeItem(SAVE_KEY);
+    buildAll(null);
+    document.getElementById('res-empty').style.display='';
+    document.getElementById('res-content').style.display='none';
+    showTab('t-sdm');
+  });
+  document.getElementById('exportBtn').addEventListener('click',exportJSON);
+  document.getElementById('importBtn').addEventListener('click',function(){document.getElementById('importFile').click();});
+  document.getElementById('importFile').addEventListener('change',function(){if(this.files[0])importJSON(this.files[0]);this.value='';});
+
+  // initial counter update
+  var data=collectAll(); var ds=calcScores(data); updateTabCounters(ds);
+});
+</script>
+</body>
+</html>

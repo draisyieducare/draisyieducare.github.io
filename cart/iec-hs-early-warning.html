@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IEC-HS Early Warning | drAisyi EduCare</title>
+<style>
+:root {
+  --primary:#1a3a5c;--accent:#e74c3c;--amber:#f39c12;--green:#27ae60;
+  --purple:#8e44ad;--blue:#2980b9;--light:#f0f4f8;--border:#d0dce8;
+  --text:#1c2b3a;--muted:#6b7f93;--card:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#e8eef5;color:var(--text);min-height:100vh;}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#1a3a5c,#24527a,#2e6da4);color:#fff;}
+.hdr-inner{max-width:900px;margin:auto;padding:16px 20px 12px;display:flex;align-items:center;gap:14px;}
+.logo{width:50px;height:50px;border-radius:11px;background:linear-gradient(135deg,#e74c3c,#f39c12);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;flex-shrink:0;}
+.brand h1{font-size:1.2rem;font-weight:800;}
+.brand p{font-size:0.75rem;opacity:.82;margin-top:1px;}
+.mod-tag{margin-left:auto;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 13px;font-size:0.7rem;font-weight:700;letter-spacing:.7px;text-transform:uppercase;white-space:nowrap;}
+.subhdr{background:rgba(0,0,0,.18);padding:9px 20px;}
+.subhdr-inner{max-width:900px;margin:auto;font-size:.8rem;opacity:.92;}
+
+/* TABS */
+.tabs{max-width:900px;margin:16px auto 0;padding:0 16px;display:flex;gap:6px;flex-wrap:wrap;}
+.tab-btn{padding:8px 16px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--muted);font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.tab-btn.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+.container{max-width:900px;margin:0 auto;padding:12px 16px 40px;}
+
+/* DISCLAIMER */
+.disclaimer{background:#fdf3cd;border:1.5px solid #f39c12;border-radius:10px;padding:11px 15px;margin-bottom:14px;display:flex;gap:10px;}
+.disclaimer .ic{font-size:1.1rem;flex-shrink:0;}
+.disclaimer p{font-size:.76rem;color:#6b4700;line-height:1.55;}
+
+/* SECTION CARD */
+.sec{background:#fff;border-radius:12px;padding:16px 18px;margin-bottom:12px;box-shadow:0 2px 8px rgba(26,58,92,.07);}
+.sec-title{font-size:.82rem;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;padding-bottom:7px;border-bottom:2px solid var(--light);display:flex;align-items:center;gap:7px;}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;}
+.fi{display:flex;flex-direction:column;gap:4px;}
+.fi label{font-size:.75rem;font-weight:700;color:var(--primary);}
+.fi .sub{font-size:.68rem;color:var(--muted);margin-top:-2px;}
+.fi input,.fi select{border:1.5px solid var(--border);border-radius:7px;padding:7px 9px;font-size:.82rem;background:var(--light);outline:none;transition:border .2s;}
+.fi input:focus,.fi select:focus{border-color:var(--primary);background:#fff;}
+.fi input.warn{border-color:var(--amber);}
+.fi input.ok{border-color:var(--green);}
+.fi input.crit{border-color:var(--accent);}
+
+/* TOGGLE */
+.tg-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.tg{border:1.5px solid var(--border);border-radius:9px;padding:9px 11px;cursor:pointer;transition:all .2s;display:flex;align-items:flex-start;gap:9px;user-select:none;background:var(--light);}
+.tg:hover{border-color:var(--primary);background:#e8f0f8;}
+.tg.on{border-color:var(--accent);background:#fdecea;}
+.tg.on2{border-color:var(--amber);background:#fff8e1;}
+.cb{width:17px;height:17px;border-radius:4px;border:2px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .2s;}
+.tg.on .cb,.tg.on2 .cb{background:var(--accent);border-color:var(--accent);}
+.tg.on2 .cb{background:var(--amber);border-color:var(--amber);}
+.tg.on .cb::after,.tg.on2 .cb::after{content:'✓';color:#fff;font-size:10px;font-weight:900;}
+.tl{font-size:.78rem;font-weight:700;}
+.ts{font-size:.68rem;color:var(--muted);margin-top:2px;}
+
+/* CRS STATUS */
+.crs-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.crs-opt{border:1.5px solid var(--border);border-radius:8px;padding:9px 11px;cursor:pointer;transition:all .2s;background:var(--light);font-size:.76rem;font-weight:700;text-align:center;}
+.crs-opt:hover{border-color:var(--primary);}
+.crs-opt.sel{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+/* FERRITIN TREND */
+.frow{display:flex;gap:9px;align-items:flex-end;}
+.frow .fi{flex:1;}
+.ft-badge{padding:7px 12px;border-radius:7px;font-size:.75rem;font-weight:700;white-space:nowrap;margin-bottom:0;}
+
+/* MISSING DATA */
+.missing-warn{background:#fff3cd;border:1px solid var(--amber);border-radius:7px;padding:8px 12px;font-size:.74rem;color:#856404;margin-top:10px;display:none;}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:9px;margin-top:4px;}
+.btn{flex:1;padding:12px;border:none;border-radius:10px;font-size:.9rem;font-weight:800;cursor:pointer;transition:all .2s;}
+.btn-p{background:var(--primary);color:#fff;}
+.btn-p:hover{background:#24527a;}
+.btn-r{background:var(--light);color:var(--muted);border:1.5px solid var(--border);}
+.btn-r:hover{background:#dce5ee;}
+
+/* RESULT */
+#result{display:none;margin-top:16px;}
+
+/* PATTERN CARD */
+.pat-card{border-radius:13px;padding:20px;margin-bottom:12px;border:2px solid transparent;}
+.pat-low{background:#f0fdf4;border-color:#27ae60;}
+.pat-mod{background:#fffbeb;border-color:#f39c12;}
+.pat-high{background:#fff1f0;border-color:#e74c3c;}
+.pat-hdr{display:flex;align-items:center;gap:13px;margin-bottom:12px;}
+.pat-icon{font-size:2rem;}
+.pat-title{font-size:1rem;font-weight:900;}
+.pat-sub{font-size:.75rem;margin-top:3px;line-height:1.5;}
+.pat-badge{margin-left:auto;padding:5px 14px;border-radius:18px;font-size:.7rem;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap;}
+.bl{background:#27ae60;}.bm{background:#f39c12;}.bh{background:#e74c3c;}
+
+/* VALIDATED NOTE */
+.validated-note{background:#e8f4fd;border:1px solid #3498db;border-radius:8px;padding:9px 13px;font-size:.74rem;color:#1a5276;margin-bottom:12px;line-height:1.5;}
+
+/* SEVERITY */
+.sev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.sev-item{border-radius:9px;padding:10px;text-align:center;border:1.5px solid var(--border);}
+.sev-item.ok{background:#f0fdf4;border-color:#27ae60;}
+.sev-item.warn{background:#fff8e1;border-color:#f39c12;}
+.sev-item.crit{background:#fdecea;border-color:#e74c3c;}
+.sev-item.na{background:var(--light);}
+.sev-label{font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+.sev-val{font-size:.88rem;font-weight:800;margin-top:3px;}
+
+/* CRITERIA TAGS */
+.ctags{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0;}
+.ctag{padding:3px 9px;border-radius:11px;font-size:.69rem;font-weight:700;background:rgba(26,58,92,.1);color:var(--primary);border:1px solid var(--border);}
+.ctag.met{background:#fdecea;color:var(--accent);border-color:#f5c6c3;}
+.ctag.warn{background:#fff3cd;color:#856404;border-color:#ffc107;}
+
+/* ALERT BOX */
+.abox{border-radius:10px;padding:13px 15px;margin-bottom:10px;display:flex;gap:11px;align-items:flex-start;}
+.abox.urg{background:#fdecea;border:1.5px solid #e74c3c;}
+.abox.warn{background:#fff8e1;border:1.5px solid #f39c12;}
+.abox.info{background:#e8f4fd;border:1.5px solid #3498db;}
+.abox.purple{background:#f5eef8;border:1.5px solid #9b59b6;}
+.abox .ai{font-size:1.05rem;flex-shrink:0;margin-top:1px;}
+.abox h4{font-size:.8rem;font-weight:800;margin-bottom:5px;}
+.abox ul{padding-left:15px;}
+.abox li{font-size:.76rem;line-height:1.65;}
+.abox p{font-size:.76rem;line-height:1.6;}
+
+/* CRS CONTEXT BOX */
+.crs-ctx{border-radius:10px;padding:12px 15px;margin-bottom:10px;border:1.5px solid;}
+.crs-ctx.still{background:#fff8e1;border-color:#f39c12;}
+.crs-ctx.resolv{background:#fdecea;border-color:#e74c3c;}
+.crs-ctx.done{background:#e8f4fd;border-color:#3498db;}
+.crs-ctx.none{background:#f0fdf4;border-color:#27ae60;}
+.crs-ctx h4{font-size:.8rem;font-weight:800;margin-bottom:5px;}
+.crs-ctx p{font-size:.76rem;line-height:1.6;}
+
+/* DIFFERENTIAL */
+.diff-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.diff-item{font-size:.73rem;padding:5px 10px;border-radius:7px;background:var(--light);border:1px solid var(--border);display:flex;align-items:center;gap:5px;}
+.diff-item.prior{background:#fdecea;border-color:#f5c6c3;color:#c0392b;font-weight:700;}
+
+/* EVAL TABLE */
+.etable{width:100%;border-collapse:collapse;font-size:.74rem;}
+.etable th{background:var(--primary);color:#fff;padding:7px 9px;text-align:left;font-weight:700;}
+.etable td{padding:6px 9px;border-bottom:1px solid var(--border);vertical-align:top;}
+.etable tr:nth-child(even) td{background:var(--light);}
+.etable tr:last-child td{border-bottom:none;}
+.ptag{display:inline-block;padding:2px 7px;border-radius:9px;font-size:.65rem;font-weight:800;text-transform:uppercase;}
+.ps{background:#fdecea;color:#c0392b;}
+.pu{background:#fff3cd;color:#856404;}
+.pr{background:#d1ecf1;color:#0c5460;}
+
+/* THERAPY LADDER */
+.therapy-ladder{counter-reset:step;}
+.t-step{display:flex;gap:12px;margin-bottom:8px;padding:10px 13px;border-radius:9px;background:var(--light);border-left:4px solid var(--border);}
+.t-step.s1{border-left-color:#27ae60;}
+.t-step.s2{border-left-color:#f39c12;}
+.t-step.s3{border-left-color:#e74c3c;}
+.t-step .sn{font-size:1rem;flex-shrink:0;}
+.t-step h5{font-size:.77rem;font-weight:800;margin-bottom:3px;}
+.t-step p{font-size:.72rem;line-height:1.55;color:var(--muted);}
+
+/* PRINT SUMMARY */
+.print-sum{background:#f8fafc;border:1px dashed var(--border);border-radius:10px;padding:14px;margin-top:12px;}
+.print-sum h4{font-size:.8rem;font-weight:800;color:var(--primary);margin-bottom:9px;text-transform:uppercase;}
+.ps-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:.74rem;}
+.ps-row:last-child{border-bottom:none;}
+.ps-key{color:var(--muted);font-weight:600;}
+.ps-val{font-weight:800;}
+
+.print-btn{background:transparent;border:1.5px solid var(--primary);color:var(--primary);border-radius:8px;padding:8px 15px;font-size:.76rem;font-weight:700;cursor:pointer;margin-top:10px;}
+.print-btn:hover{background:var(--primary);color:#fff;}
+
+.footer{text-align:center;font-size:.68rem;color:var(--muted);margin-top:20px;line-height:1.8;}
+.footer span{color:var(--accent);}
+
+/* MISSING TAG */
+.miss-tag{display:inline-block;padding:2px 7px;border-radius:9px;background:#fff3cd;color:#856404;font-size:.68rem;font-weight:700;border:1px solid #ffc107;margin-left:5px;}
+
+@media(max-width:580px){
+  .g2,.g3,.tg-grid,.crs-opts,.sev-grid,.diff-grid{grid-template-columns:1fr;}
+  .frow{flex-direction:column;}
+  .mod-tag{display:none;}
+}
+
+@media print{
+  .tabs,.btn-row,.tab-btn,.print-btn,.no-print{display:none!important;}
+  body{background:#fff;}
+  .container{padding:10px;}
+  #result{display:block!important;}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-inner">
+    <div class="logo">dA</div>
+    <div class="brand">
+      <h1>drAisyi EduCare</h1>
+      <p>CAR-T Toxicity Management Series</p>
+    </div>
+    <div class="mod-tag">IEC-HS Module</div>
+  </div>
+  <div class="subhdr">
+    <div class="subhdr-inner">⚠️ <strong>IEC-HS Early Warning, Severity & Escalation Assistant</strong> — Immune Effector Cell-associated HLH-like Syndrome pasca CAR-T Cell Therapy</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs no-print">
+  <button class="tab-btn active" data-tab="input">📝 Input Klinis</button>
+  <button class="tab-btn" data-tab="result-tab" id="result-tab-btn" style="display:none;">📊 Hasil Analisis</button>
+</div>
+
+<div class="container">
+
+<!-- TAB INPUT -->
+<div class="tab-panel active" id="tab-input">
+
+<div class="disclaimer">
+  <div class="ic">ℹ️</div>
+  <p><strong>Penting:</strong> Tool ini adalah <strong>early warning & escalation support</strong>, bukan alat diagnosis atau skoring tervalidasi. IEC-HS adalah sindrom hiper-inflamasi pasca immune effector cell therapy yang menyerupai MAS/HLH. Selalu konfirmasi dengan tim senior. Referensi: <strong>ASTCT IEC-HS Consensus 2023</strong> · <strong>EBMT Guidelines</strong>.</p>
+</div>
+
+<!-- SECTION 1: Konteks -->
+<div class="sec">
+  <div class="sec-title"><span>📋</span> Konteks Pasien & CAR-T</div>
+  <div class="g2">
+    <div class="fi">
+      <label>Hari Pasca Infusi CAR-T <span style="color:var(--accent)">*</span></label>
+      <div class="sub">IEC-HS umumnya hari 7–35; puncak hari 7–21</div>
+      <input type="number" id="day-post" placeholder="mis. 12" min="0" max="365">
+    </div>
+    <div class="fi">
+      <label>Peak CRS Grade (ASTCT)</label>
+      <div class="sub">Grade 0–4 (jika belum CRS, pilih 0)</div>
+      <select id="crs-grade">
+        <option value="">— Pilih —</option>
+        <option value="0">Grade 0 (Tidak ada CRS)</option>
+        <option value="1">Grade 1 (Demam ringan)</option>
+        <option value="2">Grade 2 (Hipotensi/hipoksia ringan)</option>
+        <option value="3">Grade 3 (Hipotensi/hipoksia berat)</option>
+        <option value="4">Grade 4 (Life-threatening)</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2: Status CRS -->
+<div class="sec">
+  <div class="sec-title"><span>🔄</span> Status CRS Saat Ini <span style="color:var(--accent)">*</span></div>
+  <div style="font-size:.74rem;color:var(--muted);margin-bottom:10px;">IEC-HS sering tampak sebagai fase inflamasi <em>setelah</em> CRS membaik. Status CRS adalah konteks diagnostik penting.</div>
+  <div class="crs-opts" id="crs-opts">
+    <div class="crs-opt" data-crs="active">🔥 CRS masih aktif / memburuk</div>
+    <div class="crs-opt" data-crs="resolving">📉 CRS sedang membaik / resolving</div>
+    <div class="crs-opt" data-crs="resolved">✅ CRS sudah resolved</div>
+    <div class="crs-opt" data-crs="none">⭕ Tidak pernah ada CRS</div>
+  </div>
+</div>
+
+<!-- SECTION 3: Ferritin (GATE UTAMA) -->
+<div class="sec">
+  <div class="sec-title"><span>🔑</span> Ferritin — Parameter Sentral IEC-HS <span style="color:var(--accent)">*</span></div>
+  <div style="font-size:.74rem;color:var(--muted);margin-bottom:10px;background:#fdf3cd;padding:8px 11px;border-radius:7px;border-left:3px solid var(--amber);">Hiperferritinemia yang cepat meningkat (<em>rapidly rising ferritin</em>) adalah penanda sentral IEC-HS. Masukkan dua titik waktu untuk menilai trend.</div>
+  <div class="frow">
+    <div class="fi">
+      <label>Ferritin Sebelumnya (ng/mL)</label>
+      <div class="sub">Nilai 24–48 jam lalu</div>
+      <input type="number" id="ferritin1" placeholder="mis. 800" min="0">
+    </div>
+    <div class="fi">
+      <label>Ferritin Terkini (ng/mL) <span style="color:var(--accent)">*</span></label>
+      <div class="sub">Nilai terbaru</div>
+      <input type="number" id="ferritin2" placeholder="mis. 5000" min="0">
+    </div>
+    <div id="ft-badge" class="ft-badge" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- SECTION 4: Lab Inti -->
+<div class="sec">
+  <div class="sec-title"><span>🔬</span> Laboratorium Inti</div>
+  <div class="g3">
+    <div class="fi">
+      <label>Fibrinogen (mg/dL) <span style="color:var(--accent)">*</span></label>
+      <div class="sub">Normal 200–400; rendah = sugestif</div>
+      <input type="number" id="fibrinogen" placeholder="mis. 120" min="0">
+    </div>
+    <div class="fi">
+      <label>Trigliserida (mg/dL) <span style="color:var(--accent)">*</span></label>
+      <div class="sub">Threshold ≥265 mg/dL</div>
+      <input type="number" id="trig" placeholder="mis. 300" min="0">
+    </div>
+    <div class="fi">
+      <label>LDH (U/L)</label>
+      <div class="sub">ULN ~250 U/L</div>
+      <input type="number" id="ldh" placeholder="mis. 800" min="0">
+    </div>
+    <div class="fi">
+      <label>AST (U/L) <span style="color:var(--accent)">*</span></label>
+      <div class="sub">ULN ~40 U/L</div>
+      <input type="number" id="ast" placeholder="mis. 200" min="0">
+    </div>
+    <div class="fi">
+      <label>ALT (U/L) <span style="color:var(--accent)">*</span></label>
+      <div class="sub">ULN ~40 U/L</div>
+      <input type="number" id="alt" placeholder="mis. 150" min="0">
+    </div>
+    <div class="fi">
+      <label>Bilirubin Total (mg/dL)</label>
+      <div class="sub">Normal &lt;1 mg/dL</div>
+      <input type="number" id="bili" placeholder="mis. 3.5" step="0.1" min="0">
+    </div>
+    <div class="fi">
+      <label>D-Dimer (µg/mL)</label>
+      <div class="sub">Normal &lt;0.5</div>
+      <input type="number" id="ddimer" placeholder="mis. 5.2" step="0.1" min="0">
+    </div>
+    <div class="fi">
+      <label>Kreatinin (mg/dL)</label>
+      <div class="sub">Sesuai usia/BB</div>
+      <input type="number" id="creat" placeholder="mis. 1.8" step="0.1" min="0">
+    </div>
+    <div class="fi">
+      <label>CRP (mg/dL)</label>
+      <div class="sub">Normal &lt;0.5</div>
+      <input type="number" id="crp" placeholder="mis. 12" step="0.1" min="0">
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 5: CBC -->
+<div class="sec">
+  <div class="sec-title"><span>🩸</span> Complete Blood Count</div>
+  <div class="g3">
+    <div class="fi">
+      <label>Hemoglobin (g/dL)</label>
+      <input type="number" id="hb" placeholder="mis. 7.5" step="0.1" min="0">
+    </div>
+    <div class="fi">
+      <label>ANC (×10³/µL)</label>
+      <div class="sub">Absolut Neutrofil</div>
+      <input type="number" id="anc" placeholder="mis. 0.3" step="0.01" min="0">
+    </div>
+    <div class="fi">
+      <label>Platelet (×10³/µL)</label>
+      <input type="number" id="plt" placeholder="mis. 25" min="0">
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 6: Temuan Klinis -->
+<div class="sec">
+  <div class="sec-title"><span>🩺</span> Temuan Klinis <span style="color:var(--accent)">*</span></div>
+  <div class="tg-grid">
+    <div class="tg" id="t-fever"><div class="cb"></div><div><div class="tl">Demam Persisten / Rekuren</div><div class="ts">≥38°C, tidak jelas sebab infeksi aktif</div></div></div>
+    <div class="tg" id="t-cytopenia"><div class="cb"></div><div><div class="tl">Sitopenia Persisten ≥2 cell lines</div><div class="ts">Tidak membaik setelah nadir, worsening</div></div></div>
+    <div class="tg" id="t-hepsplen"><div class="cb"></div><div><div class="tl">Hepatosplenomegali</div><div class="ts">Konfirmasi klinis atau imaging</div></div></div>
+    <div class="tg" id="t-coag"><div class="cb"></div><div><div class="tl">Koagulopati</div><div class="ts">PT/aPTT memanjang, ↑D-Dimer, DIC</div></div></div>
+    <div class="tg" id="t-bleed"><div class="cb"></div><div><div class="tl">Perdarahan Aktif</div><div class="ts">Perdarahan mukosa, organ, atau multifokus</div></div></div>
+    <div class="tg" id="t-icans"><div class="cb"></div><div><div class="tl">Gejala Neurologis / ICANS</div><div class="ts">Confusion, encephalopathy, aphasia</div></div></div>
+  </div>
+</div>
+
+<!-- SECTION 7: Organ Dysfunction -->
+<div class="sec">
+  <div class="sec-title"><span>🏥</span> Disfungsi Organ</div>
+  <div class="tg-grid">
+    <div class="tg" id="t-vasopr"><div class="cb"></div><div><div class="tl">Vasopressor / Hipotensi Berat</div><div class="ts">Membutuhkan vasoaktif atau MAP &lt;65</div></div></div>
+    <div class="tg" id="t-o2"><div class="cb"></div><div><div class="tl">Kebutuhan Oksigen Tinggi</div><div class="ts">High-flow O₂, NIV, atau ventilasi mekanik</div></div></div>
+    <div class="tg" id="t-aki"><div class="cb"></div><div><div class="tl">AKI / Oliguria</div><div class="ts">Kreatinin ≥2× baseline atau oliguria</div></div></div>
+    <div class="tg" id="t-ms"><div class="cb"></div><div><div class="tl">Penurunan Kesadaran / Ensefalopati</div><div class="ts">GCS menurun bukan karena obat</div></div></div>
+  </div>
+</div>
+
+<!-- SECTION 8: Infeksi workup -->
+<div class="sec">
+  <div class="sec-title"><span>🦠</span> Infection Exclusion (Wajib Evaluasi Paralel)</div>
+  <div class="tg-grid">
+    <div class="tg2" id="t-cult" style="border:1.5px solid var(--border);border-radius:9px;padding:9px 11px;cursor:pointer;display:flex;align-items:flex-start;gap:9px;background:var(--light);user-select:none;" class="tg">
+      <div class="cb"></div><div><div class="tl" style="font-size:.78rem;font-weight:700;">Blood/Urine Culture Sudah Diambil</div><div class="ts" style="font-size:.68rem;color:var(--muted);margin-top:2px;">Sebelum antibiotik bila memungkinkan</div></div>
+    </div>
+    <div class="tg2" id="t-galakt" style="border:1.5px solid var(--border);border-radius:9px;padding:9px 11px;cursor:pointer;display:flex;align-items:flex-start;gap:9px;background:var(--light);user-select:none;" class="tg">
+      <div class="cb"></div><div><div class="tl" style="font-size:.78rem;font-weight:700;">Galaktomanan / Beta-D-Glukan</div><div class="ts" style="font-size:.68rem;color:var(--muted);margin-top:2px;">Skrining IFI</div></div>
+    </div>
+    <div class="tg2" id="t-viral" style="border:1.5px solid var(--border);border-radius:9px;padding:9px 11px;cursor:pointer;display:flex;align-items:flex-start;gap:9px;background:var(--light);user-select:none;" class="tg">
+      <div class="cb"></div><div><div class="tl" style="font-size:.78rem;font-weight:700;">Viral PCR Direncanakan</div><div class="ts" style="font-size:.68rem;color:var(--muted);margin-top:2px;">EBV, CMV, HHV-6, Adenovirus</div></div>
+    </div>
+    <div class="tg2" id="t-abx" style="border:1.5px solid var(--border);border-radius:9px;padding:9px 11px;cursor:pointer;display:flex;align-items:flex-start;gap:9px;background:var(--light);user-select:none;" class="tg">
+      <div class="cb"></div><div><div class="tl" style="font-size:.78rem;font-weight:700;">Antibiotik Broad-Spectrum Sudah Diberikan</div><div class="ts" style="font-size:.68rem;color:var(--muted);margin-top:2px;">Cover gram +/- empiris</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="missing-warn" class="missing-warn">⚠️ <strong>Data Inti Belum Lengkap:</strong> <span id="missing-list"></span>. IEC-HS alert belum dapat dinilai lengkap — pertimbangkan melengkapi parameter yang ditandai bintang (*).</div>
+
+<div class="btn-row">
+  <button class="btn btn-r" id="btn-reset">↺ Reset</button>
+  <button class="btn btn-p" id="btn-analyze">🔍 Analisis IEC-HS</button>
+</div>
+
+</div><!-- end tab-input -->
+
+<!-- TAB RESULT -->
+<div class="tab-panel" id="tab-result-tab">
+<div id="result">
+
+  <!-- PATTERN CARD -->
+  <div id="pat-card" class="pat-card">
+    <div class="pat-hdr">
+      <div id="pat-icon" class="pat-icon"></div>
+      <div>
+        <div id="pat-title" class="pat-title"></div>
+        <div id="pat-sub" class="pat-sub"></div>
+      </div>
+      <div id="pat-badge" class="pat-badge"></div>
+    </div>
+    <div class="validated-note" id="validated-note"></div>
+    <div style="font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;">Kriteria IEC-HS yang Terpenuhi</div>
+    <div class="ctags" id="ctags"></div>
+  </div>
+
+  <!-- SEVERITY -->
+  <div class="sec" id="sev-sec" style="display:none;">
+    <div class="sec-title"><span>🏥</span> Penilaian Disfungsi Organ</div>
+    <div class="sev-grid" id="sev-grid"></div>
+    <div id="icu-alert" style="display:none;"></div>
+  </div>
+
+  <!-- CRS CONTEXT -->
+  <div id="crs-ctx-area"></div>
+
+  <!-- ALERTS -->
+  <div id="alerts-area"></div>
+
+  <!-- DIFFERENTIAL -->
+  <div class="sec">
+    <div class="sec-title"><span>🔎</span> Diagnosis Banding Wajib Dievaluasi Paralel</div>
+    <div class="diff-grid" id="diff-grid"></div>
+  </div>
+
+  <!-- EVAL TABLE -->
+  <div class="sec">
+    <div class="sec-title"><span>📋</span> Template Evaluasi Lanjutan</div>
+    <table class="etable">
+      <thead><tr><th>Pemeriksaan</th><th>Tujuan / Target</th><th>Prioritas</th></tr></thead>
+      <tbody id="eval-body"></tbody>
+    </table>
+    <div class="abox info" style="margin-top:10px;">
+      <div class="ai">📝</div>
+      <div>
+        <h4>Catatan HScore</h4>
+        <p>HScore dapat membantu menilai HLH sekunder, tetapi <strong>tidak tervalidasi khusus untuk IEC-HS pasca CAR-T pediatrik</strong>. Interpretasikan dengan hati-hati dan gunakan sebagai data pelengkap, bukan penentu utama.</p>
+      </div>
+    </div>
+    <div class="abox purple" style="margin-top:8px;">
+      <div class="ai">🦴</div>
+      <div>
+        <h4>BMA/BMB & Hemofagositosis</h4>
+        <p>BMA/BMB dapat dipertimbangkan bila kondisi memungkinkan. Hemofagositosis tidak selalu ditemukan pada awal penyakit dan tidak spesifik. <strong>Terapi tidak boleh tertunda menunggu hasil marrow bila kondisi memburuk.</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- THERAPY LADDER -->
+  <div class="sec">
+    <div class="sec-title"><span>💊</span> Pertimbangan Terapeutik (Sesuai Protokol Center)</div>
+    <div class="abox warn" style="margin-bottom:10px;">
+      <div class="ai">⚠️</div>
+      <div><p>Berikut adalah <strong>therapeutic consideration</strong> berdasarkan literatur terkini, bukan rekomendasi langsung. Semua keputusan terapi harus bersama tim senior dan sesuai protokol institusi.</p></div>
+    </div>
+    <div class="therapy-ladder">
+      <div class="t-step s1"><div class="sn">1️⃣</div><div><h5>Early Concern / Monitoring</h5><p>Monitor ketat, ulang lab 12–24 jam, singkirkan infeksi aktif secara agresif, hindari immunosuppresive sambil menunggu evaluasi.</p></div></div>
+      <div class="t-step s2"><div class="sn">2️⃣</div><div><h5>Moderate Concern — Diskusi Senior + Pertimbangkan Terapi Awal</h5><p>Konsultasi hematologi/onkologi senior. Pertimbangkan <strong>kortikosteroid dosis imunosupresif dan/atau anakinra</strong> sesuai protokol center. Pastikan infeksi aktif dieksklusi atau dicakup.</p></div></div>
+      <div class="t-step s3"><div class="sn">3️⃣</div><div><h5>High Concern / Organ Dysfunction — Eskalasi Segera</h5><p>ICU. Steroid/anakinra segera. Pada kasus <em>refractory/progressive</em>: pertimbangkan <strong>ruxolitinib, emapalumab</strong>, atau <strong>etoposide dosis rendah</strong> — hanya oleh tim ahli dengan pengalaman IEC-HS/HLH.</p></div></div>
+    </div>
+  </div>
+
+  <!-- ACTION PLAN -->
+  <div id="action-area"></div>
+
+  <!-- PRINT SUMMARY -->
+  <div class="print-sum" id="print-sum">
+    <h4>🖨️ Ringkasan Cetak</h4>
+    <div id="print-rows"></div>
+  </div>
+
+  <button class="print-btn" id="btn-print">🖨️ Cetak / Simpan sebagai PDF</button>
+
+</div><!-- end result -->
+</div><!-- end tab-result-tab -->
+
+<div class="footer">
+  <p><span>drAisyi EduCare</span> · CAR-T Toxicity Management Series</p>
+  <p>Referensi: ASTCT IEC-HS Consensus 2023 · EBMT Guidelines · HLH-2004 Criteria · haematologica.org · pmc.ncbi.nlm.nih.gov</p>
+  <p>Hanya untuk keperluan edukasi dan pendukung keputusan klinis — bukan alat diagnosis tervalidasi.</p>
+</div>
+
+</div><!-- container -->
+
+<script>
+(function(){
+
+// ---- TABS ----
+var tabBtns = document.querySelectorAll('.tab-btn');
+tabBtns.forEach(function(b){
+  b.addEventListener('click', function(){
+    var t = b.dataset.tab;
+    tabBtns.forEach(function(x){x.classList.remove('active');});
+    b.classList.add('active');
+    document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});
+    document.getElementById('tab-'+t).classList.add('active');
+  });
+});
+
+// ---- TOGGLES ----
+var tids = ['t-fever','t-cytopenia','t-hepsplen','t-coag','t-bleed','t-icans','t-vasopr','t-o2','t-aki','t-ms'];
+var infids = ['t-cult','t-galakt','t-viral','t-abx'];
+var ts = {};
+[].concat(tids,infids).forEach(function(id){
+  ts[id]=false;
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.addEventListener('click',function(){
+    ts[id]=!ts[id];
+    el.classList.toggle('on',ts[id]);
+  });
+});
+
+// ---- CRS STATUS ----
+var crsStatus = null;
+document.querySelectorAll('.crs-opt').forEach(function(el){
+  el.addEventListener('click',function(){
+    document.querySelectorAll('.crs-opt').forEach(function(x){x.classList.remove('sel');});
+    el.classList.add('sel');
+    crsStatus = el.dataset.crs;
+  });
+});
+
+// ---- FERRITIN TREND BADGE ----
+function updateFtBadge(){
+  var f1=parseFloat(document.getElementById('ferritin1').value)||0;
+  var f2=parseFloat(document.getElementById('ferritin2').value)||0;
+  var b=document.getElementById('ft-badge');
+  if(f2>0){
+    b.style.display='block';
+    if(f2>=10000){b.style.background='#fdecea';b.style.color='#c0392b';b.textContent='🔴 '+f2.toLocaleString()+' ng/mL — Very High';}
+    else if(f2>=2000){b.style.background='#fff8e1';b.style.color='#7d5a00';b.textContent='🟡 '+f2.toLocaleString()+' ng/mL — Elevated';}
+    else if(f2>=500){b.style.background='#fdf3cd';b.style.color='#856404';b.textContent='⚠️ '+f2.toLocaleString()+' ng/mL';}
+    else{b.style.background='#f0fdf4';b.style.color='#27ae60';b.textContent='✓ '+f2+' ng/mL — Low concern';}
+    if(f1>0&&f2>0){
+      var fold=(f2/f1).toFixed(1);
+      b.textContent+=' ('+fold+'× dari sebelumnya)';
+    }
+  } else { b.style.display='none'; }
+}
+document.getElementById('ferritin1').addEventListener('input',updateFtBadge);
+document.getElementById('ferritin2').addEventListener('input',updateFtBadge);
+
+// ---- RESET ----
+document.getElementById('btn-reset').addEventListener('click',function(){
+  ['ferritin1','ferritin2','fibrinogen','trig','ldh','ast','alt','bili','ddimer','creat','crp','hb','anc','plt','day-post'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('crs-grade').value='';
+  document.querySelectorAll('.crs-opt').forEach(function(x){x.classList.remove('sel');});
+  crsStatus=null;
+  [].concat(tids,infids).forEach(function(id){
+    ts[id]=false;
+    var el=document.getElementById(id);
+    if(el){el.classList.remove('on');el.classList.remove('on2');}
+  });
+  document.getElementById('ft-badge').style.display='none';
+  document.getElementById('result').style.display='none';
+  document.getElementById('missing-warn').style.display='none';
+  document.getElementById('result-tab-btn').style.display='none';
+  // switch back to input tab
+  tabBtns.forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});
+  tabBtns[0].classList.add('active');
+  document.getElementById('tab-input').classList.add('active');
+});
+
+// ---- ANALYZE ----
+document.getElementById('btn-analyze').addEventListener('click', analyze);
+document.getElementById('btn-print').addEventListener('click', function(){ window.print(); });
+
+function gv(id){ return parseFloat(document.getElementById(id).value); }
+function gvs(id){ var v=document.getElementById(id).value; return v===''?null:parseFloat(v); }
+
+function analyze(){
+  var f1=gvs('ferritin1')||0;
+  var f2=gvs('ferritin2')||0;
+  var fibri=gvs('fibrinogen')||0;
+  var trig=gvs('trig')||0;
+  var ldh=gvs('ldh')||0;
+  var ast=gvs('ast')||0;
+  var alt=gvs('alt')||0;
+  var bili=gvs('bili')||0;
+  var ddimer=gvs('ddimer')||0;
+  var creat=gvs('creat')||0;
+  var crp=gvs('crp')||0;
+  var hb=gvs('hb')||0;
+  var anc=gvs('anc')||0;
+  var plt=gvs('plt')||0;
+  var dayRaw=document.getElementById('day-post').value;
+  var dayPost=dayRaw===''?null:parseFloat(dayRaw);
+  var crsGrade=parseInt(document.getElementById('crs-grade').value)||0;
+
+  // MISSING CHECK
+  var missing=[];
+  if(!f2) missing.push('Ferritin terkini');
+  if(!fibri) missing.push('Fibrinogen');
+  if(!ast&&!alt) missing.push('AST/ALT');
+  if(!ts['t-cytopenia']&&!hb&&!anc&&!plt) missing.push('Data sitopenia (CBC atau toggle)');
+  if(dayPost===null) missing.push('Hari pasca CAR-T');
+  if(!crsStatus) missing.push('Status CRS saat ini');
+
+  var mw=document.getElementById('missing-warn');
+  if(missing.length){
+    mw.style.display='block';
+    document.getElementById('missing-list').textContent=missing.join(', ');
+  } else { mw.style.display='none'; }
+
+  // ----- FERRITIN GATE -----
+  var ferritinGate='none'; // none | low | moderate | high | critical
+  var ferritinRising=false;
+  if(f2>=10000){ ferritinGate='critical'; }
+  else if(f2>=2000){ ferritinGate='high'; }
+  else if(f2>=500){ ferritinGate='moderate'; }
+  else if(f2>0){ ferritinGate='low'; }
+  if(f1>0&&f2>0&&f2>=f1*2) ferritinRising=true;
+
+  // ----- CRITERIA -----
+  var met=[], notMet=[];
+  var critScore=0;
+
+  // Ferritin
+  if(ferritinGate==='critical'){ critScore+=3; met.push('Ferritin ≥10.000 ng/mL'); }
+  else if(ferritinGate==='high'){ critScore+=2; met.push('Ferritin ≥2.000 ng/mL'); }
+  else if(ferritinGate==='moderate'){ critScore+=1; met.push('Ferritin ≥500 ng/mL'); }
+  else if(f2>0){ notMet.push('Ferritin <500 ng/mL'); }
+  else { notMet.push('Ferritin belum diisi'); }
+
+  if(ferritinRising){ critScore+=2; met.push('Ferritin rapidly rising ≥2× (trend)'); }
+  else if(f1>0&&f2>0){ notMet.push('Ferritin trend <2×'); }
+
+  // Fibrinogen
+  if(fibri>0&&fibri<150){ critScore+=2; met.push('Fibrinogen <150 mg/dL'); }
+  else if(fibri>0&&fibri<200){ critScore+=1; met.push('Fibrinogen 150–200 mg/dL'); }
+  else if(fibri>0){ notMet.push('Fibrinogen ≥200 mg/dL'); }
+
+  // Trigliserida
+  if(trig>=265){ critScore+=2; met.push('Trigliserida ≥265 mg/dL'); }
+  else if(trig>=177){ critScore+=1; met.push('Trigliserida 177–264 mg/dL'); }
+  else if(trig>0){ notMet.push('Trigliserida <177 mg/dL'); }
+
+  // AST/ALT
+  var trans=Math.max(ast,alt);
+  if(trans>=5*40){ critScore+=2; met.push('Transaminase ≥5× ULN'); }
+  else if(trans>=2*40){ critScore+=1; met.push('Transaminase 2–5× ULN'); }
+  else if(trans>0){ notMet.push('Transaminase <2× ULN'); }
+
+  // Klinis
+  if(ts['t-cytopenia']){ critScore+=1; met.push('Sitopenia persisten ≥2 cell lines'); } else notMet.push('Sitopenia (-)');
+  if(ts['t-fever']){ critScore+=1; met.push('Demam persisten tanpa infeksi jelas'); } else notMet.push('Demam persisten (-)');
+  if(ts['t-hepsplen']){ critScore+=1; met.push('Hepatosplenomegali'); } else notMet.push('Hepatosplenomegali (-)');
+  if(ts['t-coag']){ critScore+=1; met.push('Koagulopati'); } else notMet.push('Koagulopati (-)');
+
+  // CRS context
+  if(crsStatus==='resolved'||crsStatus==='resolving'){ critScore+=1; met.push('Onset saat CRS resolving/resolved'); }
+
+  // LDH
+  if(ldh>=2*250){ critScore+=1; met.push('LDH ≥2× ULN'); }
+
+  // ----- ORGAN DYSFUNCTION -----
+  var orgDys=[];
+  if(ts['t-vasopr']) orgDys.push('Vasopressor/hipotensi berat');
+  if(ts['t-o2']) orgDys.push('Kebutuhan O₂ tinggi / ventilasi');
+  if(ts['t-aki']||creat>=2) orgDys.push('AKI/oliguria');
+  if(ts['t-ms']||ts['t-icans']) orgDys.push('Ensefalopati/ICANS');
+  if(ts['t-bleed']) orgDys.push('Perdarahan aktif');
+  var severeOrgan = orgDys.length >= 2;
+
+  // ----- LEVEL -----
+  var level;
+  if(ferritinGate==='none'||ferritinGate==='low'){
+    level='low';
+  } else if(critScore>=9||severeOrgan||(ferritinGate==='critical'&&critScore>=5)){
+    level='high';
+  } else if(critScore>=5||ferritinGate==='high'||(ferritinRising&&critScore>=3)){
+    level='moderate';
+  } else {
+    level='low';
+  }
+  if(missing.length>=3) level=level==='high'?'high':'moderate'; // incomplete data penalizes down
+
+  // ----- RENDER -----
+  var card=document.getElementById('pat-card');
+  var icon,title,sub,badge,bgcls,badgecls;
+  if(level==='high'){
+    icon='🔴'; title='IEC-HS Alert Pattern: HIGH CONCERN';
+    sub='Pola multipel kriteria terpenuhi. Eskalasi segera diperlukan — diskusi senior, evaluasi ICU, dan pertimbangkan terapi imunosupresif bersama tim.';
+    bgcls='pat-high'; badgecls='bh'; badge='High Concern';
+  } else if(level==='moderate'){
+    icon='🟡'; title='IEC-HS Alert Pattern: MODERATE CONCERN';
+    sub='Beberapa kriteria terpenuhi. Eskalasi evaluasi, diskusi tim senior, singkirkan infeksi aktif, dan ulang laboratorium dalam 12–24 jam.';
+    bgcls='pat-mod'; badgecls='bm'; badge='Moderate Concern';
+  } else {
+    icon='🟢'; title='IEC-HS Alert Pattern: LOW CONCERN';
+    sub='Parameter saat ini tidak mendukung IEC-HS berat. Tetap monitor ketat dan re-evaluasi bila ada perubahan klinis atau laboratorium.';
+    bgcls='pat-low'; badgecls='bl'; badge='Low Concern';
+  }
+  card.className='pat-card '+bgcls;
+  document.getElementById('pat-icon').textContent=icon;
+  document.getElementById('pat-title').textContent=title;
+  document.getElementById('pat-sub').textContent=sub;
+  var pb=document.getElementById('pat-badge');
+  pb.className='pat-badge '+badgecls; pb.textContent=badge;
+
+  document.getElementById('validated-note').innerHTML='⚠️ <strong>Catatan:</strong> Pola ini bukan skor diagnosis tervalidasi. Digunakan untuk memicu evaluasi dan eskalasi klinis berdasarkan pola IEC-HS (ASTCT 2023). Interpretasi selalu bersama tim klinisi senior.';
+
+  // Criteria tags
+  var ct=document.getElementById('ctags'); ct.innerHTML='';
+  met.forEach(function(c){
+    var t=document.createElement('span'); t.className='ctag met'; t.textContent='✓ '+c; ct.appendChild(t);
+  });
+  notMet.forEach(function(c){
+    var t=document.createElement('span'); t.className='ctag'; t.textContent='– '+c; ct.appendChild(t);
+  });
+  if(missing.length){
+    missing.forEach(function(c){
+      var t=document.createElement('span'); t.className='ctag warn'; t.textContent='? '+c+' (belum diisi)'; ct.appendChild(t);
+    });
+  }
+
+  // SEVERITY
+  var ss=document.getElementById('sev-sec');
+  if(orgDys.length>0||hb>0||plt>0||creat>0){
+    ss.style.display='block';
+    var sg=document.getElementById('sev-grid'); sg.innerHTML='';
+    var sItems=[
+      {label:'Hemodinamik',val:ts['t-vasopr']?'Vasopressor diperlukan':'Stabil',cls:ts['t-vasopr']?'crit':'ok'},
+      {label:'Respirasi',val:ts['t-o2']?'Butuh O₂/ventilasi':'Tidak distres',cls:ts['t-o2']?'crit':'ok'},
+      {label:'Renal',val:creat>=2||ts['t-aki']?'AKI/oliguria':'Tidak ada data AKI',cls:creat>=2||ts['t-aki']?'warn':'na'},
+      {label:'Neurologis',val:(ts['t-ms']||ts['t-icans'])?'Ensefalopati/ICANS':'Tidak ada data',cls:(ts['t-ms']||ts['t-icans'])?'crit':'na'},
+      {label:'Hemoglobin',val:hb>0?(hb+'g/dL'+(hb<8?' ⬇':'')):'-',cls:hb>0&&hb<8?'warn':hb>0?'ok':'na'},
+      {label:'Platelet',val:plt>0?(plt+'×10³ '+(plt<20?' ⬇⬇':plt<50?' ⬇':'')):'-',cls:plt>0&&plt<20?'crit':plt>0&&plt<50?'warn':plt>0?'ok':'na'},
+    ];
+    sItems.forEach(function(si){
+      sg.innerHTML+='<div class="sev-item '+si.cls+'"><div class="sev-label">'+si.label+'</div><div class="sev-val">'+si.val+'</div></div>';
+    });
+    var ia=document.getElementById('icu-alert');
+    if(severeOrgan){
+      ia.style.display='block';
+      ia.innerHTML='<div class="abox urg" style="margin-top:10px;"><div class="ai">🚨</div><div><h4>Disfungsi Organ Multipel Terdeteksi</h4><p>≥2 organ terdampak. Pertimbangkan <strong>transfer / eskalasi ICU segera</strong>. Diskusi tim senior tanpa tunda.</p></div></div>';
+    } else { ia.style.display='none'; }
+  } else { ss.style.display='none'; }
+
+  // CRS CONTEXT
+  var cca=document.getElementById('crs-ctx-area'); cca.innerHTML='';
+  if(crsStatus==='active'){
+    cca.innerHTML='<div class="crs-ctx still"><h4>⚠️ CRS Masih Aktif / Memburuk</h4><p>Sulit membedakan CRS berat yang sedang berlangsung dengan IEC-HS awal. <strong>Treat CRS sesuai protokol + monitor parameter IEC-HS secara serial.</strong> Bila ferritin sangat tinggi, fibrinogen turun, dan sitopenia memburuk di luar konteks CRS → pertimbangkan overlap IEC-HS.</p></div>';
+  } else if(crsStatus==='resolving'){
+    cca.innerHTML='<div class="crs-ctx resolv"><h4>🔺 CRS Sedang Membaik / Resolving — Waspadai IEC-HS</h4><p>Fase resolving CRS adalah <strong>window risiko tinggi IEC-HS</strong>. Ferritin yang terus naik, sitopenia baru/memburuk, atau fibrinogen yang turun di fase ini merupakan red flag kuat. Eskalasi evaluasi segera.</p></div>';
+  } else if(crsStatus==='resolved'){
+    cca.innerHTML='<div class="crs-ctx done"><h4>🔵 CRS Sudah Resolved — Gejala Baru Sangat Sugestif IEC-HS</h4><p>Onset/progresi sitopenia, hiperferritinemia, hipofibrinogenemia, atau transaminitis setelah CRS teratasi merupakan <strong>pola diagnostik kuat IEC-HS</strong>. Eskalasi evaluasi dan diskusi senior segera.</p></div>';
+  } else if(crsStatus==='none'){
+    cca.innerHTML='<div class="crs-ctx none"><h4>⭕ Tidak Pernah ada CRS</h4><p>IEC-HS tanpa CRS sebelumnya jarang namun bisa terjadi. Pertimbangkan diagnosis alternatif lebih kuat: infeksi, HLH sekunder non-IEC, VOD, atau relaps penyakit.</p></div>';
+  }
+
+  // ALERTS
+  var aa=document.getElementById('alerts-area'); aa.innerHTML='';
+  if(level==='high'){
+    aa.innerHTML+='<div class="abox urg"><div class="ai">🚨</div><div><h4>ALERT: Eskalasi Segera Diperlukan</h4><ul>'+
+      '<li>Diskusi <strong>SEGERA</strong> dengan dokter senior / konsultan dalam shift ini</li>'+
+      '<li>Evaluasi kebutuhan <strong>ICU Pediatri</strong></li>'+
+      '<li>Konsultasi <strong>Hematologi</strong> — kemungkinan HLH sekunder / IEC-HS</li>'+
+      '<li>Singkirkan infeksi aktif secara agresif (kultur, PCR, galaktomanan)</li>'+
+      '<li>Pertimbangkan <strong>steroid/anakinra</strong> sesuai protokol center bersama tim senior</li>'+
+      '</ul></div></div>';
+  } else if(level==='moderate'){
+    aa.innerHTML+='<div class="abox warn"><div class="ai">⚠️</div><div><h4>Eskalasi Evaluasi — Diskusi Senior</h4><ul>'+
+      '<li>Diskusi dengan dokter senior dalam <strong>shift ini</strong></li>'+
+      '<li>Konsultasi <strong>Infectious Disease</strong> untuk menyingkirkan infeksi aktif</li>'+
+      '<li>Ulang ferritin, CBC, fibrinogen, transaminase dalam <strong>12–24 jam</strong></li>'+
+      '<li>Monitor tanda vital dan status organ ketat</li>'+
+      '</ul></div></div>';
+  } else {
+    aa.innerHTML+='<div class="abox info"><div class="ai">ℹ️</div><div><h4>Monitor Rutin — Tetap Waspada</h4><ul>'+
+      '<li>Lanjutkan monitoring post CAR-T sesuai protokol</li>'+
+      '<li>Ulang ferritin, CBC, fungsi hati dalam <strong>48–72 jam</strong></li>'+
+      '<li>Re-evaluasi bila ada perubahan klinis atau laboratorium yang bermakna</li>'+
+      '</ul></div></div>';
+  }
+  if(dayPost!==null&&(dayPost<7||dayPost>35)){
+    aa.innerHTML+='<div class="abox info"><div class="ai">📅</div><div><h4>Catatan Waktu — Hari ke-'+dayPost+'</h4><p>IEC-HS umumnya muncul antara hari <strong>7–21 pasca infusi</strong> (bisa hingga hari 35). '+
+      (dayPost<7?'Onset sangat awal — pastikan bukan CRS yang sedang berkembang atau TLS.':'Onset di luar window tipikal — pertimbangkan diagnosis alternatif lebih kuat.')+
+      '</p></div></div>';
+  }
+  if(crsGrade>=3){
+    aa.innerHTML+='<div class="abox warn"><div class="ai">💥</div><div><h4>Riwayat CRS Grade Berat (Grade '+crsGrade+')</h4><p>CRS grade ≥3 adalah <strong>faktor risiko IEC-HS</strong>. Kewaspadaan lebih tinggi diperlukan meskipun pola saat ini low concern.</p></div></div>';
+  }
+
+  // DIFFERENTIAL
+  var diffs=[
+    {label:'Sepsis / Infeksi Bakter',prior:true},{label:'Invasive Fungal Infection',prior:true},
+    {label:'CMV / EBV / HHV-6 / Adenovirus',prior:true},{label:'CRS ongoing (overlap)',prior:level==='high'},
+    {label:'HLH Sekunder non-IEC',prior:false},{label:'Tumor Lysis Syndrome',prior:false},
+    {label:'Relaps / Progresi Penyakit',prior:false},{label:'VOD / SOS Hati',prior:false},
+    {label:'DIC Primer / Sepsis-DIC',prior:false},{label:'TMA (Thrombotic Microangiopathy)',prior:false},
+    {label:'Drug-induced Liver Injury',prior:false},{label:'ICANS / Inflammatory Overlap',prior:false},
+    {label:'Transfusion Reaction',prior:false},{label:'Adrenal Insufficiency',prior:false},
+  ];
+  var dg=document.getElementById('diff-grid'); dg.innerHTML='';
+  diffs.forEach(function(d){
+    dg.innerHTML+='<div class="diff-item'+(d.prior?' prior':'')+'"><span>'+(d.prior?'⚠️':'○')+'</span>'+d.label+'</div>';
+  });
+
+  // EVAL TABLE
+  var eb=document.getElementById('eval-body'); eb.innerHTML='';
+  var erows=[
+    ['Ferritin serial 24–48 jam','Trend rapidly rising, threshold 2.000/10.000',level==='high'?'ps':'pu'],
+    ['CBC lengkap + morfologi','Sitopenia ≥2 cell lines, morfologi blast?',level==='high'?'ps':'pu'],
+    ['Fibrinogen serial','Tren turun adalah red flag',level==='high'?'ps':'pu'],
+    ['PT/aPTT/INR serial','Koagulopati, DIC',level==='high'?'ps':'pu'],
+    ['D-Dimer','Konsisten dengan DIC?',level!=='low'?'pu':'pr'],
+    ['AST, ALT, GGT, Bilirubin','Hepatotoksisitas inflamasi',level!=='low'?'pu':'pr'],
+    ['LDH','Marker destruksi sel',level!=='low'?'pu':'pr'],
+    ['Kreatinin/eGFR, Albumin','Fungsi renal dan status nutrisi','pu'],
+    ['Laktat','Oksigenasi jaringan, shock?',level==='high'?'ps':'pu'],
+    ['CRP serial','Marker inflamasi sistemik','pu'],
+    ['sCD25 / IL-2Rα','Biomarker HLH/IEC-HS; >2.400 U/mL sugestif — bila tersedia',level==='high'?'pu':'pr'],
+    ['sCD163 / CXCL9 / IFN-γ','Biomarker riset; bila tersedia di center','pr'],
+    ['Blood + urine culture','Sebelum eskalasi antibiotik',level==='high'?'ps':'pu'],
+    ['Galaktomanan + Beta-D-Glukan','Skrining invasive fungal infection',level!=='low'?'pu':'pr'],
+    ['EBV, CMV, HHV-6, Adenovirus PCR','Virus sebagai trigger HLH sekunder',level!=='low'?'pu':'pr'],
+    ['HScore kalkulasi','Membantu nilai HLH sekunder — tidak tervalidasi khusus IEC-HS',level!=='low'?'pu':'pr'],
+    ['USG/CT Abdomen','Konfirmasi hepatosplenomegali, asites','pr'],
+    ['Echokardiografi (bila hemodinamik terganggu)','Disfungsi miokard terkait inflamasi',ts['t-vasopr']?'ps':'pr'],
+    ['BMA/BMB — bila kondisi memungkinkan','Mencari hemofagositosis; jangan tunda terapi menunggu hasil',level==='high'?'pu':'pr'],
+    ['Konsultasi Hematologi','Penilaian HLH/IEC-HS dan rencana terapi',level!=='low'?'ps':'pu'],
+    ['Konsultasi Infectious Disease','Eksklusi infeksi aktif',level!=='low'?'pu':'pr'],
+  ];
+  erows.forEach(function(r){
+    var cls=r[2]==='ps'?'ps':r[2]==='pu'?'pu':'pr';
+    var lbl=r[2]==='ps'?'STAT':r[2]==='pu'?'Urgent':'Rutin';
+    eb.innerHTML+='<tr><td><strong>'+r[0]+'</strong></td><td>'+r[1]+'</td><td><span class="ptag '+cls+'">'+lbl+'</span></td></tr>';
+  });
+
+  // ACTION PLAN
+  var aca=document.getElementById('action-area'); aca.innerHTML='';
+  var now=new Date(); var nowStr=now.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})+' '+now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  aca.innerHTML='<div class="sec"><div class="sec-title"><span>⏱️</span> Rencana Tindakan 0–24 Jam</div>'+
+    '<div class="abox '+(level==='high'?'urg':level==='moderate'?'warn':'info')+'"><div class="ai">'+(level==='high'?'🚨':level==='moderate'?'⚠️':'ℹ️')+'</div><div>'+
+    (level==='high'?'<h4>0–2 Jam: Diskusi senior segera. Eskalasi ke ICU bila organ disfungsi. Kultur + PCR. Evaluasi indikasi terapi imunosupresif bersama tim. Ulang lab hari ini.</h4>':
+    level==='moderate'?'<h4>0–6 Jam: Diskusi senior. Lengkapi workup infeksi. Ulang ferritin + CBC + fibrinogen. Siapkan eskalasi bila perburukan. Nilai ulang dalam 12–24 jam.</h4>':
+    '<h4>24–72 Jam: Monitor rutin post-CAR-T. Ulang ferritin, CBC, fungsi hati. Re-evaluasi bila ada perubahan klinis.</h4>')+
+    '<p style="font-size:.72rem;margin-top:6px;color:var(--muted);">Assessment waktu: '+nowStr+' · Hari ke-'+(dayPost!==null?dayPost:'?')+' pasca CAR-T</p></div></div></div>';
+
+  // PRINT SUMMARY
+  var pr=document.getElementById('print-rows'); pr.innerHTML='';
+  var prows=[
+    ['Waktu Assessment',nowStr],
+    ['Hari Pasca CAR-T',dayPost!==null?('Hari ke-'+dayPost):'Tidak diisi'],
+    ['Status CRS',crsStatus||'Tidak dipilih'],
+    ['Peak CRS Grade',crsGrade||'Tidak diisi'],
+    ['Ferritin Terkini',f2?f2+' ng/mL':'Tidak diisi'],
+    ['Ferritin Trend',f1&&f2?(f2/f1).toFixed(1)+'× dari sebelumnya':'Tidak ada data trend'],
+    ['Fibrinogen',fibri?fibri+' mg/dL':'Tidak diisi'],
+    ['Trigliserida',trig?trig+' mg/dL':'Tidak diisi'],
+    ['AST/ALT',ast||alt?ast+'/'+alt+' U/L':'Tidak diisi'],
+    ['Sitopenia',ts['t-cytopenia']?'Ya':'Tidak'],
+    ['Demam Persisten',ts['t-fever']?'Ya':'Tidak'],
+    ['Hepatosplenomegali',ts['t-hepsplen']?'Ya':'Tidak'],
+    ['Koagulopati',ts['t-coag']?'Ya':'Tidak'],
+    ['Organ Disfungsi',orgDys.length?orgDys.join(', '):'Tidak terdeteksi'],
+    ['IEC-HS Alert Pattern',badge],
+    ['Kriteria Terpenuhi',met.length+' kriteria'],
+    ['Rekomendasi',level==='high'?'Eskalasi segera + diskusi senior':level==='moderate'?'Diskusi senior + re-evaluasi 12–24 jam':'Monitor rutin + re-evaluasi 48–72 jam'],
+  ];
+  prows.forEach(function(r){
+    pr.innerHTML+='<div class="ps-row"><div class="ps-key">'+r[0]+'</div><div class="ps-val">'+r[1]+'</div></div>';
+  });
+
+  // Show result tab
+  document.getElementById('result-tab-btn').style.display='';
+  document.getElementById('result').style.display='block';
+  // Switch to result tab
+  tabBtns.forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('result-tab-btn').classList.add('active');
+  document.getElementById('tab-result-tab').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+})();
+</script>
+</body>
+</html>

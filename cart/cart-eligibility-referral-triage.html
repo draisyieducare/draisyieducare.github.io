@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAR-T Eligibility & Referral Triage v2.1 – drAisyi EduCare</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#f0f9ff 0%,#e0f2fe 40%,#f0fdf4 100%);min-height:100vh;color:#1e293b}
+.header{background:linear-gradient(135deg,#0ea5e9,#06b6d4,#6366f1);padding:18px 26px;display:flex;align-items:center;gap:14px;box-shadow:0 4px 18px rgba(6,182,212,0.2)}
+.hicon{width:46px;height:46px;background:rgba(255,255,255,0.2);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.header h1{font-size:1.1rem;font-weight:800;color:#fff}
+.header p{font-size:0.73rem;color:#bae6fd;margin-top:2px}
+.badge{background:rgba(255,255,255,0.22);color:#fff;font-size:0.6rem;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:7px;vertical-align:middle;letter-spacing:.5px}
+.ver{font-size:0.6rem;opacity:.7;margin-left:4px}
+.container{max-width:860px;margin:0 auto;padding:20px 14px 40px}
+.prog-wrap{display:flex;justify-content:space-between;margin-bottom:5px}
+.prog-label{font-size:.71rem;color:#64748b;font-weight:600}
+.prog-pct{font-size:.71rem;color:#0ea5e9;font-weight:700}
+.progress-bar{background:#e0f2fe;border-radius:10px;height:7px;margin-bottom:16px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#38bdf8,#06b6d4,#818cf8);border-radius:10px;transition:width .4s}
+.section{background:#fff;border-radius:15px;padding:18px 20px;margin-bottom:13px;box-shadow:0 2px 10px rgba(14,165,233,.07);border:1px solid #e0f2fe}
+.sec-title{font-size:.83rem;font-weight:800;color:#0369a1;margin-bottom:13px;display:flex;align-items:center;gap:7px;padding-bottom:9px;border-bottom:1px solid #f0f9ff}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+@media(max-width:560px){.form-grid{grid-template-columns:1fr}}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:.73rem;color:#475569;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.fg select,.fg input{background:#f8fafc;border:1.5px solid #bae6fd;border-radius:8px;padding:8px 11px;color:#1e293b;font-size:.82rem;outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none}
+.fg select:focus,.fg input:focus{border-color:#06b6d4;box-shadow:0 0 0 3px rgba(6,182,212,.1)}
+.fg select.err{border-color:#f87171!important}
+.fg .note{font-size:.67rem;color:#94a3b8;margin-top:2px}
+.fg.req label::after{content:' *';color:#e11d48;font-size:.68rem}
+.cb-group{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.cb-item{display:flex;align-items:center;gap:5px;background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:20px;padding:5px 10px;cursor:pointer;transition:all .2s}
+.cb-item:hover{background:#e0f2fe;border-color:#06b6d4}
+.cb-item input{accent-color:#06b6d4;width:13px;height:13px}
+.cb-item span{font-size:.73rem;font-weight:600;color:#0369a1}
+.antigen-dynamic{display:none;margin-top:11px;padding:13px;background:#f0fdf4;border-radius:10px;border:1px solid #bbf7d0}
+.antigen-dynamic h4{font-size:.76rem;font-weight:700;color:#166534;margin-bottom:9px}
+.warn-box{display:none;margin-top:9px;padding:9px 13px;background:#fef2f2;border-radius:8px;border-left:4px solid #f87171;font-size:.78rem;color:#b91c1c;font-weight:600}
+.info-box{display:none;margin-top:9px;padding:9px 13px;background:#fffbeb;border-radius:8px;border-left:4px solid #fbbf24;font-size:.78rem;color:#92400e}
+.washout-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;margin-top:8px}
+.washout-item{background:#f8fafc;border:1.5px solid #bae6fd;border-radius:9px;padding:9px 11px}
+.washout-item label{font-size:.7rem;color:#475569;font-weight:700;display:block;margin-bottom:4px}
+.washout-item select{background:#fff;border:1px solid #bae6fd;border-radius:6px;padding:5px 8px;font-size:.75rem;color:#1e293b;width:100%;outline:none}
+.btn-assess{width:100%;padding:14px;background:linear-gradient(135deg,#0ea5e9,#06b6d4);border:none;border-radius:11px;color:#fff;font-size:.93rem;font-weight:800;cursor:pointer;margin-top:10px;box-shadow:0 4px 14px rgba(6,182,212,.28);transition:all .2s;letter-spacing:.3px}
+.btn-assess:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(6,182,212,.38)}
+.btn-row{display:flex;gap:9px;margin-top:8px;flex-wrap:wrap}
+.btn-sec{background:#f1f5f9;border:1.5px solid #cbd5e1;border-radius:8px;color:#64748b;padding:8px 16px;font-size:.78rem;cursor:pointer;font-weight:600;transition:all .2s}
+.btn-sec:hover{background:#e2e8f0;color:#334155}
+.btn-print{background:linear-gradient(135deg,#6366f1,#818cf8);border:none;border-radius:8px;color:#fff;padding:8px 16px;font-size:.78rem;cursor:pointer;font-weight:700;transition:all .2s}
+.btn-print:hover{opacity:.88}
+#result{display:none;margin-top:18px}
+.verdict{border-radius:15px;padding:20px 24px;margin-bottom:14px;text-align:center;box-shadow:0 4px 18px rgba(0,0,0,.07)}
+.verdict.suitable{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:2px solid #4ade80}
+.verdict.optimize{background:linear-gradient(135deg,#fffbeb,#fef3c7);border:2px solid #fbbf24}
+.verdict.hold{background:linear-gradient(135deg,#fff7ed,#ffedd5);border:2px solid #fb923c}
+.verdict.notfit{background:linear-gradient(135deg,#fef2f2,#fee2e2);border:2px solid #f87171}
+.verdict.research{background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:2px solid #a78bfa}
+.verdict.incomplete{background:linear-gradient(135deg,#f8fafc,#f1f5f9);border:2px dashed #94a3b8}
+.v-icon{font-size:2.2rem;margin-bottom:7px}
+.v-title{font-size:1.1rem;font-weight:900;margin-bottom:5px}
+.v-subtitle{font-size:.78rem;font-weight:700;margin-bottom:4px;opacity:.8}
+.verdict.suitable .v-title{color:#16a34a}
+.verdict.optimize .v-title{color:#d97706}
+.verdict.hold .v-title{color:#ea580c}
+.verdict.notfit .v-title{color:#dc2626}
+.verdict.research .v-title{color:#7c3aed}
+.verdict.incomplete .v-title{color:#64748b}
+.v-sub{font-size:.8rem;color:#475569;line-height:1.5;margin-top:4px}
+.v-ts{font-size:.67rem;color:#94a3b8;margin-top:8px}
+.rc{background:#fff;border-radius:11px;padding:14px 16px;margin-bottom:11px;border-left:4px solid;box-shadow:0 2px 7px rgba(0,0,0,.05)}
+.rc.red{border-color:#f87171}.rc.amber{border-color:#fbbf24}.rc.blue{border-color:#60a5fa}.rc.green{border-color:#4ade80}.rc.purple{border-color:#a78bfa}.rc.slate{border-color:#94a3b8}
+.rc h3{font-size:.8rem;font-weight:800;margin-bottom:9px;display:flex;align-items:center;gap:5px;color:#1e293b}
+.rc ul{list-style:none;padding:0}
+.rc ul li{font-size:.78rem;color:#334155;padding:4px 0;border-bottom:1px solid #f1f5f9;display:flex;gap:6px;align-items:flex-start;line-height:1.45}
+.rc ul li:last-child{border-bottom:none}
+.dot{width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.dr{background:#f87171}.da{background:#fbbf24}.db{background:#60a5fa}.dg{background:#4ade80}.dp{background:#a78bfa}.ds{background:#94a3b8}
+.tag{display:inline-block;font-size:.61rem;font-weight:800;padding:1px 6px;border-radius:8px;margin-left:5px;vertical-align:middle}
+.tag-abs{background:#fee2e2;color:#b91c1c}.tag-hold{background:#ffedd5;color:#c2410c}.tag-rel{background:#fef3c7;color:#92400e}.tag-prod{background:#ede9fe;color:#6d28d9}
+.rec-box{background:linear-gradient(135deg,#f0f9ff,#f5f3ff);border-radius:13px;padding:16px 18px;border:1.5px solid #bae6fd;margin-bottom:11px}
+.rec-box h3{color:#0369a1;font-size:.83rem;font-weight:800;margin-bottom:10px}
+.rec-item{background:#fff;border-radius:7px;padding:9px 13px;margin-bottom:7px;font-size:.78rem;color:#334155;display:flex;align-items:flex-start;gap:8px;box-shadow:0 1px 4px rgba(0,0,0,.04);line-height:1.45}
+.rec-item .ri{font-size:1rem;flex-shrink:0;margin-top:1px}
+.icu-box{border-radius:11px;padding:13px 16px;margin-bottom:11px;display:flex;align-items:flex-start;gap:11px;font-size:.81rem;font-weight:700}
+.icu-low{background:#f0fdf4;border:1.5px solid #4ade80;color:#166534}
+.icu-med{background:#fffbeb;border:1.5px solid #fbbf24;color:#92400e}
+.icu-high{background:#fef2f2;border:1.5px solid #f87171;color:#b91c1c}
+.icu-ic{font-size:1.4rem;flex-shrink:0}
+.ldepl-gate{background:#fef2f2;border:1.5px solid #f87171;border-radius:11px;padding:13px 16px;margin-bottom:11px}
+.ldepl-gate h3{font-size:.8rem;font-weight:800;color:#b91c1c;margin-bottom:8px}
+.ldepl-gate ul{list-style:none;padding:0}
+.ldepl-gate ul li{font-size:.77rem;padding:3px 0;display:flex;gap:6px;align-items:flex-start;color:#334155}
+.gate-ok{color:#16a34a;font-weight:700}
+.gate-fail{color:#dc2626;font-weight:700}
+.gate-unk{color:#d97706;font-weight:700}
+.footer-note{text-align:center;font-size:.67rem;color:#94a3b8;margin-top:20px;padding-top:12px;border-top:1px solid #e0f2fe;line-height:1.8}
+.footer-note strong{color:#0ea5e9}
+.divider{height:1px;background:linear-gradient(90deg,#38bdf8,#818cf8);margin:22px 0 18px;border-radius:2px}
+.result-label{font-size:.7rem;color:#94a3b8;font-weight:700;letter-spacing:1px;margin-bottom:13px;text-transform:uppercase}
+@media print{
+  body{background:#fff!important}
+  .header{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .btn-assess,.btn-row,.section{box-shadow:none}
+  .section{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="hicon">🎯</div>
+  <div>
+    <h1>CAR-T Eligibility &amp; Referral Triage <span class="badge">drAisyi EduCare</span><span class="ver">v2.1</span></h1>
+    <p>Educational clinical toolkit · CAR-T referral readiness assessment</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="prog-wrap"><span class="prog-label">Kelengkapan Form</span><span class="prog-pct" id="progPct">0%</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+
+  <!-- S1: Data Dasar -->
+  <div class="section">
+    <div class="sec-title">👤 Data Dasar Pasien</div>
+    <div class="form-grid">
+      <div class="fg req"><label>Usia</label>
+        <select id="usia">
+          <option value="">-- Belum diisi --</option>
+          <option value="infant">&lt;2 tahun</option>
+          <option value="child-small">2–6 tahun</option>
+          <option value="child-big">7–11 tahun</option>
+          <option value="adolescent">12–17 tahun</option>
+          <option value="aya">18–25 tahun (AYA)</option>
+          <option value="adult">&gt;25 tahun</option>
+        </select>
+      </div>
+      <div class="fg req"><label>Berat Badan (kg)</label>
+        <input type="number" id="bb" min="1" max="200" placeholder="kg">
+      </div>
+      <div class="fg"><label>Tinggi Badan (cm)</label>
+        <input type="number" id="tb" min="40" max="220" placeholder="cm">
+        <span class="note">BSA dihitung otomatis (Mosteller)</span>
+      </div>
+      <div class="fg"><label>BSA (m²)</label>
+        <input type="text" id="bsa" readonly placeholder="Terisi otomatis" style="background:#f0f9ff;color:#0369a1;font-weight:700">
+      </div>
+      <div class="fg"><label>Perlu Sedasi/Anestesi untuk Leukapheresis?</label>
+        <select id="sedasi">
+          <option value="">-- Belum diketahui --</option>
+          <option value="no">Tidak perlu</option>
+          <option value="moderate">Sedasi moderat</option>
+          <option value="ga">Anestesi umum</option>
+        </select>
+        <span class="note">Relevan untuk anak kecil / akses sulit</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2: Diagnosis & Antigen -->
+  <div class="section">
+    <div class="sec-title">🧬 Diagnosis &amp; Target Antigen</div>
+    <div class="form-grid">
+      <div class="fg req"><label>Diagnosis Utama</label>
+        <select id="diagnosis">
+          <option value="">-- Belum diisi --</option>
+          <option value="B-ALL">B-ALL (relaps/refrakter)</option>
+          <option value="T-ALL">T-ALL</option>
+          <option value="DLBCL">DLBCL</option>
+          <option value="FL">Follicular Lymphoma (FL)</option>
+          <option value="MCL">Mantle Cell Lymphoma (MCL)</option>
+          <option value="NHL-B">NHL sel-B lainnya</option>
+          <option value="MM">Multiple Myeloma (MM)</option>
+          <option value="other">Diagnosis lain</option>
+        </select>
+      </div>
+      <div class="fg req"><label>Target Antigen Produk CAR-T</label>
+        <select id="antigen">
+          <option value="">-- Belum diisi --</option>
+          <option value="CD19">CD19</option>
+          <option value="CD22">CD22</option>
+          <option value="CD19+CD22">CD19 + CD22 (bispesifik)</option>
+          <option value="BCMA">BCMA</option>
+          <option value="CD7">CD7</option>
+          <option value="other">Target lain / belum ditentukan</option>
+        </select>
+      </div>
+      <div class="fg req"><label>Garis Terapi Sebelumnya</label>
+        <select id="linesTherapy">
+          <option value="">-- Belum diisi --</option>
+          <option value="1">1st line (belum ada terapi lain)</option>
+          <option value="2">≥2 prior lines</option>
+          <option value="3">≥3 prior lines</option>
+        </select>
+      </div>
+      <div class="fg req"><label>Status Relaps / Refrakter</label>
+        <select id="relapsStatus">
+          <option value="">-- Belum diisi --</option>
+          <option value="relaps-early">Relaps dini (&lt;12 bln dari remisi)</option>
+          <option value="relaps-late">Relaps lanjut (≥12 bln)</option>
+          <option value="refrakter">Refrakter primer</option>
+          <option value="cr">Complete Remission (CR) saat ini</option>
+        </select>
+      </div>
+    </div>
+    <div class="warn-box" id="diagAntigenWarn"></div>
+    <!-- Dynamic antigen expression – HARD GATE -->
+    <div class="antigen-dynamic" id="antigenExprBox">
+      <h4>🔬 Ekspresi Antigen Target <span style="color:#e11d48;font-size:.7rem">– WAJIB DIISI (hard gate)</span></h4>
+      <div class="form-grid" id="antigenExprFields"></div>
+    </div>
+    <div class="info-box" id="antigenWarnBox"></div>
+  </div>
+
+  <!-- S3: Status Penyakit -->
+  <div class="section">
+    <div class="sec-title">🔬 Status Penyakit</div>
+    <div class="form-grid">
+      <div class="fg req"><label>MRD Status</label>
+        <select id="mrd">
+          <option value="">-- Belum diisi / diperiksa --</option>
+          <option value="neg">MRD Negatif</option>
+          <option value="low">MRD Positif rendah (&lt;0.01%)</option>
+          <option value="high">MRD Positif tinggi (≥0.01%)</option>
+          <option value="na">Tidak berlaku untuk diagnosis ini</option>
+        </select>
+      </div>
+      <div class="fg req"><label>Blast Sumsum Tulang (%)</label>
+        <select id="blastBM">
+          <option value="">-- Belum diperiksa --</option>
+          <option value="lt5">&lt;5% (normal/remisi)</option>
+          <option value="5-25">5–25%</option>
+          <option value="gt25">&gt;25%</option>
+          <option value="na">Tidak berlaku (limfoma/MM)</option>
+        </select>
+      </div>
+      <div class="fg req"><label>Penyakit Ekstramedular</label>
+        <select id="extramedullary">
+          <option value="">-- Belum diperiksa --</option>
+          <option value="none">Tidak ada</option>
+          <option value="limited">Terbatas (&lt;5 cm, 1–2 lokasi)</option>
+          <option value="bulky">Bulky / masif (≥5 cm)</option>
+        </select>
+      </div>
+      <div class="fg req"><label>Keterlibatan SSP (CNS)</label>
+        <select id="cns">
+          <option value="">-- Belum dievaluasi --</option>
+          <option value="none">CNS 1 – tidak ada</option>
+          <option value="cns2">CNS 2 – blasts di CSS, tanpa gejala</option>
+          <option value="cns3">CNS 3 – gejala klinis / radiologi positif</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- S4: Neurologi Baseline -->
+  <div class="section">
+    <div class="sec-title">🧠 Baseline Neurologis (Risiko ICANS)</div>
+    <div class="form-grid">
+      <div class="fg"><label>Baseline Neurologic Exam</label>
+        <select id="neuroBaseline">
+          <option value="">-- Belum diperiksa --</option>
+          <option value="normal">Normal</option>
+          <option value="mild">Gangguan ringan (tanpa defisit fokal)</option>
+          <option value="significant">Gangguan signifikan / defisit fokal</option>
+        </select>
+      </div>
+      <div class="fg"><label>Riwayat Kejang</label>
+        <select id="seizure">
+          <option value="">-- Belum diisi --</option>
+          <option value="no">Tidak ada</option>
+          <option value="controlled">Ada, terkontrol dengan OAE</option>
+          <option value="active">Kejang aktif / tidak terkontrol</option>
+        </select>
+      </div>
+      <div class="fg"><label>Skor Baseline (sesuai usia)</label>
+        <select id="neuroScore">
+          <option value="">-- Belum dilakukan --</option>
+          <option value="ice-normal">ICE 10/10 (usia ≥12 th)</option>
+          <option value="ice-mild">ICE 7–9/10</option>
+          <option value="ice-mod">ICE ≤6/10</option>
+          <option value="capd-normal">CAPD normal (usia &lt;12 th)</option>
+          <option value="capd-abnormal">CAPD abnormal</option>
+          <option value="na">Tidak dapat dilakukan</option>
+        </select>
+        <span class="note">ICE untuk ≥12 th · CAPD untuk &lt;12 th</span>
+      </div>
+      <div class="fg"><label>Riwayat Radioterapi Kranial</label>
+        <select id="cranialRT">
+          <option value="">-- Belum diisi --</option>
+          <option value="no">Tidak ada</option>
+          <option value="yes">Ada riwayat RT kranial</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5: Fungsi Organ -->
+  <div class="section">
+    <div class="sec-title">💓 Performance Status &amp; Fungsi Organ</div>
+    <div class="form-grid">
+      <div class="fg req"><label>Lansky / Karnofsky PS</label>
+        <select id="ps">
+          <option value="">-- Belum dinilai --</option>
+          <option value="high">≥70</option>
+          <option value="borderline">50–60</option>
+          <option value="very-low">&lt;50</option>
+        </select>
+        <span class="note">Lansky &lt;16 th · Karnofsky ≥16 th</span>
+      </div>
+      <div class="fg req"><label>Fungsi Jantung (Ekokardiografi)</label>
+        <select id="cardiac">
+          <option value="">-- Belum diperiksa --</option>
+          <option value="normal">Normal (EF ≥50% / SF ≥28%)</option>
+          <option value="mild">Ringan–sedang (EF 40–49%)</option>
+          <option value="severe">Berat (EF &lt;40%)</option>
+        </select>
+      </div>
+      <div class="fg req"><label>Fungsi Ginjal (eGFR)</label>
+        <select id="renal">
+          <option value="">-- Belum diperiksa --</option>
+          <option value="normal">Normal (eGFR ≥60)</option>
+          <option value="mild">Ringan (eGFR 30–59)</option>
+          <option value="severe">Berat (eGFR &lt;30 / dialisis)</option>
+        </select>
+      </div>
+      <div class="fg req"><label>Fungsi Hati (SGPT / Bilirubin)</label>
+        <select id="liver">
+          <option value="">-- Belum diperiksa --</option>
+          <option value="normal">&lt;2× ULN</option>
+          <option value="mild">2–5× ULN</option>
+          <option value="severe">&gt;5× ULN / gagal hati</option>
+        </select>
+      </div>
+      <div class="fg req"><label>Fungsi Paru (SpO₂ / Klinis)</label>
+        <select id="pulmo">
+          <option value="">-- Belum diperiksa --</option>
+          <option value="normal">Normal (SpO₂ ≥95%, tanpa gejala)</option>
+          <option value="mild">SpO₂ 94–95%, gejala ringan</option>
+          <option value="severe">SpO₂ &lt;94% / butuh O₂ tambahan</option>
+        </select>
+      </div>
+      <div class="fg req"><label>Infeksi Aktif</label>
+        <select id="infection">
+          <option value="">-- Belum dinilai --</option>
+          <option value="none">Tidak ada</option>
+          <option value="controlled">Ada, terkontrol dengan terapi</option>
+          <option value="active">Infeksi aktif tidak terkontrol</option>
+          <option value="fungal">Infeksi jamur invasif (IFI) aktif</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- S6: Riwayat Terapi & Washout -->
+  <div class="section">
+    <div class="sec-title">💊 Riwayat Terapi &amp; Washout</div>
+    <div class="fg" style="margin-bottom:11px">
+      <label>Terapi yang pernah diberikan</label>
+      <div class="cb-group" id="priorTherapy">
+        <label class="cb-item"><input type="checkbox" value="blinatumomab"><span>Blinatumomab</span></label>
+        <label class="cb-item"><input type="checkbox" value="inotuzumab"><span>Inotuzumab</span></label>
+        <label class="cb-item"><input type="checkbox" value="cd19-therapy"><span>Anti-CD19 lain</span></label>
+        <label class="cb-item"><input type="checkbox" value="cd22-therapy"><span>Anti-CD22 lain</span></label>
+        <label class="cb-item"><input type="checkbox" value="prior-cart"><span>CAR-T sebelumnya</span></label>
+        <label class="cb-item"><input type="checkbox" value="allo-hsct"><span>Allo-HSCT</span></label>
+        <label class="cb-item"><input type="checkbox" value="auto-hsct"><span>Auto-HSCT</span></label>
+        <label class="cb-item"><input type="checkbox" value="cranial-rt-chk"><span>RT Kranial</span></label>
+        <label class="cb-item"><input type="checkbox" value="immuno-suppress"><span>Imunosupresan aktif</span></label>
+        <label class="cb-item"><input type="checkbox" value="steroid-active"><span>Steroid aktif</span></label>
+        <label class="cb-item"><input type="checkbox" value="it-therapy"><span>Terapi intratecal</span></label>
+        <label class="cb-item"><input type="checkbox" value="atg-alemtuzumab"><span>ATG / Alemtuzumab</span></label>
+      </div>
+    </div>
+    <div class="form-grid" style="margin-bottom:10px">
+      <div class="fg"><label>Waktu sejak Allo-HSCT</label>
+        <select id="hsctTime">
+          <option value="na">Tidak ada riwayat Allo-HSCT</option>
+          <option value="lt3m">&lt;3 bulan</option>
+          <option value="3-6m">3–6 bulan</option>
+          <option value="gt6m">&gt;6 bulan (tanpa GvHD aktif)</option>
+          <option value="gvhd-active">Ada GvHD aktif</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg">
+      <label>Washout per Agen (status sebelum leukapheresis)</label>
+      <div class="washout-grid">
+        <div class="washout-item"><label>Steroid</label>
+          <select id="wo_steroid"><option value="">-- --</option><option value="clear">Selesai / tidak aktif</option><option value="partial">Sebagian</option><option value="active">Masih aktif</option></select>
+        </div>
+        <div class="washout-item"><label>Blinatumomab</label>
+          <select id="wo_blina"><option value="">-- --</option><option value="clear">Selesai</option><option value="partial">Sebagian</option><option value="active">Masih aktif</option><option value="na">Tidak dipakai</option></select>
+        </div>
+        <div class="washout-item"><label>Inotuzumab</label>
+          <select id="wo_inotu"><option value="">-- --</option><option value="clear">Selesai</option><option value="partial">Sebagian</option><option value="active">Masih aktif</option><option value="na">Tidak dipakai</option></select>
+        </div>
+        <div class="washout-item"><label>Kemoterapi</label>
+          <select id="wo_chemo"><option value="">-- --</option><option value="clear">Selesai</option><option value="partial">Sebagian</option><option value="active">Masih aktif</option></select>
+        </div>
+        <div class="washout-item"><label>Fludarabin / Bendamustin</label>
+          <select id="wo_fluda"><option value="">-- --</option><option value="clear">Selesai</option><option value="partial">Sebagian</option><option value="active">Masih aktif</option><option value="na">Tidak dipakai</option></select>
+        </div>
+        <div class="washout-item"><label>ATG / Alemtuzumab</label>
+          <select id="wo_atg"><option value="">-- --</option><option value="clear">Selesai</option><option value="partial">Sebagian</option><option value="active">Masih aktif</option><option value="na">Tidak dipakai</option></select>
+        </div>
+        <div class="washout-item"><label>Imunosupresan lain</label>
+          <select id="wo_immuno"><option value="">-- --</option><option value="clear">Selesai</option><option value="partial">Sebagian</option><option value="active">Masih aktif</option><option value="na">Tidak dipakai</option></select>
+        </div>
+        <div class="washout-item"><label>Radioterapi</label>
+          <select id="wo_rt"><option value="">-- --</option><option value="clear">Selesai</option><option value="partial">Sebagian</option><option value="active">Masih aktif</option><option value="na">Tidak dipakai</option></select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S7: Leukapheresis Readiness -->
+  <div class="section">
+    <div class="sec-title">🧫 Kesiapan Leukapheresis</div>
+    <div class="form-grid">
+      <div class="fg"><label>ALC (Absolute Lymphocyte Count)</label>
+        <select id="alc">
+          <option value="">-- Belum diperiksa --</option>
+          <option value="adequate">Adekuat (≥200–300/µL sesuai spesifikasi produk)</option>
+          <option value="low">Rendah (100–199/µL)</option>
+          <option value="very-low">Sangat rendah (&lt;100/µL)</option>
+        </select>
+        <span class="note">Threshold produk-spesifik; konfirmasi dengan tim manufaktur</span>
+      </div>
+      <div class="fg"><label>CD3 Count</label>
+        <select id="cd3">
+          <option value="">-- Belum diperiksa --</option>
+          <option value="adequate">Adekuat (sesuai spesifikasi manufaktur)</option>
+          <option value="low">Rendah</option>
+          <option value="na">Tidak tersedia di fasilitas ini</option>
+        </select>
+      </div>
+      <div class="fg"><label>Akses Vena untuk Apheresis</label>
+        <select id="venousAccess">
+          <option value="">-- Belum dinilai --</option>
+          <option value="peripheral">Vena perifer adekuat</option>
+          <option value="cvc-needed">Perlu CVC / lumen besar</option>
+          <option value="poor">Akses buruk, perlu persiapan khusus</option>
+        </select>
+      </div>
+      <div class="fg"><label>Slot Manufaktur Produk CAR-T</label>
+        <select id="mfgSlot">
+          <option value="">-- Belum dikonfirmasi --</option>
+          <option value="confirmed">Sudah terkonfirmasi</option>
+          <option value="pending">Dalam proses konfirmasi</option>
+          <option value="unavailable">Belum tersedia</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- S8: Logistik -->
+  <div class="section">
+    <div class="sec-title">🏠 Dukungan Sosial &amp; Logistik</div>
+    <div class="form-grid">
+      <div class="fg req"><label>Ketersediaan Caregiver Penuh-waktu</label>
+        <select id="caregiver">
+          <option value="">-- Belum dinilai --</option>
+          <option value="yes">Ada (≥1 caregiver siap penuh-waktu)</option>
+          <option value="partial">Terbatas / bergantian</option>
+          <option value="no">Tidak ada</option>
+        </select>
+      </div>
+      <div class="fg req"><label>Jarak ke Pusat CAR-T</label>
+        <select id="access">
+          <option value="">-- Belum dinilai --</option>
+          <option value="close">≤1 jam dari pusat CAR-T</option>
+          <option value="medium">1–4 jam dari pusat CAR-T</option>
+          <option value="far">&gt;4 jam / perlu akomodasi sementara</option>
+        </select>
+      </div>
+      <div class="fg"><label>Pemahaman Keluarga tentang Risiko CAR-T</label>
+        <select id="understanding">
+          <option value="">-- Belum dinilai --</option>
+          <option value="good">Baik (edukasi sudah dilakukan)</option>
+          <option value="partial">Sebagian (perlu edukasi lanjut)</option>
+          <option value="poor">Belum ada edukasi</option>
+        </select>
+      </div>
+      <div class="fg"><label>Status Pembiayaan</label>
+        <select id="funding">
+          <option value="">-- Belum diketahui --</option>
+          <option value="covered">Jaminan pembiayaan tersedia</option>
+          <option value="self-pay">Mandiri (self-pay)</option>
+          <option value="unclear">Belum jelas</option>
+          <option value="admin-verify">Perlu verifikasi administrasi</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-assess" id="btnAssess">🔍 Nilai Kelayakan CAR-T</button>
+  <div class="btn-row">
+    <button class="btn-sec" id="btnReset">↺ Reset Form</button>
+    <button class="btn-print" id="btnPrint" style="display:none">🖨 Cetak Ringkasan</button>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result">
+    <div class="divider"></div>
+    <div class="result-label">Hasil Penilaian Kelayakan CAR-T</div>
+    <div id="icuBox"></div>
+    <div id="verdictBox"></div>
+    <div id="ldeplBox"></div>
+    <div id="redFlagsBox"></div>
+    <div id="workupBox"></div>
+    <div id="leukaphBox"></div>
+    <div id="bridgingBox"></div>
+    <div id="recBox"></div>
+    <div class="footer-note">
+      ⚠️ Toolkit ini bersifat pendukung keputusan klinis, bukan pengganti penilaian panel multidisiplin.<br>
+      Validasi akhir mengikuti protokol lokal, regulasi yang berlaku, dan pedoman internasional terkini.<br>
+      <strong>drAisyi EduCare</strong> · Educational Clinical Toolkit · v2.1
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+// ── CONSTANTS ─────────────────────────────────────────────────
+var ANTIGEN_MAP={'B-ALL':['CD19','CD22','CD19+CD22'],'T-ALL':['CD7'],'DLBCL':['CD19'],'FL':['CD19'],'MCL':['CD19'],'NHL-B':['CD19','CD22','CD19+CD22'],'MM':['BCMA'],'other':['other']};
+var REQUIRED_FIELDS=['diagnosis','antigen','linesTherapy','relapsStatus','mrd','blastBM','extramedullary','cns','ps','cardiac','renal','liver','pulmo','infection','caregiver','access','usia'];
+var ALL_FIELDS=REQUIRED_FIELDS.concat(['hsctTime','alc','cd3','venousAccess','mfgSlot','neuroBaseline','seizure','neuroScore','cranialRT','sedasi','understanding','funding']);
+
+// ── HELPERS ──────────────────────────────────────────────────
+function g(id){var e=document.getElementById(id);return e?e.value:'';}
+function getChecked(){var o=[];document.querySelectorAll('#priorTherapy input:checked').forEach(function(b){o.push(b.value);});return o;}
+function getTargets(){var a=g('antigen');return a==='CD19+CD22'?['CD19','CD22']:(a&&a!=='other'?[a]:[]);}
+function getExpr(t){var e=document.getElementById('expr_'+t);return e?e.value:'';}
+function getExprDate(t){var e=document.getElementById('exprDate_'+t);return e?e.value:'';}
+
+// ── BSA ──────────────────────────────────────────────────────
+function calcBSA(){var b=parseFloat(g('bb')),t=parseFloat(g('tb'));document.getElementById('bsa').value=(b>0&&t>0)?Math.sqrt(b*t/3600).toFixed(2)+' m²':'';}
+document.getElementById('bb').addEventListener('input',function(){calcBSA();updateProgress();});
+document.getElementById('tb').addEventListener('input',calcBSA);
+
+// ── PROGRESS ─────────────────────────────────────────────────
+window.updateProgress = function updateProgress(){
+  var n=0,tot=REQUIRED_FIELDS.length+1;
+  REQUIRED_FIELDS.forEach(function(f){if(g(f))n++;});
+  if(g('bb'))n++;
+  var tgts=getTargets();
+  if(tgts.length>0){tot+=tgts.length*2;tgts.forEach(function(t){if(getExpr(t))n++;if(getExprDate(t))n++;});}
+  var pct=Math.min(100,Math.round(n/tot*100));
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progPct').textContent=pct+'%';
+}
+REQUIRED_FIELDS.forEach(function(f){var e=document.getElementById(f);if(e)e.addEventListener('change',updateProgress);});
+
+// ── ANTIGEN MAP ───────────────────────────────────────────────
+function updateAntigenMap(){
+  var diag=g('diagnosis'),ant=g('antigen');
+  var warn=document.getElementById('diagAntigenWarn');
+  if(!diag||!ant){warn.style.display='none';return;}
+  var allowed=ANTIGEN_MAP[diag]||[];
+  if(allowed.indexOf(ant)===-1&&ant!==''){
+    warn.style.display='block';
+    warn.innerHTML='⚠️ Target antigen <b>'+ant+'</b> tidak sesuai untuk <b>'+diag+'</b>. Target yang disarankan: <b>'+allowed.join(', ')+'</b>';
+  } else {warn.style.display='none';}
+}
+
+// ── ANTIGEN EXPRESSION DYNAMIC ────────────────────────────────
+function updateAntigenExpr(){
+  var ant=g('antigen');
+  var box=document.getElementById('antigenExprBox');
+  var flds=document.getElementById('antigenExprFields');
+  var warnBox=document.getElementById('antigenWarnBox');
+  if(!ant||ant==='other'){box.style.display='none';warnBox.style.display='none';return;}
+  box.style.display='block';
+  var tgts=getTargets();
+  var html='';
+  tgts.forEach(function(t){
+    html+='<div class="fg req"><label>Ekspresi '+t+'</label>';
+    html+='<select id="expr_'+t+'" onchange="checkAntigenWarn(\''+t+'\');updateProgress()">';
+    html+='<option value="">-- Belum diperiksa --</option>';
+    html+='<option value="bright">Positif terang (bright)</option>';
+    html+='<option value="dim">Dim / lemah</option>';
+    html+='<option value="neg">Negatif / loss</option>';
+    html+='</select></div>';
+    html+='<div class="fg req"><label>Pemeriksaan '+t+' terakhir dilakukan</label>';
+    html+='<select id="exprDate_'+t+'" onchange="checkAntigenWarn(\''+t+'\');updateProgress()">';
+    html+='<option value="">-- Belum diisi --</option>';
+    html+='<option value="after-target">Setelah terapi anti-'+t+' terakhir (terbaru)</option>';
+    html+='<option value="before-target">Sebelum terapi anti-'+t+' (perlu diulang)</option>';
+    html+='<option value="never">Belum pernah diperiksa</option>';
+    html+='</select></div>';
+  });
+  flds.innerHTML=html;
+  updateAntigenMap();
+  updateProgress();
+}
+
+window.checkAntigenWarn = function(t){
+  var expr=getExpr(t),date=getExprDate(t);
+  var box=document.getElementById('antigenWarnBox');
+  var msgs=[];
+  if(date==='before-target'){msgs.push('⚠️ Ekspresi '+t+' diperiksa sebelum terapi anti-'+t+': perlu diperiksa ulang (risiko antigen loss pasca-terapi).');}
+  if(date==='never'){msgs.push('⚠️ Ekspresi '+t+' belum pernah diperiksa: wajib dilakukan sebelum referral CAR-T.');}
+  if(expr==='neg'){msgs.push('🚫 Ekspresi '+t+' negatif: terapi CAR-T anti-'+t+' tidak efektif. Evaluasi platform antigen lain.');}
+  if(msgs.length>0){box.style.display='block';box.innerHTML=msgs.join('<br>');}
+  else{box.style.display='none';}
+};
+
+document.getElementById('diagnosis').addEventListener('change',function(){updateAntigenMap();updateProgress();});
+document.getElementById('antigen').addEventListener('change',function(){updateAntigenExpr();updateAntigenMap();updateProgress();});
+
+// ── ASSESS ───────────────────────────────────────────────────
+document.getElementById('btnAssess').addEventListener('click',function(){
+  var diag=g('diagnosis'),ant=g('antigen'),lines=g('linesTherapy'),relaps=g('relapsStatus');
+  var ps=g('ps'),cardiac=g('cardiac'),renal=g('renal'),liver=g('liver'),pulmo=g('pulmo'),infect=g('infection');
+  var cg=g('caregiver'),acc=g('access'),und=g('understanding'),fund=g('funding');
+  var mrd=g('mrd'),blast=g('blastBM'),extra=g('extramedullary'),cns=g('cns');
+  var hsctT=g('hsctTime'),prior=getChecked();
+  var usia=g('usia'),alc=g('alc'),cd3=g('cd3'),veinAccess=g('venousAccess'),mfg=g('mfgSlot');
+  var neuro=g('neuroBaseline'),seizure=g('seizure'),neuroScore=g('neuroScore');
+  var cranialRT=g('cranialRT');
+
+  // ── REQUIRED FIELD VALIDATION ──
+  var missing=[];
+  if(!diag)missing.push('Diagnosis utama');
+  if(!ant)missing.push('Target antigen');
+  if(!lines)missing.push('Garis terapi');
+  if(!relaps)missing.push('Status relaps/refrakter');
+  if(!ps)missing.push('Performance status');
+  if(!cardiac)missing.push('Fungsi jantung');
+  if(!renal)missing.push('Fungsi ginjal');
+  if(!liver)missing.push('Fungsi hati');
+  if(!pulmo)missing.push('Fungsi paru');
+  if(!infect)missing.push('Status infeksi');
+  if(!usia)missing.push('Usia pasien');
+  if(!g('bb'))missing.push('Berat badan');
+  if(!mrd)missing.push('MRD status');
+  if(!blast)missing.push('Blast sumsum tulang');
+  if(!extramedullary)missing.push('Status ekstramedular');
+  if(!cns)missing.push('Status CNS');
+  if(!cg)missing.push('Ketersediaan caregiver');
+  if(!acc)missing.push('Jarak ke pusat CAR-T');
+  if(missing.length>0){alert('⚠️ Mohon lengkapi field wajib berikut:\n\n• '+missing.join('\n• '));return;}
+
+  var redFlags=[],workup=[],score=0;
+  var verdict='suitable';
+  var incompleteReasons=[];
+
+  // ── ANTIGEN EXPRESSION HARD GATE ──
+  var tgts=getTargets();
+  var antigenIncomplete=false;
+  tgts.forEach(function(t){
+    var expr=getExpr(t),date=getExprDate(t);
+    if(!expr||!date){antigenIncomplete=true;incompleteReasons.push('Ekspresi antigen '+t+' belum diperiksa / tidak lengkap');}
+    else if(expr==='neg'){
+      redFlags.push({t:'ANTIGEN LOSS – '+t,m:'Ekspresi '+t+' negatif. Produk CAR-T anti-'+t+' tidak efektif. Evaluasi platform antigen lain.',cat:'abs'});
+      verdict='notfit';
+    } else if(date==='never'){
+      antigenIncomplete=true;
+      incompleteReasons.push('Ekspresi '+t+' belum pernah diperiksa – wajib sebelum referral');
+    } else if(date==='before-target'&&(prior.indexOf('cd19-therapy')!==-1||prior.indexOf('cd22-therapy')!==-1||prior.indexOf('prior-cart')!==-1)){
+      redFlags.push({t:'PERHATIAN – Ekspresi '+t+' Perlu Diulang',m:'Pemeriksaan ekspresi '+t+' dilakukan sebelum terapi target sebelumnya. Risiko antigen loss tinggi. Wajib diperiksa ulang.',cat:'rel'});
+      score+=2;
+      if(verdict==='suitable')verdict='optimize';
+    } else if(expr==='dim'){
+      redFlags.push({t:'CATATAN – Ekspresi '+t+' Lemah (Dim)',m:'Risiko antigen escape pasca-CAR-T meningkat. Pertimbangkan bispesifik atau platform kombinasi.',cat:'rel'});
+      score+=1;
+    }
+  });
+  if(ant==='other'&&diag!=='other'){antigenIncomplete=true;incompleteReasons.push('Target antigen belum ditentukan – wajib dikonfirmasi sebelum assessment');}
+
+  // ── DIAGNOSIS-ANTIGEN MISMATCH ──
+  if(diag&&ant&&ant!=='other'){
+    var allowed=ANTIGEN_MAP[diag]||[];
+    if(diag==='T-ALL'){verdict='research';redFlags.push({t:'RISET/UJI KLINIS SAJA – T-ALL',m:'T-ALL tidak eligible untuk CAR-T anti-CD19 standar. Hanya pertimbangkan target T-lineage (CD7, dll) dalam protokol riset/akses khusus.',cat:'abs'});}
+    else if(diag==='other'){verdict='research';redFlags.push({t:'REVIEW MANUAL DIPERLUKAN',m:'Diagnosis di luar indikasi standar. Verdict otomatis tidak dapat diberikan. Ajukan ke panel multidisiplin CAR-T.',cat:'abs'});}
+    else if(allowed.indexOf(ant)===-1){verdict='notfit';redFlags.push({t:'TARGET ANTIGEN TIDAK SESUAI',m:'Kombinasi diagnosis dan antigen tidak sesuai standar. Target yang disarankan: '+allowed.join(', '),cat:'abs'});}
+  }
+
+  // ── ORGAN / CLINICAL HARD STOPS (Temporary Hold) ──
+  function setHold(){if(verdict==='suitable'||verdict==='optimize')verdict='hold';}
+  if(cardiac==='severe'){setHold();redFlags.push({t:'TUNDA – Disfungsi Jantung Berat',m:'EF &lt;40%: risiko CRS kardiak fatal. Perlu optimisasi kardiologis + konsul SpJP sebelum re-evaluasi.',cat:'hold'});}
+  if(renal==='severe'){setHold();redFlags.push({t:'TUNDA – Gagal Ginjal Berat',m:'eGFR &lt;30/dialisis: klirens toksin CRS terganggu. Perlu assessment nefrologi.',cat:'hold'});}
+  if(liver==='severe'){setHold();redFlags.push({t:'TUNDA – Disfungsi Hati Berat',m:'SGPT/bili &gt;5× ULN atau gagal hati. Cari penyebab (VOD, hepatitis viral). Tunda hingga stabil.',cat:'hold'});}
+  if(pulmo==='severe'){setHold();redFlags.push({t:'TUNDA – Gangguan Paru Berat',m:'SpO₂ &lt;94%/butuh O₂: risiko CRS/ICANS pulmonal berbahaya.',cat:'hold'});}
+  if(infect==='active'||infect==='fungal'){setHold();redFlags.push({t:'TUNDA – Infeksi Aktif Tidak Terkontrol',m:(infect==='fungal'?'IFI aktif':'Infeksi aktif tidak terkontrol')+'. Tunda hingga terkontrol, lalu re-evaluasi.',cat:'hold'});}
+  if(ps==='very-low'){setHold();redFlags.push({t:'TUNDA – PS Sangat Rendah (&lt;50)',m:'Risiko toksisitas berat tidak dapat ditoleransi. Upayakan perbaikan PS sebelum re-evaluasi.',cat:'hold'});}
+  if(hsctT==='lt3m'){setHold();redFlags.push({t:'TUNDA – Allo-HSCT &lt;3 Bulan',m:'Interval pasca-transplant terlalu singkat (rekomendasi minimal 4–6 bulan; ikuti spesifikasi protokol produk).',cat:'hold'});}
+  if(hsctT==='gvhd-active'){setHold();redFlags.push({t:'TUNDA – GvHD Aktif / Imunosupresi Aktif',m:'Kontraindikasi sementara. Tunda hingga GvHD terkontrol dan imunosupresi ditaper.',cat:'hold'});}
+  if(cns==='cns3'){setHold();redFlags.push({t:'TUNDA – CNS 3 Aktif',m:'Keterlibatan SSP aktif: tunda infusi CAR-T. Lakukan terapi intratecal dan kontrol CNS terlebih dahulu. Risiko ICANS sangat tinggi.',cat:'hold'});}
+  if(seizure==='active'){setHold();redFlags.push({t:'TUNDA – Kejang Aktif Tidak Terkontrol',m:'Tunda hingga kejang terkontrol. Risiko ICANS neurologis sangat tinggi.',cat:'hold'});}
+
+  // ── VERDICT: INCOMPLETE (beats hold/optimize if antigen not done) ──
+  if(antigenIncomplete&&verdict!=='notfit'&&verdict!=='research'){verdict='incomplete';}
+
+  // ── RELATIVE FLAGS ──
+  if(blast==='gt25'){redFlags.push({t:'PERHATIAN – Burden Penyakit Tinggi',m:'Blast &gt;25%: risiko CRS berat meningkat. Pertimbangkan bridging/debulking sebelum leukapheresis.',cat:'rel'});score+=2;if(verdict==='suitable')verdict='optimize';}
+  if(extra==='bulky'){redFlags.push({t:'PERHATIAN – Bulky Extramedullary',m:'≥5 cm: respons CAR-T mungkin suboptimal. Pertimbangkan bridging RT atau kemoterapi.',cat:'rel'});score+=1;}
+  if(relaps==='refrakter'){redFlags.push({t:'CATATAN – Refrakter Primer',m:'High-risk disease biology. Pastikan bridging strategy sudah direncanakan untuk kontrol penyakit.',cat:'rel'});score+=1;}
+  if(relaps==='relaps-early'){redFlags.push({t:'CATATAN – Relaps Dini',m:'Relaps &lt;12 bulan: high-risk. Perlu analisis biology (sitogenetik, mutasi) untuk strategi yang tepat.',cat:'rel'});score+=1;}
+  if(relaps==='cr'&&mrd==='neg'){redFlags.push({t:'VERIFIKASI INDIKASI',m:'Pasien saat ini CR MRD-negatif: diskusikan apakah CAR-T masih merupakan pilihan terbaik vs strategi observasi/konsolidasi lain.',cat:'rel'});score+=1;}
+  if(mrd==='high'){redFlags.push({t:'CATATAN – MRD Positif Tinggi',m:'MRD ≥0.01%: kandidat dipertimbangkan, tetapi perlu monitoring penyakit dan bridging strategy yang ketat.',cat:'rel'});score+=1;}
+  if(cardiac==='mild'){redFlags.push({t:'CATATAN – Disfungsi Jantung Ringan-Sedang',m:'EF 40–49%: ekokardiografi ulang terbaru dan konsul kardiologi wajib.',cat:'rel'});score+=1;}
+  if(liver==='mild'){redFlags.push({t:'CATATAN – Disfungsi Hati Ringan',m:'SGPT/bili 2–5× ULN: cari penyebab (VOD, hepatitis), pantau ketat.',cat:'rel'});score+=1;}
+  if(ps==='borderline'){redFlags.push({t:'CATATAN – PS Borderline (50–60)',m:'Mungkin eligible setelah optimisasi suportif. Pertimbangkan bridging untuk perbaikan PS.',cat:'rel'});score+=1;if(verdict==='suitable')verdict='optimize';}
+  if(prior.indexOf('prior-cart')!==-1){redFlags.push({t:'PERHATIAN – Riwayat CAR-T Sebelumnya',m:'Risiko antigen loss tinggi: ekspresi antigen target wajib diperiksa ulang pasca-CAR-T terakhir.',cat:'rel'});score+=2;}
+  if(prior.indexOf('immuno-suppress')!==-1||prior.indexOf('steroid-active')!==-1){redFlags.push({t:'PERHATIAN – Imunosupresan/Steroid Aktif',m:'Dapat menghambat ekspansi CAR-T cell. Pastikan washout selesai sebelum leukapheresis.',cat:'rel'});score+=1;}
+  if(hsctT==='3-6m'){redFlags.push({t:'PERTIMBANGAN – Allo-HSCT 3–6 Bulan',m:'Eligible bila tidak ada GvHD aktif dan tidak dalam imunosupresi. Konfirmasi protokol produk.',cat:'rel'});score+=1;}
+  if(lines==='1'){redFlags.push({t:'VERIFIKASI INDIKASI – 1 Prior Line',m:'Sebagian besar indikasi CAR-T mensyaratkan ≥2 prior lines. Verifikasi kriteria protokol lokal.',cat:'rel'});score+=2;if(verdict==='suitable')verdict='optimize';}
+  if(cg==='no'){redFlags.push({t:'HAMBATAN LOGISTIK – Tidak Ada Caregiver',m:'Syarat wajib: minimal 1 caregiver penuh-waktu selama fase awal pasca-infusi.',cat:'rel'});score+=2;if(verdict==='suitable')verdict='optimize';}
+  if(cg==='partial'){redFlags.push({t:'CATATAN – Caregiver Terbatas',m:'Perlu konfirmasi ketersediaan caregiver yang adekuat untuk periode awal pasca-infusi.',cat:'rel'});score+=1;}
+  if(acc==='far'){redFlags.push({t:'HAMBATAN LOGISTIK – Jarak Jauh',m:'Wajib menyiapkan akomodasi sementara minimal 4–6 minggu pasca-infusi.',cat:'rel'});score+=1;}
+  if(neuro==='significant'){redFlags.push({t:'PERHATIAN – Gangguan Neurologis Baseline',m:'Defisit neurologis signifikan: risiko ICANS berat meningkat. Perlu konsul neurologi.',cat:'rel'});score+=2;}
+  if(neuroScore==='ice-mod'||neuroScore==='capd-abnormal'){redFlags.push({t:'PERHATIAN – Skor Neurologi Baseline Rendah',m:'ICE ≤6/10 atau CAPD abnormal: monitoring ICANS intensif pasca-infusi wajib. Pertimbangkan profilaksis antikejang.',cat:'rel'});score+=1;}
+  if(cranialRT==='yes'||prior.indexOf('cranial-rt-chk')!==-1){redFlags.push({t:'CATATAN – Riwayat Radioterapi Kranial',m:'Risiko neurotoksisitas / ICANS lebih tinggi pasca-infusi CAR-T.',cat:'rel'});score+=1;}
+  if(alc==='very-low'){redFlags.push({t:'PERHATIAN – ALC Sangat Rendah (&lt;100/µL)',m:'Risiko gagal koleksi leukapheresis sangat tinggi. Perlu optimisasi kondisi sebelum leukapheresis.',cat:'rel'});score+=2;if(verdict==='suitable')verdict='optimize';}
+  if(alc==='low'){redFlags.push({t:'CATATAN – ALC Rendah (100–199/µL)',m:'Risiko koleksi suboptimal. Konfirmasi threshold spesifikasi produk dengan tim manufaktur.',cat:'rel'});score+=1;}
+  if(cd3==='low'){redFlags.push({t:'CATATAN – CD3 Count Rendah',m:'Risiko collection failure meningkat. Pertimbangkan timing leukapheresis.',cat:'rel'});score+=1;}
+  if(veinAccess==='poor'){redFlags.push({t:'CATATAN – Akses Vena Buruk',m:'Perlu perencanaan akses (CVC/lumen besar) sebelum penjadwalan leukapheresis.',cat:'rel'});score+=1;}
+  if(mfg==='unavailable'){redFlags.push({t:'HAMBATAN – Slot Manufaktur Belum Tersedia',m:'Jangan mulai lymphodepletion sebelum produk diterima dan QC terverifikasi.',cat:'rel'});score+=1;}
+
+  // ── WASHOUT FLAGS ──
+  var washoutIDs=['wo_steroid','wo_blina','wo_inotu','wo_chemo','wo_fluda','wo_atg','wo_immuno','wo_rt'];
+  var washoutNames={'wo_steroid':'Steroid','wo_blina':'Blinatumomab','wo_inotu':'Inotuzumab','wo_chemo':'Kemoterapi','wo_fluda':'Fludarabin/Bendamustin','wo_atg':'ATG/Alemtuzumab','wo_immuno':'Imunosupresan lain','wo_rt':'Radioterapi'};
+  var washoutActive=[],washoutPartial=[];
+  washoutIDs.forEach(function(id){var v=g(id);if(v==='active')washoutActive.push(washoutNames[id]);if(v==='partial')washoutPartial.push(washoutNames[id]);});
+  if(washoutActive.length>0){redFlags.push({t:'WASHOUT BELUM SELESAI',m:'Agen masih aktif: '+washoutActive.join(', ')+'. Jangan jadwalkan leukapheresis sebelum washout tervalidasi.',cat:'rel'});score+=2;if(verdict==='suitable')verdict='optimize';}
+  if(washoutPartial.length>0){redFlags.push({t:'WASHOUT SEBAGIAN',m:washoutPartial.join(', ')+': perlu validasi per protokol produk sebelum leukapheresis.',cat:'rel'});score+=1;}
+
+  if(score>=5&&verdict==='suitable')verdict='optimize';
+
+  // ── WORKUP ──
+  workup.push('CBC differential + ALC terbaru');
+  workup.push('CD3 count (jika tersedia / dipersyaratkan manufaktur)');
+  workup.push('Fungsi ginjal (ureum, kreatinin, eGFR)');
+  workup.push('Fungsi hati (SGPT, SGOT, bilirubin, albumin)');
+  workup.push('Ekokardiografi (EF/SF) – dalam 3 bulan terakhir');
+  workup.push('SpO₂ istirahat & aktivitas; spirometri jika indikasi');
+  workup.push('Serologi: HIV, HBsAg, Anti-HCV, CMV PCR, EBV PCR');
+  workup.push('IgG baseline');
+  workup.push('Koagulasi: PT, aPTT, fibrinogen, D-dimer');
+  workup.push('LDH, asam urat, CRP, ferritin');
+  workup.push('Evaluasi SSP: LP + sitologi (jika ada risiko CNS)');
+  workup.push('Imaging ekstramedular: PET-CT / MRI sesuai indikasi');
+  workup.push('Baseline neurologic assessment: ICE (≥12 th) / CAPD (&lt;12 th)');
+  workup.push('Pregnancy test – remaja perempuan usia reproduktif');
+  workup.push('Ekspresi antigen target terbaru (pasca semua terapi anti-target)');
+  if(!alc||!cd3)workup.push('ALC dan CD3 count untuk konfirmasi leukapheresis readiness');
+  if(!veinAccess)workup.push('Penilaian akses vena: perifer vs. kebutuhan CVC');
+  if(und==='poor'||und==='partial')workup.push('Sesi edukasi keluarga: CRS, ICANS, proses CAR-T, discharge planning');
+  if(!fund||fund==='unclear'||fund==='admin-verify')workup.push('Klarifikasi dan verifikasi pembiayaan / administrasi');
+
+  // ── ICU RISK ──
+  var icuRisk='low',icuReasons=[];
+  if(blast==='gt25'){icuRisk='high';icuReasons.push('Burden penyakit sangat tinggi');}
+  if(extra==='bulky'){icuRisk='high';icuReasons.push('Bulky extramedullary disease');}
+  if(cns==='cns3'){icuRisk='high';icuReasons.push('CNS 3 aktif');}
+  if(neuro==='significant'||seizure==='active'||neuroScore==='ice-mod'||neuroScore==='capd-abnormal'){if(icuRisk!=='high')icuRisk='intermediate';icuReasons.push('Gangguan neurologis baseline');}
+  if(cardiac==='mild'){if(icuRisk==='low')icuRisk='intermediate';icuReasons.push('Disfungsi jantung ringan-sedang');}
+  if(cranialRT==='yes'){if(icuRisk==='low')icuRisk='intermediate';icuReasons.push('Riwayat RT kranial');}
+  if(usia==='infant'||usia==='child-small'){if(icuRisk==='low')icuRisk='intermediate';icuReasons.push('Usia sangat muda');}
+
+  // ── LYMPHODEPLETION SAFETY GATE ──
+  var ldeplGates=[
+    {label:'Produk sudah diterima',ok:mfg==='confirmed',unk:mfg==='pending'||mfg===''},
+    {label:'QC/release dokumen tersedia',ok:mfg==='confirmed',unk:mfg!=='confirmed'},
+    {label:'Tidak ada infeksi aktif baru',ok:infect==='none'||infect==='controlled',unk:infect===''},
+    {label:'Fungsi organ masih aman',ok:(cardiac!=='severe'&&renal!=='severe'&&liver!=='severe'&&pulmo!=='severe'),unk:false},
+    {label:'Informed consent final selesai',ok:und==='good',unk:und===''||und==='partial'},
+    {label:'Washout tervalidasi',ok:(washoutActive.length===0&&washoutPartial.length===0),unk:washoutActive.length===0&&washoutPartial.length>0}
+  ];
+
+  // ── BRIDGING ──
+  var bridgingNotes=[];
+  if(blast==='gt25'||extra==='bulky')bridgingNotes.push('Debulking/bridging kemoterapi direkomendasikan sebelum leukapheresis');
+  if(cns==='cns2'||cns==='cns3')bridgingNotes.push('Terapi intratecal / CNS-directed perlu dilakukan sebelum infusi CAR-T');
+  if(alc==='very-low'||alc==='low')bridgingNotes.push('Hindari kemoterapi mielosupresif berat dekat waktu leukapheresis (risiko ALC &darr;)');
+  bridgingNotes.push('Jangan mulai lymphodepletion sebelum produk diterima, QC diverifikasi, dan kriteria klinis terpenuhi');
+  if(blast!=='gt25'&&extra!=='bulky'&&cns==='none')bridgingNotes.push('Bridging mungkin tidak diperlukan; monitor progresi penyakit selama menunggu manufaktur');
+
+  // ── RECOMMENDATIONS ──
+  var recs=[];
+  if(verdict==='suitable'){
+    recs.push({i:'✅',t:'Ajukan ke panel multidisiplin CAR-T untuk finalisasi kelayakan dan penjadwalan leukapheresis'});
+    recs.push({i:'📝',t:'Siapkan berkas lengkap: informed consent, ringkasan klinis, hasil lab & imaging terbaru'});
+    recs.push({i:'🧫',t:'Koordinasikan dengan tim apheresis dan konfirmasi slot manufaktur produk CAR-T'});
+    recs.push({i:'👨‍👩‍👧',t:'Lanjutkan / mulai edukasi keluarga: proses, risiko CRS/ICANS, discharge planning, follow-up'});
+  } else if(verdict==='optimize'){
+    recs.push({i:'📋',t:'Ajukan ke panel multidisiplin CAR-T dengan catatan area yang perlu optimisasi'});
+    recs.push({i:'🔬',t:'Lengkapi seluruh workup sebelum rapat panel multidisiplin'});
+    recs.push({i:'💊',t:'Pertimbangkan bridging therapy untuk stabilisasi penyakit dan perbaikan kondisi pasien'});
+    recs.push({i:'👨‍👩‍👧',t:'Mulai edukasi keluarga dan persiapan logistik (caregiver, akomodasi, pembiayaan)'});
+  } else if(verdict==='hold'){
+    recs.push({i:'🛑',t:'Tunda proses CAR-T – atasi kondisi hold aktif (infeksi, organ dysfunction, GvHD, CNS aktif)'});
+    recs.push({i:'🔄',t:'Re-evaluasi setelah kondisi stabil. Bridging untuk disease control selama periode tunggu'});
+    recs.push({i:'🤝',t:'Diskusikan alternatif terapi: bispesifik antibodi, imunoterapi lain, atau uji klinis'});
+    recs.push({i:'📅',t:'Jadwalkan re-triage dalam 4–6 minggu atau setelah kondisi teratasi'});
+  } else if(verdict==='notfit'){
+    recs.push({i:'🚫',t:'Produk CAR-T yang dipilih tidak sesuai untuk indikasi/ekspresi antigen saat ini'});
+    recs.push({i:'🔍',t:'Re-evaluasi platform CAR-T alternatif (antigen lain, bispesifik, produk berbeda)'});
+    recs.push({i:'🤝',t:'Diskusi panel multidisiplin: imunoterapi alternatif, kemoterapi, atau uji klinis'});
+  } else if(verdict==='research'){
+    recs.push({i:'🔬',t:'Indikasi ini hanya tersedia dalam konteks riset/uji klinis. Identifikasi trial yang sesuai'});
+    recs.push({i:'📋',t:'Hubungi pusat riset (nasional/internasional) untuk akses protokol investigasional'});
+    recs.push({i:'🤝',t:'Diskusi terbuka dengan keluarga tentang opsi terapi standar yang tersedia saat ini'});
+  } else if(verdict==='incomplete'){
+    recs.push({i:'⚠️',t:'Lengkapi workup esensial terlebih dahulu – terutama ekspresi antigen target'});
+    recs.push({i:'🔬',t:'Pemeriksaan ekspresi antigen (flow cytometry/IHC/NGS) wajib dilakukan setelah terapi sebelumnya'});
+    recs.push({i:'📋',t:'Setelah workup lengkap, ulangi triage ini sebelum presentasi ke panel multidisiplin'});
+  }
+
+  // ── RENDER ───────────────────────────────────────────────
+  var ts=new Date().toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'});
+
+  // ICU
+  var icuCls=icuRisk==='high'?'icu-high':icuRisk==='intermediate'?'icu-med':'icu-low';
+  var icuIco=icuRisk==='high'?'🔴':icuRisk==='intermediate'?'🟡':'🟢';
+  var icuLbl=icuRisk==='high'?'Risiko ICU/PICU Tinggi – Konsul intensivis sebelum infusi':icuRisk==='intermediate'?'Risiko ICU/PICU Menengah – Monitoring intensif ketat':'Risiko ICU/PICU Rendah – Monitoring standar';
+  var icuH='<div class="icu-box '+icuCls+'"><span class="icu-ic">'+icuIco+'</span><div><div>'+icuLbl+'</div>';
+  if(icuReasons.length)icuH+='<div style="font-size:.7rem;font-weight:400;margin-top:3px;opacity:.85">'+icuReasons.join(' · ')+'</div>';
+  document.getElementById('icuBox').innerHTML=icuH+'</div></div>';
+
+  // VERDICT
+  var vMap={
+    suitable:{cls:'suitable',ic:'✅',tl:'LAYAK DIRUJUK KE PANEL CAR-T',tlen:'Suitable for Referral',s:'Tidak ditemukan kontraindikasi absolut atau kondisi hold. Dapat diajukan ke panel multidisiplin CAR-T untuk finalisasi.'},
+    optimize:{cls:'optimize',ic:'⚠️',tl:'KANDIDAT POTENSIAL – OPTIMASI DULU',tlen:'Potential Candidate – Optimize First',s:'Ada kondisi yang perlu dioptimalkan sebelum leukapheresis. Ajukan ke panel multidisiplin dengan catatan area yang perlu perhatian.'},
+    hold:{cls:'hold',ic:'🔶',tl:'TUNDA SEMENTARA',tlen:'Temporary Hold',s:'Terdapat kondisi yang belum aman saat ini. Tunda, atasi kondisi aktif, lalu lakukan re-triage.'},
+    notfit:{cls:'notfit',ic:'🚫',tl:'TIDAK SESUAI UNTUK PRODUK YANG DIPILIH',tlen:'Not Suitable for Selected Product',s:'Target antigen atau kombinasi diagnosis–produk tidak sesuai. Evaluasi platform CAR-T alternatif.'},
+    research:{cls:'research',ic:'🔬',tl:'HANYA UNTUK RISET / UJI KLINIS',tlen:'Research / Clinical Trial Only',s:'Tidak eligible untuk CAR-T standar. Hanya dalam konteks protokol riset atau akses khusus.'},
+    incomplete:{cls:'incomplete',ic:'📋',tl:'ASSESSMENT BELUM DAPAT DITENTUKAN',tlen:'Incomplete – Essential Workup Pending',s:'Workup esensial (terutama ekspresi antigen target) belum tersedia. Lengkapi terlebih dahulu sebelum penilaian dapat diberikan.'}
+  };
+  var v=vMap[verdict];
+  var vHtml='<div class="verdict '+v.cls+'">';
+  vHtml+='<div class="v-icon">'+v.ic+'</div>';
+  vHtml+='<div class="v-title">'+v.tl+'</div>';
+  vHtml+='<div class="v-subtitle">'+v.tlen+'</div>';
+  vHtml+='<div class="v-sub">'+v.s+'</div>';
+  if(incompleteReasons.length){vHtml+='<div style="margin-top:10px;background:rgba(148,163,184,.1);border-radius:8px;padding:8px 12px;font-size:.76rem;color:#475569;text-align:left"><b>Workup esensial yang belum tersedia:</b><br>• '+incompleteReasons.join('<br>• ')+'</div>';}
+  vHtml+='<div class="v-ts">⏱ Dinilai: '+ts+'</div></div>';
+  document.getElementById('verdictBox').innerHTML=vHtml;
+
+  // LYMPHODEPLETION GATE
+  var ldH='<div class="ldepl-gate"><h3>🔒 Lymphodepletion Safety Gate</h3>';
+  ldH+='<div style="font-size:.72rem;color:#64748b;margin-bottom:8px">Seluruh kriteria di bawah harus terpenuhi sebelum lymphodepletion dapat dimulai:</div>';
+  ldH+='<ul>';
+  ldeplGates.forEach(function(g2){
+    var cls=g2.ok?'gate-ok':g2.unk?'gate-unk':'gate-fail';
+    var ic=g2.ok?'✅':g2.unk?'❓':'❌';
+    ldH+='<li><span class="'+cls+'">'+ic+' '+g2.label+'</span></li>';
+  });
+  document.getElementById('ldeplBox').innerHTML=ldH+'</ul></div>';
+
+  // RED FLAGS
+  var rfH=redFlags.length?'<div class="rc red"><h3>🚩 Red Flags &amp; Pertimbangan Klinis</h3><ul>':'';
+  redFlags.forEach(function(rf){
+    var dc=rf.cat==='abs'||rf.cat==='hold'?'dr':'da';
+    var tg=rf.cat==='abs'?'<span class="tag tag-abs">ABSOLUT</span>':rf.cat==='hold'?'<span class="tag tag-hold">TUNDA</span>':'<span class="tag tag-rel">RELATIF</span>';
+    rfH+='<li><div class="dot '+dc+'"></div><div><strong>'+rf.t+'</strong>'+tg+'<br>'+rf.m+'</div></li>';
+  });
+  document.getElementById('redFlagsBox').innerHTML=redFlags.length?rfH+'</ul></div>':'<div class="rc green"><h3>✅ Tidak ditemukan red flag klinis yang signifikan</h3></div>';
+
+  // WORKUP
+  var wH='<div class="rc blue"><h3>📋 Pre-Panel Multidisiplin Workup Checklist</h3><ul>';
+  workup.forEach(function(w){wH+='<li><div class="dot db"></div>'+w+'</li>';});
+  document.getElementById('workupBox').innerHTML=wH+'</ul></div>';
+
+  // LEUKAPHERESIS
+  var lH='<div class="rc purple"><h3>🧫 Kesiapan Leukapheresis</h3><ul>';
+  lH+='<li><div class="dot dp"></div>ALC: '+(alc||'<b style="color:#dc2626">Belum diperiksa – wajib dievaluasi</b>')+'</li>';
+  lH+='<li><div class="dot dp"></div>CD3 count: '+(cd3||'Belum diperiksa')+'</li>';
+  lH+='<li><div class="dot dp"></div>Akses vena: '+(veinAccess||'Belum dinilai')+'</li>';
+  lH+='<li><div class="dot dp"></div>Slot manufaktur: '+(mfg||'Belum dikonfirmasi')+'</li>';
+  lH+='<li><div class="dot dp"></div>Sedasi leukapheresis: '+(g('sedasi')||'Belum dinilai')+'</li>';
+  if(washoutActive.length)lH+='<li><div class="dot dr"></div><b style="color:#dc2626">Washout belum selesai: '+washoutActive.join(', ')+'</b></li>';
+  document.getElementById('leukaphBox').innerHTML=lH+'</ul></div>';
+
+  // BRIDGING
+  var bH='<div class="rc amber"><h3>💊 Bridging &amp; Lymphodepletion Planning</h3><ul>';
+  bridgingNotes.forEach(function(bn){bH+='<li><div class="dot da"></div>'+bn+'</li>';});
+  document.getElementById('bridgingBox').innerHTML=bH+'</ul></div>';
+
+  // RECS
+  var rH='<div class="rec-box"><h3>📌 Rekomendasi Tindak Lanjut</h3>';
+  recs.forEach(function(r){rH+='<div class="rec-item"><span class="ri">'+r.i+'</span>'+r.t+'</div>';});
+  document.getElementById('recBox').innerHTML=rH+'</div>';
+
+  document.getElementById('result').style.display='block';
+  document.getElementById('btnPrint').style.display='inline-block';
+
+  // AUTOSAVE FULL FORM
+  try{
+    var snap={};
+    ALL_FIELDS.forEach(function(f){snap[f]=g(f);});
+    snap.bb=g('bb');snap.tb=g('tb');snap.prior=getChecked();
+    snap.verdict=verdict;snap.icuRisk=icuRisk;snap.ts=new Date().toISOString();
+    localStorage.setItem('cartTriage_v21',JSON.stringify(snap));
+  }catch(e){}
+
+  setTimeout(function(){document.getElementById('result').scrollIntoView({behavior:'smooth'});},100);
+});
+
+// ── RESTORE FROM AUTOSAVE ─────────────────────────────────────
+(function tryRestore(){
+  try{
+    var raw=localStorage.getItem('cartTriage_v21');
+    if(!raw)return;
+    var d=JSON.parse(raw);
+    ALL_FIELDS.forEach(function(f){var e=document.getElementById(f);if(e&&d[f])e.value=d[f];});
+    if(d.bb)document.getElementById('bb').value=d.bb;
+    if(d.tb)document.getElementById('tb').value=d.tb;
+    calcBSA();
+    if(d.antigen){updateAntigenExpr();}
+    if(d.prior&&d.prior.length){
+      d.prior.forEach(function(v){
+        var c=document.querySelector('#priorTherapy input[value="'+v+'"]');
+        if(c)c.checked=true;
+      });
+    }
+    updateProgress();
+  }catch(e){}
+})();
+
+// ── RESET ────────────────────────────────────────────────────
+document.getElementById('btnReset').addEventListener('click',function(){
+  document.querySelectorAll('select').forEach(function(s){s.selectedIndex=0;});
+  document.querySelectorAll('#priorTherapy input').forEach(function(b){b.checked=false;});
+  ['bb','tb'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('bsa').value='';
+  document.getElementById('antigenExprBox').style.display='none';
+  document.getElementById('diagAntigenWarn').style.display='none';
+  document.getElementById('antigenWarnBox').style.display='none';
+  document.getElementById('result').style.display='none';
+  document.getElementById('btnPrint').style.display='none';
+  document.getElementById('progFill').style.width='0%';
+  document.getElementById('progPct').textContent='0%';
+  try{localStorage.removeItem('cartTriage_v21');}catch(e){}
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+// ── PRINT ────────────────────────────────────────────────────
+document.getElementById('btnPrint').addEventListener('click',function(){window.print();});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>drAisyiEduCare – Pediatric Oncology Extravasation Management</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#1565C0;--blue-d:#0D47A1;--blue-l:#E3F2FD;--blue-m:#BBDEFB;
+  --sky:#0288D1;--sky-l:#E1F5FE;
+  --red:#C62828;--red-l:#FFEBEE;--red-m:#EF9A9A;
+  --orange:#E65100;--orange-l:#FFF3E0;--orange-m:#FFCC80;
+  --amber:#F57F17;--amber-l:#FFF8E1;
+  --green:#2E7D32;--green-l:#E8F5E9;--green-m:#A5D6A7;
+  --gray:#455A64;--gray-l:#ECEFF1;--gray-m:#B0BEC5;
+  --border:#CFD8DC;--text:#263238;--text2:#455A64;--text3:#78909C;
+  --r:10px;--rl:14px;--sh:0 2px 8px rgba(0,0,0,0.08);
+  --f:'Segoe UI',system-ui,sans-serif;
+}
+body{font-family:var(--f);background:#F0F4F8;color:var(--text);font-size:14px;min-height:100vh}
+.app{display:flex;flex-direction:column;min-height:100vh}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#0D47A1,#1565C0 60%,#0288D1);color:#fff}
+.hdr-in{max-width:1100px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:14px}
+.logo{width:42px;height:42px;background:rgba(255,255,255,0.15);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#fff;flex-shrink:0;letter-spacing:-1px}
+.brand{font-size:19px;font-weight:700}
+.brand-sub{font-size:12px;color:rgba(255,255,255,0.88);margin-top:2px;font-weight:500}
+.tagline{font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+
+/* NAV */
+.nav{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.nav-in{max-width:1100px;margin:0 auto;display:flex;padding:0 20px;overflow-x:auto}
+.ntab{padding:12px 16px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:.15s;user-select:none}
+.ntab:hover{color:var(--blue)}
+.ntab.act{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+
+/* MAIN */
+.main{max-width:1100px;margin:0 auto;padding:18px 20px;flex:1;width:100%}
+.panel{display:none}.panel.act{display:block}
+
+/* DISCLAIMER */
+.disc{background:#FFF8E1;border:1px solid var(--orange-m);border-radius:var(--r);padding:11px 15px;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start}
+.disc-text{font-size:12px;color:#4E342E;line-height:1.55}
+
+/* SEARCH CARD */
+.scard{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);padding:22px;margin-bottom:18px}
+.slbl{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:7px}
+.swrap{position:relative}
+.dsearch{width:100%;padding:12px 14px 12px 40px;border:2px solid var(--border);border-radius:var(--r);font-size:14px;font-family:var(--f);color:var(--text);outline:none;transition:.2s}
+.dsearch:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(21,101,192,0.1)}
+.sico{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:16px}
+.shint{font-size:12px;color:var(--text3);margin-top:5px}
+.ddrop{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1.5px solid var(--blue);border-radius:var(--r);box-shadow:0 4px 20px rgba(0,0,0,0.13);z-index:200;max-height:280px;overflow-y:auto;display:none}
+.ddrop.open{display:block}
+.dopt{padding:10px 15px;cursor:pointer;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--gray-l)}
+.dopt:last-child{border-bottom:none}
+.dopt:hover{background:var(--blue-l)}
+.dopt-name{font-weight:500;font-size:13px}
+.dopt-cls{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700}
+.cV{background:#FFEBEE;color:#C62828}.cI{background:#FFF3E0;color:#E65100}.cN{background:#E8F5E9;color:#2E7D32}
+
+/* OPTIONS ROW */
+.orow{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:14px}
+.ocard{background:var(--gray-l);border-radius:var(--r);padding:13px}
+.otitle{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px}
+.sbrow{display:flex;gap:5px;flex-wrap:wrap}
+.sbtn{padding:5px 11px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;cursor:pointer;background:#fff;color:var(--text2);transition:.15s;font-weight:500;font-family:var(--f)}
+.sbtn:hover,.sbtn.on{border-color:var(--blue);background:var(--blue-l);color:var(--blue)}
+.symg{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.schk{display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer}
+.schk input{accent-color:var(--blue);width:14px;height:14px}
+
+/* OUTPUT */
+.outsec{display:none}.outsec.vis{display:block}
+.ogrid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px}
+.ocard2{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);padding:17px}
+.clbl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:11px}
+
+/* CLASSIFICATION BADGE */
+.cbadge{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:22px;font-size:14px;font-weight:700;margin-bottom:6px}
+.cbadge.vest{background:#FFEBEE;color:#C62828;border:2px solid var(--red-m)}
+.cbadge.irr{background:#FFF3E0;color:#E65100;border:2px solid var(--orange-m)}
+.cbadge.neu{background:#E8F5E9;color:#2E7D32;border:2px solid var(--green-m)}
+.cdrug{font-size:19px;font-weight:700;color:#1A237E;margin-bottom:7px}
+.cdesc{font-size:12px;color:var(--text2);line-height:1.5;margin-top:5px}
+.dcls-sub{font-size:11px;color:var(--text3);margin-top:4px;font-style:italic}
+
+/* COMPRESS */
+.cpcard{border-radius:var(--r);padding:14px;text-align:center}
+.cpcard.cold{background:#E3F2FD;border:2px solid #90CAF9}
+.cpcard.warm{background:#FFF3E0;border:2px solid var(--orange-m)}
+.cpcard.none{background:var(--gray-l);border:2px solid var(--border)}
+.cpico{font-size:32px;display:block;margin-bottom:6px}
+.cptyp{font-size:16px;font-weight:700;margin-bottom:3px}
+.cpcard.cold .cptyp{color:#1565C0}.cpcard.warm .cptyp{color:#E65100}
+.cpdet{font-size:12px;color:var(--text2);line-height:1.6}
+
+/* CHECKLIST */
+.cklist{list-style:none;display:flex;flex-direction:column;gap:7px}
+.cki{display:flex;align-items:flex-start;gap:9px;padding:8px 11px;border-radius:8px;background:var(--gray-l);cursor:pointer;font-size:12px;line-height:1.4;transition:.15s}
+.cki:hover{background:#DFE9F3}
+.cki.done{background:#E8F5E9}
+.cki.done .ckb{background:var(--green);border-color:var(--green);color:#fff}
+.ckb{width:19px;height:19px;border:2px solid var(--border);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;margin-top:1px;transition:.15s}
+.cks{font-size:9px;font-weight:700;color:var(--blue);background:var(--blue-l);padding:2px 5px;border-radius:4px;flex-shrink:0;margin-top:2px}
+
+/* ANTIDOTE */
+.aitem{background:var(--blue-l);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:11px 13px;margin-bottom:9px}
+.aname{font-weight:700;color:var(--blue);font-size:14px;margin-bottom:3px}
+.atag{font-size:10px;padding:2px 7px;border-radius:11px;font-weight:600;background:#fff;color:var(--blue);border:1px solid var(--blue-m);display:inline-block;margin:2px 3px 4px 0}
+.anote{font-size:11px;color:var(--text2);line-height:1.5;margin-top:3px}
+.noa{background:var(--gray-l);border-radius:8px;padding:12px;text-align:center;color:var(--text3);font-size:12px}
+.awarn{background:#FFF8E1;border-left:3px solid var(--amber);border-radius:0 7px 7px 0;padding:8px 11px;font-size:11px;color:#4E342E;margin-top:8px;line-height:1.5}
+
+/* RISK */
+.rdis{display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px}
+.tlights{display:flex;flex-direction:column;gap:7px;align-items:center}
+.tldot{width:36px;height:36px;border-radius:50%;opacity:.18;font-size:14px;display:flex;align-items:center;justify-content:center}
+.tldot.on{opacity:1}
+.tlr{background:#E53935}.tla{background:#FF8F00}.tlg{background:#43A047}
+.rlbl{font-size:16px;font-weight:700}
+.rsub{font-size:11px;color:var(--text3);text-align:center}
+
+/* MONITOR */
+.mtl{display:flex;gap:7px;margin-top:7px;overflow-x:auto;padding-bottom:4px}
+.mday{background:var(--blue-l);border:1.5px solid var(--blue-m);border-radius:7px;padding:7px 10px;text-align:center;flex-shrink:0;min-width:48px}
+.mday.hl{background:var(--blue);border-color:var(--blue)}
+.mday.hl .mdn,.mday.hl .mdl{color:#fff}
+.mdn{font-size:14px;font-weight:700;color:var(--blue)}
+.mdl{font-size:9px;color:var(--text3)}
+.mnte{font-size:12px;color:var(--text2);margin-top:9px;line-height:1.5}
+
+/* RED FLAGS */
+.rfc{background:#FFEBEE;border:2px solid var(--red-m);border-radius:var(--rl);padding:16px;margin-bottom:15px}
+.rft{color:var(--red);font-size:14px;font-weight:700;margin-bottom:10px}
+.rfl{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.rfi{display:flex;align-items:flex-start;gap:7px;font-size:12px;color:#7B1818}
+.rfd{width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:3px}
+
+/* PEARLS */
+.psec{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);margin-bottom:15px;overflow:hidden}
+.ptog{width:100%;padding:14px 17px;background:none;border:none;text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:var(--f);font-size:13px;font-weight:600;color:#1A237E}
+.ptog:hover{background:var(--blue-l)}
+.pbody{padding:0 17px;max-height:0;overflow:hidden;transition:max-height .3s,padding .3s}
+.pbody.open{padding:0 17px 15px;max-height:600px}
+.pitem{padding:9px 13px;border-left:3px solid var(--sky);background:var(--sky-l);border-radius:0 7px 7px 0;margin-bottom:7px;font-size:12px;color:var(--text2);line-height:1.5}
+
+/* ACTION ROW */
+.arow{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:18px}
+.pbtn{background:var(--blue);color:#fff;border:none;padding:9px 20px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:var(--f);transition:.15s}
+.pbtn:hover{background:var(--blue-d)}
+.pbtn.sky{background:var(--sky)}.pbtn.sky:hover{background:#0277BD}
+
+/* EMPTY */
+.empty{text-align:center;padding:44px 20px;color:var(--text3)}
+.empty-ico{font-size:44px;margin-bottom:10px;opacity:.35}
+.empty-t{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:5px}
+.empty-s{font-size:12px;line-height:1.6}
+
+/* QUICK REF */
+.qrc{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden;margin-bottom:15px}
+.qrh{background:linear-gradient(135deg,var(--blue-d),var(--sky));color:#fff;padding:15px 18px}
+.qrd{font-size:20px;font-weight:700}
+.qrt{width:100%;border-collapse:collapse}
+.qrt td{padding:12px 17px;border-bottom:1px solid var(--border);vertical-align:top;font-size:13px}
+.qrt tr:last-child td{border-bottom:none}
+.qrt td:first-child{width:32%;font-weight:600;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;background:var(--gray-l);vertical-align:top}
+
+/* ALGORITHM */
+.flow{display:flex;flex-direction:column;align-items:center}
+.fs{border-radius:var(--r);padding:10px 20px;font-size:12px;font-weight:600;min-width:190px;text-align:center;box-shadow:var(--sh);margin:0}
+.fs.def{background:#fff;border:2px solid var(--blue-m);color:var(--blue)}
+.fs.dec{background:var(--amber-l);border:2px solid #FFCC80;color:var(--amber)}
+.fs.act{background:var(--green-l);border:2px solid var(--green-m);color:var(--green)}
+.fs.end{background:var(--blue);color:#fff;border:none}
+.fs.esc{background:#FFEBEE;border:2px solid var(--red-m);color:var(--red)}
+.farr{height:22px;display:flex;align-items:flex-end;justify-content:center;color:var(--text3);font-size:9px}
+.fbranch{display:flex;gap:16px;padding:8px;align-items:flex-start;flex-wrap:wrap;justify-content:center}
+.fbc{display:flex;flex-direction:column;align-items:center}
+.fblbl{font-size:10px;font-weight:700;padding:2px 9px;border-radius:11px;margin-bottom:5px}
+.fblbl.v{background:#FFEBEE;color:#C62828}
+.fblbl.va{background:#E3F2FD;color:#1565C0}
+.fblbl.ir{background:#FFF3E0;color:#E65100}
+.fblbl.ne{background:#E8F5E9;color:#2E7D32}
+
+/* DRUG TABLE */
+.ftrow{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.fchip{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:11px;font-weight:500;cursor:pointer;color:var(--text2);transition:.15s}
+.fchip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.dtbl{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden}
+.dr{display:grid;grid-template-columns:180px 1fr 100px 1fr 80px;padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;align-items:center;gap:7px}
+.dr.dh{background:var(--gray-l);font-weight:700;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px}
+.dr:not(.dh):hover{background:var(--blue-l);cursor:pointer}
+.cbadge2{padding:3px 8px;border-radius:11px;font-size:10px;font-weight:700}
+.cb2c{background:#E3F2FD;color:#1565C0}.cb2w{background:#FFF3E0;color:#E65100}.cb2n{background:var(--gray-l);color:var(--text3)}
+
+/* FAMILY */
+.fsec{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);padding:20px;margin-bottom:15px}
+.ftit{font-size:15px;font-weight:700;color:#1A237E;margin-bottom:3px}
+.fsub{font-size:12px;color:var(--text3);margin-bottom:14px}
+.fcard{border-radius:var(--r);padding:13px 15px;margin-bottom:9px;border-left:4px solid var(--green);background:var(--green-l)}
+.fcard.w{background:#FFF8E1;border-left-color:var(--amber)}
+.fcard.a{background:#FFEBEE;border-left-color:var(--red)}
+.fq{font-weight:600;font-size:13px;color:var(--text);margin-bottom:5px}
+.fa{font-size:12px;color:var(--text2);line-height:1.6}
+
+/* REFERENCES */
+.refsec{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);padding:20px;margin-bottom:15px}
+.refitem{border-left:3px solid var(--blue);background:var(--blue-l);border-radius:0 8px 8px 0;padding:12px 14px;margin-bottom:10px}
+.refname{font-weight:600;font-size:13px;color:var(--blue);margin-bottom:3px}
+.refdet{font-size:12px;color:var(--text2);line-height:1.5}
+.refnote{background:var(--amber-l);border:1px solid var(--orange-m);border-radius:var(--r);padding:12px 15px;font-size:12px;color:#4E342E;line-height:1.6}
+
+/* PRINT OVERLAY */
+#po{display:none;position:fixed;inset:0;background:#fff;z-index:9999;overflow-y:auto;padding:30px}
+#po.show{display:block}
+.po-bar{position:fixed;top:0;left:0;right:0;background:#fff;border-bottom:1px solid var(--border);padding:10px 20px;display:flex;gap:10px;z-index:10000}
+.po-content{margin-top:52px}
+.pob{padding:8px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--f)}
+.pob.blue{background:var(--blue);color:#fff}.pob.red{background:var(--red);color:#fff}
+
+/* FOOTER */
+.ft{text-align:center;padding:14px;font-size:11px;color:var(--text3);border-top:1px solid var(--border);background:#fff}
+
+@media print{
+  .po-bar,.hdr,.nav,.arow,.disc,.scard,.ocard,.psec,.rfc,.empty,.ftrow{display:none!important}
+  #po{position:static;padding:0}
+  body>.app{display:none}
+  #po.show{display:block!important}
+  .po-content{margin-top:0}
+}
+@media(max-width:680px){
+  .ogrid{grid-template-columns:1fr}
+  .rfl{grid-template-columns:1fr}
+  .dr{grid-template-columns:1fr 1fr;gap:4px}
+  .dr .dc3,.dr .dc4{display:none}
+  .fbranch{gap:10px}
+  .fs{min-width:130px;font-size:11px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="logo">dA</div>
+    <div>
+      <div class="brand">drAisyiEduCare</div>
+      <div class="brand-sub">Pediatric Oncology Extravasation Management</div>
+      <div class="tagline">Pediatric Hematology Oncology Clinical Toolkit</div>
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-in">
+    <div class="ntab act" id="tab-tool">⚕ Management Tool</div>
+    <div class="ntab" id="tab-qr">⚡ Quick Reference</div>
+    <div class="ntab" id="tab-algo">↕ Algorithm</div>
+    <div class="ntab" id="tab-srch">🔍 Drug Search</div>
+    <div class="ntab" id="tab-fam">👨‍👩‍👧 Family Education</div>
+    <div class="ntab" id="tab-ref">📚 References</div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+<div class="disc">
+  <span style="font-size:17px;flex-shrink:0;margin-top:1px">⚠</span>
+  <span class="disc-text"><strong>For trained healthcare teams.</strong> This tool supports — but does not replace — local protocols, pharmacy review, oncology consultation, or urgent surgical/plastic review when indicated. Verify drug, concentration, volume, line type, and time since event with your senior oncology team and pharmacist.</span>
+</div>
+
+<!-- ===== MANAGEMENT TOOL ===== -->
+<div class="panel act" id="panel-tool">
+  <div class="scard">
+    <div class="slbl">Drug Selection</div>
+    <div class="swrap">
+      <span class="sico">💊</span>
+      <input class="dsearch" id="dsearch" type="text" placeholder="Search chemotherapy agent (e.g. Vincristine, Doxorubicin, Etoposide…)" autocomplete="off">
+      <div class="ddrop" id="ddrop"></div>
+    </div>
+    <div class="shint">Type to search · Select drug to generate management guidance</div>
+    <div class="orow">
+      <div class="ocard">
+        <div class="otitle">Severity</div>
+        <div class="sbrow" id="sevBtns">
+          <button class="sbtn" data-sev="mild">Mild</button>
+          <button class="sbtn" data-sev="moderate">Moderate</button>
+          <button class="sbtn" data-sev="severe">Severe</button>
+        </div>
+      </div>
+      <div class="ocard">
+        <div class="otitle">Volume Suspected</div>
+        <div class="sbrow" id="volBtns">
+          <button class="sbtn" data-vol="<1mL">&lt;1 mL</button>
+          <button class="sbtn" data-vol="1–5mL">1–5 mL</button>
+          <button class="sbtn" data-vol=">5mL">&gt;5 mL</button>
+        </div>
+      </div>
+      <div class="ocard">
+        <div class="otitle">Symptoms Present</div>
+        <div class="symg">
+          <label class="schk"><input type="checkbox"> Pain</label>
+          <label class="schk"><input type="checkbox"> Swelling</label>
+          <label class="schk"><input type="checkbox"> Erythema</label>
+          <label class="schk"><input type="checkbox"> Blister</label>
+          <label class="schk"><input type="checkbox"> Discoloration</label>
+          <label class="schk"><input type="checkbox"> Ulceration</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="outsec" id="outsec">
+    <div class="arow">
+      <button class="pbtn" id="btnPrint">🖨 Print Management Plan</button>
+      <button class="pbtn sky" id="btnQR">⚡ Quick Reference</button>
+    </div>
+
+    <div class="ogrid">
+      <div class="ocard2">
+        <div class="clbl">🏷 Drug Classification</div>
+        <div class="cdrug" id="oDrug"></div>
+        <div id="oBadge"></div>
+        <div class="dcls-sub" id="oSubCls"></div>
+        <div class="cdesc" id="oDesc"></div>
+      </div>
+      <div class="ocard2">
+        <div class="clbl">🧊 Compress Recommendation</div>
+        <div id="oCompress"></div>
+      </div>
+    </div>
+
+    <div class="ogrid">
+      <div class="ocard2">
+        <div class="clbl">⚡ Immediate Actions</div>
+        <ul class="cklist" id="oCklist"></ul>
+      </div>
+      <div class="ocard2">
+        <div class="clbl">💉 Antidote / Specific Treatment</div>
+        <div id="oAntidote"></div>
+      </div>
+    </div>
+
+    <div class="ogrid">
+      <div class="ocard2">
+        <div class="clbl">📅 Monitoring Schedule</div>
+        <div id="oMonitor"></div>
+      </div>
+      <div class="ocard2">
+        <div class="clbl">🚦 Tissue Injury Risk</div>
+        <div class="rdis">
+          <div class="tlights">
+            <div class="tldot tlr" id="tlR">🔴</div>
+            <div class="tldot tla" id="tlA">🟡</div>
+            <div class="tldot tlg" id="tlG">🟢</div>
+          </div>
+          <div class="rlbl" id="rLbl"></div>
+          <div class="rsub" id="rSub"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rfc">
+      <div class="rft">🚨 Escalate — Seek Senior Oncology + Surgical/Plastic Review If:</div>
+      <ul class="rfl">
+        <li class="rfi"><span class="rfd"></span>Progressive pain not responding to initial management</li>
+        <li class="rfi"><span class="rfd"></span>Blistering or blister expansion</li>
+        <li class="rfi"><span class="rfd"></span>Ulceration at or near extravasation site</li>
+        <li class="rfi"><span class="rfd"></span>Necrosis or tissue death</li>
+        <li class="rfi"><span class="rfd"></span>Neurovascular compromise</li>
+        <li class="rfi"><span class="rfd"></span>Large-volume extravasation (&gt;10 mL or high-risk agent)</li>
+        <li class="rfi"><span class="rfd"></span>Central line or port extravasation</li>
+        <li class="rfi"><span class="rfd"></span>CTCAE Grade 2–4 tissue injury</li>
+      </ul>
+    </div>
+
+    <div class="psec">
+      <button class="ptog" id="ptog">
+        <span>💎 Clinical Pearls — <span id="pDrugName"></span></span>
+        <span id="pChev">▼</span>
+      </button>
+      <div class="pbody" id="pbody"><div id="pContent"></div></div>
+    </div>
+  </div>
+
+  <div class="empty" id="emptyState">
+    <div class="empty-ico">🔬</div>
+    <div class="empty-t">Select a chemotherapy agent to begin</div>
+    <div class="empty-s">Search for a drug above to generate evidence-based extravasation management guidance, compress recommendations, antidote protocols, and monitoring schedules.</div>
+  </div>
+</div>
+
+<!-- ===== QUICK REFERENCE ===== -->
+<div class="panel" id="panel-qr">
+  <div class="qrc" id="qrCard" style="display:none">
+    <div class="qrh">
+      <div style="font-size:12px;opacity:.75;margin-bottom:3px">Quick Reference Summary</div>
+      <div class="qrd" id="qrDrug"></div>
+      <div style="font-size:11px;opacity:.7;margin-top:2px" id="qrSubCls"></div>
+    </div>
+    <table class="qrt" id="qrTable"></table>
+  </div>
+  <div style="text-align:center;padding:40px;color:var(--text3);font-size:13px" id="qrEmpty">Select a drug in the Management Tool tab first.</div>
+</div>
+
+<!-- ===== ALGORITHM ===== -->
+<div class="panel" id="panel-algo">
+  <div class="scard" style="margin-bottom:18px">
+    <div style="font-size:15px;font-weight:700;color:#1A237E;margin-bottom:3px">Extravasation Management Algorithm</div>
+    <div style="font-size:12px;color:var(--text3)">Evidence-based clinical pathway — always apply local institutional protocol</div>
+  </div>
+  <div class="ocard2" style="margin-bottom:15px;overflow-x:auto">
+    <div class="flow" style="min-width:320px">
+      <div class="fs dec">🔍 Suspected Extravasation — Call for Help</div>
+      <div class="farr">▼</div>
+      <div class="fs act">🛑 STOP infusion immediately · Do NOT flush the line</div>
+      <div class="farr">▼</div>
+      <div class="fs act">Leave VAD/cannula in place · Disconnect tubing</div>
+      <div class="farr">▼</div>
+      <div class="fs act">💉 Aspirate residual drug if possible (3–5 mL)</div>
+      <div class="farr">▼</div>
+      <div class="fs act">📷 Mark area · Photograph with timestamp · Document drug, concentration, volume, time, site, symptoms</div>
+      <div class="farr">▼</div>
+      <div class="fs dec">🏷 Identify drug mechanism / class</div>
+      <div class="fbranch">
+        <div class="fbc">
+          <div class="fblbl v">🔴 DNA-binding Vesicant</div>
+          <div class="farr">▼</div>
+          <div class="fs" style="min-width:140px;font-size:11px;background:#FFEBEE;border:2px solid var(--red-m);color:var(--red)">❄ COLD Compress<br><small style="color:#9E3333">15–20 min · q6h · 48–72h</small></div>
+          <div class="farr">▼</div>
+          <div class="fs" style="min-width:140px;font-size:11px">💉 Dexrazoxane ≤6h<br>or DMSO 99% topical</div>
+        </div>
+        <div class="fbc">
+          <div class="fblbl va">🔵 Vinca Alkaloid Vesicant</div>
+          <div class="farr">▼</div>
+          <div class="fs" style="min-width:140px;font-size:11px;background:#FFF3E0;border:2px solid var(--orange-m);color:#E65100">🔥 WARM Compress<br><small style="color:#8D3900">15–20 min · q6h · 48–72h</small></div>
+          <div class="farr">▼</div>
+          <div class="fs" style="min-width:140px;font-size:11px">💉 Hyaluronidase<br>per local protocol</div>
+        </div>
+        <div class="fbc">
+          <div class="fblbl ir">🟠 Irritant</div>
+          <div class="farr">▼</div>
+          <div class="fs" style="min-width:140px;font-size:11px;background:#FFF8E1;border:2px solid #FFCC80;color:var(--amber)">❄/🔥 Agent-specific<br><small style="color:#6D4C00">see drug entry</small></div>
+          <div class="farr">▼</div>
+          <div class="fs" style="min-width:140px;font-size:11px">👁 Observe · Senior review<br>if high-risk features</div>
+        </div>
+        <div class="fbc">
+          <div class="fblbl ne">🟢 Neutral</div>
+          <div class="farr">▼</div>
+          <div class="fs" style="min-width:140px;font-size:11px;background:var(--green-l);border:2px solid var(--green-m);color:var(--green)">Comfort measures<br><small>No specific compress</small></div>
+          <div class="farr">▼</div>
+          <div class="fs" style="min-width:140px;font-size:11px">📋 Routine observation<br>Day 1–3</div>
+        </div>
+      </div>
+      <div class="farr">▼</div>
+      <div class="fs act">Notify senior oncology team + pharmacist · Incident report</div>
+      <div class="farr">▼</div>
+      <div class="fs dec">📅 Structured monitoring: High risk Day 1,2,3,7,14,21 · Moderate Day 1,2,3,7 · Low Day 1–3</div>
+      <div class="farr">▼</div>
+      <div class="fs esc">⚠ Escalate if: Progressive pain · Blistering · Ulceration · Necrosis · Neurovascular compromise · Large volume · Central line event · CTCAE ≥2</div>
+      <div class="farr">▼</div>
+      <div class="fs end">🏥 Senior Oncology + Surgical/Plastic Surgery Review</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DRUG SEARCH ===== -->
+<div class="panel" id="panel-srch">
+  <div class="scard" style="margin-bottom:14px">
+    <input class="dsearch" id="tsearch" type="text" placeholder="🔍  Search drug name, class, compress type, or antidote…" style="padding-left:14px">
+  </div>
+  <div class="ftrow" id="filterRow">
+    <button class="fchip on" data-f="all">All</button>
+    <button class="fchip" data-f="Vesicant">🔴 Vesicants</button>
+    <button class="fchip" data-f="Irritant">🟠 Irritants</button>
+    <button class="fchip" data-f="Neutral">🟢 Neutral</button>
+    <button class="fchip" data-f="cold">❄ Cold</button>
+    <button class="fchip" data-f="warm">🔥 Warm</button>
+    <button class="fchip" data-f="antidote">💉 Has Antidote</button>
+    <button class="fchip" data-f="High">High Risk</button>
+  </div>
+  <div class="dtbl">
+    <div class="dr dh"><div>Drug</div><div>Classification</div><div class="dc3">Compress</div><div class="dc4">Antidote</div><div>Risk</div></div>
+    <div id="tblBody"></div>
+  </div>
+</div>
+
+<!-- ===== FAMILY EDUCATION ===== -->
+<div class="panel" id="panel-fam">
+  <div class="fsec">
+    <div class="ftit">👨‍👩‍👧 Family &amp; Patient Education</div>
+    <div class="fsub">Plain language information for parents and caregivers</div>
+    <div class="fcard"><div class="fq">❓ What is extravasation?</div><div class="fa">Extravasation happens when a chemotherapy medicine leaks outside the blood vessel during your child's treatment. Instead of going into the vein, the drug seeps into the tissue under the skin. Depending on the drug, this can sometimes cause pain, swelling, or skin changes around the IV site.</div></div>
+    <div class="fcard"><div class="fq">⚠ Why must the IV site be watched during treatment?</div><div class="fa">Some chemotherapy drugs can injure the skin and tissue if they leak outside the vein. The amount of injury depends on the drug type. Your child's nurses and doctors watch the IV site carefully during treatment. Please tell them immediately if your child complains of pain, stinging, or burning near the IV site — do not wait until the end of the infusion.</div></div>
+    <div class="fcard w"><div class="fq">🔍 What should parents watch for at home?</div><div class="fa">After chemotherapy, check the IV site area daily for: redness that is spreading or getting darker · swelling that is increasing · any change in skin colour (bruising, darkening, purple discolouration) · skin feeling very warm or tender to touch · any blister or open wound forming. If unsure, take a photo each day and show it to the team at the next visit.</div></div>
+    <div class="fcard a"><div class="fq">🚨 When should you return to hospital immediately?</div><div class="fa">Contact your oncology team or return to hospital immediately if you see: skin turning dark purple or black · an area becoming very painful and not improving · a blister, peeling skin, or open sore at the IV site · fever together with swelling or redness at the IV site · any signs that seem to be getting worse rather than better. Do not wait for the next scheduled appointment.</div></div>
+    <div class="fcard"><div class="fq">💊 Will my child need special treatment?</div><div class="fa">It depends on the chemotherapy drug that was given. For some drugs there is a specific antidote medicine. For most situations, cold or warm compresses are applied to the area and the team monitors it closely. Always follow the instructions given by your oncology team — they will tell you exactly what to do at home and when to return.</div></div>
+    <div class="fcard"><div class="fq">📞 Who should we contact?</div><div class="fa">Contact your oncology team or the hospital's oncology emergency line as soon as you are worried. There is no such thing as calling too early when it comes to your child's safety. If you cannot reach the team and signs are worsening, go to the nearest emergency department and tell them your child is receiving chemotherapy.</div></div>
+  </div>
+</div>
+
+<!-- ===== REFERENCES ===== -->
+<div class="panel" id="panel-ref">
+  <div class="refsec">
+    <div style="font-size:15px;font-weight:700;color:#1A237E;margin-bottom:4px">📚 References &amp; Guideline Sources</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:16px">This tool was developed with reference to the following clinical resources. Always verify current versions and adapt to local protocol.</div>
+    <div class="refitem">
+      <div class="refname">eviQ Cancer Treatments Online — Extravasation Clinical Procedure</div>
+      <div class="refdet">SLAP approach: Stop, Leave cannula, Aspirate, Photograph/document. Australian standard for anti-cancer drug extravasation management in oncology and haematology settings. Includes agent-specific management tables.</div>
+    </div>
+    <div class="refitem">
+      <div class="refname">eviQ Quicklink — Anti-Cancer Therapy Extravasation Summary Table</div>
+      <div class="refdet">Rapid reference table categorising drugs by irritant/vesicant classification, recommended compress, and antidote availability. Used as primary source for drug-specific compress recommendations in this tool.</div>
+    </div>
+    <div class="refitem">
+      <div class="refname">ONS/ASCO Chemotherapy Administration Safety Standards (current edition)</div>
+      <div class="refdet">Includes extravasation prevention, recognition, management, and documentation standards. Specifies nurse competency, vascular access considerations, and escalation criteria.</div>
+    </div>
+    <div class="refitem">
+      <div class="refname">Pérez Fidalgo JA et al. — ESMO Clinical Practice Guidelines for Extravasation (2012, updated references)</div>
+      <div class="refdet">European guidance on extravasation management including dexrazoxane, DMSO, hyaluronidase, and sodium thiosulfate use. Covers anthracycline, vinca alkaloid, and platinum compound management.</div>
+    </div>
+    <div class="refitem">
+      <div class="refname">Dexrazoxane (Totect / Savene) Product Information</div>
+      <div class="refdet">Pharmacist and oncology team verification required for dosing, timing, contraindications, and local availability. First-line antidote for anthracycline extravasation when given within 6 hours of event.</div>
+    </div>
+    <div class="refitem">
+      <div class="refname">Local Institutional Extravasation Protocol</div>
+      <div class="refdet">Final management decisions must follow your institution's approved protocol, including drug concentration, line type, patient-specific factors, antidote availability, and surgical pathway.</div>
+    </div>
+    <div class="refnote">
+      <strong>Implementation note:</strong> Drug classification, compress type, and antidote recommendation in this tool reflect published international guidelines but may differ from local protocols based on available agents, drug concentrations, and institutional policies. Final action always requires verification with the senior oncology team, pharmacist, and where indicated, surgical or plastic surgery specialist. This is a clinical support tool, not a standalone protocol.
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="ft">
+  drAisyiEduCare · Pediatric Hematology Oncology Clinical Toolkit · Pediatric Oncology Extravasation Management<br>
+  This is a clinical support tool. It does not replace local protocols, pharmacy review, or specialist consultation.
+</footer>
+</div>
+
+<!-- PRINT OVERLAY -->
+<div id="po">
+  <div class="po-bar">
+    <button class="pob blue" id="poPrint">🖨 Print / Save as PDF</button>
+    <button class="pob red" id="poClose">✕ Close</button>
+    <span style="font-size:12px;color:var(--text3);align-self:center;margin-left:8px">Use browser Print → Save as PDF to export</span>
+  </div>
+  <div class="po-content" id="poContent"></div>
+</div>
+
+<script>
+// ── DRUG DATABASE ─────────────────────────────────────────────────────────
+const DRUGS = [
+  // ── DNA-BINDING VESICANTS ──
+  {name:"Doxorubicin",cls:"Vesicant",displayCls:"Vesicant — DNA-binding anthracycline",compress:"cold",
+   cd:{dur:"15–20 min",freq:"Every 6 hours (3–4×/day)",days:"48–72 hours or per local protocol"},
+   antidote:[
+     {name:"Dexrazoxane (Totect / Savene)",timing:"Preferred: within 6 hours of event",notes:"1000 mg/m² IV Day 1, 1000 mg/m² Day 2, 500 mg/m² Day 3. Remove cold compress ≥15 min before infusion. Verify dosing with pharmacy."},
+     {name:"DMSO 99% topical",timing:"Alternative when dexrazoxane unavailable/contraindicated",notes:"Apply 1–2 mL to affected area, allow to dry, do NOT cover. Repeat every 8 hours × 7 days. Do NOT combine with dexrazoxane."}
+   ],
+   monitor:{days:[1,2,3,7,14,21],note:"Anthracycline injury may progress over weeks. Ulceration can develop 1–4 weeks post-event. Daily monitoring for first 3 days is essential. Photograph at each visit."},
+   risk:"High",
+   pearls:["Doxorubicin is among the most tissue-damaging vesicants. DNA intercalation causes ongoing cellular injury even after drug dilution.","Dexrazoxane (Totect/Savene) is the only evidence-based antidote for anthracycline extravasation — administer as soon as possible and within 6 hours of the event.","Remove cold compress at least 15 minutes before dexrazoxane infusion to ensure adequate local perfusion.","Do NOT use DMSO and dexrazoxane together unless explicitly directed by local protocol.","Tissue necrosis and ulceration may appear insidiously days to weeks after the event. Early surgical consultation is recommended for any worsening case."]},
+
+  {name:"Daunorubicin",cls:"Vesicant",displayCls:"Vesicant — DNA-binding anthracycline",compress:"cold",
+   cd:{dur:"15–20 min",freq:"Every 6 hours (3–4×/day)",days:"48–72 hours"},
+   antidote:[
+     {name:"Dexrazoxane",timing:"Within 6 hours",notes:"Same anthracycline protocol as doxorubicin. Verify with pharmacy."},
+     {name:"DMSO 99% topical",timing:"If dexrazoxane unavailable",notes:"Do NOT combine with dexrazoxane."}
+   ],
+   monitor:{days:[1,2,3,7,14,21],note:"Delayed ulceration possible 1–3 weeks post-event. Monitor closely."},
+   risk:"High",
+   pearls:["Daunorubicin has the same mechanism of tissue injury as doxorubicin. Management is identical.","Particularly relevant in paediatric acute leukaemia — extravasation risk is highest when peripheral IV access is used."]},
+
+  {name:"Epirubicin",cls:"Vesicant",displayCls:"Vesicant — DNA-binding anthracycline",compress:"cold",
+   cd:{dur:"15–20 min",freq:"Every 6 hours",days:"48–72 hours"},
+   antidote:[{name:"Dexrazoxane",timing:"Within 6 hours",notes:"Standard anthracycline antidote protocol. Verify with pharmacy."}],
+   monitor:{days:[1,2,3,7,14],note:"Monitor for at least 2 weeks. Injury may progress despite initial mild presentation."},
+   risk:"High",
+   pearls:["Epirubicin is an anthracycline vesicant — management mirrors doxorubicin protocol.","Tissue injury may appear slightly less severe than doxorubicin but close monitoring remains essential."]},
+
+  {name:"Idarubicin",cls:"Vesicant",displayCls:"Vesicant — DNA-binding anthracycline",compress:"cold",
+   cd:{dur:"15–20 min",freq:"Every 6 hours",days:"48–72 hours"},
+   antidote:[{name:"Dexrazoxane",timing:"Within 6 hours",notes:"Use if available. Verify with pharmacy."}],
+   monitor:{days:[1,2,3,7,14],note:"Daily assessment first 3 days; continue at Day 7 and Day 14."},
+   risk:"High",
+   pearls:["Idarubicin is highly lipophilic and may penetrate tissue more deeply than other anthracyclines.","Management follows standard anthracycline extravasation protocol."]},
+
+  {name:"Dactinomycin (Actinomycin D)",cls:"Vesicant",displayCls:"Vesicant — DNA-binding (non-anthracycline)",compress:"cold",
+   cd:{dur:"15–20 min",freq:"Every 6 hours",days:"48–72 hours or per local protocol"},
+   antidote:[],
+   monitor:{days:[1,2,3,7,14],note:"No specific antidote. Monitor for necrosis. Photograph at each assessment."},
+   risk:"High",
+   pearls:["Dactinomycin is a potent vesicant — even very small volumes can cause severe tissue injury.","Commonly used in paediatric solid tumours (Wilms tumour, rhabdomyosarcoma).","Radiation recall phenomenon: prior radiation fields may develop erythema/injury following dactinomycin administration, even without direct extravasation.","No specific antidote — cold compress, close monitoring, and early surgical review for any progression."]},
+
+  {name:"Mitomycin C",cls:"Vesicant",displayCls:"Vesicant — DNA-binding (alkylating)",compress:"cold",
+   cd:{dur:"15–20 min",freq:"Every 6 hours",days:"48–72 hours; extend monitoring to 14+ days"},
+   antidote:[{name:"DMSO 99% topical",timing:"Within 30 min if possible",notes:"Apply topically every 8 hours × 7–14 days. Verify with pharmacy."}],
+   monitor:{days:[1,2,3,7,14,21],note:"Ulceration may be significantly delayed — injury may not be apparent for 1–6 weeks. Monitor closely for 21 days minimum."},
+   risk:"High",
+   pearls:["Mitomycin C extravasation can cause severely delayed ulceration — injury may not become apparent for weeks.","Surgical debridement is frequently required for significant extravasation.","DMSO is the commonly cited topical antidote when available."]},
+
+  // ── VINCA ALKALOID VESICANTS ──
+  {name:"Vincristine",cls:"Vesicant",displayCls:"Vesicant — non-DNA-binding vinca alkaloid",compress:"warm",
+   cd:{dur:"15–20 min",freq:"Every 6 hours (3–4×/day)",days:"48–72 hours or per local protocol"},
+   antidote:[{name:"Hyaluronidase",timing:"Ideally within 1 hour of event",notes:"150 units/mL — inject 1 mL SC/ID divided into multiple injections around the extravasation site. Follow local protocol for exact dosing and preparation."}],
+   monitor:{days:[1,2,3,7,14],note:"Monitor for progressive tissue injury and neurological symptoms. Photograph at each assessment. Escalate if worsening."},
+   risk:"High",
+   pearls:["Vinca alkaloids require WARM compress, not cold. Cold compress may limit drug dispersion and worsen local injury.","Hyaluronidase works by enzymatically degrading hyaluronic acid, promoting drug dispersal and dilution ('disperse-and-dilute' strategy).","Hyaluronidase is most effective when given within 1 hour of the event.","Progressive tissue injury may develop if extravasation is not recognised and treated early.","Document exact time of extravasation — timing of antidote administration is clinically important."]},
+
+  {name:"Vinblastine",cls:"Vesicant",displayCls:"Vesicant — non-DNA-binding vinca alkaloid",compress:"warm",
+   cd:{dur:"15–20 min",freq:"Every 6 hours",days:"48–72 hours"},
+   antidote:[{name:"Hyaluronidase",timing:"Within 1 hour",notes:"Same protocol as vincristine."}],
+   monitor:{days:[1,2,3,7,14],note:"Monitor for 2 weeks. Progressive necrosis may develop within days."},
+   risk:"High",
+   pearls:["Vinblastine shares the same extravasation mechanism and management as vincristine — warm compress and hyaluronidase.","Daily photography is essential to track any progression."]},
+
+  {name:"Vindesine",cls:"Vesicant",displayCls:"Vesicant — non-DNA-binding vinca alkaloid",compress:"warm",
+   cd:{dur:"15–20 min",freq:"Every 6 hours",days:"48–72 hours"},
+   antidote:[{name:"Hyaluronidase",timing:"Within 1 hour",notes:"Standard vinca alkaloid antidote protocol."}],
+   monitor:{days:[1,2,3,7,14],note:"Monitor daily for first week."},
+   risk:"High",
+   pearls:["Vindesine is a semisynthetic vinca alkaloid with similar extravasation toxicity profile to vincristine and vinblastine.","Warm compress + hyaluronidase are the mainstay."]},
+
+  {name:"Vinorelbine",cls:"Vesicant",displayCls:"Vesicant — non-DNA-binding vinca alkaloid",compress:"warm",
+   cd:{dur:"15–20 min",freq:"Every 6 hours",days:"48–72 hours"},
+   antidote:[{name:"Hyaluronidase",timing:"Within 1 hour",notes:"Administer promptly per local protocol."}],
+   monitor:{days:[1,2,3,7],note:"Monitor for 7 days; escalate if worsening."},
+   risk:"High",
+   pearls:["Vinorelbine extravasation can cause significant pain and local inflammation.","Warm compress and early hyaluronidase remain first-line management."]},
+
+  // ── IRRITANTS WITH VESICANT PROPERTIES ──
+  {name:"Bendamustine",cls:"Irritant",displayCls:"Irritant with vesicant properties",compress:"cold",
+   cd:{dur:"15–20 min",freq:"3–4× daily",days:"3–5 days"},
+   antidote:[],
+   monitor:{days:[1,2,3,7],note:"Requires senior review if large volume, worsening pain, blistering, ulceration, or neurovascular compromise."},
+   risk:"Moderate",
+   pearls:["Bendamustine is classified as an irritant with vesicant properties — treat as higher risk.","Prefer cold compress unless agent-specific protocol directs otherwise.","Senior review is required for large-volume extravasation, worsening pain, blistering, ulceration, or neurovascular compromise."]},
+
+  {name:"Melphalan",cls:"Irritant",displayCls:"Irritant with vesicant properties",compress:"cold",
+   cd:{dur:"15–20 min",freq:"3–4× daily",days:"3–5 days"},
+   antidote:[],
+   monitor:{days:[1,2,3,7],note:"High-dose melphalan (HSCT conditioning) — central venous access strongly preferred. Monitor closely."},
+   risk:"Moderate",
+   pearls:["High-dose melphalan used in HSCT conditioning is more irritating than standard doses and should be considered higher risk.","Central venous access is strongly preferred for high-dose melphalan.","Cold compress for comfort; senior review if any worsening features."]},
+
+  {name:"Cisplatin (high concentration / large volume)",cls:"Irritant",displayCls:"Irritant with vesicant properties — high concentration",compress:"cold",
+   cd:{dur:"15–20 min",freq:"3–4× daily",days:"5–7 days"},
+   antidote:[{name:"Sodium Thiosulfate (consider)",timing:"Promptly — specialist and pharmacy guidance required",notes:"1/6 molar sodium thiosulfate injected intradermally and subcutaneously around site. Volume: approximately 2 mL per 100 mg cisplatin. Use only on specialist and pharmacist advice."}],
+   monitor:{days:[1,2,3,7,14],note:"Concentrated cisplatin (>0.5 mg/mL) or large-volume event: treat as high risk. Monitor closely."},
+   risk:"High",
+   pearls:["Cisplatin >0.5 mg/mL or large-volume extravasation: treat as irritant with vesicant properties — higher risk management applies.","Sodium thiosulfate directly inactivates cisplatin — administer only on specialist and pharmacist advice.","Cold compress for comfort.","Central line is strongly preferred for cisplatin administration."]},
+
+  // ── STANDARD IRRITANTS ──
+  {name:"Cisplatin (standard dilution ≤0.5 mg/mL)",cls:"Irritant",displayCls:"Irritant — standard dilution",compress:"cold",
+   cd:{dur:"15–20 min",freq:"3× daily",days:"3 days"},
+   antidote:[],
+   monitor:{days:[1,3,7],note:"Standard dilution cisplatin — lower risk. Monitor for local reaction. Escalate if worsening."},
+   risk:"Moderate",
+   pearls:["Cisplatin at standard dilutions (≤0.5 mg/mL) is classified as an irritant with generally lower risk of severe tissue injury.","Cold compress for comfort. Monitor and escalate if pain or local signs worsen."]},
+
+  {name:"Etoposide",cls:"Irritant",displayCls:"Irritant",compress:"warm",
+   cd:{dur:"15–20 min",freq:"3–4× daily",days:"3–5 days"},
+   antidote:[],
+   monitor:{days:[1,3,7],note:"Monitor for local inflammatory reaction. Usually self-limiting with appropriate management."},
+   risk:"Moderate",
+   pearls:["Etoposide is classified as an irritant and is managed with WARM compress.","Large-volume extravasation may cause significant local irritation even without vesicant-level necrosis.","Monitor closely; escalate if any vesicant-like features develop."]},
+
+  {name:"Carboplatin",cls:"Irritant",displayCls:"Irritant",compress:"cold",
+   cd:{dur:"15–20 min for comfort",freq:"3× daily",days:"2–3 days"},
+   antidote:[],
+   monitor:{days:[1,3,7],note:"Carboplatin is less reactive than cisplatin. Cold compress for comfort. Monitor for 7 days."},
+   risk:"Moderate",
+   pearls:["Carboplatin is less reactive than cisplatin but can still cause significant local irritation.","Cold compress for comfort; no routine antidote recommended."]},
+
+  {name:"Ifosfamide",cls:"Irritant",displayCls:"Irritant",compress:"cold",
+   cd:{dur:"15–20 min for comfort",freq:"3× daily",days:"2–3 days"},
+   antidote:[],
+   monitor:{days:[1,3],note:"Generally minimal local tissue injury. Standard irritant management."},
+   risk:"Low",
+   pearls:["Ifosfamide extravasation is generally considered low risk for severe tissue injury.","Cold compress for comfort; monitor and escalate if any signs of progression."]},
+
+  {name:"Bleomycin",cls:"Irritant",displayCls:"Irritant",compress:"cold",
+   cd:{dur:"15–20 min for comfort",freq:"3× daily",days:"2–3 days"},
+   antidote:[],
+   monitor:{days:[1,3],note:"Cold compress for comfort. Low risk for significant tissue necrosis."},
+   risk:"Low",
+   pearls:["Bleomycin extravasation — cold compress for comfort. Low necrotic potential."]},
+
+  {name:"Gemcitabine",cls:"Irritant",displayCls:"Irritant",compress:"cold",
+   cd:{dur:"15–20 min for comfort",freq:"3× daily",days:"2–3 days"},
+   antidote:[],
+   monitor:{days:[1,3],note:"Cold compress for comfort. Low risk for severe tissue injury."},
+   risk:"Low",
+   pearls:["Gemcitabine extravasation — cold compress for comfort. Low necrotic potential."]},
+
+  {name:"Irinotecan",cls:"Irritant",displayCls:"Irritant",compress:"cold",
+   cd:{dur:"15–20 min for comfort",freq:"3× daily",days:"2–3 days"},
+   antidote:[],
+   monitor:{days:[1,3],note:"Cold compress for comfort. Low risk for significant necrosis."},
+   risk:"Low",
+   pearls:["Irinotecan extravasation — cold compress for comfort. Routine observation appropriate."]},
+
+  {name:"Topotecan",cls:"Irritant",displayCls:"Irritant",compress:"cold",
+   cd:{dur:"15–20 min for comfort",freq:"3× daily",days:"2–3 days"},
+   antidote:[],
+   monitor:{days:[1,3],note:"Cold compress for comfort. Low risk."},
+   risk:"Low",
+   pearls:["Topotecan extravasation — cold compress for comfort. Routine observation appropriate."]},
+
+  // ── NEUTRAL / NON-IRRITANTS ──
+  {name:"Cytarabine",cls:"Neutral",displayCls:"Non-irritant / neutral",compress:"none",
+   cd:{dur:"Not required",freq:"Comfort measures only",days:""},
+   antidote:[],
+   monitor:{days:[1,3],note:"Very low risk of significant tissue injury. Monitor for local discomfort only."},
+   risk:"Low",
+   pearls:["Cytarabine (Ara-C) is classified as a neutral, non-irritant agent with very low risk of tissue injury.","No specific compress or antidote required. Standard observation is appropriate."]},
+
+  {name:"Methotrexate",cls:"Neutral",displayCls:"Non-irritant / neutral",compress:"none",
+   cd:{dur:"Not required",freq:"Comfort measures only",days:""},
+   antidote:[],
+   monitor:{days:[1],note:"Very low tissue toxicity. Routine observation."},
+   risk:"Low",
+   pearls:["Methotrexate extravasation carries very low risk of local tissue toxicity.","Standard observation and site care are adequate."]},
+
+  {name:"Cyclophosphamide",cls:"Neutral",displayCls:"Non-irritant / neutral",compress:"none",
+   cd:{dur:"Not required",freq:"Comfort measures only",days:""},
+   antidote:[],
+   monitor:{days:[1,3],note:"Low risk. Monitor for local discomfort only."},
+   risk:"Low",
+   pearls:["Cyclophosphamide extravasation is generally well tolerated with very low tissue toxicity.","Comfort measures and observation are appropriate."]},
+
+  {name:"Mesna",cls:"Neutral",displayCls:"Non-irritant / neutral",compress:"none",
+   cd:{dur:"Not required",freq:"Comfort measures only",days:""},
+   antidote:[],
+   monitor:{days:[1],note:"No clinically significant tissue toxicity expected."},
+   risk:"Low",
+   pearls:["Mesna is a uroprotective agent — extravasation is clinically not significant from a tissue-injury perspective."]},
+
+  {name:"Asparaginase / Pegaspargase",cls:"Neutral",displayCls:"Non-irritant / neutral — hypersensitivity risk",compress:"none",
+   cd:{dur:"Not required",freq:"Comfort measures only",days:""},
+   antidote:[],
+   monitor:{days:[1],note:"Extravasation tissue injury is not the primary concern. Hypersensitivity/anaphylaxis risk during infusion is the key safety consideration."},
+   risk:"Low",
+   pearls:["Asparaginase/pegaspargase — the primary safety concern during infusion is hypersensitivity/anaphylaxis, not extravasation tissue injury.","If extravasation occurs, comfort measures and observation are appropriate."]},
+
+  {name:"Rituximab",cls:"Neutral",displayCls:"Non-irritant / neutral",compress:"none",
+   cd:{dur:"Not required",freq:"Comfort measures only",days:""},
+   antidote:[],
+   monitor:{days:[1],note:"Very low extravasation tissue toxicity. Infusion-related reaction (IRR) is the primary infusion safety concern."},
+   risk:"Low",
+   pearls:["Rituximab extravasation is not associated with significant local tissue injury.","The primary infusion safety concern is infusion-related reaction (IRR), not extravasation injury."]},
+
+  {name:"Mercaptopurine (6-MP)",cls:"Neutral",displayCls:"Oral agent / low extravasation relevance",compress:"none",
+   cd:{dur:"Not required",freq:"Comfort measures only",days:""},
+   antidote:[],
+   monitor:{days:[1],note:"Primarily an oral agent. IV extravasation is rare and low risk."},
+   risk:"Low",
+   pearls:["6-Mercaptopurine is primarily administered orally. IV extravasation is very rare.","Included for search completeness — IV extravasation is not usually clinically significant."]},
+
+  {name:"Thioguanine (6-TG)",cls:"Neutral",displayCls:"Oral agent / low extravasation relevance",compress:"none",
+   cd:{dur:"Not required",freq:"Comfort measures only",days:""},
+   antidote:[],
+   monitor:{days:[1],note:"Primarily oral agent. Low extravasation relevance."},
+   risk:"Low",
+   pearls:["Thioguanine is primarily an oral agent. IV extravasation is not usually clinically significant.","Included for search completeness."]}
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let selDrug = null, pearlsOpen = false, tFilter = 'all';
+
+// ── DROPDOWN ──────────────────────────────────────────────────────────────
+function buildDD(q) {
+  const dd = document.getElementById('ddrop');
+  const matches = DRUGS.filter(d => d.name.toLowerCase().includes(q.toLowerCase()));
+  if (!matches.length) { dd.classList.remove('open'); return; }
+  dd.innerHTML = matches.map(d =>
+    `<div class="dopt" data-name="${d.name}"><span class="dopt-cls c${d.cls[0]}">${d.cls}</span><span class="dopt-name">${d.name}</span></div>`
+  ).join('');
+  dd.classList.add('open');
+  dd.querySelectorAll('.dopt').forEach(el => {
+    el.addEventListener('mousedown', function(e) { e.preventDefault(); selectDrug(this.dataset.name); });
+  });
+}
+
+const dInput = document.getElementById('dsearch');
+dInput.addEventListener('input', () => buildDD(dInput.value));
+dInput.addEventListener('focus', () => buildDD(dInput.value));
+dInput.addEventListener('blur', () => setTimeout(() => document.getElementById('ddrop').classList.remove('open'), 200));
+
+function selectDrug(name) {
+  selDrug = DRUGS.find(d => d.name === name);
+  dInput.value = name;
+  document.getElementById('ddrop').classList.remove('open');
+  renderOutput();
+}
+
+// ── SEVERITY / VOLUME TOGGLE ──────────────────────────────────────────────
+function makeSBtns(id) {
+  document.getElementById(id).addEventListener('click', function(e) {
+    const btn = e.target.closest('.sbtn');
+    if (!btn) return;
+    this.querySelectorAll('.sbtn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+  });
+}
+makeSBtns('sevBtns'); makeSBtns('volBtns');
+
+// ── RENDER OUTPUT ─────────────────────────────────────────────────────────
+function renderOutput() {
+  const d = selDrug; if (!d) return;
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('outsec').classList.add('vis');
+
+  document.getElementById('oDrug').textContent = d.name;
+  const bc = d.cls === 'Vesicant' ? 'vest' : d.cls === 'Irritant' ? 'irr' : 'neu';
+  const bi = d.cls === 'Vesicant' ? '🔴' : d.cls === 'Irritant' ? '🟠' : '🟢';
+  document.getElementById('oBadge').innerHTML = `<span class="cbadge ${bc}">${bi} ${d.cls}</span>`;
+  document.getElementById('oSubCls').textContent = d.displayCls;
+  const descs = {
+    Vesicant: 'Vesicants cause progressive tissue necrosis on extravasation. Immediate action, compress, and antidote (if available) are required. Monitor closely for weeks.',
+    Irritant: 'Irritants cause local inflammation, pain, and erythema. Severity varies by agent, concentration, and volume. Prompt management reduces risk of progression.',
+    Neutral: 'Neutral / non-irritant agents have minimal potential for significant local tissue injury. Comfort measures and observation are appropriate.'
+  };
+  document.getElementById('oDesc').textContent = descs[d.cls];
+
+  // Compress
+  let cHTML = '';
+  if (d.compress === 'cold') cHTML = `<div class="cpcard cold"><span class="cpico">❄</span><div class="cptyp">Cold Compress</div><div class="cpdet">Duration: <strong>${d.cd.dur}</strong><br>Frequency: <strong>${d.cd.freq}</strong>${d.cd.days ? '<br>Apply for: <strong>' + d.cd.days + '</strong>' : ''}</div></div>`;
+  else if (d.compress === 'warm') cHTML = `<div class="cpcard warm"><span class="cpico">🔥</span><div class="cptyp">Warm Compress</div><div class="cpdet">Duration: <strong>${d.cd.dur}</strong><br>Frequency: <strong>${d.cd.freq}</strong>${d.cd.days ? '<br>Apply for: <strong>' + d.cd.days + '</strong>' : ''}</div></div>`;
+  else cHTML = `<div class="cpcard none"><span class="cpico">✔</span><div class="cptyp" style="color:var(--text2)">Comfort Measures Only</div><div class="cpdet">No specific compress required. Observe the site and apply comfort measures as appropriate.</div></div>`;
+  document.getElementById('oCompress').innerHTML = cHTML;
+
+  // Checklist
+  const steps = [
+    'STOP infusion immediately — do NOT flush the line',
+    'Leave VAD/cannula in place — do not remove yet',
+    'Disconnect IV tubing from the access device',
+    'Aspirate residual drug if possible (attempt 3–5 mL)',
+    'Mark and outline the affected area with a skin marker',
+    'Photograph the site with a timestamp',
+    'Document: drug name, concentration, estimated volume, time, site, symptoms',
+    'Apply compress as indicated for this drug (see above)',
+    'Notify senior oncology team and pharmacist',
+    'Complete incident report and request antidote if indicated'
+  ];
+  document.getElementById('oCklist').innerHTML = steps.map((s, i) =>
+    `<li class="cki"><span class="cks">${i + 1}</span><span class="ckb">✓</span><span>${s}</span></li>`
+  ).join('');
+
+  // Antidote
+  let aHTML = '';
+  if (d.antidote.length) {
+    aHTML = d.antidote.map(a => `
+      <div class="aitem">
+        <div class="aname">💉 ${a.name}</div>
+        <span class="atag">⏱ ${a.timing}</span>
+        <div class="anote">${a.notes}</div>
+      </div>`).join('');
+    if (d.antidote.length > 1) aHTML += `<div class="awarn">⚠ Do NOT combine DMSO and dexrazoxane unless local protocol explicitly directs. Verify antidote availability with pharmacy before administration.</div>`;
+    else aHTML += `<div class="awarn">⚠ Verify antidote availability, dosing, and local procedure with pharmacy and senior oncology team before administration.</div>`;
+  } else {
+    aHTML = `<div class="noa">No specific antidote available for <strong>${d.name}</strong> extravasation.<br><span style="font-size:11px;margin-top:4px;display:block">Supportive care, appropriate compress, and close monitoring are the mainstay of management.</span></div>`;
+  }
+  document.getElementById('oAntidote').innerHTML = aHTML;
+
+  // Monitor
+  const m = d.monitor;
+  const dayBadges = m.days.map((day, i) =>
+    `<div class="mday${i === 0 ? ' hl' : ''}"><div class="mdn">${day}</div><div class="mdl">day${day > 1 ? 's' : ''}</div></div>`
+  ).join('');
+  document.getElementById('oMonitor').innerHTML = `<div class="mtl">${dayBadges}</div><div class="mnte">${m.note}</div>`;
+
+  // Risk
+  const rm = { High:{r:true,a:false,g:false,lbl:'HIGH RISK',sub:'Requires immediate action, antidote consideration, and close monitoring.',col:'#C62828'},
+                Moderate:{r:false,a:true,g:false,lbl:'MODERATE RISK',sub:'Close monitoring and senior review required for worsening features.',col:'#F57F17'},
+                Low:{r:false,a:false,g:true,lbl:'LOW RISK',sub:'Minimal tissue toxicity expected. Comfort measures and observation.',col:'#2E7D32'}}[d.risk];
+  document.getElementById('tlR').className = 'tldot tlr' + (rm.r ? ' on' : '');
+  document.getElementById('tlA').className = 'tldot tla' + (rm.a ? ' on' : '');
+  document.getElementById('tlG').className = 'tldot tlg' + (rm.g ? ' on' : '');
+  document.getElementById('rLbl').textContent = rm.lbl;
+  document.getElementById('rLbl').style.color = rm.col;
+  document.getElementById('rSub').textContent = rm.sub;
+
+  // Pearls
+  document.getElementById('pDrugName').textContent = d.name;
+  document.getElementById('pContent').innerHTML = d.pearls.map(p => `<div class="pitem">💎 ${p}</div>`).join('');
+
+  document.getElementById('outsec').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── CHECKLIST CLICK ───────────────────────────────────────────────────────
+document.getElementById('oCklist').addEventListener('click', function(e) {
+  const li = e.target.closest('.cki');
+  if (li) li.classList.toggle('done');
+});
+
+// ── PEARLS ────────────────────────────────────────────────────────────────
+document.getElementById('ptog').addEventListener('click', function() {
+  pearlsOpen = !pearlsOpen;
+  document.getElementById('pbody').classList.toggle('open', pearlsOpen);
+  document.getElementById('pChev').textContent = pearlsOpen ? '▲' : '▼';
+});
+
+// ── TABS ──────────────────────────────────────────────────────────────────
+const TABS = ['tool','qr','algo','srch','fam','ref'];
+function switchTab(id) {
+  TABS.forEach(t => {
+    document.getElementById('panel-' + t).classList.toggle('act', t === id);
+    document.getElementById('tab-' + t).classList.toggle('act', t === id);
+  });
+  if (id === 'qr') renderQR();
+  if (id === 'srch') buildTable();
+}
+TABS.forEach(t => {
+  document.getElementById('tab-' + t).addEventListener('click', () => switchTab(t));
+});
+
+// ── QUICK REFERENCE ───────────────────────────────────────────────────────
+function renderQR() {
+  const d = selDrug;
+  const empty = document.getElementById('qrEmpty');
+  const card = document.getElementById('qrCard');
+  if (!d) { card.style.display = 'none'; empty.style.display = 'block'; return; }
+  card.style.display = 'block'; empty.style.display = 'none';
+  document.getElementById('qrDrug').textContent = d.name;
+  document.getElementById('qrSubCls').textContent = d.displayCls;
+  const ci = d.compress === 'cold' ? '❄ Cold Compress' : d.compress === 'warm' ? '🔥 Warm Compress' : 'Comfort measures only';
+  const ant = d.antidote.length ? d.antidote.map(a => a.name).join(' · ') : 'None specific';
+  const bc = d.cls === 'Vesicant' ? 'vest' : d.cls === 'Irritant' ? 'irr' : 'neu';
+  const bi = d.cls === 'Vesicant' ? '🔴' : d.cls === 'Irritant' ? '🟠' : '🟢';
+  document.getElementById('qrTable').innerHTML = `
+    <tr><td>Classification</td><td><span class="cbadge ${bc}" style="padding:5px 13px;font-size:12px">${bi} ${d.cls}</span></td></tr>
+    <tr><td>Compress</td><td><strong>${ci}</strong><br><span style="font-size:11px;color:var(--text3)">${d.cd.dur} · ${d.cd.freq}</span></td></tr>
+    <tr><td>Antidote</td><td>${ant}</td></tr>
+    <tr><td>Monitor — days</td><td>${d.monitor.days.join(', ')}</td></tr>
+    <tr><td>Tissue risk</td><td><strong style="color:${d.risk==='High'?'#C62828':d.risk==='Moderate'?'#F57F17':'#2E7D32'}">${d.risk}</strong></td></tr>
+    <tr><td>Key steps</td><td style="font-size:12px;line-height:1.7">Stop · Leave cannula · Aspirate · ${ci}${d.antidote.length ? ' · ' + d.antidote[0].name : ''} · Monitor · Escalate if red flags</td></tr>
+    <tr><td>Escalate if</td><td style="font-size:11px;color:var(--text2)">Progressive pain · Blistering · Ulceration · Necrosis · Neurovascular compromise · Large volume · Central line event · CTCAE ≥2</td></tr>`;
+}
+
+document.getElementById('btnQR').addEventListener('click', () => switchTab('qr'));
+
+// ── DRUG TABLE ────────────────────────────────────────────────────────────
+function buildTable() {
+  const q = (document.getElementById('tsearch').value || '').toLowerCase();
+  const rows = DRUGS.filter(d => {
+    const s = `${d.name} ${d.cls} ${d.displayCls} ${d.compress} ${d.antidote.map(a=>a.name).join(' ')}`.toLowerCase();
+    if (q && !s.includes(q)) return false;
+    if (tFilter === 'all') return true;
+    if (tFilter === 'antidote') return d.antidote.length > 0;
+    if (tFilter === 'cold') return d.compress === 'cold';
+    if (tFilter === 'warm') return d.compress === 'warm';
+    if (tFilter === 'High') return d.risk === 'High';
+    return d.cls === tFilter;
+  });
+  const rc = {High:'#C62828',Moderate:'#F57F17',Low:'#2E7D32'};
+  document.getElementById('tblBody').innerHTML = rows.map(d => `
+    <div class="dr" data-name="${d.name}">
+      <div style="font-weight:600">${d.name}</div>
+      <div style="font-size:11px"><span class="dopt-cls c${d.cls[0]}">${d.cls}</span><br><span style="color:var(--text3);font-size:10px">${d.displayCls}</span></div>
+      <div class="dc3">${d.compress==='cold'?'<span class="cbadge2 cb2c">❄ Cold</span>':d.compress==='warm'?'<span class="cbadge2 cb2w">🔥 Warm</span>':'<span class="cbadge2 cb2n">—</span>'}</div>
+      <div class="dc4" style="font-size:11px;color:var(--text2)">${d.antidote.length ? d.antidote.map(a=>a.name).join(', ') : '—'}</div>
+      <div style="font-weight:700;font-size:12px;color:${rc[d.risk]}">${d.risk}</div>
+    </div>`).join('');
+  document.getElementById('tblBody').querySelectorAll('.dr').forEach(row => {
+    row.addEventListener('click', function() { selectDrug(this.dataset.name); switchTab('tool'); });
+  });
+}
+document.getElementById('tsearch').addEventListener('input', buildTable);
+document.getElementById('filterRow').addEventListener('click', function(e) {
+  const c = e.target.closest('[data-f]'); if (!c) return;
+  tFilter = c.dataset.f;
+  this.querySelectorAll('.fchip').forEach(x => x.classList.remove('on'));
+  c.classList.add('on');
+  buildTable();
+});
+
+// ── PRINT ─────────────────────────────────────────────────────────────────
+function buildPrintHTML(d) {
+  const steps = ['STOP infusion immediately — do NOT flush the line','Leave VAD/cannula in place','Disconnect IV tubing from access device','Aspirate residual drug if possible (3–5 mL)','Mark and outline the affected area','Photograph the site with timestamp','Document: drug, concentration, estimated volume, time, site, symptoms','Apply compress as indicated (see below)','Notify senior oncology team and pharmacist','Complete incident report; request antidote if indicated'];
+  const bc = d.cls==='Vesicant'?'#C62828':d.cls==='Irritant'?'#E65100':'#2E7D32';
+  const bg = d.cls==='Vesicant'?'#FFEBEE':d.cls==='Irritant'?'#FFF3E0':'#E8F5E9';
+  const bi = d.cls==='Vesicant'?'🔴':d.cls==='Irritant'?'🟠':'🟢';
+  const ci = d.compress==='cold' ? `❄ Cold Compress — ${d.cd.dur}, ${d.cd.freq}${d.cd.days?' · '+d.cd.days:''}` : d.compress==='warm' ? `🔥 Warm Compress — ${d.cd.dur}, ${d.cd.freq}${d.cd.days?' · '+d.cd.days:''}` : 'Comfort measures only — no specific compress required';
+  const ant = d.antidote.length ? d.antidote.map(a=>`<div style="margin-bottom:9px"><strong>${a.name}</strong><br><span style="font-size:11px;color:#555">⏱ ${a.timing}</span><br><span style="font-size:11px;color:#555">${a.notes}</span></div>`).join('') : 'No specific antidote available. Supportive care, compress, and close monitoring.';
+  const date = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  const s = (t,c='#1565C0') => `<div style="font-weight:700;font-size:11px;color:${c};text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">${t}</div>`;
+  const box = (html,lc='#1565C0') => `<div style="background:#F5F7FA;border-left:4px solid ${lc};padding:11px 14px;border-radius:0 7px 7px 0;margin-bottom:13px;font-size:12px;line-height:1.6">${html}</div>`;
+  return `<div style="font-family:'Segoe UI',sans-serif;max-width:700px;margin:0 auto;color:#263238">
+    <div style="border-bottom:3px solid #1565C0;padding-bottom:10px;margin-bottom:14px">
+      <div style="font-size:9px;color:#78909C;text-transform:uppercase;letter-spacing:1px">drAisyiEduCare · Pediatric Oncology Extravasation Management</div>
+      <div style="font-size:20px;font-weight:700;color:#0D47A1;margin:3px 0">Management Plan: ${d.name}</div>
+      <div style="font-size:11px;color:#78909C">Generated: ${date} &nbsp;|&nbsp; Local protocol verification required</div>
+    </div>
+    <span style="display:inline-block;padding:5px 14px;border-radius:18px;font-weight:700;font-size:13px;background:${bg};color:${bc};border:1.5px solid ${bc};margin-bottom:5px">${bi} ${d.cls}</span>
+    <div style="font-size:11px;color:#78909C;font-style:italic;margin-bottom:13px">${d.displayCls}</div>
+    ${s('Immediate Actions')}
+    ${box('<ol style="margin:0;padding-left:17px">' + steps.map(x=>`<li style="padding:2px 0">${x}</li>`).join('') + '</ol>')}
+    ${s('Compress Recommendation')}
+    ${box(ci)}
+    ${s('Antidote / Specific Treatment')}
+    ${box(ant)}
+    ${d.antidote.length > 1 ? box('⚠ Do NOT combine DMSO and dexrazoxane unless local protocol explicitly directs. Verify antidote availability with pharmacy.','#F57F17') : ''}
+    ${s('Monitoring Schedule')}
+    ${box('Follow-up days: <strong>' + d.monitor.days.join(', ') + '</strong><br>' + d.monitor.note)}
+    ${s('Clinical Pearls')}
+    ${box('<ul style="margin:0;padding-left:17px">' + d.pearls.map(p=>`<li style="padding:2px 0">${p}</li>`).join('') + '</ul>')}
+    ${s('Escalation — Seek Senior Oncology + Surgical/Plastic Review If','#C62828')}
+    ${box('Progressive pain · Blistering · Ulceration · Necrosis · Neurovascular compromise · Large-volume event · Central line extravasation · CTCAE Grade ≥2','#C62828')}
+    <div style="margin-top:18px;padding-top:10px;border-top:1px solid #CFD8DC;font-size:10px;color:#90A4AE;line-height:1.6">
+      <strong>drAisyiEduCare — Pediatric Hematology Oncology Clinical Toolkit</strong><br>
+      This is a clinical support tool. It does not replace local institutional protocols, pharmacy review, oncology consultation, or surgical/plastic specialist review when indicated. Verify drug concentration, antidote availability, line type, and time since event with the senior oncology team and pharmacist.
+    </div>
+  </div>`;
+}
+
+document.getElementById('btnPrint').addEventListener('click', function() {
+  if (!selDrug) { alert('Please select a drug first.'); return; }
+  document.getElementById('poContent').innerHTML = buildPrintHTML(selDrug);
+  document.getElementById('po').classList.add('show');
+});
+document.getElementById('poClose').addEventListener('click', () => document.getElementById('po').classList.remove('show'));
+document.getElementById('poPrint').addEventListener('click', () => window.print());
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+buildTable();
+</script>
+</body>
+</html>

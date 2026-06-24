@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATR Navigator v2 – drAisyi EduCare</title>
+<style>
+:root {
+  --primary:#6c3fc5;--primary-light:#9b72e8;--primary-dark:#4a2a8a;
+  --accent:#e84393;--accent2:#00bcd4;
+  --bg:#f6f4fb;--card:#ffffff;--text:#1a1a2e;--muted:#6b7280;
+  --danger:#dc2626;--warn:#d97706;--success:#059669;--info:#0284c7;
+  --border:#e5e7eb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,var(--primary-dark),var(--primary) 60%,var(--accent));color:#fff;padding:18px 20px 14px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(108,63,197,.35)}
+.hdr-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brand{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.4);border-radius:8px;padding:3px 10px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.ver{background:rgba(255,255,255,.1);border-radius:6px;padding:2px 8px;font-size:10px;opacity:.85}
+.hdr h1{font-size:16px;font-weight:700;margin-top:5px;line-height:1.3}
+.hdr p{font-size:11px;opacity:.8;margin-top:2px}
+
+/* TABS */
+.tabs{display:flex;gap:4px;padding:12px 16px 0;background:#fff;border-bottom:2px solid var(--border)}
+.tab{padding:8px 16px;font-size:12px;font-weight:600;border:none;background:none;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;border-radius:6px 6px 0 0;transition:all .2s}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary);background:#f3f0ff}
+
+/* PANELS */
+.panel{display:none;padding:16px}.panel.active{display:block}
+
+/* CARDS */
+.card{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.sec-label{font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+
+/* SYMPTOM GRID */
+.sym-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:12px}
+.sym-btn{display:flex;align-items:center;gap:7px;background:#fff;border:2px solid var(--border);border-radius:10px;padding:8px 10px;cursor:pointer;font-size:12px;font-weight:500;color:var(--text);transition:all .15s;user-select:none}
+.sym-btn:hover{border-color:var(--primary-light);background:#f3f0ff}
+.sym-btn.active{border-color:var(--primary);background:#ede9fe;color:var(--primary-dark)}
+.sym-btn .ck{display:none;margin-left:auto;color:var(--primary);font-size:12px;font-weight:700}
+.sym-btn.active .ck{display:inline}
+.sym-icon{font-size:16px}
+
+/* CONTEXT INPUTS */
+.ctx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:12px}
+.ctx-item label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:4px}
+.ctx-item select,.ctx-item input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:7px 10px;font-size:12px;color:var(--text);background:#fff;outline:none;transition:border .15s}
+.ctx-item select:focus,.ctx-item input:focus{border-color:var(--primary)}
+
+/* BTNS */
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;border:none;border-radius:10px;padding:11px 24px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(108,63,197,.3);transition:transform .15s,box-shadow .15s}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(108,63,197,.4)}
+.btn-sec{background:none;border:2px solid var(--border);border-radius:10px;padding:9px 16px;font-size:12px;cursor:pointer;color:var(--muted);transition:all .15s}
+.btn-sec:hover{border-color:var(--danger);color:var(--danger)}
+.btn-print{background:#f0fdf4;border:2px solid #86efac;color:var(--success);border-radius:10px;padding:9px 16px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-print:hover{background:#dcfce7}
+.btn-copy{background:#eff6ff;border:2px solid #93c5fd;color:var(--info);border-radius:10px;padding:9px 16px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+
+/* EMERGENCY BANNER */
+.emer-banner{background:#fff1f2;border:2px solid #fda4af;border-radius:12px;padding:14px 16px;display:flex;gap:12px;margin-bottom:14px}
+.emer-icon{font-size:26px}
+.emer-text strong{display:block;color:var(--danger);font-size:14px;margin-bottom:4px}
+.emer-text p{font-size:12px;color:#7f1d1d;line-height:1.5}
+
+.warn-banner{background:#fffbeb;border:2px solid #fde68a;border-radius:12px;padding:12px 16px;display:flex;gap:10px;margin-bottom:14px}
+.warn-banner strong{color:var(--warn);font-size:13px}
+.warn-banner p{font-size:12px;color:#78350f;margin-top:3px;line-height:1.5}
+
+/* REACTION TAGS */
+.rx-wrap{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+.rx-tag{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;border:1.5px solid transparent}
+.rx-tag.critical{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+.rx-tag.high{background:#ffedd5;color:#92400e;border-color:#fdba74}
+.rx-tag.moderate{background:#fef9c3;color:#78350f;border-color:#fde68a}
+.rx-tag.low{background:#dcfce7;color:#065f46;border-color:#6ee7b7}
+
+/* SEVERITY BAR */
+.sev-wrap{margin-bottom:12px}
+.sev-lbl{font-size:11px;font-weight:600;color:var(--muted);margin-bottom:3px}
+.sev-bar{height:9px;border-radius:20px;background:var(--border);overflow:hidden}
+.sev-fill{height:100%;border-radius:20px;transition:width .5s ease}
+.sev-low .sev-fill{background:linear-gradient(90deg,#34d399,#059669)}
+.sev-moderate .sev-fill{background:linear-gradient(90deg,#fbbf24,#d97706)}
+.sev-high .sev-fill{background:linear-gradient(90deg,#f97316,#dc2626)}
+.sev-critical .sev-fill{background:linear-gradient(90deg,#dc2626,#7f1d1d)}
+
+/* STEPS */
+.steps{list-style:none;display:flex;flex-direction:column;gap:8px}
+.step{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--bg);border-radius:9px;border-left:4px solid var(--primary-light);font-size:12px;line-height:1.5}
+.step.urg{border-left-color:var(--danger)}
+.step.wrn{border-left-color:var(--warn)}
+.step.ok{border-left-color:var(--success)}
+.step-n{min-width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step.urg .step-n{background:var(--danger)}
+.step.wrn .step-n{background:var(--warn)}
+.step.ok .step-n{background:var(--success)}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{background:var(--primary);color:#fff;padding:7px 10px;text-align:left;font-size:11px}
+.tbl th:first-child{border-radius:7px 0 0 0}.tbl th:last-child{border-radius:0 7px 0 0}
+.tbl td{padding:7px 10px;border-bottom:1px solid var(--border)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:nth-child(even) td{background:#faf9ff}
+.badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:#ede9fe;color:var(--primary-dark)}
+.badge.now{background:#fee2e2;color:#991b1b}
+.badge.fast{background:#ffedd5;color:#92400e}
+.badge.elec{background:#dcfce7;color:#065f46}
+
+/* RX DETAIL */
+.rx-detail{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.rx-d-item{font-size:11px;color:var(--muted);padding:7px 10px;background:var(--bg);border-radius:7px}
+.rx-d-item strong{color:var(--text)}
+
+/* MUST-NOT-MISS */
+.mnm-list{display:flex;flex-direction:column;gap:6px}
+.mnm-item{display:flex;align-items:flex-start;gap:8px;padding:8px 12px;border-radius:9px;background:#fff8f8;border:1px solid #fecaca;font-size:12px}
+
+/* FUTURE REC */
+.rec-list{display:flex;flex-direction:column;gap:7px}
+.rec-item{padding:8px 12px;border-radius:9px;background:#f0fdf4;border-left:3px solid var(--success);font-size:12px}
+
+/* SAFE MSG */
+.safe-msg{text-align:center;padding:30px;color:var(--muted);font-size:13px}
+.safe-msg .big{font-size:40px;margin-bottom:8px}
+
+footer{text-align:center;font-size:10px;color:var(--muted);margin-top:24px;padding-top:12px;border-top:1px solid var(--border)}
+footer strong{color:var(--primary)}
+
+@media print{.hdr,.tabs,.btn-row,footer{display:none!important}.panel{display:block!important}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <span class="brand">drAisyi EduCare</span>
+    <span class="ver">v2.0</span>
+  </div>
+  <h1>🩸 Acute Transfusion Reaction — First Aid & Blood Bank Workup Navigator</h1>
+  <p>Deteksi cepat · Tata laksana awal · Panduan workup · Referensi: AABB, BSH, BCSH, ISBT</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('input')">📋 Input Klinis</button>
+  <button class="tab" id="tab-result" onclick="showTab('result')" style="display:none">🎯 Hasil Analisis</button>
+</div>
+
+<!-- INPUT PANEL -->
+<div class="panel active" id="panel-input">
+  <div class="card">
+    <div class="sec-label">Konteks Klinis</div>
+    <div class="ctx-grid">
+      <div class="ctx-item">
+        <label>Produk Darah</label>
+        <select id="product">
+          <option value="">— pilih —</option>
+          <option value="prc">Packed Red Cells (PRC)</option>
+          <option value="platelet">Platelet Concentrate</option>
+          <option value="ffp">Fresh Frozen Plasma (FFP)</option>
+          <option value="cryo">Cryoprecipitate</option>
+          <option value="wb">Whole Blood</option>
+          <option value="other">Lainnya</option>
+        </select>
+      </div>
+      <div class="ctx-item">
+        <label>Waktu Onset Gejala</label>
+        <select id="onset">
+          <option value="">— pilih —</option>
+          <option value="during">Selama transfusi / menit awal</option>
+          <option value="lt1h">< 1 jam setelah mulai</option>
+          <option value="1_6h">1–6 jam setelah mulai</option>
+          <option value="gt6h">> 6 jam</option>
+        </select>
+      </div>
+      <div class="ctx-item">
+        <label>Volume Masuk (estimasi)</label>
+        <select id="volume">
+          <option value="">— pilih —</option>
+          <option value="small">< 50 mL</option>
+          <option value="mod">50–100 mL</option>
+          <option value="large">> 100 mL</option>
+          <option value="complete">Transfusi selesai</option>
+        </select>
+      </div>
+      <div class="ctx-item">
+        <label>Berat Badan (kg)</label>
+        <input type="number" id="weight" min="1" max="200" placeholder="mis. 35">
+      </div>
+      <div class="ctx-item">
+        <label>Riwayat Jantung/Ginjal</label>
+        <select id="cardiac">
+          <option value="no">Tidak ada</option>
+          <option value="yes">Ada (jantung / ginjal)</option>
+        </select>
+      </div>
+      <div class="ctx-item">
+        <label>JVP / Tanda Overload</label>
+        <select id="jvp">
+          <option value="no">Tidak meningkat</option>
+          <option value="yes">Meningkat / S3 gallop</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec-label">Gejala yang Ditemukan — Pilih Semua yang Ada</div>
+    <div class="sym-grid" id="symGrid"></div>
+  </div>
+
+  <div class="card">
+    <div class="sec-label">Tanda Vital Saat Ini (opsional)</div>
+    <div class="ctx-grid">
+      <div class="ctx-item"><label>Tekanan Darah</label><input type="text" id="bp" placeholder="mis. 80/50"></div>
+      <div class="ctx-item"><label>Nadi (x/mnt)</label><input type="number" id="hr" placeholder="mis. 130"></div>
+      <div class="ctx-item"><label>Suhu (°C)</label><input type="number" step="0.1" id="temp" placeholder="mis. 38.5"></div>
+      <div class="ctx-item"><label>SpO₂ (%)</label><input type="number" id="spo2" placeholder="mis. 88"></div>
+      <div class="ctx-item"><label>RR (x/mnt)</label><input type="number" id="rr" placeholder="mis. 32"></div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-primary" onclick="analyze()">🔍 Analisis Reaksi</button>
+    <button class="btn-sec" onclick="resetAll()">↺ Reset</button>
+  </div>
+</div>
+
+<!-- RESULT PANEL -->
+<div class="panel" id="panel-result">
+  <div class="btn-row">
+    <button class="btn-sec" onclick="showTab('input')">← Ubah Input</button>
+    <button class="btn-print" onclick="window.print()">🖨️ Cetak</button>
+    <button class="btn-copy" id="copyBtn" onclick="copySummary()">📋 Salin Ringkasan</button>
+  </div>
+  <div id="results"></div>
+</div>
+
+<script>
+const SYMS = [
+  {id:'fever',label:'Demam (>1°C naik)',icon:'🌡️'},
+  {id:'chills',label:'Menggigil / Rigors',icon:'🥶'},
+  {id:'itch',label:'Gatal (Pruritus)',icon:'🖐️'},
+  {id:'urticaria',label:'Urtikaria / Ruam',icon:'🔴'},
+  {id:'angioedema',label:'Angioedema',icon:'😮'},
+  {id:'stridor',label:'Stridor / Serak mendadak',icon:'🗣️'},
+  {id:'wheeze',label:'Bronkospasme / Wheeze',icon:'🌀'},
+  {id:'dyspnea',label:'Sesak Napas',icon:'😮‍💨'},
+  {id:'cyanosis',label:'Sianosis',icon:'🫧'},
+  {id:'edema_lung',label:'Edema Paru / Krepitasi',icon:'💧'},
+  {id:'hypotension',label:'Hipotensi / Kolaps',icon:'📉'},
+  {id:'hypertension',label:'Hipertensi',icon:'📈'},
+  {id:'tachycardia',label:'Takikardia',icon:'💓'},
+  {id:'hemoglobinuria',label:'Hemoglobinuria (urin merah)',icon:'🟤'},
+  {id:'back_pain',label:'Nyeri Pinggang / Flank',icon:'⚡'},
+  {id:'chest_pain',label:'Nyeri Dada',icon:'💥'},
+  {id:'abdo_pain',label:'Nyeri Perut',icon:'🤢'},
+  {id:'nausea',label:'Mual / Muntah',icon:'😫'},
+  {id:'flushing',label:'Flushing / Kemerahan',icon:'🌸'},
+  {id:'jaundice',label:'Ikterus akut',icon:'🟡'},
+  {id:'bleeding',label:'Perdarahan / DIC',icon:'🩹'},
+  {id:'oliguria',label:'Oliguria / Anuria',icon:'🚰'},
+  {id:'collapse',label:'Kolaps / Tidak sadar',icon:'💫'},
+  {id:'toxic',label:'Tampak toksik / Sepsis',icon:'🦠'},
+];
+
+const has = id => selected.has(id);
+const any = arr => arr.some(id => selected.has(id));
+const all = arr => arr.every(id => selected.has(id));
+
+let selected = new Set();
+
+function renderSyms() {
+  document.getElementById('symGrid').innerHTML = SYMS.map(s => `
+    <button class="sym-btn" id="s_${s.id}" onclick="tog('${s.id}')">
+      <span class="sym-icon">${s.icon}</span><span>${s.label}</span>
+      <span class="ck">✔</span>
+    </button>`).join('');
+}
+
+function tog(id) {
+  selected.has(id) ? selected.delete(id) : selected.add(id);
+  document.getElementById('s_'+id).classList.toggle('active', selected.has(id));
+}
+
+function showTab(t) {
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+t).classList.add('active');
+  if(t==='result') document.getElementById('tab-result').classList.add('active');
+  else document.querySelectorAll('.tab')[0].classList.add('active');
+}
+
+// ── HARD TRIGGERS ──
+const HARD_SERIOUS = ['hypotension','dyspnea','wheeze','stridor','cyanosis','edema_lung',
+  'hemoglobinuria','collapse','bleeding'];
+
+function analyze() {
+  if(selected.size===0){alert('Pilih minimal satu gejala.');return;}
+
+  const prod = document.getElementById('product').value;
+  const onset = document.getElementById('onset').value;
+  const vol = document.getElementById('volume').value;
+  const wt = parseFloat(document.getElementById('weight').value)||null;
+  const cardiac = document.getElementById('cardiac').value;
+  const jvp = document.getElementById('jvp').value;
+  const bp = document.getElementById('bp').value;
+  const hr = document.getElementById('hr').value;
+  const temp = parseFloat(document.getElementById('temp').value)||null;
+  const spo2 = parseFloat(document.getElementById('spo2').value)||null;
+  const rr = document.getElementById('rr').value;
+
+  const ctx = {prod,onset,vol,wt,cardiac,jvp,bp,hr,temp,spo2,rr};
+
+  // ── MATCH REACTIONS ──
+  const matched = [];
+
+  // FNHTR
+  if(any(['fever','chills']) && !has('hemoglobinuria') && !has('hypotension')) {
+    matched.push({id:'FNHTR',name:'FNHTR',full:'Febrile Non-Hemolytic Transfusion Reaction',
+      level:'moderate',emoji:'🌡️',
+      desc:'Reaksi sering; sitokin/leukosit antibodi. Singkirkan hemolisis dan sepsis dulu.'});
+  }
+
+  // ALLERGIC MILD
+  if(any(['itch','urticaria','flushing','angioedema']) && !any(['hypotension','dyspnea','wheeze','stridor','collapse'])) {
+    matched.push({id:'ALLERGIC',name:'Alergi Ringan–Sedang',full:'Allergic Transfusion Reaction',
+      level:'moderate',emoji:'🤧',
+      desc:'Reaksi IgE-mediated terhadap protein plasma. Tanpa gejala sistemik berat.'});
+  }
+
+  // ANAPHYLAXIS — fleksibel
+  const anaphy = has('hypotension') || has('stridor') || has('wheeze') ||
+    has('collapse') || (has('dyspnea')&&any(['urticaria','flushing','angioedema'])) ||
+    (has('urticaria')&&has('hypotension')) || (has('angioedema')&&has('dyspnea'));
+  if(anaphy) {
+    matched.push({id:'ANAPHYLAXIS',name:'Anafilaksis',full:'Anaphylactic Transfusion Reaction',
+      level:'critical',emoji:'🚨',
+      desc:'Reaksi sistemik berat; sering pada defisiensi IgA. MENGANCAM JIWA — respons segera.'});
+  }
+
+  // AHTR — hemoglobinuria tidak wajib
+  const ahtr = has('hemoglobinuria') ||
+    (any(['fever','chills']) && any(['back_pain','chest_pain'])) ||
+    (any(['fever','chills']) && has('hypotension')) ||
+    (has('chills') && has('hypotension')) ||
+    (any(['fever','chills']) && any(['bleeding','oliguria'])) ||
+    has('jaundice');
+  if(ahtr) {
+    matched.push({id:'AHTR',name:'Hemolisis Akut (AHTR)',full:'Acute Hemolytic Transfusion Reaction',
+      level:'critical',emoji:'☠️',
+      desc:'Inkompatibilitas ABO/antibodi → hemolisis intravaskular masif. Bisa muncul tanpa hemoglobinuria awal. DARURAT!'});
+  }
+
+  // SEPTIC / BACTERIAL CONTAMINATION
+  const septic = (any(['fever','chills']) && any(['toxic','hypotension','nausea','collapse'])) ||
+    has('toxic') || (prod==='platelet' && any(['fever','chills','hypotension']));
+  if(septic) {
+    matched.push({id:'SEPTIC',name:'Sepsis Transfusi',full:'Septic / Bacterial Transfusion Reaction',
+      level:'critical',emoji:'🦠',
+      desc:'Kontaminasi bakteri pada komponen (terutama platelet). Demam tinggi, rigor, syok mendadak. DARURAT!'});
+  }
+
+  // TRALI
+  const trali = has('dyspnea') && has('edema_lung') && !has('hypertension') && jvp!=='yes';
+  if(trali) {
+    matched.push({id:'TRALI',name:'TRALI',full:'Transfusion-Related Acute Lung Injury',
+      level:'high',emoji:'🫁',
+      desc:'ALI dalam 6 jam pasca transfusi; bilateral infiltrat, hipoksemia, tanpa overload. Bukan indikasi diuretik.'});
+  }
+
+  // TACO
+  const taco = has('dyspnea') && (has('edema_lung')||has('hypertension')) &&
+    (has('hypertension')||cardiac==='yes'||jvp==='yes');
+  if(taco) {
+    matched.push({id:'TACO',name:'TACO',full:'Transfusion-Associated Circulatory Overload',
+      level:'high',emoji:'💧',
+      desc:'Overload cairan → edema paru. Lebih sering pada pasien jantung/ginjal, anak, lansia. Respons baik terhadap diuretik.'});
+  }
+
+  // Severity sort
+  const ord={critical:4,high:3,moderate:2,low:1};
+  matched.sort((a,b)=>ord[b.level]-ord[a.level]);
+
+  const hasHardTrigger = HARD_SERIOUS.some(s=>selected.has(s));
+  const maxSev = matched.length ? matched[0].level : (hasHardTrigger?'high':null);
+
+  document.getElementById('tab-result').style.display='';
+  renderResults(matched, ctx, hasHardTrigger, maxSev);
+  showTab('result');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderResults(matched, ctx, hardTrigger, maxSev) {
+  const {prod,onset,wt,cardiac,jvp,spo2} = ctx;
+  const isAnaphy = matched.some(r=>r.id==='ANAPHYLAXIS');
+  const isAHTR = matched.some(r=>r.id==='AHTR');
+  const isSeptic = matched.some(r=>r.id==='SEPTIC');
+  const isTRALI = matched.some(r=>r.id==='TRALI');
+  const isTACO = matched.some(r=>r.id==='TACO');
+  const isFNHTR = matched.some(r=>r.id==='FNHTR');
+  const isAllergy = matched.some(r=>r.id==='ALLERGIC');
+  const isCritical = maxSev==='critical';
+
+  const sevPct={critical:100,high:75,moderate:50,low:25};
+  const sevLbl={critical:'🔴 KRITIS',high:'🟠 Tinggi',moderate:'🟡 Sedang',low:'🟢 Ringan'};
+
+  let html='';
+
+  // ─── 0. EMERGENCY BLOCK — ALWAYS FIRST ───
+  html += `<div class="card">
+    <div class="sec-label">⚡ Tindakan Darurat — Lakukan Segera</div>
+    <ul class="steps">
+      <li class="step urg"><div class="step-n">!</div>
+        <div>🛑 <strong>HENTIKAN TRANSFUSI SEMENTARA</strong> — berlaku untuk SEMUA kecurigaan reaksi transfusi.
+        Jangan lanjutkan sampai pasien dinilai, identitas dicocokkan, dan reaksi berat disingkirkan.</div></li>
+      <li class="step urg"><div class="step-n">!</div>
+        <div>💉 Pertahankan akses IV dengan <strong>NaCl 0,9% melalui infus set baru</strong>. Jangan cabut kanul.</div></li>
+      <li class="step urg"><div class="step-n">!</div>
+        <div>🪪 Cocokkan identitas pasien dengan label kantong darah dan formulir transfusi. Cari kemungkinan <strong>kesalahan identifikasi</strong>.</div></li>
+      <li class="step urg"><div class="step-n">!</div>
+        <div>🩺 Nilai tanda vital segera: TD, nadi, suhu, SpO₂, RR. Lakukan serial tiap 5–15 menit.</div></li>
+      <li class="step urg"><div class="step-n">!</div>
+        <div>📣 Laporkan ke <strong>dokter jaga / penanggung jawab</strong> dan <strong>Bank Darah</strong> segera. Jangan buang sisa komponen dan infus set.</div></li>
+    </ul>
+  </div>`;
+
+  // ─── 1. POSSIBLE REACTIONS ───
+  if(matched.length>0) {
+    html += `<div class="card">
+      <div class="sec-label">🎯 Kemungkinan Reaksi Transfusi</div>
+      <div class="sev-wrap sev-${maxSev}">
+        <div class="sev-lbl">Tingkat Keparahan Tertinggi: ${sevLbl[maxSev]||'—'}</div>
+        <div class="sev-bar"><div class="sev-fill" style="width:${sevPct[maxSev]||50}%"></div></div>
+      </div>
+      <div class="rx-wrap">
+        ${matched.map(r=>`<span class="rx-tag ${r.level}">${r.emoji} ${r.name}</span>`).join('')}
+      </div>
+      <div class="rx-detail">
+        ${matched.map(r=>`<div class="rx-d-item"><strong>${r.emoji} ${r.full}</strong><br>${r.desc}</div>`).join('')}
+      </div>
+    </div>`;
+  } else if(hardTrigger) {
+    html += `<div class="warn-banner"><div>⚠️</div><div>
+      <strong>Gejala serius terdeteksi tanpa pola diagnostik spesifik</strong>
+      <p>Satu atau lebih gejala berat (hipotensi, sesak, wheeze, hemoglobinuria, dll.) dipilih. 
+      Anggap sebagai reaksi berat sampai terbukti sebaliknya. Lakukan full workup dan lapor dokter segera.</p>
+    </div></div>`;
+  }
+
+  // ─── 2. MUST-NOT-MISS ───
+  const mnm = [];
+  if(isCritical||hardTrigger) {
+    if(isAHTR||any(['hemoglobinuria','back_pain','chest_pain'])) mnm.push({e:'☠️',t:'Hemolisis Akut (AHTR)','d':'Inkompatibilitas ABO. Hemoglobinuria bisa tidak muncul awal.'});
+    if(isSeptic||has('toxic')||prod==='platelet') mnm.push({e:'🦠',t:'Sepsis Transfusi','d':'Kontaminasi bakteri. Platelet berisiko tinggi. Mulai antibiotik segera jika dicurigai.'});
+    if(isAnaphy||any(['stridor','wheeze','angioedema'])) mnm.push({e:'🚨',t:'Anafilaksis','d':'Bisa terjadi tanpa hipotensi awal. Epinefrin adalah terapi utama.'});
+    if(isTRALI||isTACO||any(['edema_lung','cyanosis'])) mnm.push({e:'🫁',t:'TRALI / TACO','d':'Keduanya muncul sebagai distres napas — bedakan sebelum terapi.'});
+  }
+  if(mnm.length>0) {
+    html += `<div class="card">
+      <div class="sec-label">🚫 Must-Not-Miss — Jangan Dilewatkan</div>
+      <div class="mnm-list">${mnm.map(m=>`<div class="mnm-item"><span>${m.e}</span><div><strong>${m.t}</strong> — ${m.d}</div></div>`).join('')}</div>
+    </div>`;
+  }
+
+  // ─── 3. IMMEDIATE TREATMENT ───
+  const steps = buildSteps({isAnaphy,isAHTR,isSeptic,isTRALI,isTACO,isFNHTR,isAllergy},ctx);
+  if(steps.length>0) {
+    html += `<div class="card">
+      <div class="sec-label">💊 Tata Laksana Segera</div>
+      <ul class="steps">${steps.map((s,i)=>`<li class="step ${s.cls||''}"><div class="step-n">${i+1}</div><div>${s.t}</div></li>`).join('')}</ul>
+    </div>`;
+  }
+
+  // ─── 4. WORKUP ───
+  const labs = buildLabs({isAnaphy,isAHTR,isSeptic,isTRALI,isTACO,isAllergy,isFNHTR,hardTrigger},ctx);
+  const isMinimal = isAllergy && !any(['fever','hypotension','dyspnea','hemoglobinuria','back_pain','chest_pain','chills']) && matched.length===1;
+  html += `<div class="card">
+    <div class="sec-label">🔬 Pemeriksaan Lab & Bank Darah ${isMinimal?'(Minimal — alergi ringan terisolasi)':'(Lengkap)'}</div>
+    <table class="tbl">
+      <thead><tr><th>Pemeriksaan</th><th>Tujuan</th><th>Prioritas</th></tr></thead>
+      <tbody>${labs.map(l=>`<tr><td><strong>${l.n}</strong></td><td style="color:var(--muted)">${l.p}</td><td><span class="badge ${l.cls}">${l.pr}</span></td></tr>`).join('')}</tbody>
+    </table>
+  </div>`;
+
+  // ─── 5. TRALI vs TACO DIFFERENTIATOR ───
+  if(isTRALI||isTACO) {
+    html += `<div class="card">
+      <div class="sec-label">🔍 Diferensiasi TRALI vs TACO</div>
+      <table class="tbl">
+        <thead><tr><th>Parameter</th><th>TRALI</th><th>TACO</th></tr></thead>
+        <tbody>
+          <tr><td>Tekanan Darah</td><td>Hipotensi atau normal</td><td>Hipertensi (umumnya)</td></tr>
+          <tr><td>JVP / Overload</td><td>Normal / tidak ada</td><td>Meningkat, S3 gallop</td></tr>
+          <tr><td>BNP/NT-proBNP</td><td>Normal / rendah</td><td>Sangat tinggi</td></tr>
+          <tr><td>Foto toraks</td><td>Bilateral infiltrat difus, normal jantung</td><td>Kardiomegali, edema interstitial</td></tr>
+          <tr><td>Respons diuretik</td><td>Tidak membantu / membahayakan</td><td>Membaik dengan furosemid</td></tr>
+          <tr><td>Riwayat jantung/ginjal</td><td>Tidak khas</td><td>Sering ada</td></tr>
+          <tr><td>Terapi utama</td><td>O₂ tinggi, ventilasi mekanik, ICU</td><td>O₂, furosemid, posisi duduk</td></tr>
+        </tbody>
+      </table>
+    </div>`;
+  }
+
+  // ─── 6. FUTURE TRANSFUSION RECOMMENDATIONS ───
+  const recs = buildRecs({isAnaphy,isAHTR,isSeptic,isTRALI,isTACO,isAllergy,isFNHTR},ctx);
+  if(recs.length>0) {
+    html += `<div class="card">
+      <div class="sec-label">📌 Rekomendasi Transfusi Berikutnya</div>
+      <div class="rec-list">${recs.map(r=>`<div class="rec-item">✅ ${r}</div>`).join('')}</div>
+    </div>`;
+  }
+
+  // Footer
+  html += `<footer><strong>drAisyi EduCare</strong> · ATR First Aid Navigator v2.0<br>
+    Panduan edukasi klinis. Selalu terapkan penilaian klinis mandiri. Tidak menggantikan protokol institusi.</footer>`;
+
+  document.getElementById('results').innerHTML = html;
+  window.summaryText = buildSummaryText(matched,ctx,steps,labs);
+}
+
+function buildSteps(flags,ctx) {
+  const {isAnaphy,isAHTR,isSeptic,isTRALI,isTACO,isFNHTR,isAllergy} = flags;
+  const {wt,spo2} = ctx;
+  const steps = [];
+
+  if(isAnaphy) {
+    const epiDose = wt ? `${(wt*0.01).toFixed(2)} mg (${wt} kg × 0,01 mg/kg)` : '0,01 mg/kg (maks 0,5 mg)';
+    steps.push({cls:'urg',t:`🚨 <strong>ANAFILAKSIS</strong>: Epinefrin IM segera — <strong>${epiDose}</strong> — paha anterolateral. Ulangi tiap 5–15 mnt jika perlu.`});
+    steps.push({cls:'urg',t:`🛏️ Posisi: telentang + kaki elevasi (jika tidak sesak berat) ATAU duduk tegak jika distres napas. O₂ aliran tinggi.`});
+    steps.push({cls:'wrn',t:`💊 Antihistamin H1 IV (difenhidramin 1 mg/kg), H2 blocker yang tersedia lokal (mis. famotidin bila sesuai protokol), kortikosteroid — sebagai adjuvan, bukan pengganti epinefrin.`});
+    steps.push({cls:'urg',t:`📞 Panggil bantuan SEGERA — ICU / anestesi. Siapkan akses IV besar, resusitasi NaCl 0,9%.`});
+  }
+
+  if(isAHTR) {
+    steps.push({cls:'urg',t:`☠️ <strong>AHTR</strong>: Pertahankan output urin ≥ 1 mL/kg/jam. Pasang kateter urin. Hidrasi agresif NaCl 0,9% segera.`});
+    steps.push({cls:'urg',t:`🔬 Kirim sampel darah baru + urin ke Bank Darah dan Lab SEGERA — cross-match ulang, hemolisis panel.`});
+    steps.push({cls:'wrn',t:`⚠️ Monitor tanda DIC: PT, APTT, fibrinogen, D-Dimer. Siapkan FFP/kriopresipitat.`});
+    steps.push({t:`🏥 Konsultasi hematologi / nefrologi jika tanda gagal ginjal akut muncul (oliguria, kreatinin naik).`});
+  }
+
+  if(isSeptic) {
+    steps.push({cls:'urg',t:`🦠 <strong>SEPSIS TRANSFUSI</strong>: Ambil kultur darah dari pasien segera (2 set). Kirim sisa komponen darah ke Bank Darah untuk kultur dan Gram stain.`});
+    steps.push({cls:'urg',t:`💉 Mulai <strong>antibiotik broad-spectrum</strong> segera sesuai protokol sepsis lokal. Jangan tunggu hasil kultur.`});
+    steps.push({cls:'urg',t:`🏥 Resusitasi cairan, pantau tanda vital serial. Transfer ICU jika ada syok.`});
+  }
+
+  if(isTRALI) {
+    const o2Note = spo2 && spo2<92 ? `(SpO₂ saat ini ${spo2}% — segera ventilasi)` : '';
+    steps.push({cls:'urg',t:`🫁 <strong>TRALI</strong>: O₂ aliran tinggi. Jika SpO₂ tidak membaik dalam 15 menit — siapkan ventilasi mekanik. Transfer ICU. ${o2Note}`});
+    steps.push({cls:'urg',t:`⚠️ <strong>JANGAN</strong> berikan diuretik empiris — TRALI bukan overload, furosemid dapat memperburuk hipotensi.`});
+  }
+
+  if(isTACO) {
+    const furoseDose = wt ? `${wt} mg (${wt} kg × 1 mg/kg)` : '1 mg/kg IV';
+    steps.push({cls:'wrn',t:`💧 <strong>TACO</strong>: Hentikan / kurangi infus. Posisi duduk tegak. O₂. Pertimbangkan Furosemid IV ${furoseDose} — sesuai kondisi klinis.`});
+    steps.push({t:`📊 Monitor SpO₂, TD, balans cairan ketat. Periksa BNP/NT-proBNP dan foto toraks segera.`});
+  }
+
+  if(isFNHTR && !isAHTR && !isSeptic && !isAnaphy) {
+    steps.push({cls:'wrn',t:`🌡️ <strong>FNHTR</strong>: Berikan antipiretik — paracetamol ${ctx.wt ? ctx.wt*12.5+' mg' : '10–15 mg/kg'} PO/IV. Evaluasi ulang setelah 15 menit.`});
+    steps.push({t:`🔄 Setelah hemolisis dan sepsis <strong>disingkirkan</strong>, transfusi dapat dilanjutkan dengan komponen baru bila secara klinis diperlukan.`});
+  }
+
+  if(isAllergy && !isAnaphy) {
+    steps.push({cls:'wrn',t:`🤧 <strong>Alergi Ringan</strong>: Difenhidramin 1 mg/kg (maks 50 mg) PO/IV. Observasi 15–30 menit.`});
+    steps.push({t:`🔄 Jika gejala mereda dan tidak ada progresi sistemik, transfusi dapat dilanjutkan secara hati-hati dengan pemantauan ketat.`});
+  }
+
+  steps.push({t:`📝 Isi <strong>formulir laporan reaksi transfusi</strong> lengkap. Kembalikan sisa komponen + infus set ke Bank Darah.`});
+  steps.push({t:`🗒️ Dokumentasi rekam medis: waktu onset, gejala, intervensi, respons, rencana tindak lanjut, dan laporan ke Bank Darah.`});
+  return steps;
+}
+
+function buildLabs(flags,ctx) {
+  const {isAnaphy,isAHTR,isSeptic,isTRALI,isTACO,isAllergy,isFNHTR,hardTrigger} = flags;
+  const isMinimalOnly = isAllergy && !isAHTR && !isAnaphy && !isSeptic && !isTRALI && !isTACO && !hardTrigger;
+  const labs = [];
+
+  if(!isMinimalOnly) {
+    labs.push({n:'Darah Lengkap (CBC)',p:'Hb, trombosit, leukosit pasca reaksi',pr:'Segera',cls:'now'});
+    labs.push({n:'Golongan Darah & Cross-Match Ulang',p:'Konfirmasi ABO/Rh, skrining antibodi — dari sampel baru',pr:'Segera',cls:'now'});
+    labs.push({n:'Direct Antiglobulin Test (DAT)',p:'Deteksi hemolisis imun',pr:'Segera',cls:'now'});
+    labs.push({n:'Bilirubin Total & Direk',p:'Tanda hemolisis / ikterik akut',pr:'Segera',cls:'now'});
+    labs.push({n:'LDH',p:'Penanda hemolisis eritrosit',pr:'Segera',cls:'now'});
+    labs.push({n:'Haptoglobin Serum',p:'Turun bermakna pada hemolisis intravaskular',pr:'Segera',cls:'now'});
+    labs.push({n:'Urinalisis + Hemoglobinuria',p:'Deteksi hemoglobin bebas di urin',pr:'Segera',cls:'now'});
+    labs.push({n:'Fungsi Ginjal (BUN, Kreatinin)',p:'Deteksi dini AKI',pr:'Cepat',cls:'fast'});
+    labs.push({n:'Elektrolit (K⁺, Na⁺)',p:'Hiperkalemia pada hemolisis masif',pr:'Cepat',cls:'fast'});
+  }
+
+  labs.push({n:'Kultur Darah Pasien (2 set)',p:'Singkirkan sepsis / bacterial contamination',pr: isSeptic?'Segera':'Cepat',cls:isSeptic?'now':'fast'});
+  if(!isMinimalOnly) labs.push({n:'Kultur + Gram Stain Sisa Komponen',p:'Konfirmasi kontaminasi bakteri produk darah',pr:isSeptic?'Segera':'Cepat',cls:isSeptic?'now':'fast'});
+
+  if(isAHTR) {
+    labs.push({n:'PT, APTT, Fibrinogen, D-Dimer',p:'Skrining DIC pada AHTR berat',pr:'Segera',cls:'now'});
+    labs.push({n:'Plasma Bebas Hemoglobin',p:'Konfirmasi hemolisis intravaskular',pr:'Cepat',cls:'fast'});
+  }
+
+  if(isTRALI||isTACO) {
+    labs.push({n:'Analisis Gas Darah (AGD)',p:'Hipoksemia; PaO₂/FiO₂ ratio (TRALI: <300)',pr:'Segera',cls:'now'});
+    labs.push({n:'Foto Toraks',p:'Bilateral infiltrat (TRALI) vs kardiomegali/edema (TACO)',pr:'Segera',cls:'now'});
+    labs.push({n:'BNP / NT-proBNP',p:'Tinggi pada TACO, normal/rendah pada TRALI',pr:'Cepat',cls:'fast'});
+  }
+
+  if(isAnaphy) {
+    labs.push({n:'Triptase Serum',p:'Ambil 1–2 jam pasca onset; konfirmasi anafilaksis',pr:'Cepat',cls:'fast'});
+    labs.push({n:'Kadar IgA Serum',p:'Singkirkan defisiensi IgA sebagai etiologi',pr:'Elektif',cls:'elec'});
+  }
+
+  if(isMinimalOnly) {
+    labs.push({n:'Cek identitas + tanda vital',p:'Minimal workup alergi ringan terisolasi',pr:'Segera',cls:'now'});
+    labs.push({n:'Lapor Bank Darah',p:'Sesuai kebijakan lokal',pr:'Segera',cls:'now'});
+  }
+
+  return labs;
+}
+
+function buildRecs(flags,ctx) {
+  const {isAnaphy,isAHTR,isSeptic,isTRALI,isTACO,isAllergy,isFNHTR} = flags;
+  const recs = [];
+  if(isFNHTR) recs.push('Gunakan komponen leukodepleted (leukoreduced) untuk mencegah FNHTR berulang.');
+  if(isAllergy) recs.push('Pertimbangkan washed RBC/platelet jika reaksi alergi berulang berat.');
+  if(isAnaphy) recs.push('Periksa kadar IgA serum; jika defisiensi IgA terkonfirmasi, gunakan komponen dari donor IgA-deficient atau washed products.');
+  if(isAnaphy||isAllergy) recs.push('Premedikasi (antihistamin) tidak direkomendasikan secara rutin — hanya pada pasien tertentu dengan riwayat reaksi alergi berulang (diskusikan dengan Bank Darah).');
+  if(isTACO||ctx.cardiac==='yes') recs.push('Turunkan laju transfusi (maks 1–2 mL/kg/jam) dan pertimbangkan profilaksis diuretik pada pasien risiko TACO.');
+  if(isAHTR) recs.push('Investigasi penyebab inkompatibilitas sebelum transfusi berikutnya. Lapor insiden ke komite keselamatan transfusi.');
+  if(isSeptic) recs.push('Laporkan ke Bank Darah dan otoritas terkait (hemovigilance). Tunda semua transfusi sampai investigasi selesai.');
+  if(isTRALI) recs.push('TRALI: Donor terkait (FFP/platelet dari donor multi-gravida) perlu dievaluasi. Lapor ke Bank Darah.');
+  return recs;
+}
+
+function buildSummaryText(matched, ctx, steps, labs) {
+  const d = new Date().toLocaleString('id-ID');
+  let t = `=== ATR FIRST AID NAVIGATOR — drAisyi EduCare ===\nTanggal: ${d}\n`;
+  t += `\nPRODUK: ${ctx.prod||'—'} | ONSET: ${ctx.onset||'—'} | BB: ${ctx.wt||'—'} kg\n`;
+  t += `GEJALA: ${[...selected].join(', ')}\n`;
+  t += `\n=== KEMUNGKINAN REAKSI ===\n${matched.map(r=>r.name+' ('+r.level+')').join(', ')||'Tidak teridentifikasi'}\n`;
+  t += `\n=== TINDAKAN DARURAT ===\n1. Hentikan transfusi\n2. Pertahankan IV NaCl 0.9% (set baru)\n3. Cocokkan identitas\n4. Nilai tanda vital\n5. Lapor dokter & Bank Darah\n`;
+  t += `\n=== PEMERIKSAAN LAB ===\n${labs.map((l,i)=>`${i+1}. ${l.n} [${l.pr}]`).join('\n')}\n`;
+  t += `\n---\nPanduan edukasi klinis. Selalu terapkan penilaian klinis mandiri.`;
+  return t;
+}
+
+function copySummary() {
+  if(!window.summaryText){alert('Jalankan analisis dulu.');return;}
+  navigator.clipboard.writeText(window.summaryText).then(()=>{
+    const b=document.getElementById('copyBtn');
+    b.textContent='✅ Tersalin!';
+    setTimeout(()=>b.textContent='📋 Salin Ringkasan',2000);
+  });
+}
+
+function resetAll() {
+  selected.clear();
+  document.querySelectorAll('.sym-btn').forEach(b=>b.classList.remove('active'));
+  ['product','onset','volume','cardiac','jvp'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['weight','bp','hr','temp','spo2','rr'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('tab-result').style.display='none';
+  showTab('input');
+}
+
+renderSyms();
+</script>
+</body>
+</html>

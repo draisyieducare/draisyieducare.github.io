@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pediatric Hematologic Malignancy Red Flag & Referral Triage | drAisyi EduCare</title>
+<style>
+:root {
+  --p:#6B21A8;--pl:#A855F7;--acc:#EC4899;
+  --bg:#F5F3FF;--card:#fff;--text:#1E1B4B;--muted:#6B7280;--border:#E5E7EB;
+  --low:#16A34A;--med:#D97706;--high:#DC2626;
+  --low-bg:#DCFCE7;--med-bg:#FEF3C7;--high-bg:#FEE2E2;
+  --r:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.hdr{background:linear-gradient(135deg,var(--p),#9333EA 60%,var(--acc));color:#fff;padding:18px 20px 14px;text-align:center;}
+.brand{font-size:10px;font-weight:700;letter-spacing:2px;opacity:.85;text-transform:uppercase;margin-bottom:3px;}
+.hdr h1{font-size:18px;font-weight:900;line-height:1.3;}
+.hdr p{font-size:11px;opacity:.85;margin-top:3px;}
+.badge{display:inline-block;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:3px 12px;font-size:9px;margin-top:7px;letter-spacing:1px;}
+.main{max-width:720px;margin:0 auto;padding:16px 14px 60px;}
+
+/* TABS */
+.tabs{display:flex;gap:6px;margin-bottom:16px;}
+.tab{flex:1;padding:9px 6px;border:2px solid var(--border);background:#fff;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);transition:all .18s;text-align:center;}
+.tab.active{border-color:var(--p);background:var(--p);color:#fff;}
+
+/* SECTION */
+.sec-title{font-size:11px;font-weight:700;color:var(--p);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;display:flex;align-items:center;gap:7px;}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ALERT BOX */
+.alert-box{background:#FFF1F2;border:1.5px solid #FCA5A5;border-radius:10px;padding:11px 14px;margin-bottom:12px;font-size:12px;color:#991B1B;line-height:1.6;}
+.alert-box strong{display:block;margin-bottom:4px;font-size:13px;}
+
+/* EMERGENCY TRIGGERS */
+.emer-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+@media(max-width:460px){.emer-grid{grid-template-columns:1fr;}}
+.emer-card{background:#FFF1F2;border:2px solid #FCA5A5;border-radius:10px;padding:11px 13px;cursor:pointer;transition:all .18s;display:flex;gap:10px;align-items:flex-start;}
+.emer-card:hover{border-color:#EF4444;}
+.emer-card.active{background:#FEE2E2;border-color:#DC2626;box-shadow:0 0 0 3px rgba(220,38,38,.15);}
+.emer-icon{font-size:18px;min-width:22px;}
+.emer-name{font-size:12px;font-weight:700;color:#991B1B;}
+.emer-desc{font-size:10px;color:#B91C1C;margin-top:2px;}
+.emer-chk{width:20px;height:20px;border-radius:5px;border:2px solid #FCA5A5;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;background:#fff;transition:all .18s;margin-left:auto;min-width:20px;}
+.emer-card.active .emer-chk{background:#DC2626;border-color:#DC2626;}
+
+/* FLAGS GRID */
+.flags-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+@media(max-width:460px){.flags-grid{grid-template-columns:1fr;}}
+.flag-card{background:#fff;border:2px solid var(--border);border-radius:10px;padding:11px 13px;cursor:pointer;transition:all .18s;display:flex;gap:10px;align-items:flex-start;}
+.flag-card:hover{border-color:var(--pl);background:#FAF5FF;}
+.flag-card.active{border-color:var(--p);background:#FAF5FF;box-shadow:0 0 0 3px rgba(107,33,168,.1);}
+.fl-icon{font-size:18px;min-width:22px;}
+.fl-name{font-size:12px;font-weight:700;}
+.fl-desc{font-size:10px;color:var(--muted);margin-top:2px;}
+.fl-chk{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;background:#fff;transition:all .18s;margin-left:auto;min-width:20px;}
+.flag-card.active .fl-chk{background:var(--p);border-color:var(--p);}
+
+/* DURATION */
+.dur-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:4px;}
+.dur-label{font-size:12px;font-weight:700;margin-bottom:8px;}
+.dur-opts{display:flex;gap:7px;flex-wrap:wrap;}
+.dur-btn{border:2px solid var(--border);background:#fff;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;transition:all .18s;color:var(--text);}
+.dur-btn:hover{border-color:var(--pl);}
+.dur-btn.active{border-color:var(--p);background:var(--p);color:#fff;}
+
+/* DPL INPUTS */
+.dpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:460px){.dpl-grid{grid-template-columns:1fr;}}
+.dpl-field label{display:block;font-size:11px;font-weight:700;color:var(--p);margin-bottom:4px;}
+.dpl-field input,.dpl-field select{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--text);background:#fff;outline:none;transition:border .18s;}
+.dpl-field input:focus,.dpl-field select:focus{border-color:var(--p);}
+.dpl-toggle{display:flex;align-items:center;gap:10px;background:#FAF5FF;border:1.5px solid var(--pl);border-radius:9px;padding:10px 13px;cursor:pointer;margin-bottom:4px;}
+.dpl-toggle input[type=checkbox]{width:16px;height:16px;accent-color:var(--p);}
+.dpl-toggle span{font-size:12px;font-weight:700;color:var(--p);}
+
+/* BTNS */
+.analyze-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--p),var(--pl));color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:800;cursor:pointer;margin-top:16px;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.analyze-btn:hover{opacity:.9;}
+.reset-btn{width:100%;padding:9px;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:var(--r);font-size:12px;cursor:pointer;margin-top:8px;transition:all .2s;}
+.reset-btn:hover{background:#F3F4F6;}
+
+/* RESULT */
+.result-box{display:none;border-radius:var(--r);overflow:hidden;margin-top:18px;box-shadow:0 4px 20px rgba(0,0,0,.1);}
+.result-box.show{display:block;}
+.result-hdr{padding:14px 18px;display:flex;align-items:center;gap:12px;}
+.result-hdr.low{background:var(--low-bg);color:var(--low);}
+.result-hdr.medium{background:var(--med-bg);color:var(--med);}
+.result-hdr.high{background:var(--high-bg);color:var(--high);}
+.res-icon{font-size:26px;}
+.res-risk-lbl{font-size:10px;font-weight:700;opacity:.8;text-transform:uppercase;letter-spacing:1px;}
+.res-risk-val{font-size:20px;font-weight:900;}
+.res-sub{font-size:10px;opacity:.75;margin-top:2px;font-style:italic;}
+.result-body{background:#fff;padding:16px 18px;}
+.rrow{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid var(--border);}
+.rrow:last-child{border-bottom:none;}
+.rrow-icon{font-size:17px;min-width:24px;}
+.rrow-content{flex:1;}
+.rrow-title{font-size:11px;font-weight:700;color:var(--p);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.rrow-text{font-size:12px;color:var(--text);line-height:1.6;}
+.tag-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px;}
+.tag{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;background:var(--bg);color:var(--p);border:1px solid var(--pl);}
+.tag.red{background:#FEE2E2;color:var(--high);border-color:#FCA5A5;}
+.tag.grn{background:var(--low-bg);color:var(--low);border-color:#86EFAC;}
+.rujuk-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:8px;font-size:13px;font-weight:800;margin-top:5px;}
+.rujuk-igd{background:#FEE2E2;color:var(--high);}
+.rujuk-segera{background:#FEF3C7;color:var(--med);}
+.rujuk-terencana{background:#DBEAFE;color:#1D4ED8;}
+.rujuk-observasi{background:var(--low-bg);color:var(--low);}
+
+/* DONT DO */
+.dont-box{background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:10px;padding:12px 14px;margin-top:10px;}
+.dont-title{font-size:11px;font-weight:800;color:#C2410C;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;}
+.dont-list{list-style:none;padding:0;}
+.dont-list li{font-size:11px;color:#92400E;padding:3px 0 3px 18px;position:relative;line-height:1.5;}
+.dont-list li::before{content:'🚫';position:absolute;left:0;font-size:10px;}
+
+/* REFERRAL NOTE */
+.ref-note{background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:10px;padding:12px 14px;margin-top:10px;font-size:11px;color:#166534;line-height:1.65;}
+.ref-note-title{font-weight:800;font-size:12px;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.print-btn{width:100%;padding:10px;background:#166534;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:7px;}
+.print-btn:hover{opacity:.9;}
+
+/* EDU PARENT */
+.edu-box{background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:10px;padding:12px 14px;margin-top:10px;font-size:11px;color:#1E40AF;line-height:1.65;}
+.edu-box strong{display:block;margin-bottom:5px;font-size:12px;}
+
+/* DISCLAIMER */
+.disclaimer{background:#F1F5F9;border-left:3px solid var(--pl);border-radius:8px;padding:11px 13px;margin-top:16px;font-size:10px;color:var(--muted);line-height:1.6;}
+.ref-section{font-size:10px;color:var(--muted);margin-top:12px;padding:10px 12px;background:#F8F9FA;border-radius:8px;line-height:1.7;}
+.ref-section strong{color:var(--p);display:block;margin-bottom:3px;}
+.footer{text-align:center;font-size:10px;color:var(--muted);padding:14px;margin-top:16px;border-top:1px solid var(--border);}
+.footer strong{color:var(--p);}
+.ver-chip{display:inline-block;background:var(--bg);border:1px solid var(--pl);border-radius:20px;padding:2px 10px;font-size:9px;color:var(--p);margin-left:6px;}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="brand">drAisyi EduCare</div>
+  <h1>🚨 Red Flag & Referral Triage<br>Keganasan Hematologi Anak</h1>
+  <p>Deteksi Dini · Triase Klinis · Panduan Rujukan</p>
+  <span class="badge">PEDIATRIC HEMATOLOGY-ONCOLOGY TOOLKIT v2.0</span>
+</div>
+
+<div class="main">
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="switchTab(0)" id="tab0">🩺 Mode Gejala</button>
+  <button class="tab" onclick="switchTab(1)" id="tab1">🔬 Gejala + DPL Awal</button>
+</div>
+
+<!-- ============ TAB 0: GEJALA ============ -->
+<div id="panel0">
+
+  <div class="alert-box">
+    <strong>⚠️ Kegawatan Darurat — Centang bila ada</strong>
+    Jika salah satu di bawah ini ditemukan → <strong>Kirim ke IGD hari yang sama</strong>
+  </div>
+  <div class="emer-grid" id="emerGrid"></div>
+
+  <div class="sec-title">🌡️ Durasi Demam</div>
+  <div class="dur-card">
+    <div class="dur-label">Berapa lama demam berlangsung?</div>
+    <div class="dur-opts">
+      <button class="dur-btn active" onclick="setDurasi(0)" id="d0">Tidak ada / tidak demam</button>
+      <button class="dur-btn" onclick="setDurasi(1)" id="d1">&lt;1 minggu</button>
+      <button class="dur-btn" onclick="setDurasi(2)" id="d2">1–2 minggu</button>
+      <button class="dur-btn" onclick="setDurasi(3)" id="d3">&gt;2 minggu</button>
+    </div>
+  </div>
+
+  <div class="sec-title">🔴 Tanda & Gejala Lainnya</div>
+  <div class="flags-grid" id="flagsGrid"></div>
+
+</div>
+
+<!-- ============ TAB 1: GEJALA + DPL ============ -->
+<div id="panel1" style="display:none;">
+
+  <div class="alert-box">
+    <strong>⚠️ Kegawatan Darurat — Centang bila ada</strong>
+    Jika salah satu di bawah ini ditemukan → <strong>Kirim ke IGD hari yang sama</strong>
+  </div>
+  <div class="emer-grid" id="emerGrid2"></div>
+
+  <div class="sec-title">🌡️ Durasi Demam</div>
+  <div class="dur-card">
+    <div class="dur-label">Berapa lama demam berlangsung?</div>
+    <div class="dur-opts">
+      <button class="dur-btn active" onclick="setDurasi2(0)" id="e0">Tidak ada</button>
+      <button class="dur-btn" onclick="setDurasi2(1)" id="e1">&lt;1 minggu</button>
+      <button class="dur-btn" onclick="setDurasi2(2)" id="e2">1–2 minggu</button>
+      <button class="dur-btn" onclick="setDurasi2(3)" id="e3">&gt;2 minggu</button>
+    </div>
+  </div>
+
+  <div class="sec-title">🔴 Tanda & Gejala</div>
+  <div class="flags-grid" id="flagsGrid2"></div>
+
+  <div class="sec-title">🔬 Hasil DPL Awal</div>
+  <div class="dpl-grid">
+    <div class="dpl-field">
+      <label>Hb (g/dL)</label>
+      <input type="number" id="dHb" placeholder="e.g. 8.5" step="0.1"/>
+    </div>
+    <div class="dpl-field">
+      <label>Leukosit (/mm³)</label>
+      <input type="number" id="dWBC" placeholder="e.g. 12000"/>
+    </div>
+    <div class="dpl-field">
+      <label>ANC (/mm³)</label>
+      <input type="number" id="dANC" placeholder="e.g. 800"/>
+    </div>
+    <div class="dpl-field">
+      <label>Trombosit (×10³/mm³)</label>
+      <input type="number" id="dPlt" placeholder="e.g. 45"/>
+    </div>
+    <div class="dpl-field">
+      <label>LDH (U/L)</label>
+      <input type="number" id="dLDH" placeholder="e.g. 450"/>
+    </div>
+    <div class="dpl-field">
+      <label>Asam Urat (mg/dL)</label>
+      <input type="number" id="dUA" placeholder="e.g. 7.2" step="0.1"/>
+    </div>
+    <div class="dpl-field">
+      <label>Blast di darah tepi</label>
+      <select id="dBlast">
+        <option value="">-- Pilih --</option>
+        <option value="no">Tidak ditemukan</option>
+        <option value="yes">Ada blast</option>
+        <option value="nd">Belum diperiksa</option>
+      </select>
+    </div>
+    <div class="dpl-field">
+      <label>NRBC / sel abnormal</label>
+      <select id="dNRBC">
+        <option value="">-- Pilih --</option>
+        <option value="no">Tidak ada</option>
+        <option value="yes">Ada</option>
+        <option value="nd">Belum diperiksa</option>
+      </select>
+    </div>
+  </div>
+
+</div>
+
+<!-- ANALYZE -->
+<button class="analyze-btn" onclick="analyze()">🔍 Analisis & Rekomendasi</button>
+<button class="reset-btn" onclick="resetAll()">↺ Reset Semua</button>
+
+<!-- RESULT -->
+<div class="result-box" id="resultBox">
+  <div class="result-hdr" id="resultHdr">
+    <div class="res-icon" id="resIcon"></div>
+    <div>
+      <div class="res-risk-lbl">Pola Triage Klinis</div>
+      <div class="res-risk-val" id="resRisk"></div>
+      <div class="res-sub">Rule-based triage — bukan skor diagnostik tervalidasi</div>
+    </div>
+  </div>
+  <div class="result-body">
+    <div class="rrow">
+      <div class="rrow-icon">🩸</div>
+      <div class="rrow-content">
+        <div class="rrow-title">Penilaian Pola Gejala</div>
+        <div class="rrow-text" id="resDiagnosis"></div>
+      </div>
+    </div>
+    <div class="rrow" id="dplRowEl" style="display:none;">
+      <div class="rrow-icon">🔬</div>
+      <div class="rrow-content">
+        <div class="rrow-title">Interpretasi DPL</div>
+        <div class="rrow-text" id="resDPL"></div>
+      </div>
+    </div>
+    <div class="rrow">
+      <div class="rrow-icon">🏥</div>
+      <div class="rrow-content">
+        <div class="rrow-title">Tingkat Urgensi Rujukan</div>
+        <div id="resRujuk"></div>
+        <div class="rrow-text" id="resRujukNote" style="margin-top:6px;"></div>
+      </div>
+    </div>
+    <div class="rrow">
+      <div class="rrow-icon">🧪</div>
+      <div class="rrow-content">
+        <div class="rrow-title">Pemeriksaan Penunjang — Sesuai Level Fasilitas</div>
+        <div class="rrow-text" id="resPem"></div>
+      </div>
+    </div>
+    <div class="dont-box">
+      <div class="dont-title">⛔ Jangan Dilakukan Sebelum Rujuk</div>
+      <ul class="dont-list" id="resDont"></ul>
+    </div>
+    <div class="edu-box" id="resEdu">
+      <strong>📋 Edukasi Orang Tua — Segera ke IGD bila:</strong>
+      Anak makin pucat/lemas · Sesak napas · Demam tinggi mendadak · Perdarahan aktif · Petekie/memar meluas tiba-tiba · Nyeri tulang berat hingga tidak bisa berjalan · Benjolan makin besar atau bertambah · Penurunan kesadaran
+    </div>
+    <div class="ref-note" id="resRefNote">
+      <div class="ref-note-title">📄 Surat Rujukan Ringkas</div>
+      <div id="resRefText"></div>
+    </div>
+    <button class="print-btn" onclick="printRef()">🖨️ Cetak / Simpan Ringkasan Rujukan</button>
+  </div>
+</div>
+
+<div class="disclaimer">
+  ⚕️ <strong>Disclaimer:</strong> Toolkit ini bersifat edukatif dan alat bantu skrining klinis berbasis rule-based triage. Bukan pengganti anamnesis lengkap, pemeriksaan fisik, dan penilaian klinis dokter. Diagnosis akhir memerlukan pemeriksaan laboratorium dan konfirmasi histopatologi/BMA. Keputusan tata laksana tetap merupakan wewenang dokter yang merawat.
+</div>
+<div class="ref-section">
+  <strong>📚 Referensi & Evidence Base</strong>
+  ASTCT Consensus Grading · EBMT Handbook · NICE NG12 (Suspected Cancer Referral) · RCH Lymphadenopathy & Leukemia Guidelines · TIF Guidelines for Thalassemia · PNPK Keganasan Hematologi Anak Indonesia · COG Risk Stratification Principles<br>
+  <em>Versi 2.0 | Update: Juni 2026 | drAisyi EduCare</em>
+</div>
+
+</div><!-- /main -->
+
+<div class="footer">
+  <strong>drAisyi EduCare</strong> <span class="ver-chip">v2.0</span><br>
+  Pediatric Hematology-Oncology Toolkit Series · Untuk keperluan edukasi dan skrining klinis
+</div>
+
+<div id="printArea" style="display:none;"></div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+
+const EMER = [
+  {id:'sesak',   icon:'😮‍💨', name:'Sesak / Stridor',         desc:'Curiga massa mediastinum, SVC syndrome'},
+  {id:'perdarahan',icon:'🩸', name:'Perdarahan Aktif',         desc:'Epistaksis masif, perdarahan gusi, hematom luas'},
+  {id:'pucat_berat',icon:'😰',name:'Pucat Berat + Takikardia', desc:'Tanda anemia berat dengan hemodinamik terganggu'},
+  {id:'penurunan_kesadaran',icon:'🧠',name:'Penurunan Kesadaran',desc:'Letargi berat, tidak responsif, tanda CNS'},
+  {id:'nyeri_hebat',icon:'🦴',name:'Nyeri Tulang Tak Bisa Jalan',desc:'Nyeri ekstrem, menolak berjalan/berdiri'},
+  {id:'demam_toksik',icon:'🌡️',name:'Demam + Tampak Toksik',   desc:'Suhu >38.5°C + lemas berat, curiga neutropenia'},
+];
+
+const FLAGS = [
+  {id:'pucat',   icon:'😰', name:'Pucat / Anemia',          desc:'Pucat wajah, telapak, konjungtiva',                w:2},
+  {id:'lemas',   icon:'😔', name:'Lemas / Letargi',          desc:'Anak lesu, tidak aktif bermain seperti biasa',     w:1},
+  {id:'demam',   icon:'🌡️', name:'Demam Tidak Jelas',        desc:'Demam berulang/menetap tanpa fokus infeksi jelas', w:2},
+  {id:'infeksi_berulang',icon:'🦠',name:'Infeksi Berulang', desc:'Infeksi lebih sering dari biasa, sulit sembuh',    w:1},
+  {id:'memar',   icon:'🟣', name:'Memar Spontan',            desc:'Hematom/ekimosis tanpa trauma berarti',            w:2},
+  {id:'petekie', icon:'🔴', name:'Petekie / Purpura',        desc:'Bintik merah tidak hilang saat ditekan',           w:3},
+  {id:'epistaksis',icon:'🩹',name:'Epistaksis/Perdarahan Gusi',desc:'Berulang, sulit berhenti',                      w:1},
+  {id:'tulang',  icon:'🦴', name:'Nyeri Tulang / Sendi',     desc:'Nyeri tungkai, tulang panjang, tanpa trauma jelas',w:3},
+  {id:'pincang', icon:'🚶', name:'Pincang / Enggan Berjalan',desc:'Nyeri saat berjalan, sering minta digendong',     w:2},
+  {id:'limfad',  icon:'🫧', name:'Limfadenopati',            desc:'KGB >2 cm, multiple, tidak nyeri, atau supraklavikula',w:3},
+  {id:'hepar',   icon:'🟤', name:'Hepatosplenomegali',       desc:'Hati atau limpa teraba besar',                    w:3},
+  {id:'bb',      icon:'⚖️', name:'Penurunan Berat Badan',   desc:'BB turun >10% atau anoreksia bermakna',            w:2},
+  {id:'keringat',icon:'💦', name:'Keringat Malam',           desc:'Berkeringat berlebihan saat tidur',                w:2},
+  {id:'sakit_kepala',icon:'🤕',name:'Sakit Kepala Pagi / Muntah',desc:'Terutama pagi hari, curiga tanda peningkatan TIK / CNS',w:2},
+  {id:'testis',  icon:'🔵', name:'Pembesaran Testis',        desc:'Tidak nyeri, unilateral, pada anak laki-laki',    w:2},
+  {id:'massa',   icon:'💠', name:'Massa Abdomen / Leher',    desc:'Teraba massa atau benjolan baru di perut/leher',   w:3},
+];
+
+let selA={}, selB={}, emerA={}, emerB={};
+let durasiA=0, durasiB=0;
+let activeTab=0;
+
+// ─── RENDER ─────────────────────────────────────────────────────────────────
+
+function renderEmer(gridId, selObj, tag){
+  const g=document.getElementById(gridId);
+  g.innerHTML=EMER.map(e=>`
+    <div class="emer-card" id="${tag}_ec_${e.id}" onclick="toggleEmer('${e.id}','${tag}')">
+      <div class="emer-icon">${e.icon}</div>
+      <div style="flex:1">
+        <div class="emer-name">${e.name}</div>
+        <div class="emer-desc">${e.desc}</div>
+      </div>
+      <div class="emer-chk" id="${tag}_echk_${e.id}"></div>
+    </div>`).join('');
+}
+
+function renderFlags(gridId, selObj, tag){
+  const g=document.getElementById(gridId);
+  g.innerHTML=FLAGS.map(f=>`
+    <div class="flag-card" id="${tag}_fc_${f.id}" onclick="toggleFlag('${f.id}','${tag}')">
+      <div class="fl-icon">${f.icon}</div>
+      <div style="flex:1">
+        <div class="fl-name">${f.name}</div>
+        <div class="fl-desc">${f.desc}</div>
+      </div>
+      <div class="fl-chk" id="${tag}_fchk_${f.id}"></div>
+    </div>`).join('');
+}
+
+function toggleEmer(id,tag){
+  const obj=tag==='a'?emerA:emerB;
+  obj[id]=!obj[id];
+  document.getElementById(tag+'_ec_'+id).classList.toggle('active',!!obj[id]);
+  document.getElementById(tag+'_echk_'+id).textContent=obj[id]?'✓':'';
+}
+
+function toggleFlag(id,tag){
+  const obj=tag==='a'?selA:selB;
+  obj[id]=!obj[id];
+  document.getElementById(tag+'_fc_'+id).classList.toggle('active',!!obj[id]);
+  document.getElementById(tag+'_fchk_'+id).textContent=obj[id]?'✓':'';
+  // sync demam checkbox with durasi
+  if(id==='demam'){
+    if(tag==='a'&&!obj[id]){durasiA=0;updateDurBtns('d',0);}
+    if(tag==='b'&&!obj[id]){durasiB=0;updateDurBtns('e',0);}
+  }
+}
+
+function updateDurBtns(prefix,v){
+  [0,1,2,3].forEach(i=>document.getElementById(prefix+i).classList.toggle('active',i===v));
+}
+
+function setDurasi(v){
+  durasiA=v;
+  updateDurBtns('d',v);
+  if(v>0&&!selA['demam']){toggleFlag('demam','a');}
+  if(v===0&&selA['demam']){toggleFlag('demam','a');}
+}
+
+function setDurasi2(v){
+  durasiB=v;
+  updateDurBtns('e',v);
+  if(v>0&&!selB['demam']){toggleFlag('demam','b');}
+  if(v===0&&selB['demam']){toggleFlag('demam','b');}
+}
+
+// ─── TABS ────────────────────────────────────────────────────────────────────
+
+function switchTab(n){
+  activeTab=n;
+  document.getElementById('panel0').style.display=n===0?'block':'none';
+  document.getElementById('panel1').style.display=n===1?'block':'none';
+  document.getElementById('tab0').classList.toggle('active',n===0);
+  document.getElementById('tab1').classList.toggle('active',n===1);
+  document.getElementById('resultBox').classList.remove('show');
+}
+
+// ─── ANALYZE ─────────────────────────────────────────────────────────────────
+
+function analyze(){
+  const isMode2=activeTab===1;
+  const sel=isMode2?selB:selA;
+  const emer=isMode2?emerB:emerA;
+  const dur=isMode2?durasiB:durasiA;
+
+  // Emergency check
+  const emerActive=Object.values(emer).some(v=>v);
+
+  // Gejala score
+  let score=0;
+  const active=FLAGS.filter(f=>sel[f.id]);
+  active.forEach(f=>score+=f.w);
+  if(dur===2)score+=1;
+  if(dur===3)score+=3;
+
+  const has=id=>!!sel[id];
+
+  // Hard triggers → minimal SEDANG
+  const hardMed = has('petekie')||has('memar')||has('pucat')||has('pincang')||
+                  has('limfad')||has('hepar')||dur===3||has('bb')||has('massa')||
+                  has('testis')||has('sakit_kepala');
+
+  // Hard triggers → TINGGI
+  const hardHigh =
+    (has('petekie')&&has('pucat')) ||
+    (has('petekie')&&has('demam')) ||
+    (has('memar')&&has('demam')) ||
+    (has('tulang')&&(has('demam')||has('pucat'))) ||
+    (has('hepar')&&(has('pucat')||has('petekie')||has('demam'))) ||
+    (has('limfad')&&(has('keringat')||has('bb')||has('demam'))) ||
+    (has('pincang')&&has('demam')) ||
+    (has('massa')&&active.length>=2) ||
+    (has('testis')&&has('pucat')) ||
+    (has('sakit_kepala')&&active.length>=2);
+
+  // DPL hard triggers
+  let dplHigh=false, dplText='', dplAlerts=[];
+  if(isMode2){
+    const hb=parseFloat(document.getElementById('dHb').value)||null;
+    const wbc=parseFloat(document.getElementById('dWBC').value)||null;
+    const anc=parseFloat(document.getElementById('dANC').value)||null;
+    const plt=parseFloat(document.getElementById('dPlt').value)||null;
+    const ldh=parseFloat(document.getElementById('dLDH').value)||null;
+    const ua=parseFloat(document.getElementById('dUA').value)||null;
+    const blast=document.getElementById('dBlast').value;
+    const nrbc=document.getElementById('dNRBC').value;
+
+    if(blast==='yes'){dplHigh=true;dplAlerts.push('🔴 Blast di darah tepi → RUJUK HEMATOLOGI SEGERA');}
+    if(nrbc==='yes')dplAlerts.push('⚠️ Sel abnormal / NRBC ditemukan → evaluasi ADT segera');
+    if(hb!==null&&hb<7){dplHigh=true;dplAlerts.push(`🔴 Hb sangat rendah (${hb} g/dL) → anemia berat, pertimbangkan IGD`);}
+    else if(hb!==null&&hb<10)dplAlerts.push(`⚠️ Hb rendah (${hb} g/dL) → monitor ketat`);
+    if(plt!==null&&plt<20){dplHigh=true;dplAlerts.push(`🔴 Trombosit sangat rendah (${plt}×10³) → risiko perdarahan tinggi`);}
+    else if(plt!==null&&plt<50)dplAlerts.push(`⚠️ Trombosit rendah (${plt}×10³) → pantau perdarahan`);
+    if(wbc!==null&&wbc>50000){dplHigh=true;dplAlerts.push(`🔴 Leukosit sangat tinggi (${(wbc/1000).toFixed(1)}K) → curiga leukemia, risiko hiperviskositas`);}
+    else if(wbc!==null&&wbc<2000)dplAlerts.push(`⚠️ Leukosit rendah (${wbc}) → evaluasi neutropenia`);
+    if(anc!==null&&anc<500){dplHigh=true;dplAlerts.push(`🔴 ANC sangat rendah (${anc}) → neutropenia berat, risiko infeksi fatal`);}
+    if(ldh!==null&&ldh>500)dplAlerts.push(`⚠️ LDH tinggi (${ldh} U/L) → curiga turnover sel tinggi`);
+    if(ua!==null&&ua>8)dplAlerts.push(`⚠️ Asam urat tinggi (${ua} mg/dL) → waspadai tumor lysis`);
+    // Bicytopenia / pancytopenia
+    let cytoLow=0;
+    if(hb!==null&&hb<10)cytoLow++;
+    if(plt!==null&&plt<100)cytoLow++;
+    if(wbc!==null&&wbc<4000)cytoLow++;
+    if(cytoLow>=2){dplHigh=true;dplAlerts.push('🔴 Bi/pancytopenia → BMA diperlukan, rujuk segera');}
+    dplText=dplAlerts.length?dplAlerts.join('<br>'):'<span style="color:var(--low)">✅ Tidak ada kelainan DPL kritis terdeteksi dari nilai yang dimasukkan. Tetap evaluasi ADT dan klinis.</span>';
+  }
+
+  // Final risk
+  let risk,rClass,icon;
+  if(emerActive||hardHigh||dplHigh||score>=10){
+    risk='URGENSI TINGGI';rClass='high';icon='🔴';
+  } else if(hardMed||score>=4||active.length>=2){
+    risk='URGENSI SEDANG';rClass='medium';icon='🟡';
+  } else {
+    risk='URGENSI RENDAH';rClass='low';icon='🟢';
+  }
+  if(emerActive){risk='KEGAWATAN — IGD SEGERA';rClass='high';icon='🚨';}
+
+  // Diagnosis text
+  let diagText='';
+  const suspekHO=(has('tulang')||has('pucat'))&&active.length>=2;
+  const suspekLimfoma=has('limfad')&&(has('keringat')||has('bb')||has('massa'));
+  const purpuraSaja=has('petekie')&&!has('hepar')&&!has('limfad')&&!has('tulang')&&!has('demam')&&active.length<=2;
+
+  if(rClass==='high'){
+    if(suspekLimfoma&&suspekHO)
+      diagText='⚠️ <strong>Pola gejala mengarah pada keganasan hematologi.</strong> Leukemia <em>DAN</em> Limfoma perlu disingkirkan. Diperlukan DPL, ADT, dan evaluasi hematologi-onkologi anak segera.';
+    else if(suspekHO)
+      diagText='⚠️ <strong>Pola gejala mengarah pada kemungkinan Leukemia</strong> (ALL/AML). Perlu DPL, apusan darah tepi, dan evaluasi hematologi-onkologi anak segera untuk konfirmasi atau penyingkiran diagnosis.';
+    else if(suspekLimfoma)
+      diagText='⚠️ <strong>Pola gejala mengarah pada kemungkinan Limfoma.</strong> Limfadenopati + gejala B / massa memerlukan evaluasi onkologi segera.';
+    else
+      diagText='⚠️ <strong>Pola gejala mencurigakan untuk keganasan hematologi.</strong> Kombinasi gejala ini memerlukan pemeriksaan DPL dan evaluasi segera — leukemia/limfoma belum bisa disingkirkan.';
+  } else if(rClass==='medium'){
+    if(purpuraSaja)
+      diagText='Petekie/memar tanpa gejala sistemik lain: <strong>ITP mungkin</strong>, tetapi wajib konfirmasi DPL + ADT untuk menyingkirkan leukemia, bone marrow failure, infeksi, DIC, dan TMA sebelum label diagnosis diberikan.';
+    else
+      diagText='Gejala <strong>belum dapat dipastikan</strong> mengarah ke keganasan, namun memerlukan pemeriksaan lanjut. Leukemia/limfoma perlu disingkirkan dengan DPL dan ADT.';
+  } else {
+    diagText='Risiko pola keganasan hematologi <strong>rendah</strong> berdasarkan gejala yang dipilih. Tetap lakukan pemantauan klinis dan edukasi orang tua tentang tanda bahaya.';
+  }
+
+  // Rujukan
+  let rujClass,rujLabel,rujNote;
+  if(emerActive){
+    rujClass='rujuk-igd';rujLabel='🚨 IGD — HARI INI';
+    rujNote='Kondisi gawat darurat ditemukan. Kirim langsung ke IGD rumah sakit yang memiliki fasilitas hematologi-onkologi anak. Jangan tunda.';
+  } else if(rClass==='high'){
+    rujClass='rujuk-segera';rujLabel='⏰ RUJUK URGENT 24–48 Jam';
+    rujNote='Rujuk ke fasilitas hematologi-onkologi anak dalam 24–48 jam. Lakukan DPL + ADT sebelum atau bersamaan dengan rujukan. Jangan berikan steroid empiris.';
+  } else if(rClass==='medium'){
+    rujClass='rujuk-terencana';rujLabel='📅 Evaluasi dalam 72 Jam';
+    rujNote='Lakukan DPL dan ADT segera. Rujuk jika ditemukan kelainan atau gejala memburuk. Safety net: kembali dalam 1–2 minggu jika gejala menetap.';
+  } else {
+    rujClass='rujuk-observasi';rujLabel='👁️ Observasi 2–4 Minggu';
+    rujNote='Pantau klinis. Edukasi orang tua tanda bahaya. Kunjungi ulang jika gejala baru muncul atau memburuk. Pertimbangkan DPL jika belum pernah dilakukan.';
+  }
+
+  // Pemeriksaan
+  const pemHTML=`
+    <div style="margin-bottom:8px"><em style="font-size:10px;color:var(--muted)">Sesuaikan dengan level fasilitas:</em></div>
+    <strong style="font-size:10px;color:var(--p)">🏥 KLINIK / PUSKESMAS</strong>
+    <div class="tag-list">
+      <span class="tag">DPL + Hitung Jenis</span>
+      <span class="tag">Rujuk bila ada kelainan hitung darah</span>
+      <span class="tag ${rClass==='high'?'red':''}">Jangan beri steroid empiris</span>
+    </div>
+    <strong style="font-size:10px;color:var(--p);display:block;margin-top:8px;">🏨 RS UMUM / TIPE B-C</strong>
+    <div class="tag-list">
+      <span class="tag">DPL ulang + ADT review</span><span class="tag">LDH</span>
+      <span class="tag">Asam Urat</span><span class="tag">Elektrolit, Kreatinin</span>
+      ${rClass!=='low'?'<span class="tag">PT/APTT/Fibrinogen (bila ada perdarahan)</span>':''}
+      ${has('sesak')||emerActive?'<span class="tag red">Foto Toraks SEGERA</span>':'<span class="tag">Foto Toraks (bila sesak/curiga mediastinum)</span>'}
+      ${has('hepar')||has('limfad')||has('massa')?'<span class="tag">USG Abdomen</span>':''}
+      ${rClass==='high'?'<span class="tag red">Golongan Darah + Crossmatch</span>':''}
+      <span class="tag">Konsultasi Hematologi-Onkologi Anak</span>
+    </div>
+    <strong style="font-size:10px;color:var(--p);display:block;margin-top:8px;">🔬 PUSAT HEMATO-ONKOLOGI ANAK</strong>
+    <div class="tag-list">
+      <span class="tag">BMA / BMP</span><span class="tag">Flow Cytometry</span>
+      <span class="tag">Sitogenetik / Molekular</span>
+      ${has('sakit_kepala')?'<span class="tag red">LP (sesuai protokol & keamanan)</span>':'<span class="tag">LP bila ada indikasi CNS</span>'}
+      ${has('limfad')||has('massa')?'<span class="tag">Imaging staging (CT/PET bila limfoma)</span>':''}
+    </div>`;
+
+  // Jangan dilakukan
+  const dontItems=[
+    'Berikan steroid empiris sebelum diagnosis leukemia/limfoma dikonfirmasi',
+    'Tunda rujukan karena menunggu semua pemeriksaan lengkap',
+    'Transfusi berlebihan pada dugaan leukemia hiperleukositosis tanpa arahan spesialis',
+    'Aspirasi/biopsi kelenjar parsial tanpa koordinasi bila curiga limfoma',
+    'Berikan antibiotik berulang tanpa evaluasi ulang bila limfadenopati menetap',
+    'Label "ITP" hanya dari petekie/memar tanpa konfirmasi DPL dan ADT',
+  ];
+
+  // Referral note content
+  const now=new Date();
+  const tgl=now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
+  const jam=now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  const gejalaTxt=active.map(f=>f.name).join(', ')||'—';
+  const emerTxt=Object.keys(emer).filter(k=>emer[k]).map(k=>EMER.find(e=>e.id===k)?.name||k).join(', ')||'Tidak ada';
+  const refText=`
+    <strong>Tanggal/Jam:</strong> ${tgl}, ${jam}<br>
+    <strong>Gejala Utama:</strong> ${gejalaTxt}<br>
+    <strong>Kegawatan:</strong> ${emerTxt}<br>
+    <strong>Durasi Demam:</strong> ${['Tidak ada','&lt;1 minggu','1–2 minggu','&gt;2 minggu'][dur]}<br>
+    <strong>Pola Triage:</strong> ${risk}<br>
+    <strong>Urgensi Rujukan:</strong> ${rujLabel.replace(/[🚨⏰📅👁️]/g,'').trim()}<br>
+    <strong>Pemeriksaan Diminta:</strong> DPL + ADT, LDH, Asam Urat${has('sesak')||emerActive?', Foto Toraks':''}<br>
+    <strong>Alasan Rujukan:</strong> ${diagText.replace(/<[^>]+>/g,'').substring(0,120)}...<br>
+    <em style="font-size:10px;">Generated by drAisyi EduCare Toolkit v2.0 — Rule-based triage, bukan diagnosis final</em>`;
+
+  // Render
+  document.getElementById('resultHdr').className='result-hdr '+rClass;
+  document.getElementById('resIcon').textContent=icon;
+  document.getElementById('resRisk').textContent=risk;
+  document.getElementById('resDiagnosis').innerHTML=diagText;
+  document.getElementById('resDPL').innerHTML=dplText;
+  document.getElementById('dplRowEl').style.display=isMode2?'flex':'none';
+  document.getElementById('resRujuk').innerHTML=`<span class="rujuk-badge ${rujClass}">${rujLabel}</span>`;
+  document.getElementById('resRujukNote').textContent=rujNote;
+  document.getElementById('resPem').innerHTML=pemHTML;
+  document.getElementById('resDont').innerHTML=dontItems.map(d=>`<li>${d}</li>`).join('');
+  document.getElementById('resRefText').innerHTML=refText;
+
+  const box=document.getElementById('resultBox');
+  box.classList.add('show');
+  setTimeout(()=>box.scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+// ─── PRINT ────────────────────────────────────────────────────────────────────
+
+function printRef(){
+  const content=document.getElementById('resRefText').innerHTML;
+  const w=window.open('','_blank','width=600,height=700');
+  w.document.write(`<!DOCTYPE html><html><head><title>Ringkasan Rujukan - drAisyi EduCare</title>
+  <style>body{font-family:Arial,sans-serif;font-size:13px;padding:30px;color:#1E1B4B;line-height:1.8;}
+  h2{color:#6B21A8;border-bottom:2px solid #A855F7;padding-bottom:8px;margin-bottom:16px;}
+  strong{color:#6B21A8;}</style></head><body>
+  <h2>🏥 Surat Rujukan Ringkas — drAisyi EduCare</h2>
+  <p>${content}</p>
+  <hr style="margin-top:30px">
+  <p style="font-size:11px;color:#6B7280">Dokumen ini dibuat oleh drAisyi EduCare Pediatric Hematology-Oncology Toolkit v2.0.<br>
+  Rule-based triage — bukan pengganti penilaian klinis dokter.</p>
+  </body></html>`);
+  w.document.close();
+  w.print();
+}
+
+// ─── RESET ────────────────────────────────────────────────────────────────────
+
+function resetAll(){
+  selA={}; selB={}; emerA={}; emerB={};
+  durasiA=0; durasiB=0;
+  ['a','b'].forEach(tag=>{
+    FLAGS.forEach(f=>{
+      const fc=document.getElementById(tag+'_fc_'+f.id);
+      const chk=document.getElementById(tag+'_fchk_'+f.id);
+      if(fc)fc.classList.remove('active');
+      if(chk)chk.textContent='';
+    });
+    EMER.forEach(e=>{
+      const ec=document.getElementById(tag+'_ec_'+e.id);
+      const chk=document.getElementById(tag+'_echk_'+e.id);
+      if(ec)ec.classList.remove('active');
+      if(chk)chk.textContent='';
+    });
+  });
+  updateDurBtns('d',0); updateDurBtns('e',0);
+  ['dHb','dWBC','dANC','dPlt','dLDH','dUA'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['dBlast','dNRBC'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const box=document.getElementById('resultBox');
+  box.classList.remove('show');
+  // clear old content
+  ['resDiagnosis','resDPL','resPem','resRujukNote','resRefText'].forEach(id=>{
+    const el=document.getElementById(id); if(el)el.innerHTML='';
+  });
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+
+renderEmer('emerGrid',emerA,'a');
+renderEmer('emerGrid2',emerB,'b');
+renderFlags('flagsGrid',selA,'a');
+renderFlags('flagsGrid2',selB,'b');
+</script>
+</body>
+</html>

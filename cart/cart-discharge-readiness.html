@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAR-T Discharge Readiness v2 – drAisyi EduCare</title>
+<style>
+:root{--primary:#1a3a5c;--accent:#e8553e;--teal:#0d9488;--gold:#f59e0b;--green:#16a34a;--red:#dc2626;--bg:#f0f4f8;--card:#fff;--border:#d1d5db;--text:#1e293b;--muted:#64748b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.header{background:linear-gradient(135deg,var(--primary),#0f2847);color:#fff;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{width:44px;height:44px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;flex-shrink:0}
+.brand-text h1{font-size:17px;font-weight:700}
+.brand-text p{font-size:10px;opacity:.7;text-transform:uppercase;letter-spacing:1px}
+.badge{background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap}
+.tabs{display:flex;background:var(--primary);padding:0 20px;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 15px;color:rgba(255,255,255,.55);cursor:pointer;font-size:12px;font-weight:600;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap}
+.tab.active{color:#fff;border-bottom-color:var(--accent)}
+.tab:hover{color:#fff}
+.panel{display:none;padding:20px;max-width:960px;margin:0 auto}
+.panel.active{display:block}
+.sec{background:var(--card);border-radius:12px;padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.07);border:1px solid var(--border)}
+.sec-title{font-size:12px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.sec-title span{font-size:15px}
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.full{grid-column:1/-1}
+/* INPUTS */
+.inp label{display:block;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.inp input,.inp select,.inp textarea{width:100%;border:1.5px solid var(--border);border-radius:7px;padding:8px 11px;font-size:13px;color:var(--text);outline:none;transition:border .15s;font-family:inherit;background:#fff}
+.inp input:focus,.inp select:focus,.inp textarea:focus{border-color:var(--teal)}
+.inp input.err,.inp select.err{border-color:var(--red)}
+.inp .hint{font-size:10px;color:var(--muted);margin-top:3px}
+.inp .hint.warn-hint{color:#b45309}
+/* VITAL ROW */
+.vital-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+@media(max-width:640px){.vital-row{grid-template-columns:1fr 1fr}}
+.vital-box{background:#f8fafc;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;text-align:center}
+.vital-box label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
+.vital-box input{width:100%;border:none;background:transparent;text-align:center;font-size:16px;font-weight:700;color:var(--text);outline:none}
+.vital-box .unit{font-size:9px;color:var(--muted)}
+.vital-box.ok{border-color:var(--green);background:#f0fdf4}
+.vital-box.ng{border-color:var(--red);background:#fef2f2}
+.vital-box.wr{border-color:var(--gold);background:#fffbeb}
+/* CHECKLIST */
+.chk-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:600px){.chk-grid{grid-template-columns:1fr}}
+.chk-item{display:flex;align-items:flex-start;gap:9px;padding:9px 11px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;transition:all .15s;user-select:none}
+.chk-item:hover{border-color:var(--teal);background:#f0fdfa}
+.chk-item.checked{border-color:var(--green);background:#f0fdf4}
+.chk-item.flagged{border-color:var(--red);background:#fef2f2}
+.chk-box{width:18px;height:18px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;font-size:11px;transition:all .15s}
+.chk-item.checked .chk-box{background:var(--green);border-color:var(--green);color:#fff}
+.chk-item.flagged .chk-box{background:var(--red);border-color:var(--red);color:#fff}
+.chk-label b{display:block;font-size:12px;font-weight:600}
+.chk-label small{color:var(--muted);font-size:10px}
+/* VERDICT */
+.verdict{border-radius:10px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+.verdict.go{background:#f0fdf4;border:2px solid var(--green)}
+.verdict.stop{background:#fef2f2;border:2px solid var(--red)}
+.verdict.partial{background:#fffbeb;border:2px solid var(--gold)}
+.v-icon{font-size:32px}
+.v-text h2{font-size:17px;font-weight:800}
+.verdict.go .v-text h2{color:var(--green)}
+.verdict.stop .v-text h2{color:var(--red)}
+.verdict.partial .v-text h2{color:#b45309}
+.v-text p{font-size:12px;color:var(--muted);margin-top:3px}
+.miss-list{background:#fef2f2;border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:14px}
+.miss-list li{margin:3px 0 3px 16px;color:var(--red)}
+.miss-list.warn-list{background:#fffbeb}
+.miss-list.warn-list li{color:#b45309}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .15s;font-family:inherit}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:#0f2847}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:hover{background:#c0392b}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-teal:hover{background:#0f7a70}
+.btn-outline{background:#fff;color:var(--primary);border:1.5px solid var(--primary)}
+.btn-outline:hover{background:#f0f4f8}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+/* PATIENT CARD */
+.pt-card{background:linear-gradient(135deg,#0f2847 0%,var(--primary) 55%,#0d9488 100%);color:#fff;border-radius:14px;padding:22px;margin-bottom:14px;position:relative;overflow:hidden}
+.pt-card::before{content:'';position:absolute;top:-30px;right:-30px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.04)}
+.c-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.c-brand{font-size:9px;opacity:.65;text-transform:uppercase;letter-spacing:1px}
+.c-type{background:var(--accent);font-size:9px;font-weight:700;padding:3px 9px;border-radius:20px}
+.c-name{font-size:19px;font-weight:800;margin-bottom:3px}
+.c-dob{font-size:11px;opacity:.75;margin-bottom:12px}
+.c-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+@media(max-width:500px){.c-grid{grid-template-columns:1fr 1fr}}
+.c-item{background:rgba(255,255,255,.1);border-radius:7px;padding:7px 9px}
+.c-item-label{font-size:8px;opacity:.65;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.c-item-val{font-size:12px;font-weight:700}
+.c-warn{background:var(--accent);border-radius:7px;padding:8px 11px;font-size:10px;font-weight:600;margin-bottom:10px;line-height:1.5}
+.c-hcp{background:rgba(255,255,255,.12);border-radius:7px;padding:9px 11px;margin-bottom:10px}
+.c-hcp-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;opacity:.75;margin-bottom:5px}
+.c-hcp-body{font-size:10px;line-height:1.6}
+.c-emerg{background:rgba(255,255,255,.1);border-radius:7px;padding:8px 11px;font-size:11px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+/* FAMILY */
+.fi{border-radius:9px;padding:13px 15px;margin-bottom:10px}
+.fi h3{font-size:13px;font-weight:700;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.fi ul{padding-left:16px;font-size:12px;line-height:1.75}
+.fi-red{background:#fef2f2;border-left:4px solid var(--red)}
+.fi-red h3{color:var(--red)}
+.fi-orange{background:#fff7ed;border-left:4px solid #ea580c}
+.fi-orange h3{color:#c2410c}
+.fi-yellow{background:#fffbeb;border-left:4px solid var(--gold)}
+.fi-yellow h3{color:#b45309}
+.fi-green{background:#f0fdf4;border-left:4px solid var(--green)}
+.fi-green h3{color:var(--green)}
+.fi-blue{background:#eff6ff;border-left:4px solid #3b82f6}
+.fi-blue h3{color:#1d4ed8}
+.fi-purple{background:#f5f3ff;border-left:4px solid #7c3aed}
+.fi-purple h3{color:#6d28d9}
+/* SCHEDULE */
+.sched-table{width:100%;border-collapse:collapse;font-size:12px}
+.sched-table th{background:var(--primary);color:#fff;padding:9px 12px;text-align:left;font-size:11px}
+.sched-table td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.sched-table tr:nth-child(even) td{background:#f8fafc}
+.sched-table tr:hover td{background:#f0f4f8}
+.next-visit{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:2px solid var(--green);border-radius:10px;padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;gap:14px}
+.next-visit .nv-icon{font-size:30px}
+.next-visit h3{font-size:15px;font-weight:800;color:var(--green)}
+.next-visit p{font-size:12px;color:var(--muted)}
+.tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;margin:1px}
+.tag-r{background:#fee2e2;color:var(--red)}
+.tag-y{background:#fef3c7;color:#92400e}
+.tag-g{background:#dcfce7;color:#166534}
+.tag-b{background:#dbeafe;color:#1e40af}
+.tag-p{background:#ede9fe;color:#5b21b6}
+/* PROGRESS */
+.progress-bar{height:6px;background:#e2e8f0;border-radius:3px;margin-top:8px;overflow:hidden}
+.progress-fill{height:100%;background:var(--teal);border-radius:3px;transition:width .3s}
+/* SECTION DIVIDER */
+.sdiv{display:flex;align-items:center;gap:10px;margin:14px 0 10px;color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+.sdiv::before,.sdiv::after{content:'';flex:1;height:1px;background:var(--border)}
+/* VALIDATION MSG */
+.val-msg{background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:12px;display:none}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">
+    <div class="brand-logo">dA</div>
+    <div class="brand-text">
+      <h1>drAisyi EduCare</h1>
+      <p>CAR-T Cell Therapy · Discharge Safety Pack</p>
+    </div>
+  </div>
+  <div class="badge">CAR-T DISCHARGE v2</div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-tab="checklist">✅ Readiness</div>
+  <div class="tab" data-tab="vitals">🩺 Klinis Objektif</div>
+  <div class="tab" data-tab="logistics">🏠 Logistik</div>
+  <div class="tab" data-tab="meds">💊 Obat Pulang</div>
+  <div class="tab" data-tab="card">🪪 Patient Card</div>
+  <div class="tab" data-tab="family">📋 Instruksi Keluarga</div>
+  <div class="tab" data-tab="schedule">📅 Jadwal</div>
+</div>
+
+<!-- ===== TAB 1: DATA & READINESS ===== -->
+<div class="panel active" id="tab-checklist">
+  <div class="sec">
+    <div class="sec-title"><span>👤</span> Data Identitas Pasien <span style="font-size:10px;color:var(--accent);font-weight:700;margin-left:auto">* wajib diisi</span></div>
+    <div class="g2">
+      <div class="inp"><label>Nama / Kode Pasien *</label><input type="text" id="p-name" placeholder="Nama lengkap pasien"></div>
+      <div class="inp"><label>Tanggal Lahir *</label><input type="date" id="p-dob"></div>
+      <div class="inp"><label>Berat Badan (kg)</label><input type="number" id="p-bb" step="0.1" min="1" max="150" placeholder="kg" oninput="recalcDoses()"></div>
+      <div class="inp"><label>Tinggi Badan (cm)</label><input type="number" id="p-tb" step="0.1" min="30" max="220" placeholder="cm" oninput="recalcDoses()"></div>
+      <div class="inp"><label>Tanggal Infus CAR-T – Day 0 *</label><input type="date" id="p-day0"></div>
+      <div class="inp"><label>Tanggal Pulang *</label><input type="date" id="p-discharge"></div>
+      <div class="inp"><label>Produk CAR-T *</label>
+        <select id="p-product">
+          <option value="">— Pilih produk —</option>
+          <option value="Tisagenlecleucel (Kymriah)">Tisagenlecleucel (Kymriah) – stay 2 mgg</option>
+          <option value="Axicabtagene ciloleucel (Yescarta)">Axicabtagene ciloleucel (Yescarta) – stay 4 mgg</option>
+          <option value="Lisocabtagene maraleucel (Breyanzi)">Lisocabtagene maraleucel (Breyanzi) – stay 4 mgg</option>
+          <option value="Brexucabtagene autoleucel (Tecartus)">Brexucabtagene autoleucel (Tecartus) – stay 4 mgg</option>
+          <option value="Ide-cel (Abecma)">Ide-cel (Abecma) – stay 4 mgg</option>
+          <option value="Ciltacabtagene autoleucel (Carvykti)">Ciltacabtagene autoleucel (Carvykti) – stay 4 mgg</option>
+          <option value="Protokol lokal / lainnya">Protokol lokal / lainnya</option>
+        </select>
+      </div>
+      <div class="inp"><label>Diagnosis *</label><input type="text" id="p-dx" placeholder="mis. B-ALL, r/r LBCL"></div>
+      <div class="inp"><label>Tim / Dokter Penanggung Jawab *</label><input type="text" id="p-dr" placeholder="Tim CAR-T"></div>
+      <div class="inp"><label>Nomor Emergensi RS (24 jam) *</label><input type="tel" id="p-hostel" placeholder="+62..."></div>
+      <div class="inp"><label>Nomor Telepon Keluarga / Caregiver *</label><input type="tel" id="p-emertel" placeholder="+62..."></div>
+      <div class="inp"><label>Jadwal Kontrol Pertama *</label><input type="date" id="p-ctrl1"><div class="hint">Idealnya 24–72 jam setelah pulang untuk pasien risiko tinggi</div></div>
+    </div>
+  </div>
+
+  <div id="val-msg" class="val-msg">⚠️ Data wajib belum lengkap – lihat field yang ditandai merah</div>
+
+  <div class="sec">
+    <div class="sec-title"><span>📋</span> Checklist Discharge – Klinis</div>
+    <div class="chk-grid" id="chk-clinical">
+      <div class="chk-item" data-key="febris"><div class="chk-box">✓</div><div class="chk-label"><b>Afebril ≥48 jam tanpa antipiretik</b><small>Suhu &lt;38°C, bukan disamarkan parasetamol</small></div></div>
+      <div class="chk-item" data-key="hemo"><div class="chk-box">✓</div><div class="chk-label"><b>Hemodinamik stabil</b><small>Tidak butuh bolus cairan / vasopressor</small></div></div>
+      <div class="chk-item" data-key="crs"><div class="chk-box">✓</div><div class="chk-label"><b>CRS Grade 0 atau stabil Grade 1</b><small>Tidak ada eskalasi dalam 48 jam terakhir</small></div></div>
+      <div class="chk-item" data-key="icans"><div class="chk-box">✓</div><div class="chk-label"><b>ICANS Grade 0, neurologi stabil</b><small>ICE/CAPD dalam batas aman, tidak ada kejang baru</small></div></div>
+      <div class="chk-item" data-key="spo2"><div class="chk-box">✓</div><div class="chk-label"><b>SpO₂ ≥95% tanpa oksigen tambahan</b><small>Konfirmasi dari data vital tab Klinis Objektif</small></div></div>
+      <div class="chk-item" data-key="infect"><div class="chk-box">✓</div><div class="chk-label"><b>Tidak ada infeksi aktif tak terkontrol</b><small>Kultur negatif / rencana antibiotik oral jelas</small></div></div>
+      <div class="chk-item" data-key="oral"><div class="chk-box">✓</div><div class="chk-label"><b>Asupan oral adekuat</b><small>Tidak ada muntah/diare berat yang tak terkontrol</small></div></div>
+      <div class="chk-item" data-key="bleed"><div class="chk-box">✓</div><div class="chk-label"><b>Tidak ada perdarahan aktif</b><small>Transfusi tidak diperlukan secara emergensi</small></div></div>
+      <div class="chk-item" data-key="elektrolit"><div class="chk-box">✓</div><div class="chk-label"><b>Elektrolit & fungsi organ stabil</b><small>Kreatinin, ALT/AST, bilirubin, Na/K dalam toleransi</small></div></div>
+      <div class="chk-item" data-key="abxplan"><div class="chk-box">✓</div><div class="chk-label"><b>Rencana antibiotik/profilaksis jelas</b><small>Sudah tertulis di obat pulang</small></div></div>
+    </div>
+    <div style="margin-top:10px">
+      <div class="progress-bar"><div class="progress-fill" id="prog-clinical" style="width:0%"></div></div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px" id="prog-clinical-txt">0/10 klinis terpenuhi</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title"><span>👨‍👩‍👧</span> Checklist – Kesiapan Keluarga & Logistik</div>
+    <div class="chk-grid" id="chk-logistic">
+      <div class="chk-item" data-key="cg24"><div class="chk-box">✓</div><div class="chk-label"><b>Caregiver utama tersedia 24 jam</b><small>Tidak boleh pasien sendirian di rumah</small></div></div>
+      <div class="chk-item" data-key="cgbackup"><div class="chk-box">✓</div><div class="chk-label"><b>Caregiver cadangan tersedia</b><small>Bila caregiver utama tidak bisa hadir</small></div></div>
+      <div class="chk-item" data-key="transport"><div class="chk-box">✓</div><div class="chk-label"><b>Transportasi ke RS tersedia 24 jam</b><small>Kendaraan atau ambulans siap bila darurat</small></div></div>
+      <div class="chk-item" data-key="proxim"><div class="chk-box">✓</div><div class="chk-label"><b>Domisili ≤2 jam dari RS atau sudah atur menginap dekat RS</b><small>Sesuai protokol produk CAR-T yang dipakai</small></div></div>
+      <div class="chk-item" data-key="thermom"><div class="chk-box">✓</div><div class="chk-label"><b>Caregiver paham cara pakai termometer</b><small>Bisa ukur suhu 2x/hari dan catat</small></div></div>
+      <div class="chk-item" data-key="redflag"><div class="chk-box">✓</div><div class="chk-label"><b>Caregiver paham red flags</b><small>Edukasi selesai, bisa repeat-back instruksi</small></div></div>
+      <div class="chk-item" data-key="noparacetamol"><div class="chk-box">✓</div><div class="chk-label"><b>Keluarga tahu larangan minum antipiretik tanpa lapor</b><small>Demam bisa pertanda CRS/infeksi – harus segera lapor</small></div></div>
+      <div class="chk-item" data-key="cardready"><div class="chk-box">✓</div><div class="chk-label"><b>Kartu Pasien CAR-T sudah dicetak & dikantongi</b><small>Wajib dibawa ke IGD mana pun</small></div></div>
+      <div class="chk-item" data-key="edreferral"><div class="chk-box">✓</div><div class="chk-label"><b>Surat rujukan untuk IGD luar sudah disiapkan</b><small>Berisi riwayat CAR-T & rencana bila datang ke IGD lain</small></div></div>
+      <div class="chk-item" data-key="ctrlsched"><div class="chk-box">✓</div><div class="chk-label"><b>Jadwal kontrol pertama sudah dikonfirmasi</b><small>Keluarga tahu tanggal, tempat, dan cara ke sana</small></div></div>
+    </div>
+    <div style="margin-top:10px">
+      <div class="progress-bar"><div class="progress-fill" id="prog-logistic" style="width:0%"></div></div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px" id="prog-logistic-txt">0/10 logistik terpenuhi</div>
+    </div>
+  </div>
+
+  <div id="verdict-box"></div>
+  <div class="btn-row">
+    <button class="btn btn-primary" id="btn-assess">🔍 Nilai Kesiapan</button>
+    <button class="btn btn-teal" id="btn-generate">⚡ Generate Semua Output</button>
+    <button class="btn btn-accent" id="btn-reset">↺ Reset Semua</button>
+  </div>
+</div>
+
+<!-- ===== TAB 2: KLINIS OBJEKTIF ===== -->
+<div class="panel" id="tab-vitals">
+  <div class="sec">
+    <div class="sec-title"><span>🌡️</span> Tanda Vital – Terakhir Tercatat</div>
+    <div class="vital-row" id="vital-row">
+      <div class="vital-box" id="vb-temp">
+        <label>Suhu (°C)</label><input type="number" id="v-temp" step="0.1" min="35" max="42" placeholder="--" oninput="evalVitals()">
+        <div class="unit">°C</div>
+      </div>
+      <div class="vital-box" id="vb-sys">
+        <label>Sistol (mmHg)</label><input type="number" id="v-sys" placeholder="--" oninput="evalVitals()">
+        <div class="unit">mmHg</div>
+      </div>
+      <div class="vital-box" id="vb-hr">
+        <label>Nadi (/mnt)</label><input type="number" id="v-hr" placeholder="--" oninput="evalVitals()">
+        <div class="unit">/mnt</div>
+      </div>
+      <div class="vital-box" id="vb-spo2">
+        <label>SpO₂ (%)</label><input type="number" id="v-spo2" step="1" min="70" max="100" placeholder="--" oninput="evalVitals()">
+        <div class="unit">%</div>
+      </div>
+      <div class="vital-box" id="vb-rr">
+        <label>RR (/mnt)</label><input type="number" id="v-rr" placeholder="--" oninput="evalVitals()">
+        <div class="unit">/mnt</div>
+      </div>
+    </div>
+    <div id="vital-feedback" style="margin-top:10px;font-size:12px"></div>
+  </div>
+  <div class="sec">
+    <div class="sec-title"><span>🧪</span> Lab Terakhir</div>
+    <div class="g4">
+      <div class="inp"><label>Hb (g/dL)</label><input type="number" id="l-hb" step="0.1" placeholder="--" oninput="evalLab()"></div>
+      <div class="inp"><label>ANC (/µL)</label><input type="number" id="l-anc" step="1" placeholder="--" oninput="evalLab()"></div>
+      <div class="inp"><label>Trombosit (ribu/µL)</label><input type="number" id="l-plt" step="1" placeholder="--" oninput="evalLab()"></div>
+      <div class="inp"><label>Kreatinin (mg/dL)</label><input type="number" id="l-cr" step="0.01" placeholder="--" oninput="evalLab()"></div>
+      <div class="inp"><label>ALT (U/L)</label><input type="number" id="l-alt" placeholder="--" oninput="evalLab()"></div>
+      <div class="inp"><label>Bilirubin Total (mg/dL)</label><input type="number" id="l-bil" step="0.1" placeholder="--" oninput="evalLab()"></div>
+      <div class="inp"><label>Ferritin (ng/mL)</label><input type="number" id="l-ferr" placeholder="--"></div>
+      <div class="inp"><label>CRP (mg/dL)</label><input type="number" id="l-crp" step="0.1" placeholder="--"></div>
+    </div>
+    <div id="lab-feedback" style="margin-top:10px;font-size:12px"></div>
+  </div>
+  <div class="sec">
+    <div class="sec-title"><span>🧠</span> Status Neurologis & CRS/ICANS</div>
+    <div class="g2">
+      <div class="inp"><label>CRS Grade Terakhir (ASTCT 2019)</label>
+        <select id="crs-grade">
+          <option value="">— Pilih —</option>
+          <option value="0">Grade 0 – tidak ada</option>
+          <option value="1">Grade 1 – demam saja</option>
+          <option value="2">Grade 2 – butuh intervensi</option>
+          <option value="3">Grade 3 – perlu ICU</option>
+          <option value="4">Grade 4 – mengancam jiwa</option>
+        </select>
+      </div>
+      <div class="inp"><label>ICANS Grade Terakhir (ASTCT 2019)</label>
+        <select id="icans-grade">
+          <option value="">— Pilih —</option>
+          <option value="0">Grade 0 – tidak ada</option>
+          <option value="1">Grade 1 – ICE 7–9</option>
+          <option value="2">Grade 2 – ICE 3–6</option>
+          <option value="3">Grade 3 – ICE 0–2 / edema ringan</option>
+          <option value="4">Grade 4 – mengancam jiwa</option>
+        </select>
+      </div>
+      <div class="inp"><label>Skor ICE / CAPD Terakhir</label><input type="number" id="ice-score" min="0" max="10" placeholder="0–10"></div>
+      <div class="inp"><label>Kejang dalam 48 jam terakhir?</label>
+        <select id="seizure"><option value="">— Pilih —</option><option value="no">Tidak ada</option><option value="yes">Ada</option></select>
+      </div>
+      <div class="inp"><label>Antibiotik IV masih berjalan?</label>
+        <select id="abx-iv"><option value="">— Pilih —</option><option value="no">Tidak / sudah oral</option><option value="yes">Masih IV</option></select>
+      </div>
+      <div class="inp"><label>Kultur darah positif aktif?</label>
+        <select id="cx-pos"><option value="">— Pilih —</option><option value="no">Tidak / negatif</option><option value="yes">Ya, masih dalam terapi</option></select>
+      </div>
+    </div>
+    <div id="neuro-feedback" style="margin-top:10px;font-size:12px"></div>
+  </div>
+</div>
+
+<!-- ===== TAB 3: LOGISTIK ===== -->
+<div class="panel" id="tab-logistics">
+  <div class="sec">
+    <div class="sec-title"><span>🏠</span> Informasi Domisili & Logistik</div>
+    <div class="g2">
+      <div class="inp">
+        <label>Jarak Rumah ke RS</label>
+        <select id="p-dist-cat">
+          <option value="">— Pilih —</option>
+          <option value="lt30">Kurang dari 30 menit</option>
+          <option value="30to60">30–60 menit</option>
+          <option value="60to120">1–2 jam</option>
+          <option value="gt120">Lebih dari 2 jam ⚠️</option>
+        </select>
+        <div class="hint warn-hint" id="dist-hint" style="display:none">⚠️ Jarak >2 jam – wajib atur menginap dekat RS atau rumah singgah</div>
+      </div>
+      <div class="inp">
+        <label>Durasi Wajib Tinggal Dekat RS</label>
+        <select id="p-stay">
+          <option value="2wk">2 minggu (sesuai Kymriah)</option>
+          <option value="4wk">4 minggu (sesuai Yescarta/Breyanzi/dll)</option>
+          <option value="custom">Sesuai protokol lokal</option>
+        </select>
+      </div>
+      <div class="inp"><label>Akomodasi yang Disiapkan</label>
+        <select id="p-accom">
+          <option value="home">Rumah sendiri (dalam jarak aman)</option>
+          <option value="hotel">Hotel dekat RS</option>
+          <option value="rumah-singgah">Rumah singgah</option>
+          <option value="sewa">Kost / sewa dekat RS</option>
+          <option value="family">Rumah keluarga dekat RS</option>
+        </select>
+      </div>
+      <div class="inp"><label>Transportasi 24 Jam Tersedia?</label>
+        <select id="p-transport">
+          <option value="">— Pilih —</option>
+          <option value="yes-own">Ya – kendaraan sendiri</option>
+          <option value="yes-family">Ya – kendaraan keluarga</option>
+          <option value="yes-ambulance">Ya – ambulans on-call</option>
+          <option value="no">Belum tersedia ⚠️</option>
+        </select>
+      </div>
+      <div class="inp"><label>Nama Caregiver Utama</label><input type="text" id="cg-name" placeholder="Nama caregiver"></div>
+      <div class="inp"><label>Hubungan dengan Pasien</label><input type="text" id="cg-rel" placeholder="mis. Ibu, Ayah, Saudara"></div>
+      <div class="inp"><label>Nomor HP Caregiver Utama</label><input type="tel" id="cg-tel" placeholder="+62..."></div>
+      <div class="inp"><label>Nama Caregiver Cadangan</label><input type="text" id="cg2-name" placeholder="Nama caregiver cadangan"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 4: OBAT PULANG ===== -->
+<div class="panel" id="tab-meds">
+
+  <div class="sec" style="background:#eff6ff;border:1px solid #bfdbfe;">
+    <div style="font-size:12px;color:#1e40af;line-height:1.7">
+      <b>📚 Referensi:</b> ASTCT Consensus 2019 · COG Supportive Care · EBMT/EHA CAR-T Guidelines 2021 · IDSA Immunocompromised Hosts · ESCMID 2022 · Kymriah/Yescarta Prescribing Information.<br>
+      <b>💡 Cara pakai:</b> Isi <b>BB & TB</b> di tab Readiness → dosis otomatis terhitung. Klik chip obat untuk memilih, edit bila perlu.
+    </div>
+    <div id="bsa-display" style="margin-top:8px;display:none">
+      <span class="bsa-badge" id="bsa-val"></span>
+      <span class="bsa-badge" style="background:#dcfce7;color:#166534" id="bb-val"></span>
+    </div>
+  </div>
+
+  <!-- ANTIVIRAL -->
+  <div class="sec">
+    <div class="sec-title"><span>🦠</span> Antiviral Profilaksis
+      <span style="margin-left:6px;font-size:10px;background:#dcfce7;color:#166534;padding:2px 8px;border-radius:20px;font-weight:700">✅ RUTIN</span>
+      <button class="btn btn-outline" style="margin-left:auto;padding:4px 10px;font-size:10px" onclick="toggleRef('ref-antiviral')">📖 Referensi</button>
+    </div>
+    <div id="ref-antiviral" class="ref-box" style="display:none">
+      <b>Indikasi:</b> Rutin pada SEMUA pasien pasca CAR-T. Limfodeplesi berat menyebabkan risiko reaktivasi HSV/VZV tinggi.<br>
+      <b>Referensi:</b> ASTCT Consensus 2019; Kymriah & Yescarta PI; EBMT/EHA 2021; IDSA Immunocompromised Guidelines.<br>
+      <b>Durasi:</b> Minimal sampai reconstitusi imun (CD4 >200/µL) – umumnya 6–12 bulan. Lanjutkan selama IgG rendah.
+    </div>
+    <div class="drug-grid">
+      <div class="drug-card preferred">
+        <div class="drug-badge">Pilihan Utama</div>
+        <div class="drug-name">Asiklovir</div>
+        <div class="drug-dose" id="dc-acyclovir-dose">Anak: 250 mg/m²/dosis 2–3x/hari (maks 400 mg/dosis) | Dewasa: 400 mg 2–3x/hari</div>
+        <div class="drug-note">✅ Rutin · first-line · murah · efektif HSV & VZV</div>
+      </div>
+      <div class="drug-card">
+        <div class="drug-badge alt">Alternatif</div>
+        <div class="drug-name">Valasiklovir</div>
+        <div class="drug-dose" id="dc-valacy-dose">Anak ≥2 th: 20 mg/kgBB/dosis 3x/hari (maks 1 g/dosis) | Dewasa: 500 mg–1 g 2x/hari</div>
+        <div class="drug-note">✅ Bioavailabilitas lebih baik · dosis lebih jarang · pilihan bila adherens sulit</div>
+      </div>
+    </div>
+    <div class="dose-sel">
+      <label>Pilihan untuk pasien ini – klik untuk memilih:</label>
+      <div class="dose-chips" id="chips-antiviral"></div>
+      <input class="dose-inp" type="text" id="m-antiviral" placeholder="Klik chip di atas atau ketik manual...">
+    </div>
+  </div>
+
+  <!-- PJP -->
+  <div class="sec">
+    <div class="sec-title"><span>🫁</span> Profilaksis PJP
+      <span style="margin-left:6px;font-size:10px;background:#dcfce7;color:#166534;padding:2px 8px;border-radius:20px;font-weight:700">✅ RUTIN</span>
+      <button class="btn btn-outline" style="margin-left:auto;padding:4px 10px;font-size:10px" onclick="toggleRef('ref-pjp')">📖 Referensi</button>
+    </div>
+    <div id="ref-pjp" class="ref-box" style="display:none">
+      <b>Indikasi:</b> Rutin pada SEMUA pasien pasca CAR-T. CD4 sangat rendah pasca limfodeplesi + steroid = risiko PJP tinggi.<br>
+      <b>Referensi:</b> ASTCT 2019; COG Supportive Care Guidelines; EBMT 2021; Kymriah & Yescarta PI.<br>
+      <b>Durasi:</b> Minimal 6 bulan atau sampai CD4 >200/µL stabil ≥3 bulan.
+    </div>
+    <div class="drug-grid">
+      <div class="drug-card preferred">
+        <div class="drug-badge">Pilihan Utama</div>
+        <div class="drug-name">Kotrimoksazol (TMP-SMX)</div>
+        <div class="drug-dose" id="dc-cotrim-dose">Anak: 5 mg TMP/kgBB/hari dibagi 2 dosis, 3 hari/minggu | Dewasa: 1 tab DS 3x/minggu</div>
+        <div class="drug-note">✅ Rutin · first-line · juga proteksi Toxoplasma & beberapa bakteri</div>
+      </div>
+      <div class="drug-card">
+        <div class="drug-badge alt">Alternatif (bila intoleran)</div>
+        <div class="drug-name">Dapson</div>
+        <div class="drug-dose" id="dc-dapson-dose">Anak: 2 mg/kgBB/hari (maks 100 mg) 1x/hari | Dewasa: 100 mg/hari</div>
+        <div class="drug-note">⚠️ Cek G6PD sebelum mulai · oral · terjangkau</div>
+      </div>
+      <div class="drug-card">
+        <div class="drug-badge alt">Alternatif</div>
+        <div class="drug-name">Pentamidin inhalasi</div>
+        <div class="drug-dose">≥5 th & dewasa: 300 mg inhalasi 1x/bulan</div>
+        <div class="drug-note">⚠️ Hanya bila alergi TMP-SMX & intoleran dapson · butuh nebulizer khusus</div>
+      </div>
+    </div>
+    <div class="dose-sel">
+      <label>Pilihan untuk pasien ini – klik untuk memilih:</label>
+      <div class="dose-chips" id="chips-pjp"></div>
+      <input class="dose-inp" type="text" id="m-pjp" placeholder="Klik chip di atas atau ketik manual...">
+    </div>
+  </div>
+
+  <!-- ANTIFUNGAL -->
+  <div class="sec">
+    <div class="sec-title"><span>🍄</span> Profilaksis Antijamur
+      <span style="margin-left:6px;font-size:10px;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:20px;font-weight:700">⚠️ KONDISIONAL</span>
+      <button class="btn btn-outline" style="margin-left:auto;padding:4px 10px;font-size:10px" onclick="toggleRef('ref-antifungal')">📖 Referensi</button>
+    </div>
+    <div id="ref-antifungal" class="ref-box" style="display:none">
+      <b>Indikasi kondisional:</b> Neutropenia berkepanjangan (ANC &lt;500 >7 hari) · riwayat IFI · steroid dosis tinggi ≥2 minggu · mucositis berat.<br>
+      <b>Referensi:</b> ESCMID Guidelines 2022; IDSA Aspergillosis 2016; EBMT CAR-T 2021; Patterson et al. Clin Infect Dis 2016.<br>
+      <b>Durasi:</b> Selama neutropenia/steroid; hentikan setelah ANC recovery dan steroid stop.
+    </div>
+    <div class="drug-grid">
+      <div class="drug-card preferred">
+        <div class="drug-badge">Pilihan Utama (Candida)</div>
+        <div class="drug-name">Flukonazol</div>
+        <div class="drug-dose" id="dc-fluco-dose">Anak: 3–6 mg/kgBB/hari 1x (maks 400 mg) | Dewasa: 100–400 mg/hari</div>
+        <div class="drug-note">⚠️ Kondisional · tidak efektif Aspergillus · murah & oral</div>
+      </div>
+      <div class="drug-card">
+        <div class="drug-badge alt">Cakupan lebih luas</div>
+        <div class="drug-name">Vorikonazol</div>
+        <div class="drug-dose" id="dc-vori-dose">Anak 2–12 th: 9 mg/kgBB 2x hari 1, lalu 8 mg/kg 2x/hari | Dewasa: 200–300 mg 2x/hari</div>
+        <div class="drug-note">⚠️ Kondisional · pilihan bila risiko Aspergillus · pantau LFT & TDM</div>
+      </div>
+      <div class="drug-card">
+        <div class="drug-badge alt">Pilihan IV</div>
+        <div class="drug-name">Mikafungin</div>
+        <div class="drug-dose" id="dc-mica-dose">Anak &lt;30 kg: 2 mg/kgBB/hari IV | Anak ≥30 kg & dewasa: 50 mg/hari IV</div>
+        <div class="drug-note">⚠️ Kondisional · IV · transisi dari rawat inap atau oral tidak toleran</div>
+      </div>
+    </div>
+    <div class="dose-sel">
+      <label>Pilihan untuk pasien ini – klik untuk memilih:</label>
+      <div class="dose-chips" id="chips-antifungal"></div>
+      <input class="dose-inp" type="text" id="m-antifungal" placeholder="Klik chip atau ketik manual... (kosongkan bila tidak diindikasikan)">
+    </div>
+  </div>
+
+  <!-- ANTIBIOTIK -->
+  <div class="sec">
+    <div class="sec-title"><span>💊</span> Antibiotik Oral – Profilaksis Bakterial
+      <span style="margin-left:6px;font-size:10px;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:20px;font-weight:700">⚠️ KONDISIONAL</span>
+      <button class="btn btn-outline" style="margin-left:auto;padding:4px 10px;font-size:10px" onclick="toggleRef('ref-abx')">📖 Referensi</button>
+    </div>
+    <div id="ref-abx" class="ref-box" style="display:none">
+      <b>Indikasi kondisional:</b> ANC &lt;500 berkepanjangan (>7 hari) · sesuai pola resistensi lokal · protokol institusi.<br>
+      <b>Referensi:</b> IDSA Febrile Neutropenia 2010/update 2023; ASCO/IDSA 2018; Flowers et al. J Clin Oncol 2013.<br>
+      <b>Catatan:</b> Tidak semua protokol CAR-T merekomendasikan antibiotik profilaksis rutin – keputusan berdasarkan risiko & antibiogram lokal.
+    </div>
+    <div class="drug-grid">
+      <div class="drug-card preferred">
+        <div class="drug-badge">Pilihan Utama (bila indikasi)</div>
+        <div class="drug-name">Levofloksasin</div>
+        <div class="drug-dose" id="dc-levo-dose">Anak ≥5 th: 10 mg/kgBB/hari (maks 500 mg) 1x/hari | Dewasa: 500 mg/hari</div>
+        <div class="drug-note">⚠️ Kondisional · selama neutropenia · waspadai tendinopati & QT prolongation</div>
+      </div>
+      <div class="drug-card">
+        <div class="drug-badge alt">Alternatif</div>
+        <div class="drug-name">Siprofloksasin</div>
+        <div class="drug-dose" id="dc-cipro-dose">Anak: 10–20 mg/kgBB/hari dibagi 2 dosis (maks 500 mg/dosis) | Dewasa: 500 mg 2x/hari</div>
+        <div class="drug-note">⚠️ Kondisional · cakupan lebih sempit · lebih tersedia</div>
+      </div>
+    </div>
+    <div class="dose-sel">
+      <label>Pilihan untuk pasien ini – klik untuk memilih:</label>
+      <div class="dose-chips" id="chips-abx"></div>
+      <input class="dose-inp" type="text" id="m-abx" placeholder="Klik chip atau ketik manual... (kosongkan bila tidak indikasi)">
+    </div>
+  </div>
+
+  <!-- SIMTOMATIK -->
+  <div class="sec">
+    <div class="sec-title"><span>🩹</span> Obat Simtomatik & Suportif</div>
+
+    <div class="sdiv">Antiemetik</div>
+    <div class="drug-grid">
+      <div class="drug-card preferred">
+        <div class="drug-badge">Pilihan Utama</div>
+        <div class="drug-name">Ondansetron</div>
+        <div class="drug-dose" id="dc-ondan-dose">Anak: 0,15 mg/kgBB/dosis tiap 8 jam PRN (maks 8 mg/dosis) | Dewasa: 4–8 mg tiap 8 jam PRN</div>
+        <div class="drug-note">✅ PRN · first-line pasca kemoterapi · aman anak · sediaan oral & IV</div>
+      </div>
+      <div class="drug-card">
+        <div class="drug-badge alt">Alternatif</div>
+        <div class="drug-name">Metoklopramid</div>
+        <div class="drug-dose" id="dc-metoclo-dose">Anak: 0,1–0,15 mg/kgBB/dosis tiap 6–8 jam PRN (maks 10 mg/dosis) | Dewasa: 10 mg tiap 8 jam</div>
+        <div class="drug-note">⚠️ Hati-hati efek ekstrapiramidal pada anak · hindari usia &lt;1 tahun</div>
+      </div>
+    </div>
+    <div class="dose-sel">
+      <label>Antiemetik untuk pasien ini:</label>
+      <div class="dose-chips" id="chips-antiemetic"></div>
+      <input class="dose-inp" type="text" id="m-antiemetic" placeholder="Pilih atau ketik manual...">
+    </div>
+
+    <div class="sdiv">Antikonvulsan (bila ICANS)</div>
+    <div class="drug-grid">
+      <div class="drug-card preferred">
+        <div class="drug-badge">Pilihan Utama</div>
+        <div class="drug-name">Levetirasetam</div>
+        <div class="drug-dose" id="dc-leve-dose">Anak: 10–20 mg/kgBB/hari dibagi 2 dosis (maks 1500 mg/dosis) | Dewasa: 500–1500 mg 2x/hari</div>
+        <div class="drug-note">⚠️ Kondisional – hanya bila riwayat kejang terkait ICANS. Tidak rutin semua pasien.</div>
+      </div>
+      <div class="drug-card">
+        <div class="drug-badge alt">Alternatif</div>
+        <div class="drug-name">Asam Valproat</div>
+        <div class="drug-dose" id="dc-valproat-dose">Anak: 10–15 mg/kgBB/hari dibagi 2–3 dosis | Dewasa: 500–1000 mg/hari dibagi 2 dosis</div>
+        <div class="drug-note">⚠️ Kondisional · hindari bila trombositopenia berat · pantau LFT</div>
+      </div>
+    </div>
+    <div class="dose-sel">
+      <label>Antikonvulsan untuk pasien ini:</label>
+      <div class="dose-chips" id="chips-anticonv"></div>
+      <input class="dose-inp" type="text" id="m-anticonv" placeholder="Pilih atau kosongkan bila tidak ada ICANS...">
+    </div>
+
+    <div class="sdiv">Kortikosteroid – tapering pasca CRS/ICANS</div>
+    <div class="drug-grid">
+      <div class="drug-card preferred">
+        <div class="drug-badge">Pilihan Utama</div>
+        <div class="drug-name">Deksametason</div>
+        <div class="drug-dose">Sesuai tapering schedule yang dimulai saat rawat inap. Mis: 10 → 6 → 4 → 2 mg tiap 2–3 hari</div>
+        <div class="drug-note">⚠️ Kondisional – HANYA bila masih tapering pasca CRS/ICANS. Tidak diberikan rutin.</div>
+      </div>
+    </div>
+    <div class="dose-sel">
+      <label>Kortikosteroid untuk pasien ini:</label>
+      <div class="dose-chips" id="chips-steroid"></div>
+      <input class="dose-inp" type="text" id="m-steroid" placeholder="Pilih atau kosongkan bila tidak tapering...">
+    </div>
+
+    <div class="sdiv">Gastroproteksi & Lain-lain</div>
+    <div class="dose-sel">
+      <label>Tambahan / Suplemen:</label>
+      <div class="dose-chips" id="chips-other"></div>
+      <input class="dose-inp" type="text" id="m-other" placeholder="Pilih atau ketik manual...">
+    </div>
+  </div>
+
+  <!-- INSTRUKSI KHUSUS -->
+  <div class="sec">
+    <div class="sec-title"><span>⛔</span> Instruksi Khusus
+      <button class="btn btn-outline" style="margin-left:auto;padding:4px 10px;font-size:10px" onclick="toggleRef('ref-instruksi')">📖 Referensi</button>
+    </div>
+    <div id="ref-instruksi" class="ref-box" style="display:none">
+      <b>Obat dihindari:</b> NSAID & aspirin → inhibisi COX-1/2 memperburuk trombositopenia dan CRS (Scott et al. Blood 2019). Ibuprofen dapat menutupi demam. Herbal → interaksi obat tidak terprediksi.<br>
+      <b>Antipiretik PRN:</b> Parasetamol adalah satu-satunya antipiretik yang direkomendasikan, HANYA setelah melapor ke tim (demam bisa CRS atau infeksi – ASTCT 2019).<br>
+      <b>Vaksin hidup:</b> Dikontraindikasikan ≥2 tahun pasca CAR-T atau sampai reconstitusi imun terkonfirmasi (EBMT 2021; COG Immunization in Immunocompromised Hosts).<br>
+      <b>Stop obat:</b> Jangan stop antikonvulsan atau steroid tiba-tiba tanpa konfirmasi tim – risiko seizure & adrenal insufficiency (UpToDate 2024).
+    </div>
+
+    <div class="dose-sel" style="margin-bottom:14px">
+      <label>⛔ Obat yang HARUS dihindari – klik untuk pilih:</label>
+      <div class="dose-chips" id="chips-avoid"></div>
+      <textarea class="dose-inp" id="m-avoid" rows="2" placeholder="Klik chip di atas atau ketik tambahan..."></textarea>
+    </div>
+
+    <div class="dose-sel" style="margin-bottom:14px">
+      <label>💊 Obat PRN & kapan digunakan – klik untuk pilih:</label>
+      <div class="dose-chips" id="chips-prn"></div>
+      <textarea class="dose-inp" id="m-prn" rows="2" placeholder="Klik chip atau ketik manual..."></textarea>
+    </div>
+
+    <div class="dose-sel">
+      <label>🛑 Kapan harus stop obat & hubungi dokter:</label>
+      <div class="dose-chips" id="chips-stop"></div>
+      <textarea class="dose-inp" id="m-stop" rows="2" placeholder="Klik chip atau ketik manual..."></textarea>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== TAB 5: PATIENT CARD ===== -->
+<div class="panel" id="tab-card">
+  <div id="patient-card-output">
+    <div class="sec" style="text-align:center;color:var(--muted);padding:40px">
+      <div style="font-size:48px;margin-bottom:12px">🪪</div>
+      <p>Isi data di tab <b>Readiness</b>, lalu klik <b>⚡ Generate Semua Output</b></p>
+    </div>
+  </div>
+  <div class="btn-row" id="card-btn-row" style="display:none">
+    <button class="btn btn-primary" id="btn-print-card">🖨️ Cetak Kartu Pasien</button>
+  </div>
+</div>
+
+<!-- ===== TAB 6: FAMILY ===== -->
+<div class="panel" id="tab-family">
+  <div id="family-output">
+    <div class="sec" style="text-align:center;color:var(--muted);padding:40px">
+      <div style="font-size:48px;margin-bottom:12px">📋</div>
+      <p>Klik <b>⚡ Generate Semua Output</b> di tab Readiness</p>
+    </div>
+  </div>
+  <div class="btn-row" id="family-btn-row" style="display:none">
+    <button class="btn btn-teal" id="btn-print-family">🖨️ Cetak Instruksi Keluarga</button>
+  </div>
+</div>
+
+<!-- ===== TAB 7: SCHEDULE ===== -->
+<div class="panel" id="tab-schedule">
+  <div id="schedule-output">
+    <div class="sec" style="text-align:center;color:var(--muted);padding:40px">
+      <div style="font-size:48px;margin-bottom:12px">📅</div>
+      <p>Isi <b>Tanggal Infus Day 0</b> & <b>Tanggal Pulang</b>, lalu klik <b>⚡ Generate</b></p>
+    </div>
+  </div>
+  <div class="btn-row" id="sched-btn-row" style="display:none">
+    <button class="btn btn-outline" id="btn-print-sched">🖨️ Cetak Jadwal Monitoring</button>
+  </div>
+</div>
+
+<script>
+// ---- UTILS ----
+function esc(s){ var d=document.createElement('div');d.textContent=String(s||'');return d.innerHTML; }
+function v(id){ return document.getElementById(id)?document.getElementById(id).value.trim():''; }
+function parseLocalDate(s){ if(!s)return null;var p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2]); }
+function formatDate(s){ if(!s)return '';var d=parseLocalDate(s);if(!d)return s;var m=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];return d.getDate()+' '+m[d.getMonth()]+' '+d.getFullYear(); }
+function addDays(d,n){ var r=new Date(d.getTime());r.setDate(r.getDate()+n);return r; }
+function dateToISO(d){ var mm=d.getMonth()+1;var dd=d.getDate();return d.getFullYear()+'-'+(mm<10?'0':'')+mm+'-'+(dd<10?'0':'')+dd; }
+
+// ---- TABS ----
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click',function(){
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});
+    document.querySelectorAll('.panel').forEach(function(x){x.classList.remove('active');});
+    t.classList.add('active');
+    document.getElementById('tab-'+t.dataset.tab).classList.add('active');
+  });
+});
+
+// ---- CHECKLIST ----
+function initChk(){
+  document.querySelectorAll('.chk-item').forEach(function(item){
+    item.addEventListener('click',function(){
+      if(item.classList.contains('checked')){item.classList.remove('checked');item.querySelector('.chk-box').textContent='';}
+      else{item.classList.add('checked');item.querySelector('.chk-box').textContent='✓';}
+      updateProgress();
+    });
+  });
+}
+function updateProgress(){
+  ['clinical','logistic'].forEach(function(cat){
+    var items=document.querySelectorAll('#chk-'+cat+' .chk-item');
+    var n=0;
+    items.forEach(function(i){if(i.classList.contains('checked'))n++;});
+    var pct=Math.round(n/items.length*100);
+    document.getElementById('prog-'+cat).style.width=pct+'%';
+    document.getElementById('prog-'+cat+'-txt').textContent=n+'/'+items.length+' terpenuhi';
+  });
+}
+
+// ---- VITALS EVAL ----
+function evalVitals(){
+  var temp=parseFloat(v('v-temp'));var sys=parseFloat(v('v-sys'));var hr=parseFloat(v('v-hr'));var spo2=parseFloat(v('v-spo2'));var rr=parseFloat(v('v-rr'));
+  function setVB(id,val,ok,warn,ng,unit){
+    var el=document.getElementById(id);if(isNaN(val)){el.className='vital-box';return;}
+    if(ng)el.className='vital-box ng';else if(warn)el.className='vital-box wr';else el.className='vital-box ok';
+  }
+  setVB('vb-temp',temp,temp<38,temp>=38&&temp<38.5,temp>=38.5,'°C');
+  setVB('vb-sys',sys,sys>=90&&sys<=140,sys>=80&&sys<90,sys<80||sys>160,'mmHg');
+  setVB('vb-hr',hr,hr>=60&&hr<=100,hr>100&&hr<=120,hr>120||hr<50,'/mnt');
+  setVB('vb-spo2',spo2,spo2>=95,spo2>=90&&spo2<95,spo2<90,'%');
+  setVB('vb-rr',rr,rr>=12&&rr<=22,rr>22&&rr<=28,rr>28||rr<10,'/mnt');
+  var msgs=[];
+  if(!isNaN(temp)&&temp>=38)msgs.push('<span style="color:var(--red)">🌡️ Suhu ≥38°C – BELUM afebril</span>');
+  if(!isNaN(spo2)&&spo2<95)msgs.push('<span style="color:var(--red)">💨 SpO₂ &lt;95% – cek kebutuhan oksigen</span>');
+  if(!isNaN(sys)&&sys<90)msgs.push('<span style="color:var(--red)">❤️ Sistol &lt;90 – perhatikan hemodinamik</span>');
+  if(!isNaN(hr)&&hr>120)msgs.push('<span style="color:var(--gold)">💓 Nadi &gt;120 – evaluasi lebih lanjut</span>');
+  document.getElementById('vital-feedback').innerHTML=msgs.length?msgs.join('<br>'):'<span style="color:var(--green)">✅ Vital sign dalam batas acceptable</span>';
+}
+
+function evalLab(){
+  var hb=parseFloat(v('l-hb'));var anc=parseFloat(v('l-anc'));var plt=parseFloat(v('l-plt'));var cr=parseFloat(v('l-cr'));var alt=parseFloat(v('l-alt'));var bil=parseFloat(v('l-bil'));
+  var msgs=[];
+  if(!isNaN(anc)&&anc<500)msgs.push('<span style="color:var(--red)">🦠 ANC &lt;500 – neutropenia berat, pastikan profilaksis infeksi ketat</span>');
+  else if(!isNaN(anc)&&anc<1000)msgs.push('<span style="color:var(--gold)">🦠 ANC 500–1000 – pantau tanda infeksi</span>');
+  if(!isNaN(plt)&&plt<20)msgs.push('<span style="color:var(--red)">🩸 Trombosit &lt;20rb – risiko perdarahan tinggi</span>');
+  if(!isNaN(hb)&&hb<7)msgs.push('<span style="color:var(--gold)">💉 Hb &lt;7 – pertimbangkan transfusi sebelum pulang</span>');
+  if(!isNaN(cr)&&cr>1.5)msgs.push('<span style="color:var(--gold)">🫘 Kreatinin meningkat – evaluasi fungsi ginjal</span>');
+  if(!isNaN(alt)&&alt>200)msgs.push('<span style="color:var(--gold)">🫀 ALT tinggi – pantau hepatotoksisitas</span>');
+  if(!isNaN(bil)&&bil>3)msgs.push('<span style="color:var(--gold)">🟡 Bilirubin meningkat – evaluasi ikterus</span>');
+  document.getElementById('lab-feedback').innerHTML=msgs.length?msgs.join('<br>'):'<span style="color:var(--green)">✅ Lab dalam rentang acceptable untuk pulang</span>';
+}
+
+// ---- DISTANCE HINT ----
+document.getElementById('p-dist-cat')&&document.getElementById('p-dist-cat').addEventListener('change',function(){
+  document.getElementById('dist-hint').style.display=this.value==='gt120'?'block':'none';
+});
+
+// ---- ASSESS ----
+function assess(){
+  var clinItems=document.querySelectorAll('#chk-clinical .chk-item');
+  var logItems=document.querySelectorAll('#chk-logistic .chk-item');
+  var clinMiss=[],logMiss=[];
+  clinItems.forEach(function(i){if(!i.classList.contains('checked'))clinMiss.push(i.querySelector('b').textContent);});
+  logItems.forEach(function(i){if(!i.classList.contains('checked'))logMiss.push(i.querySelector('b').textContent);});
+  var totalMiss=clinMiss.length+logMiss.length;
+  var box=document.getElementById('verdict-box');
+  if(totalMiss===0){
+    box.innerHTML='<div class="verdict go"><div class="v-icon">✅</div><div class="v-text"><h2>BOLEH PULANG</h2><p>Semua kriteria klinis dan logistik terpenuhi. Generate output untuk paket discharge lengkap.</p></div></div>';
+  } else {
+    var clinHtml=clinMiss.length?'<div class="miss-list"><b style="color:var(--red)">Klinis belum terpenuhi:</b><ul>'+clinMiss.map(function(m){return '<li>'+esc(m)+'</li>';}).join('')+'</ul></div>':'';
+    var logHtml=logMiss.length?'<div class="miss-list warn-list" style="margin-top:8px"><b style="color:#b45309">Logistik/edukasi belum terpenuhi:</b><ul>'+logMiss.map(function(m){return '<li>'+esc(m)+'</li>';}).join('')+'</ul></div>':'';
+    box.innerHTML='<div class="verdict stop"><div class="v-icon">🚫</div><div class="v-text"><h2>BELUM BOLEH PULANG</h2><p>'+totalMiss+' kriteria belum terpenuhi:</p></div></div>'+clinHtml+logHtml;
+  }
+}
+
+// ---- VALIDATE REQUIRED ----
+function validateRequired(){
+  var required=['p-name','p-dob','p-day0','p-discharge','p-product','p-dx','p-dr','p-hostel','p-emertel','p-ctrl1'];
+  var missing=false;
+  required.forEach(function(id){
+    var el=document.getElementById(id);
+    if(el&&!el.value.trim()){el.classList.add('err');missing=true;}
+    else if(el){el.classList.remove('err');}
+  });
+  document.getElementById('val-msg').style.display=missing?'block':'none';
+  return !missing;
+}
+
+// ---- GENERATE ALL ----
+document.getElementById('btn-generate').addEventListener('click',function(){
+  if(!validateRequired()){
+    document.getElementById('tab-checklist').scrollTop=0;
+    return;
+  }
+  assess();
+  generateCard();
+  generateFamily();
+  generateSchedule();
+});
+document.getElementById('btn-assess').addEventListener('click',assess);
+
+// ---- GENERATE CARD ----
+function generateCard(){
+  var name=v('p-name')||'(Nama Pasien)';
+  var dob=formatDate(v('p-dob'));
+  var day0=formatDate(v('p-day0'));
+  var product=v('p-product')||'(Produk CAR-T)';
+  var dx=v('p-dx')||'(Diagnosis)';
+  var hostel=v('p-hostel')||'(No. RS)';
+  var emertel=v('p-emertel')||'(No. Keluarga)';
+  var dr=v('p-dr')||'Tim CAR-T';
+  var discharge=formatDate(v('p-discharge'));
+
+  var stayText='≥2 minggu';
+  var prodVal=v('p-product');
+  if(prodVal.indexOf('Kymriah')>-1)stayText='≥2 minggu';
+  else if(prodVal.length)stayText='≥4 minggu';
+
+  document.getElementById('patient-card-output').innerHTML=
+    '<div class="pt-card">'+
+      '<div class="c-header"><div><div class="c-brand">drAisyi EduCare · CAR-T Cell Therapy Program</div></div><div class="c-type">KARTU PASIEN CAR-T</div></div>'+
+      '<div class="c-name">'+esc(name)+'</div>'+
+      '<div class="c-dob">TTL: '+esc(dob)+'&nbsp;&nbsp;|&nbsp;&nbsp;Pulang: '+esc(discharge)+'</div>'+
+      '<div class="c-grid">'+
+        '<div class="c-item"><div class="c-item-label">Diagnosis</div><div class="c-item-val">'+esc(dx)+'</div></div>'+
+        '<div class="c-item"><div class="c-item-label">Produk CAR-T</div><div class="c-item-val">'+esc(product.split('(')[0].trim())+'</div></div>'+
+        '<div class="c-item"><div class="c-item-label">Day 0 Infus</div><div class="c-item-val">'+esc(day0)+'</div></div>'+
+        '<div class="c-item"><div class="c-item-label">Tinggal dekat RS</div><div class="c-item-val">'+stayText+'</div></div>'+
+      '</div>'+
+      '<div class="c-warn">⚠️ PASIEN INI MENERIMA CAR-T CELL THERAPY · Risiko CRS, ICANS, sitopenia, dan infeksi berat hingga 3+ bulan pasca infus · JANGAN berikan vaksin hidup · Hubungi tim onkologi sebelum tindakan apapun</div>'+
+      '<div class="c-hcp">'+
+        '<div class="c-hcp-title">🏥 Untuk Tenaga Kesehatan di IGD / Faskes Lain:</div>'+
+        '<div class="c-hcp-body">'+
+          '• Demam ≥38°C = <b>EMERGENSI</b> – kultur darah & empiris antibiotik bila neutropenia<br>'+
+          '• Evaluasi CRS (demam, hipotensi, hipoksia) & ICANS (konfusi, kejang, ICE/CAPD)<br>'+
+          '• <b>Hubungi tim CAR-T</b> sebelum pemberian steroid atau tocilizumab, kecuali mengancam jiwa<br>'+
+          '• Produk darah: gunakan irradiated & leukoreduced sesuai protokol<br>'+
+          '• JANGAN berikan vaksin hidup apapun<br>'+
+          '• PJ: <b>'+esc(dr)+'</b>'+
+        '</div>'+
+      '</div>'+
+      '<div class="c-emerg"><span>📞 Keluarga: <b>'+esc(emertel)+'</b></span><span>🏥 Emergensi RS 24 jam: <b>'+esc(hostel)+'</b></span></div>'+
+    '</div>'+
+    '<div class="sec" style="font-size:12px;color:var(--muted)">💡 Cetak kartu ini dan laminasi. Pasien wajib membawa kartu ini ke mana pun pergi, terutama saat ke IGD rumah sakit lain.</div>';
+  document.getElementById('card-btn-row').style.display='flex';
+}
+
+// ---- GENERATE FAMILY ----
+function generateFamily(){
+  var name=v('p-name')||'pasien';
+  var hostel=v('p-hostel')||'(Nomor RS)';
+  var mAntiviral=v('m-antiviral');
+  var mPJP=v('m-pjp');
+  var mAbx=v('m-abx');
+  var mAntifungal=v('m-antifungal');
+  var mAntiemetic=v('m-antiemetic');
+  var mAnticonv=v('m-anticonv');
+  var mSteroid=v('m-steroid');
+  var mOther=v('m-other');
+  var mAvoid=v('m-avoid');
+  var mPRN=v('m-prn');
+  var ctrl1=formatDate(v('p-ctrl1'));
+
+  var medsHtml='';
+  var medsList=[];
+  if(mAntiviral)medsList.push('Antiviral: '+mAntiviral);
+  if(mPJP)medsList.push('PJP profilaksis: '+mPJP);
+  if(mAbx)medsList.push('Antibiotik: '+mAbx);
+  if(mAntifungal)medsList.push('Antijamur: '+mAntifungal);
+  if(mAntiemetic)medsList.push('Antiemetik: '+mAntiemetic);
+  if(mAnticonv)medsList.push('Antikonvulsan: '+mAnticonv);
+  if(mSteroid)medsList.push('Kortikosteroid: '+mSteroid);
+  if(mOther)medsList.push('Lainnya: '+mOther);
+  if(medsList.length){medsHtml='<ul>'+medsList.map(function(m){return '<li>'+esc(m)+'</li>';}).join('')+'</ul>';}
+  else{medsHtml='<p style="color:var(--muted)">Sesuai resep dokter yang diberikan saat pulang.</p>';}
+
+  document.getElementById('family-output').innerHTML=
+    '<div class="sec">'+
+      '<div class="sec-title"><span>📋</span> Instruksi Pulang untuk Keluarga – '+esc(name)+'</div>'+
+      '<p style="font-size:12px;color:var(--muted);margin-bottom:14px">Kontrol pertama: <b>'+esc(ctrl1)+'</b>&nbsp;|&nbsp;Emergensi RS 24 jam: <b>'+esc(hostel)+'</b></p>'+
+
+      '<div class="fi fi-red"><h3>🚨 SEGERA KE IGD – JANGAN TUNGGU BESOK jika:</h3><ul>'+
+        '<li><b>Demam ≥38°C</b> – bahkan bila tampak baik, JANGAN minum antipiretik dahulu tanpa melapor</li>'+
+        '<li>Kejang, atau badan kaku mendadak</li>'+
+        '<li>Bingung, tidak kenal orang, bicara kacau atau aneh (tanda ICANS)</li>'+
+        '<li>Tulisan berubah, tidak bisa baca/tulis normal</li>'+
+        '<li>Mengantuk tidak wajar, sangat sulit dibangunkan</li>'+
+        '<li>Sesak napas, bibir atau ujung jari biru</li>'+
+        '<li>Tekanan darah turun: pusing berat, pingsan, atau lemas mendadak</li>'+
+        '<li>Sulit berjalan, sempoyongan tiba-tiba</li>'+
+        '<li>Perdarahan tidak berhenti: hidung, gusi, kulit memar luas</li>'+
+        '<li>Nyeri dada atau jantung berdebar kencang</li>'+
+        '<li>Tidak BAK lebih dari 8 jam atau tanda dehidrasi berat</li>'+
+        '<li>Muntah/diare berat lebih dari 3x tidak terkontrol</li>'+
+      '</ul></div>'+
+
+      '<div class="fi fi-orange"><h3>📞 HUBUNGI TIM DOKTER SEGERA – jangan tunggu kontrol jika:</h3><ul>'+
+        '<li>Suhu 37,5–37,9°C yang tidak turun setelah 2 jam tanpa obat</li>'+
+        '<li>Sakit kepala berat atau leher terasa kaku</li>'+
+        '<li>Pasien makin lemah dari hari ke hari</li>'+
+        '<li>Tidak mau makan/minum sama sekali 1 hari penuh</li>'+
+        '<li>Ada obat yang terlewat lebih dari 1 dosis atau habis</li>'+
+        '<li>Muncul kemerahan, bengkak, atau gejala baru yang mengkhawatirkan</li>'+
+        '<li>Nomor RS 24 jam: <b>'+esc(hostel)+'</b></li>'+
+      '</ul></div>'+
+
+      '<div class="fi fi-yellow"><h3>⚠️ WAJIB: Saat ke IGD mana pun – perlihatkan kartu CAR-T</h3><ul>'+
+        '<li>Tunjukkan <b>Kartu Identitas Pasien CAR-T</b> kepada petugas IGD segera saat tiba</li>'+
+        '<li>Katakan: <i>"Anak/pasien ini mendapat terapi CAR-T, mohon hubungi tim onkologi di nomor yang tertera di kartu"</i></li>'+
+        '<li>Jangan terima tindakan medis atau obat tanpa tim onkologi dihubungi dahulu, kecuali keadaan darurat jiwa</li>'+
+      '</ul></div>'+
+
+      '<div class="fi fi-green"><h3>✅ Yang Harus Dilakukan Setiap Hari di Rumah:</h3><ul>'+
+        '<li>Ukur suhu tubuh minimal <b>2x sehari</b> (pagi dan malam) selama minimal 30 hari pertama</li>'+
+        '<li>Catat suhu, kondisi umum, dan gejala baru di buku harian setiap hari</li>'+
+        '<li>Cuci tangan pakai sabun sebelum menyiapkan obat atau makanan pasien</li>'+
+        '<li>Hindari keramaian, pasar, mall, sekolah, dan kontak dengan orang sakit (flu, cacar, dll)</li>'+
+        '<li>Pastikan ventilasi rumah baik, hindari debu, jamur, dan hewan peliharaan</li>'+
+        '<li>Makan bergizi, cukup protein, buah, sayur matang – hindari makanan mentah/setengah matang</li>'+
+        '<li>Pasien tidak boleh sendirian – selalu ada caregiver di rumah</li>'+
+        '<li>Kontrol pertama: <b>'+esc(ctrl1)+'</b> – jangan ditunda</li>'+
+      '</ul></div>'+
+
+      '<div class="fi fi-blue"><h3>💊 Jadwal Obat Pulang:</h3>'+medsHtml+
+        (mPRN?'<p style="margin-top:8px;font-size:12px"><b>Obat bila perlu (PRN):</b> '+esc(mPRN)+'</p>':'')+
+        (mAvoid?'<p style="margin-top:6px;font-size:12px;color:var(--red)"><b>⛔ Yang harus DIHINDARI:</b> '+esc(mAvoid)+'</p>':'')+
+      '</div>'+
+
+      '<div class="fi fi-purple"><h3>💉 Vaksin & Obat dari Luar:</h3><ul>'+
+        '<li><b>DILARANG vaksin hidup</b> (campak, MMR, cacar air, rotavirus, BCG, demam kuning, polio oral) minimal <b>2 tahun</b> atau sampai konfirmasi tim</li>'+
+        '<li>Vaksin mati (influenza suntik, hepatitis) boleh, tapi <b>wajib tanya dokter dahulu</b></li>'+
+        '<li>Jangan beli obat dari apotek atau warung tanpa konfirmasi tim, termasuk vitamin dan obat herbal</li>'+
+        '<li>Jangan minum obat penurun demam berulang tanpa melapor – demam adalah tanda bahaya</li>'+
+      '</ul></div>'+
+    '</div>';
+  document.getElementById('family-btn-row').style.display='flex';
+}
+
+// ---- GENERATE SCHEDULE ----
+function generateSchedule(){
+  var day0str=v('p-day0');
+  var dischargeStr=v('p-discharge');
+  var name=v('p-name')||'Pasien';
+  var ctrl1=formatDate(v('p-ctrl1'));
+  if(!day0str){
+    document.getElementById('schedule-output').innerHTML='<div class="sec" style="color:var(--red);text-align:center;padding:30px">⚠️ Masukkan <b>Tanggal Infus Day 0</b> untuk generate jadwal.</div>';
+    return;
+  }
+  var d0=parseLocalDate(day0str);
+  var dDischarge=dischargeStr?parseLocalDate(dischargeStr):null;
+  var today=new Date();
+  var currentDay=Math.round((today-d0)/(1000*60*60*24));
+  var dischargeDay=dDischarge?Math.round((dDischarge-d0)/(1000*60*60*24)):null;
+
+  var tps=[
+    {day:7, label:'Day +7', color:'tag-r', items:['CBC lengkap','Elektrolit, fungsi ginjal','Ferritin, CRP, fibrinogen','Evaluasi gejala CRS/ICANS','Tanda vital & status neurologi']},
+    {day:14, label:'Day +14', color:'tag-r', items:['CBC + hitung jenis','Kimia darah','Evaluasi sitopenia','Status performa pasien','Kadar sel B awal']},
+    {day:28, label:'Day +28', color:'tag-y', items:['Bone marrow aspirasi (indikasi)','MRD assessment','CBC, kimia, LFT','Pencitraan evaluasi respons','IgG / imunoglobulin']},
+    {day:60, label:'Day +60', color:'tag-y', items:['CBC + panel limfosit','Imunoglobulin (IgG, IgA, IgM)','Evaluasi kebutuhan IVIG','Status nutrisi & berat badan']},
+    {day:90, label:'Day +90', color:'tag-g', items:['CBC, kimia, LFT','Pencitraan evaluasi respons','MRD (sesuai protokol)','Skrining infeksi oportunistik','Evaluasi pertumbuhan (anak)']},
+    {day:180, label:'6 Bulan', color:'tag-g', items:['Evaluasi remisi komprehensif','Panel imun lengkap','Mulai pertimbangkan vaksinasi mati','Skrining late effects','Evaluasi endokrin']},
+    {day:365, label:'1 Tahun', color:'tag-b', items:['Remisi jangka panjang','Late effects: kardiak, endokrin, neurokognitif','Panel imun + imunoglobulin','Jadwal vaksinasi ulang','Survivorship plan']},
+  ];
+
+  // Find next visit
+  var nextTP=null;
+  var refDay=dischargeDay!==null?dischargeDay:currentDay;
+  for(var i=0;i<tps.length;i++){
+    if(tps[i].day>refDay){nextTP=tps[i];break;}
+  }
+
+  var nextHtml='';
+  if(nextTP){
+    var nextDate=addDays(d0,nextTP.day);
+    nextHtml='<div class="next-visit"><div class="nv-icon">📌</div><div><h3>Kunjungan Berikutnya: '+nextTP.label+' – '+formatDate(dateToISO(nextDate))+'</h3><p>Kontrol pertama pasca pulang sudah terjadwal: <b>'+esc(ctrl1)+'</b></p></div></div>';
+  }
+
+  var rows=tps.map(function(tp){
+    var date=addDays(d0,tp.day);
+    var isPast=dDischarge&&tp.day<=dischargeDay;
+    var tags=tp.items.slice(0,3).map(function(i){return '<span class="tag '+tp.color+'">'+esc(i)+'</span>';}).join('');
+    var extra=tp.items.length>3?'<br><span style="font-size:10px;color:var(--muted)">+'+(tp.items.length-3)+' lainnya</span>':'';
+    var style=isPast?'opacity:.45;text-decoration:line-through':'';
+    return '<tr style="'+style+'"><td><b>'+tp.label+'</b>'+(isPast?' <span class="tag tag-g" style="font-size:9px">Sudah lewat</span>':'')+'</td><td>'+formatDate(dateToISO(date))+'</td><td>'+tags+extra+'</td></tr>';
+  }).join('');
+
+  document.getElementById('schedule-output').innerHTML=
+    '<div class="sec">'+
+      '<div class="sec-title"><span>📅</span> Jadwal Monitoring Pasca CAR-T – '+esc(name)+'</div>'+
+      '<p style="font-size:11px;color:var(--muted);margin-bottom:12px">Day 0: <b>'+formatDate(day0str)+'</b>&nbsp;|&nbsp;Tanggal Pulang: <b>'+(dischargeStr?formatDate(dischargeStr):'—')+'</b>&nbsp;|&nbsp;Hari pasca infus saat ini: <b>Day +'+(currentDay>0?currentDay:'?')+'</b></p>'+
+      nextHtml+
+      '<div style="overflow-x:auto"><table class="sched-table"><thead><tr><th>Waktu</th><th>Tanggal</th><th>Pemeriksaan Utama</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+      '<p style="font-size:10px;color:var(--muted);margin-top:10px">⚠️ Jadwal dapat disesuaikan berdasarkan kondisi klinis, protokol institusi, dan ketersediaan fasilitas. Selalu konfirmasi dengan tim CAR-T.</p>'+
+    '</div>';
+  document.getElementById('sched-btn-row').style.display='flex';
+}
+
+// ---- PRINT ----
+function printSection(contentId,title){
+  var content=document.getElementById(contentId).innerHTML;
+  var w=window.open('','_blank','width=800,height=600');
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+title+' – drAisyi EduCare</title><style>'+
+    'body{font-family:Segoe UI,Arial,sans-serif;padding:20px;color:#1e293b;background:#fff}'+
+    '.pt-card{background:linear-gradient(135deg,#0f2847,#1a3a5c,#0d9488);color:#fff;border-radius:14px;padding:22px;margin-bottom:14px}'+
+    '.c-header{display:flex;justify-content:space-between;margin-bottom:12px}.c-brand{font-size:9px;opacity:.7;text-transform:uppercase}.c-type{background:#e8553e;font-size:9px;font-weight:700;padding:3px 9px;border-radius:20px}'+
+    '.c-name{font-size:19px;font-weight:800;margin-bottom:3px}.c-dob{font-size:11px;opacity:.75;margin-bottom:12px}'+
+    '.c-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}'+
+    '.c-item{background:rgba(255,255,255,.1);border-radius:7px;padding:7px 9px}.c-item-label{font-size:8px;opacity:.65;text-transform:uppercase}.c-item-val{font-size:12px;font-weight:700}'+
+    '.c-warn{background:#e8553e;border-radius:7px;padding:8px 11px;font-size:10px;font-weight:600;margin-bottom:10px;line-height:1.5}'+
+    '.c-hcp{background:rgba(255,255,255,.12);border-radius:7px;padding:9px 11px;margin-bottom:10px}.c-hcp-title{font-size:9px;font-weight:700;text-transform:uppercase;opacity:.75;margin-bottom:5px}.c-hcp-body{font-size:10px;line-height:1.6}'+
+    '.c-emerg{background:rgba(255,255,255,.1);border-radius:7px;padding:8px 11px;font-size:11px;display:flex;justify-content:space-between}'+
+    '.sec{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;margin-bottom:12px}'+
+    '.fi{border-radius:8px;padding:12px 14px;margin-bottom:10px}.fi h3{font-size:12px;font-weight:700;margin-bottom:6px}.fi ul{padding-left:14px;font-size:11px;line-height:1.75}'+
+    '.fi-red{background:#fef2f2;border-left:4px solid #dc2626}.fi-red h3{color:#dc2626}'+
+    '.fi-orange{background:#fff7ed;border-left:4px solid #ea580c}.fi-orange h3{color:#c2410c}'+
+    '.fi-yellow{background:#fffbeb;border-left:4px solid #f59e0b}.fi-yellow h3{color:#b45309}'+
+    '.fi-green{background:#f0fdf4;border-left:4px solid #16a34a}.fi-green h3{color:#16a34a}'+
+    '.fi-blue{background:#eff6ff;border-left:4px solid #3b82f6}.fi-blue h3{color:#1d4ed8}'+
+    '.fi-purple{background:#f5f3ff;border-left:4px solid #7c3aed}.fi-purple h3{color:#6d28d9}'+
+    '.sched-table{width:100%;border-collapse:collapse;font-size:11px}.sched-table th{background:#1a3a5c;color:#fff;padding:8px 10px}.sched-table td{padding:7px 10px;border-bottom:1px solid #e2e8f0}'+
+    '.tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px;margin:1px}'+
+    '.tag-r{background:#fee2e2;color:#dc2626}.tag-y{background:#fef3c7;color:#92400e}.tag-g{background:#dcfce7;color:#166534}.tag-b{background:#dbeafe;color:#1e40af}'+
+    '.next-visit{background:#f0fdf4;border:2px solid #16a34a;border-radius:8px;padding:12px 14px;margin-bottom:12px}'+
+    '.next-visit h3{font-size:14px;font-weight:800;color:#16a34a}.next-visit p{font-size:11px;color:#64748b}'+
+    '.brand-hdr{text-align:center;padding:12px 0 16px;border-bottom:2px solid #e2e8f0;margin-bottom:16px;color:#1a3a5c}'+
+    '.brand-hdr h2{font-size:16px;font-weight:700}.brand-hdr p{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:1px}'+
+  '</style></head><body>'+
+    '<div class="brand-hdr"><h2>drAisyi EduCare – CAR-T Cell Therapy</h2><p>'+title+'</p></div>'+
+    content+
+  '</body></html>');
+  w.document.close();w.focus();w.print();
+}
+
+document.getElementById('btn-print-card').addEventListener('click',function(){printSection('patient-card-output','Kartu Pasien CAR-T');});
+document.getElementById('btn-print-family').addEventListener('click',function(){printSection('family-output','Instruksi Keluarga');});
+document.getElementById('btn-print-sched').addEventListener('click',function(){printSection('schedule-output','Jadwal Monitoring');});
+
+// ---- RESET ----
+document.getElementById('btn-reset').addEventListener('click',function(){
+  document.querySelectorAll('.chk-item').forEach(function(i){i.classList.remove('checked','flagged');i.querySelector('.chk-box').textContent='';});
+  document.querySelectorAll('input[type=text],input[type=date],input[type=number],input[type=tel],textarea').forEach(function(el){el.value='';el.classList.remove('err');});
+  document.querySelectorAll('select').forEach(function(el){el.selectedIndex=0;});
+  document.getElementById('verdict-box').innerHTML='';
+  document.getElementById('val-msg').style.display='none';
+  document.getElementById('dist-hint').style.display='none';
+  document.getElementById('vital-feedback').innerHTML='';
+  document.getElementById('lab-feedback').innerHTML='';
+  document.getElementById('neuro-feedback').innerHTML='';
+  var placeholder=['patient-card-output','family-output','schedule-output'];
+  var icons=['🪪','📋','📅'];
+  var hints=['Isi data di tab Readiness, lalu klik Generate','Klik Generate di tab Readiness','Isi Tanggal Infus Day 0 & Tanggal Pulang, lalu klik Generate'];
+  placeholder.forEach(function(id,i){
+    document.getElementById(id).innerHTML='<div class="sec" style="text-align:center;color:var(--muted);padding:40px"><div style="font-size:48px;margin-bottom:12px">'+icons[i]+'</div><p>'+hints[i]+'</p></div>';
+  });
+  document.getElementById('card-btn-row').style.display='none';
+  document.getElementById('family-btn-row').style.display='none';
+  document.getElementById('sched-btn-row').style.display='none';
+  updateProgress();
+});
+
+// ---- BSA CALCULATION (Mosteller) ----
+function calcBSA(bb,tb){ return Math.sqrt((bb*tb)/3600); }
+function rnd(n,dec){ var f=Math.pow(10,dec); return Math.round(n*f)/f; }
+function cap(val,mx){ return Math.min(val,mx); }
+
+function recalcDoses(){
+  var bb=parseFloat(document.getElementById('p-bb').value)||0;
+  var tb=parseFloat(document.getElementById('p-tb').value)||0;
+  var bsa=bb&&tb?calcBSA(bb,tb):0;
+  // show BSA badge
+  var bsaDisp=document.getElementById('bsa-display');
+  var bsaVal=document.getElementById('bsa-val');
+  var bbVal=document.getElementById('bb-val');
+  if(bb&&tb){
+    bsaDisp.style.display='block';
+    bsaVal.textContent='BSA = '+rnd(bsa,2)+' m²';
+    bbVal.textContent='BB = '+bb+' kg';
+  } else { bsaDisp.style.display='none'; }
+  buildAllChips(bb,tb,bsa);
+}
+
+// ---- CHIP DEFINITIONS ----
+// Each chip: {label, dose_fn(bb,tb,bsa)->string, type:'normal'|'avoid'|'prn'}
+function buildAllChips(bb,tb,bsa){
+  // Helper: safe rnd dose string
+  function d(val,unit,suffix){ return rnd(val,1)+' '+unit+(suffix?' '+suffix:''); }
+  var hasW=bb>0; var hasBSA=bsa>0;
+
+  var chips={
+    antiviral:[
+      {l:'Asiklovir 2x/hari',fn:function(){return 'Asiklovir '+(hasBSA?d(cap(bsa*250,400),'mg',''):'250 mg/m²')+'/dosis PO 2x/hari';}},
+      {l:'Asiklovir 3x/hari',fn:function(){return 'Asiklovir '+(hasBSA?d(cap(bsa*250,400),'mg',''):'250 mg/m²')+'/dosis PO 3x/hari';}},
+      {l:'Valasiklovir 2x',fn:function(){return 'Valasiklovir '+(hasW?d(cap(bb*20,1000),'mg',''):'20 mg/kgBB')+'/dosis PO 2x/hari';}},
+      {l:'Valasiklovir 3x',fn:function(){return 'Valasiklovir '+(hasW?d(cap(bb*20,1000),'mg',''):'20 mg/kgBB')+'/dosis PO 3x/hari';}}
+    ],
+    pjp:[
+      {l:'Kotrimoksazol 3x/minggu',fn:function(){var tmp=hasW?rnd(cap(bb*5/2,80),1):null; return 'Kotrimoksazol '+(tmp?tmp+' mg TMP':'5 mg TMP/kgBB')+'/dosis 2x/hari, 3 hari/minggu (Sen-Rab-Jum)';}},
+      {l:'Kotrimoksazol tiap hari',fn:function(){var tmp=hasW?rnd(cap(bb*2.5,80),1):null; return 'Kotrimoksazol '+(tmp?tmp+' mg TMP':'2,5 mg TMP/kgBB')+'/dosis 1x/hari tiap hari';}},
+      {l:'Dapson',fn:function(){return 'Dapson '+(hasW?d(cap(bb*2,100),'mg',''):'2 mg/kgBB')+' PO 1x/hari (cek G6PD dahulu)';}},
+      {l:'Pentamidin inhalasi',fn:function(){return 'Pentamidin 300 mg inhalasi 1x/bulan (bila tidak bisa oral/dapson)';}}
+    ],
+    antifungal:[
+      {l:'Flukonazol (Candida)',fn:function(){return 'Flukonazol '+(hasW?d(cap(bb*6,400),'mg',''):'6 mg/kgBB')+' PO 1x/hari';},cond:true},
+      {l:'Flukonazol dosis rendah',fn:function(){return 'Flukonazol '+(hasW?d(cap(bb*3,200),'mg',''):'3 mg/kgBB')+' PO 1x/hari';},cond:true},
+      {l:'Vorikonazol (Aspergillus)',fn:function(){return 'Vorikonazol '+(hasW?d(cap(bb*9,350),'mg',''):'9 mg/kgBB')+'/dosis PO 2x/hari (loading), lalu '+(hasW?d(cap(bb*8,300),'mg',''):'8 mg/kgBB')+' 2x/hari';},cond:true},
+      {l:'Mikafungin IV',fn:function(){return 'Mikafungin '+(hasW&&bb<30?d(bb*2,'mg','IV 1x/hari'):'50 mg IV 1x/hari');},cond:true},
+      {l:'Tidak diindikasikan',fn:function(){return 'Antijamur tidak diindikasikan – ANC recovery adekuat';}}
+    ],
+    abx:[
+      {l:'Levofloksasin',fn:function(){return 'Levofloksasin '+(hasW?d(cap(bb*10,500),'mg',''):'10 mg/kgBB')+' PO 1x/hari (selama neutropenia)';},cond:true},
+      {l:'Siprofloksasin',fn:function(){return 'Siprofloksasin '+(hasW?d(cap(bb*15,500),'mg',''):'10–20 mg/kgBB')+'/dosis PO 2x/hari (selama neutropenia)';},cond:true},
+      {l:'Tidak diindikasikan',fn:function(){return 'Antibiotik profilaksis tidak diindikasikan saat ini';}}
+    ],
+    antiemetic:[
+      {l:'Ondansetron PRN',fn:function(){return 'Ondansetron '+(hasW?d(cap(bb*0.15,8),'mg',''):'0,15 mg/kgBB')+'/dosis PO tiap 8 jam PRN bila mual';}},
+      {l:'Ondansetron rutin',fn:function(){return 'Ondansetron '+(hasW?d(cap(bb*0.15,8),'mg',''):'0,15 mg/kgBB')+'/dosis PO 3x/hari rutin';}},
+      {l:'Metoklopramid PRN',fn:function(){return 'Metoklopramid '+(hasW?d(cap(bb*0.1,10),'mg',''):'0,1 mg/kgBB')+'/dosis PO tiap 8 jam PRN (hati-hati EPS)';}}
+    ],
+    anticonv:[
+      {l:'Levetirasetam 2x',fn:function(){return 'Levetirasetam '+(hasW?d(cap(bb*10,1500),'mg',''):'10 mg/kgBB')+'/dosis PO 2x/hari (bila ICANS/kejang)';},cond:true},
+      {l:'Levetirasetam dosis tinggi',fn:function(){return 'Levetirasetam '+(hasW?d(cap(bb*20,1500),'mg',''):'20 mg/kgBB')+'/dosis PO 2x/hari';},cond:true},
+      {l:'Asam Valproat',fn:function(){return 'Asam valproat '+(hasW?d(cap(bb*15,500),'mg',''):'10–15 mg/kgBB')+'/hari PO dibagi 2 dosis (cek plt & LFT)';},cond:true},
+      {l:'Tidak diindikasikan',fn:function(){return 'Antikonvulsan tidak diindikasikan – tidak ada riwayat ICANS/kejang';}}
+    ],
+    steroid:[
+      {l:'Dexa tapering cepat',fn:function(){return 'Deksametason 4 mg → 2 mg tiap 2 hari → stop (total ~4 hari)';}},
+      {l:'Dexa tapering standar',fn:function(){return 'Deksametason '+(hasW?rnd(cap(bb*0.15,10),1):'0,15 mg/kgBB')+' mg → setengah dosis tiap 3 hari → stop';}},
+      {l:'Prednison tapering',fn:function(){return 'Prednison '+(hasW?rnd(cap(bb*1,40),1):'1 mg/kgBB')+' mg/hari → turun 25%/minggu';}},
+      {l:'Tidak tapering',fn:function(){return 'Kortikosteroid tidak diberikan – CRS/ICANS sudah resolved tanpa steroid';}}
+    ],
+    other:[
+      {l:'Omeprazol',fn:function(){return 'Omeprazol '+(hasW?d(cap(bb*1,40),'mg',''):'1 mg/kgBB')+' PO 1x/hari (gastroproteksi selama steroid)';}},
+      {l:'Vitamin D3',fn:function(){return 'Vitamin D3 400–1000 IU PO 1x/hari';}},
+      {l:'Zinc',fn:function(){return 'Zinc elemental '+(hasW?d(cap(bb*0.5,20),'mg',''):'0,5 mg/kgBB')+'/hari PO';}},
+      {l:'Folat',fn:function(){return 'Asam folat 1 mg PO 1x/hari (suportif)';}},
+      {l:'Laktulosa',fn:function(){return 'Laktulosa '+(hasW?d(cap(bb*0.5,20),'mL',''):'0,5 mL/kgBB')+' PO 1–2x/hari PRN (bila konstipasi)';}}
+    ],
+    avoid:[
+      {l:'NSAID / Ibuprofen',type:'avoid',fn:function(){return 'NSAID / Ibuprofen – inhibisi COX memperburuk trombositopenia dan dapat menutupi demam';}},
+      {l:'Aspirin',type:'avoid',fn:function(){return 'Aspirin – risiko perdarahan pada trombositopenia';}},
+      {l:'Obat herbal',type:'avoid',fn:function(){return 'Obat herbal / jamu – interaksi obat tidak terprediksi, hindari tanpa konsultasi tim';}},
+      {l:'Vaksin hidup',type:'avoid',fn:function(){return 'Vaksin hidup (MMR, varisela, BCG, polio oral, rotavirus, demam kuning) – kontraindikasi minimal 2 tahun pasca CAR-T';}},
+      {l:'Antipiretik tanpa lapor',type:'avoid',fn:function(){return 'Antipiretik berulang tanpa lapor – demam adalah tanda bahaya CRS/infeksi, WAJIB lapor sebelum minum';}},
+      {l:'Alkohol',type:'avoid',fn:function(){return 'Alkohol – interaksi obat dan hepatotoksisitas';}},
+      {l:'Makanan mentah/setengah matang',type:'avoid',fn:function(){return 'Makanan mentah/setengah matang, susu tidak pasteurisasi – risiko infeksi pada imunosupresi berat';}}
+    ],
+    prn:[
+      {l:'Parasetamol demam',type:'prn',fn:function(){return 'Parasetamol '+(hasW?d(cap(bb*15,500),'mg',''):'15 mg/kgBB')+'/dosis PO HANYA bila demam ≥38°C – SEGERA LAPOR ke tim setelah minum, maksimal 4x/hari';}},
+      {l:'Ondansetron mual',type:'prn',fn:function(){return 'Ondansetron '+(hasW?d(cap(bb*0.15,8),'mg',''):'0,15 mg/kgBB')+' PO tiap 8 jam bila mual berat';}},
+      {l:'Laktulosa konstipasi',type:'prn',fn:function(){return 'Laktulosa '+(hasW?d(cap(bb*0.5,20),'mL',''):'0,5 mL/kgBB')+' PO bila tidak BAB >2 hari';}},
+      {l:'ORS diare',type:'prn',fn:function(){return 'Oralit / larutan rehidrasi oral '+(hasW?d(bb*10,'mL',''):'10 mL/kgBB')+' per episode diare';}},
+      {l:'Loratadin alergi',type:'prn',fn:function(){return 'Loratadin '+(hasW?d(cap(bb*0.2,10),'mg',''):'0,2 mg/kgBB')+' (maks 10 mg) PO 1x/hari PRN gatal/alergi';}}
+    ],
+    stop:[
+      {l:'Stop antikonvulsan',type:'prn',fn:function(){return 'Stop levetirasetam/antikonvulsan dan SEGERA hubungi tim bila muncul kejang baru saat on-medication atau trombositopenia berat';}},
+      {l:'Stop steroid (jangan tiba-tiba)',type:'prn',fn:function(){return 'JANGAN stop steroid tiba-tiba – tapering sesuai jadwal; hubungi tim bila ada kelemahan mendadak, nyeri perut, atau hipotensi';}},
+      {l:'Stop antijamur bila recovery',type:'prn',fn:function(){return 'Stop antijamur setelah ANC >500/µL stabil dan steroid sudah dihentikan – konfirmasi dengan tim';}},
+      {l:'Stop antibiotik bila recovery',type:'prn',fn:function(){return 'Stop antibiotik profilaksis setelah ANC recovery (>1000/µL) atau sesuai arahan tim';}},
+      {l:'Obat baru harus konfirmasi',type:'prn',fn:function(){return 'Setiap obat baru dari luar (apotek/puskesmas/herbal) WAJIB dikonfirmasi ke tim dahulu – risiko interaksi dan efek samping';}}
+    ]
+  };
+  Object.keys(chips).forEach(function(cat){renderChips(cat,chips[cat]);});
+}
+
+function renderChips(cat,chipDefs){
+  var container=document.getElementById('chips-'+cat);
+  if(!container)return;
+  var inputId='m-'+cat;
+  var currentVal=document.getElementById(inputId)?document.getElementById(inputId).value:'';
+  container.innerHTML='';
+  chipDefs.forEach(function(c){
+    var btn=document.createElement('button');
+    btn.className='dose-chip'+(c.type==='avoid'?' avoid-chip':c.type==='prn'?' prn-chip':'')+(c.cond?' cond-chip':'');
+    var doseStr=c.fn();
+    btn.textContent=c.l;
+    btn.title=doseStr;
+    if(currentVal.indexOf(c.l)>-1||currentVal===doseStr)btn.classList.add('selected');
+    btn.addEventListener('click',function(){
+      var inp=document.getElementById(inputId);
+      if(!inp)return;
+      var isTextarea=inp.tagName==='TEXTAREA';
+      if(btn.classList.contains('selected')){
+        btn.classList.remove('selected');
+        if(isTextarea){
+          var lines=inp.value.split('\n').filter(function(l){return l.trim()!==doseStr&&l.trim()!==c.l;});
+          inp.value=lines.join('\n').trim();
+        } else { if(inp.value===doseStr)inp.value=''; }
+      } else {
+        btn.classList.add('selected');
+        if(isTextarea){
+          inp.value=(inp.value.trim()?inp.value.trim()+'\n':'')+doseStr;
+        } else { inp.value=doseStr; }
+        // deselect others in same group if not textarea
+        if(!isTextarea){
+          container.querySelectorAll('.dose-chip').forEach(function(b){if(b!==btn)b.classList.remove('selected');});
+        }
+      }
+    });
+    container.appendChild(btn);
+  });
+}
+
+// ---- TOGGLE REF ----
+function toggleRef(id){var el=document.getElementById(id);el.style.display=el.style.display==='none'?'block':'none';}
+
+// ---- INIT ----
+initChk();
+updateProgress();
+recalcDoses();
+</script>
+</body>
+</html>

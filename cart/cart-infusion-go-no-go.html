@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAR-T Infusion Day GO/NO-GO | drAisyi EduCare</title>
+<style>
+:root{--p:#1a3a5c;--p2:#0f4c81;--acc:#0ea5e9;--pur:#7c3aed;--grn:#059669;--red:#dc2626;--ora:#d97706;--bg:#f0f6ff;--card:#fff;--bdr:#cbd5e1;--txt:#1e293b;--mut:#64748b;--lgt:#e0f2fe;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;}
+/* HEADER */
+.hdr{background:linear-gradient(135deg,var(--p) 0%,var(--p2) 60%,var(--pur) 100%);color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 12px rgba(0,0,0,.2);}
+.brand{display:flex;align-items:center;gap:12px;}
+.bicon{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,var(--acc),var(--pur));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.btxt h1{font-size:1.2rem;font-weight:800;}
+.btxt p{font-size:.7rem;opacity:.8;margin-top:2px;}
+.hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 12px;font-size:.75rem;font-weight:700;}
+.ver{font-size:.65rem;opacity:.6;}
+/* TABS */
+.tab-bar{display:flex;background:#fff;border-bottom:2px solid var(--bdr);overflow-x:auto;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.tab{padding:12px 16px;font-size:.8rem;font-weight:700;color:var(--mut);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;flex-shrink:0;}
+.tab.active{color:var(--p);border-bottom-color:var(--p);}
+.tab:hover{background:#f8faff;}
+.tab-badge{display:inline-block;background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:.62rem;margin-left:4px;font-weight:800;}
+.tab-badge.ok{background:var(--grn);}
+/* CONTAINER */
+.con{max-width:920px;margin:0 auto;padding:20px 14px;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+/* WARN */
+.warn{background:linear-gradient(90deg,#fef3c7,#fde68a);border-left:5px solid var(--ora);border-radius:10px;padding:12px 16px;margin-bottom:18px;display:flex;gap:10px;}
+.warn .ic{font-size:1.3rem;}
+.warn p{font-size:.8rem;color:#92400e;line-height:1.5;}
+.warn strong{display:block;font-size:.85rem;color:#78350f;margin-bottom:3px;}
+/* CARDS */
+.sc{background:var(--card);border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:18px;overflow:hidden;}
+.sh{display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid var(--bdr);background:linear-gradient(90deg,#f8faff,#eef2ff);}
+.sh .si{font-size:1.2rem;}
+.sh h2{font-size:.95rem;font-weight:700;color:var(--p);}
+.sh .sb{margin-left:auto;background:var(--p);color:#fff;border-radius:20px;padding:2px 10px;font-size:.68rem;font-weight:700;}
+.sb-grn{background:var(--grn)!important;}
+.sb-red{background:var(--red)!important;}
+.sb-ora{background:var(--ora)!important;}
+.body{padding:16px 18px;}
+/* FORM */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fg.g3{grid-template-columns:1fr 1fr 1fr;}
+.fitem label{font-size:.72rem;font-weight:700;color:var(--mut);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px;}
+.fitem input,.fitem select,.fitem textarea{width:100%;padding:8px 11px;border:1.5px solid var(--bdr);border-radius:8px;font-size:.88rem;color:var(--txt);transition:border .2s;font-family:inherit;}
+.fitem input:focus,.fitem select:focus,.fitem textarea:focus{outline:none;border-color:var(--acc);}
+.fitem.full{grid-column:1/-1;}
+.fitem textarea{resize:vertical;min-height:60px;}
+.required-star{color:var(--red);}
+/* STATUS STRIP */
+.sstrip{background:var(--card);border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.07);padding:16px;margin-bottom:18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:sticky;top:42px;z-index:40;}
+.pw{flex:1;min-width:180px;}
+.pl{font-size:.75rem;font-weight:700;color:var(--mut);margin-bottom:5px;display:flex;justify-content:space-between;}
+.pb{height:9px;background:#e2e8f0;border-radius:10px;overflow:hidden;}
+.pf{height:100%;background:linear-gradient(90deg,var(--acc),var(--grn));border-radius:10px;transition:width .4s;}
+.verdict{padding:9px 20px;border-radius:30px;font-weight:800;font-size:.9rem;letter-spacing:.8px;text-align:center;min-width:130px;}
+.go{background:linear-gradient(135deg,var(--grn),#10b981);color:#fff;box-shadow:0 4px 12px rgba(5,150,105,.4);}
+.nogo{background:linear-gradient(135deg,var(--red),#ef4444);color:#fff;box-shadow:0 4px 12px rgba(220,38,38,.3);}
+.partial{background:linear-gradient(135deg,var(--ora),#f59e0b);color:#fff;box-shadow:0 4px 12px rgba(217,119,6,.3);}
+/* CHECKLIST ITEMS */
+.clgrid{display:flex;flex-direction:column;gap:9px;}
+.ci{display:flex;align-items:flex-start;gap:12px;padding:11px 13px;border-radius:10px;border:1.5px solid var(--bdr);cursor:pointer;transition:all .2s;background:#fafbff;}
+.ci:hover{border-color:var(--acc);background:#f0f9ff;}
+.ci.checked{border-color:var(--grn);background:#f0fdf4;}
+.ci.critical{border-left:4px solid var(--red);}
+.ci.critical.checked{border-color:var(--grn);border-left-color:var(--grn);}
+.ci.na{opacity:.5;background:#f8f8f8;}
+.cbox{width:22px;height:22px;border-radius:6px;border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .2s;}
+.ci.checked .cbox{background:var(--grn);border-color:var(--grn);}
+.ctick{color:#fff;font-size:13px;font-weight:900;display:none;}
+.ci.checked .ctick{display:block;}
+.cc{flex:1;}
+.clbl{font-size:.9rem;font-weight:700;color:var(--txt);}
+.cdesc{font-size:.76rem;color:var(--mut);margin-top:2px;line-height:1.4;}
+.ctag{font-size:.62rem;font-weight:800;color:#fff;background:var(--red);padding:1px 6px;border-radius:8px;margin-left:6px;vertical-align:middle;text-transform:uppercase;}
+.ctag-n{background:var(--ora)!important;}
+/* STATUS SELECTOR per item */
+.item-status-row{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;}
+.ist-btn{font-size:.68rem;padding:3px 9px;border-radius:8px;border:1.5px solid var(--bdr);background:#fff;cursor:pointer;font-weight:700;transition:all .15s;color:var(--mut);}
+.ist-btn:hover{border-color:var(--acc);}
+.ist-btn.sel-ok{background:var(--grn);border-color:var(--grn);color:#fff;}
+.ist-btn.sel-na{background:#94a3b8;border-color:#94a3b8;color:#fff;}
+.ist-btn.sel-pend{background:var(--ora);border-color:var(--ora);color:#fff;}
+/* TOCI CALCULATOR */
+.toci-calc{background:linear-gradient(90deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;border-radius:10px;padding:12px 14px;margin-top:10px;}
+.toci-calc h4{font-size:.8rem;font-weight:800;color:#166534;margin-bottom:8px;}
+.toci-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.toci-row label{font-size:.75rem;color:#166534;font-weight:600;}
+.toci-row input{width:80px;padding:5px 8px;border:1.5px solid #86efac;border-radius:6px;font-size:.85rem;}
+.toci-result{background:#fff;border-radius:8px;padding:8px 12px;font-size:.82rem;color:#166534;font-weight:700;margin-top:8px;border:1px solid #86efac;}
+/* MISSING */
+.mbox{background:#fff7ed;border:1.5px solid #fdba74;border-radius:10px;padding:12px 16px;margin-top:12px;}
+.mbox h4{font-size:.82rem;color:#9a3412;font-weight:700;margin-bottom:6px;}
+.mlist{list-style:none;}
+.mlist li{font-size:.79rem;color:#c2410c;padding:3px 0;display:flex;align-items:center;gap:5px;}
+.mlist li::before{content:'⚠';}
+/* LAB TABLE */
+.lab-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.lab-item{background:#fafbff;border:1.5px solid var(--bdr);border-radius:8px;padding:10px 12px;}
+.lab-item label{font-size:.7rem;font-weight:700;color:var(--mut);display:block;margin-bottom:4px;text-transform:uppercase;}
+.lab-item input{width:100%;border:none;background:transparent;font-size:.88rem;font-weight:700;color:var(--txt);}
+.lab-item input:focus{outline:none;}
+.lab-item .ref{font-size:.68rem;color:var(--mut);margin-top:2px;}
+/* NEURO */
+.neuro-box{background:#faf5ff;border:1.5px solid #c4b5fd;border-radius:10px;padding:14px;margin-top:12px;}
+.neuro-box h4{font-size:.82rem;font-weight:800;color:var(--pur);margin-bottom:10px;}
+.ice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.ice-item{background:#fff;border:1.5px solid #c4b5fd;border-radius:8px;padding:8px 10px;text-align:center;}
+.ice-item label{font-size:.68rem;color:var(--pur);font-weight:700;display:block;margin-bottom:4px;}
+.ice-item input,.ice-item select{width:100%;text-align:center;border:none;background:transparent;font-size:.9rem;font-weight:800;color:var(--pur);}
+.ice-total{background:var(--pur);color:#fff;border-radius:8px;padding:8px 12px;text-align:center;font-size:.88rem;font-weight:800;margin-top:8px;}
+/* ACTIONS */
+.arow{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px;}
+.btn{display:flex;align-items:center;gap:7px;padding:10px 18px;border:none;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-p{background:linear-gradient(135deg,var(--p),#1e4d8c);color:#fff;}
+.btn-pu{background:linear-gradient(135deg,var(--pur),#6d28d9);color:#fff;}
+.btn-g{background:linear-gradient(135deg,var(--grn),#10b981);color:#fff;}
+.btn-r{background:#f1f5f9;color:var(--mut);border:1.5px solid var(--bdr);}
+.btn:hover{opacity:.9;transform:translateY(-1px);}
+.btn-r:hover{background:#e2e8f0;transform:none;}
+/* OVERLAY */
+#ovl{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1000;align-items:center;justify-content:center;}
+#ovl.active{display:flex;}
+.modal{background:#fff;border-radius:16px;padding:28px;max-width:740px;width:95%;max-height:90vh;overflow-y:auto;position:relative;}
+.modal h2{font-size:1.1rem;color:var(--p);font-weight:800;margin-bottom:3px;}
+.modal .sub{font-size:.75rem;color:var(--mut);margin-bottom:18px;}
+.close-btn{position:absolute;top:14px;right:14px;background:#f1f5f9;border:none;border-radius:8px;padding:5px 12px;cursor:pointer;font-size:.82rem;font-weight:700;color:var(--mut);}
+.phdr{background:linear-gradient(90deg,var(--p),var(--pur));color:#fff;padding:12px 16px;border-radius:10px;margin-bottom:14px;}
+.phdr h3{font-size:.95rem;font-weight:800;}
+.phdr p{font-size:.73rem;opacity:.85;}
+.psec{margin-bottom:14px;}
+.psec h4{font-size:.85rem;font-weight:800;color:var(--p);border-bottom:2px solid var(--lgt);padding-bottom:3px;margin-bottom:7px;}
+.pr{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #e2e8f0;font-size:.8rem;}
+.pr .lb{color:var(--mut);font-weight:600;}
+.pr .vl{font-weight:700;}
+.pckrow{display:flex;align-items:center;gap:7px;padding:4px 0;font-size:.8rem;}
+.htbl{width:100%;border-collapse:collapse;font-size:.79rem;}
+.htbl th{background:var(--p);color:#fff;padding:6px 8px;text-align:left;}
+.htbl td{padding:5px 8px;border-bottom:1px solid #e2e8f0;}
+.htbl tr:nth-child(even) td{background:#f8faff;}
+.chip{display:inline-block;padding:2px 8px;border-radius:8px;font-size:.68rem;font-weight:800;}
+.c-ok{background:#dcfce7;color:#166534;}
+.c-no{background:#fee2e2;color:#991b1b;}
+.c-nd{background:#fef3c7;color:#92400e;}
+.c-na{background:#f1f5f9;color:#64748b;}
+.m-actions{display:flex;gap:8px;margin-top:16px;}
+.btn-pg{background:var(--p);color:#fff;padding:9px 18px;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:.85rem;}
+/* AUTOSAVE */
+.save-bar{display:flex;align-items:center;gap:8px;padding:8px 14px;background:#f0fdf4;border-radius:8px;margin-bottom:14px;font-size:.76rem;color:var(--grn);}
+/* FOOTER */
+.footer{text-align:center;color:var(--mut);font-size:.72rem;padding:16px 0 30px;}
+/* RESPONSIVE */
+@media(max-width:600px){
+  .fg,.fg.g3,.lab-grid,.ice-grid{grid-template-columns:1fr;}
+  .arow{flex-direction:column;}
+  .sstrip{flex-direction:column;}
+  .hdr{flex-direction:column;gap:10px;text-align:center;}
+  .hdr-right{align-items:center;}
+  .toci-row{flex-direction:column;align-items:flex-start;}
+}
+@media print{
+  body *{visibility:hidden;}
+  #ovl,#ovl *{visibility:visible;}
+  #ovl{position:absolute;top:0;left:0;background:#fff;}
+  .close-btn,.m-actions{display:none!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="brand">
+    <div class="bicon">dA</div>
+    <div class="btxt">
+      <h1>drAisyi EduCare</h1>
+      <p>Clinical Decision Support · Pediatric Oncology</p>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="badge">🧬 CAR-T Infusion Day GO/NO-GO</div>
+    <div class="ver">v2.0 · 2025</div>
+  </div>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <div class="tab active" data-tab="t-patient">🪪 Identitas & Produk</div>
+  <div class="tab" data-tab="t-release">📄 Release & CoI/CoC</div>
+  <div class="tab" data-tab="t-clearance">🩺 Medical Clearance</div>
+  <div class="tab" data-tab="t-thaw">❄️ Thawing & Handling</div>
+  <div class="tab" data-tab="t-safety">🚨 Safety Readiness</div>
+  <div class="tab" data-tab="t-lab">🔬 Lab Hari-H</div>
+  <div class="tab" data-tab="t-neuro">🧠 Neuro Baseline</div>
+  <div class="tab" data-tab="t-post">📅 Post-Infusion Plan</div>
+</div>
+
+<!-- STATUS STRIP (sticky) -->
+<div class="sstrip" id="sstrip">
+  <div class="pw">
+    <div class="pl"><span>Progress Checklist</span><span id="ptxt">0 / 0 item</span></div>
+    <div class="pb"><div class="pf" id="pfill" style="width:0%"></div></div>
+  </div>
+  <div class="verdict partial" id="vbox">⏳ BELUM LENGKAP</div>
+</div>
+
+<div class="con">
+
+<!-- TAB 1: PATIENT + PRODUCT -->
+<div class="tab-content active" id="t-patient">
+  <div class="warn">
+    <div class="ic">⚠️</div>
+    <p><strong>PERHATIAN – Keselamatan Pasien</strong>
+    Seluruh item berlabel CRITICAL wajib terpenuhi sebelum infus dapat dimulai. Tool ini bersifat edukatif dan tidak menggantikan penilaian klinis atau kebijakan institusi.</p>
+  </div>
+  <div class="sc">
+    <div class="sh"><span class="si">🪪</span><h2>Identitas Pasien</h2><span class="sb">WAJIB DIISI</span></div>
+    <div class="body">
+      <div class="fg">
+        <div class="fitem"><label>Nama Pasien <span class="required-star">*</span></label><input type="text" id="pt-name" placeholder="Nama lengkap"></div>
+        <div class="fitem"><label>No. Rekam Medis <span class="required-star">*</span></label><input type="text" id="pt-mrn" placeholder="No. RM"></div>
+        <div class="fitem"><label>Tanggal Lahir <span class="required-star">*</span></label><input type="date" id="pt-dob"></div>
+        <div class="fitem"><label>Berat Badan (kg) <span class="required-star">*</span></label><input type="number" id="pt-bb" placeholder="kg" step="0.1"></div>
+        <div class="fitem"><label>Diagnosis <span class="required-star">*</span></label><input type="text" id="pt-dx" placeholder="mis. B-ALL r/r"></div>
+        <div class="fitem"><label>Tanggal Infus <span class="required-star">*</span></label><input type="date" id="pt-date"></div>
+        <div class="fitem"><label>DPJP <span class="required-star">*</span></label><input type="text" id="pt-dpjp" placeholder="Dokter penanggung jawab"></div>
+        <div class="fitem"><label>Perawat Pelaksana</label><input type="text" id="pt-nurse" placeholder="Nama perawat hari-H"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sc">
+    <div class="sh"><span class="si">🧬</span><h2>Identifikasi Produk CAR-T</h2><span class="sb">WAJIB DIISI</span></div>
+    <div class="body">
+      <div class="fg">
+        <div class="fitem"><label>Produk CAR-T <span class="required-star">*</span></label>
+          <select id="pt-product">
+            <option value="">-- Pilih Produk --</option>
+            <option>Tisagenlecleucel (Kymriah)</option>
+            <option>Axicabtagene ciloleucel (Yescarta)</option>
+            <option>Lisocabtagene maraleucel (Breyanzi)</option>
+            <option>Brexucabtagene autoleucel (Tecartus)</option>
+            <option>Ciltacabtagene autoleucel (Carvykti)</option>
+            <option>Idecabtagene vicleucel (Abecma)</option>
+            <option>Lainnya</option>
+          </select>
+        </div>
+        <div class="fitem"><label>Lot / Batch Number <span class="required-star">*</span></label><input type="text" id="pt-lot" placeholder="Lot/batch number"></div>
+        <div class="fitem"><label>DIN / Aph ID / Product ID</label><input type="text" id="pt-din" placeholder="DIN atau Aph ID"></div>
+        <div class="fitem"><label>Jumlah Bag <span class="required-star">*</span></label><input type="number" id="pt-bags" placeholder="Jumlah bag" min="1"></div>
+        <div class="fitem"><label>Volume Produk (mL)</label><input type="text" id="pt-vol" placeholder="Total volume mL"></div>
+        <div class="fitem"><label>Expiry Date / Time <span class="required-star">*</span></label><input type="datetime-local" id="pt-exp"></div>
+        <div class="fitem"><label>Dose / Cell Count</label><input type="text" id="pt-cell" placeholder="mis. 0.6–6×10⁶ CAR+ T cells/kg"></div>
+        <div class="fitem"><label>Lokasi Produk Saat Ini</label><input type="text" id="pt-loc" placeholder="mis. Lab Cell Processing"></div>
+      </div>
+
+      <!-- TOCI CALCULATOR -->
+      <div class="toci-calc" style="margin-top:14px;">
+        <h4>🧮 Kalkulator Dosis Tocilizumab</h4>
+        <div class="toci-row">
+          <label>BB Pasien (kg):</label>
+          <input type="number" id="toci-bb" placeholder="kg" step="0.1">
+          <label>Jumlah Dosis Tersedia:</label>
+          <input type="number" id="toci-dose" placeholder="mis. 2" min="1">
+          <label>Lokasi Obat:</label>
+          <input type="text" id="toci-loc" placeholder="mis. Farmasi Lt.2" style="width:160px;">
+        </div>
+        <div class="toci-result" id="toci-result">Masukkan berat badan untuk menghitung dosis tocilizumab.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 2: RELEASE + CoI/CoC -->
+<div class="tab-content" id="t-release">
+  <div class="sc">
+    <div class="sh"><span class="si">📄</span><h2>Product Release & Dokumentasi</h2><span class="sb sb-red">SEMUA CRITICAL</span></div>
+    <div class="body"><div class="clgrid" id="cl-release"></div></div>
+  </div>
+</div>
+
+<!-- TAB 3: MEDICAL CLEARANCE -->
+<div class="tab-content" id="t-clearance">
+  <div class="sc">
+    <div class="sh"><span class="si">🩺</span><h2>Final Medical Clearance</h2><span class="sb sb-red">SEMUA CRITICAL</span></div>
+    <div class="body"><div class="clgrid" id="cl-clearance"></div></div>
+  </div>
+</div>
+
+<!-- TAB 4: THAWING & HANDLING -->
+<div class="tab-content" id="t-thaw">
+  <div class="sc">
+    <div class="sh"><span class="si">❄️</span><h2>Product Thawing & Handling</h2><span class="sb sb-red">SEMUA CRITICAL</span></div>
+    <div class="body">
+      <div class="fg" style="margin-bottom:14px;">
+        <div class="fitem"><label>Waktu Keluar Cryostorage</label><input type="time" id="thaw-out"></div>
+        <div class="fitem"><label>Waktu Mulai Thawing</label><input type="time" id="thaw-start"></div>
+        <div class="fitem"><label>Waktu Selesai Thawing</label><input type="time" id="thaw-end"></div>
+        <div class="fitem"><label>Batas Infus Setelah Thawing</label><input type="text" id="thaw-limit" placeholder="mis. dalam 30 mnt (sesuai SOP)"></div>
+        <div class="fitem"><label>Petugas Thawing</label><input type="text" id="thaw-who" placeholder="Nama petugas"></div>
+        <div class="fitem"><label>Petugas Pengiriman ke Ruangan</label><input type="text" id="thaw-deliver" placeholder="Nama petugas"></div>
+      </div>
+      <div class="clgrid" id="cl-thaw"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 5: SAFETY READINESS -->
+<div class="tab-content" id="t-safety">
+  <div class="sc">
+    <div class="sh"><span class="si">🚨</span><h2>Safety & Emergency Readiness</h2><span class="sb sb-red">CRITICAL</span></div>
+    <div class="body"><div class="clgrid" id="cl-safety"></div></div>
+  </div>
+  <div class="sc">
+    <div class="sh"><span class="si">💉</span><h2>Premedikasi</h2><span class="sb">CHECKLIST</span></div>
+    <div class="body"><div class="clgrid" id="cl-premed"></div></div>
+  </div>
+  <div class="sc">
+    <div class="sh"><span class="si">🔗</span><h2>Akses Vena & Vital Sign</h2><span class="sb sb-red">CRITICAL</span></div>
+    <div class="body">
+      <div class="fg" style="margin-bottom:12px;">
+        <div class="fitem"><label>TD Baseline (mmHg)</label><input type="text" id="vs-td" placeholder="mis. 110/70"></div>
+        <div class="fitem"><label>Nadi (x/mnt)</label><input type="number" id="vs-hr" placeholder="mis. 88"></div>
+        <div class="fitem"><label>Suhu (°C)</label><input type="number" id="vs-t" placeholder="mis. 36.8" step="0.1"></div>
+        <div class="fitem"><label>RR (x/mnt)</label><input type="number" id="vs-rr" placeholder="mis. 20"></div>
+        <div class="fitem"><label>SpO₂ (%)</label><input type="number" id="vs-spo2" placeholder="mis. 98"></div>
+        <div class="fitem"><label>Jam Pengukuran</label><input type="time" id="vs-time"></div>
+      </div>
+      <div class="clgrid" id="cl-access"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 6: LAB HARI-H -->
+<div class="tab-content" id="t-lab">
+  <div class="sc">
+    <div class="sh"><span class="si">🔬</span><h2>Laboratorium Hari-H</h2><span class="sb">INPUT NILAI</span></div>
+    <div class="body">
+      <p style="font-size:.78rem;color:var(--mut);margin-bottom:12px;">Masukkan nilai lab terbaru. Isikan N/A bila tidak diambil hari ini sesuai protokol.</p>
+      <div class="lab-grid">
+        <div class="lab-item"><label>Hemoglobin (g/dL)</label><input id="l-hb" placeholder="–"><div class="ref">Ref: ~7–14 g/dL (usia)</div></div>
+        <div class="lab-item"><label>Leukosit (/µL)</label><input id="l-wbc" placeholder="–"></div>
+        <div class="lab-item"><label>Trombosit (/µL)</label><input id="l-plt" placeholder="–"><div class="ref">Perhatikan bila &lt;50.000</div></div>
+        <div class="lab-item"><label>ANC (/µL)</label><input id="l-anc" placeholder="–"></div>
+        <div class="lab-item"><label>Natrium (mEq/L)</label><input id="l-na" placeholder="–"><div class="ref">Normal: 136–145</div></div>
+        <div class="lab-item"><label>Kalium (mEq/L)</label><input id="l-k" placeholder="–"><div class="ref">Normal: 3.5–5.0</div></div>
+        <div class="lab-item"><label>Kreatinin (mg/dL)</label><input id="l-cr" placeholder="–"></div>
+        <div class="lab-item"><label>Ureum / BUN (mg/dL)</label><input id="l-ur" placeholder="–"></div>
+        <div class="lab-item"><label>AST (U/L)</label><input id="l-ast" placeholder="–"><div class="ref">Normal &lt;40 U/L</div></div>
+        <div class="lab-item"><label>ALT (U/L)</label><input id="l-alt" placeholder="–"><div class="ref">Normal &lt;40 U/L</div></div>
+        <div class="lab-item"><label>Bilirubin Total (mg/dL)</label><input id="l-bil" placeholder="–"></div>
+        <div class="lab-item"><label>CRP (mg/L)</label><input id="l-crp" placeholder="–"></div>
+        <div class="lab-item"><label>Ferritin (ng/mL)</label><input id="l-fer" placeholder="–"></div>
+        <div class="lab-item"><label>Fibrinogen (mg/dL)</label><input id="l-fib" placeholder="–"><div class="ref">Bila protokol mensyaratkan</div></div>
+        <div class="lab-item"><label>CMV Status</label><input id="l-cmv" placeholder="–"></div>
+        <div class="lab-item"><label>Pregnancy Test</label><input id="l-preg" placeholder="N/A bila tidak berlaku"></div>
+      </div>
+      <div class="fitem" style="margin-top:12px;"><label>Catatan Lab</label><textarea id="l-note" placeholder="Catatan abnormalitas atau komentar klinis"></textarea></div>
+      <div class="clgrid" style="margin-top:12px;" id="cl-lab"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 7: NEURO BASELINE -->
+<div class="tab-content" id="t-neuro">
+  <div class="sc">
+    <div class="sh"><span class="si">🧠</span><h2>Baseline Neurologis Pre-Infus</h2><span class="sb sb-red">CRITICAL</span></div>
+    <div class="body">
+      <div class="neuro-box">
+        <h4>ICE Score (≥12 tahun atau sesuai kemampuan perkembangan)</h4>
+        <div class="ice-grid">
+          <div class="ice-item"><label>Orientasi (0–4)</label><select id="ice-ori"><option>4</option><option>3</option><option>2</option><option>1</option><option>0</option></select><div style="font-size:.65rem;color:var(--mut);">Tahun/bulan/kota/RS</div></div>
+          <div class="ice-item"><label>Penamaan (0–3)</label><select id="ice-name"><option>3</option><option>2</option><option>1</option><option>0</option></select><div style="font-size:.65rem;color:var(--mut);">3 benda</div></div>
+          <div class="ice-item"><label>Perintah (0–1)</label><select id="ice-cmd"><option>1</option><option>0</option></select><div style="font-size:.65rem;color:var(--mut);">Genggam/lepas</div></div>
+          <div class="ice-item"><label>Menulis (0–1)</label><select id="ice-write"><option>1</option><option>0</option></select><div style="font-size:.65rem;color:var(--mut);">Standar kalimat</div></div>
+          <div class="ice-item"><label>Hitung (0–1)</label><select id="ice-count"><option>1</option><option>0</option></select><div style="font-size:.65rem;color:var(--mut);">Mundur dari 100 (×10)</div></div>
+        </div>
+        <div class="ice-total" id="ice-total">ICE Total: 10/10</div>
+      </div>
+
+      <div class="neuro-box" style="background:#fff7ff;border-color:#d8b4fe;margin-top:12px;">
+        <h4>CAPD Score (&lt;12 tahun atau tidak mampu ICE)</h4>
+        <div class="fg">
+          <div class="fitem"><label>Skor CAPD</label><input type="number" id="capd-score" placeholder="0–9" min="0" max="9"></div>
+          <div class="fitem"><label>Interpretasi</label><input type="text" id="capd-interp" placeholder="mis. Normal / Abnormal (≥9)"></div>
+        </div>
+        <div style="font-size:.74rem;color:#7e22ce;margin-top:6px;">CAPD ≥9 = kemungkinan delirium. Baseline penting untuk perbandingan pasca-infus.</div>
+      </div>
+
+      <div class="fg" style="margin-top:14px;">
+        <div class="fitem"><label>Tingkat Kesadaran</label>
+          <select id="neuro-loc"><option>Sadar penuh / Alert</option><option>Somnolen</option><option>Delirium</option><option>Obtunded</option><option>Koma</option></select>
+        </div>
+        <div class="fitem"><label>Status Bicara / Bahasa</label><input type="text" id="neuro-speech" placeholder="mis. Normal / Afasia ekspresif"></div>
+        <div class="fitem"><label>Temuan Motorik</label><input type="text" id="neuro-motor" placeholder="mis. Tidak ada defisit"></div>
+        <div class="fitem"><label>Riwayat Kejang</label>
+          <select id="neuro-sz"><option value="Tidak">Tidak ada</option><option value="Ada – terkontrol">Ada – terkontrol</option><option value="Ada – tidak terkontrol">Ada – tidak terkontrol</option></select>
+        </div>
+        <div class="fitem"><label>Plan Antikonvulsan</label><input type="text" id="neuro-aed" placeholder="mis. Sudah ada order / tidak ada"></div>
+        <div class="fitem"><label>Penilai Neurologi</label><input type="text" id="neuro-who" placeholder="Nama dokter penilai"></div>
+      </div>
+      <div class="clgrid" style="margin-top:12px;" id="cl-neuro"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 8: POST-INFUSION PLAN -->
+<div class="tab-content" id="t-post">
+  <div class="sc">
+    <div class="sh"><span class="si">📅</span><h2>Rencana Monitoring Pasca-Infus</h2><span class="sb">CHECKLIST</span></div>
+    <div class="body">
+      <div class="fg" style="margin-bottom:14px;">
+        <div class="fitem"><label>Frekuensi Vital Sign 0–24 jam</label>
+          <select id="post-vs"><option>Setiap 15 menit saat infus</option><option>q30 menit</option><option>q1 jam</option><option>Sesuai instruksi DPJP</option></select>
+        </div>
+        <div class="fitem"><label>Frekuensi Neuro Check</label>
+          <select id="post-nc"><option>q4 jam hari 1</option><option>q8 jam hari 2–7</option><option>Sesuai instruksi DPJP</option></select>
+        </div>
+        <div class="fitem"><label>Rawat Inap / Rawat Jalan</label>
+          <select id="post-admit"><option>Rawat inap (direkomendasikan)</option><option>Rawat jalan ketat (sesuai protokol)</option></select>
+        </div>
+        <div class="fitem"><label>Durasi Observasi Pasca-Infus</label><input type="text" id="post-dur" placeholder="mis. 4 minggu sesuai protokol produk"></div>
+        <div class="fitem"><label>Jarak Pasien dari Fasilitas</label><input type="text" id="post-dist" placeholder="mis. &lt;1 jam perjalanan"></div>
+        <div class="fitem"><label>Kontak Emergency</label><input type="text" id="post-tel" placeholder="No. telp unit/DPJP"></div>
+      </div>
+      <div class="clgrid" id="cl-post"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MISSING -->
+<div class="mbox" id="mbox" style="display:none"><h4>⚠️ Item Belum Terpenuhi:</h4><ul class="mlist" id="mlist"></ul></div>
+
+<!-- ACTIONS -->
+<div class="arow">
+  <button class="btn btn-p" id="btn-ck">🖨️ Cetak Infusion Checklist</button>
+  <button class="btn btn-pu" id="btn-hw">📋 Cetak Handover Perawat</button>
+  <button class="btn btn-g" id="btn-save">💾 Simpan Data</button>
+  <button class="btn btn-r" id="btn-reset">🔄 Reset Semua</button>
+</div>
+
+<div class="save-bar" id="savebar" style="display:none">💾 Data tersimpan: <span id="savetime"></span> &nbsp;|&nbsp; <a href="#" id="clearsave" style="color:var(--red);text-decoration:none;font-weight:700;">Hapus Simpanan</a></div>
+
+</div><!-- /con -->
+
+<!-- PRINT OVERLAY -->
+<div id="ovl">
+  <div class="modal">
+    <button class="close-btn" id="close-ovl">✕ Tutup</button>
+    <div id="modal-content"></div>
+    <div class="m-actions"><button class="btn-pg" onclick="window.print()">🖨️ Print / Save PDF</button></div>
+  </div>
+</div>
+
+<div class="footer">drAisyi EduCare · CAR-T Infusion Day GO/NO-GO Checklist v2.0 · For Educational & Clinical Safety Use Only</div>
+
+<script>
+// ── ESCAPE ──────────────────────────────────────────────────────────────────
+function esc(s){return String(s||'').replace(/[&<>"']/g,function(m){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]);});}
+
+// ── CHECKLIST DATA ───────────────────────────────────────────────────────────
+var SECTIONS = {
+  release:[
+    {id:'coa', label:'Certificate of Analysis / Certificate of Release Tersedia', desc:'Dokumen CoA/CoR asli dari produsen tersedia dan telah diverifikasi oleh farmasi atau cell processing.', critical:true},
+    {id:'expiry', label:'Produk Dalam Batas Expiry', desc:'Tanggal dan waktu expiry produk sudah dicek; produk masih dalam batas valid saat infus akan berlangsung.', critical:true},
+    {id:'bagcount', label:'Jumlah Bag Sesuai Dokumen', desc:'Jumlah bag yang diterima cocok dengan dokumen release dan work order.', critical:true},
+    {id:'cellcount', label:'Dose / Cell Count Sesuai Release Document', desc:'Jumlah sel CAR+ atau dosis sesuai spesifikasi release. Status in-specification terkonfirmasi.', critical:true},
+    {id:'productid', label:'Product ID / DIN / Aph ID Cocok', desc:'Product identifier pada produk fisik cocok dengan dokumen CoA dan rekam medis pasien.', critical:true},
+    {id:'lotmatch', label:'Lot / Batch Number Cocok', desc:'Lot/batch number pada label produk dicocokkan dengan dokumen release dan form administrasi.', critical:true},
+    {id:'volmatch', label:'Volume Produk Sesuai Dokumentasi', desc:'Volume tercantum pada label sesuai dengan dokumen release; tidak ada kebocoran atau kejanggalan fisik.', critical:true},
+    {id:'coi', label:'Chain of Identity (CoI) Lengkap', desc:'Rantai identitas dari apheresis hingga produk akhir terdokumentasi penuh, termasuk apheresis ID, proses manufaktur, dan nomor lot.', critical:true},
+    {id:'coc', label:'Chain of Custody (CoC) Lengkap', desc:'Dokumen penyimpanan, suhu sepanjang perjalanan, dan setiap perpindahan tangan produk tersedia dan lengkap.', critical:true},
+    {id:'ooscheck', label:'Status In-Specification / Out-of-Specification Jelas', desc:'Bila ada deviasi OOS, dokumentasi persetujuan release khusus dari DPJP tersedia sebelum infus dimulai.', critical:true}
+  ],
+  clearance:[
+    {id:'lymphodep', label:'Lymphodepletion Selesai Sesuai Jadwal', desc:'Regimen lymphodepletion telah selesai dan interval LD-ke-infus sesuai protokol produk (umumnya Day 0 = hari ke-2 atau ke-3 setelah LD).', critical:true},
+    {id:'nofever', label:'Tidak Ada Demam Tidak Terjelaskan', desc:'Suhu pasien dalam 24 jam terakhir tidak menunjukkan demam tanpa sebab yang jelas. Infeksi aktif baru harus dievaluasi sebelum infus.', critical:true},
+    {id:'noinfection', label:'Tidak Ada Infeksi Aktif Baru', desc:'Tidak ada tanda infeksi aktif (klinis, lab, atau kultur) yang belum tertangani sejak lymphodepletion.', critical:true},
+    {id:'labhday', label:'Lab & Kondisi Klinis Hari-H Telah Dievaluasi', desc:'Hasil CBC, elektrolit, fungsi ginjal/hati, CRP, dan ferritin terbaru telah direviewed oleh DPJP hari ini.', critical:true},
+    {id:'fitinfusion', label:'Kondisi Klinis Pasien Fit untuk Infus', desc:'DPJP telah melakukan evaluasi klinis hari-H dan menyatakan pasien layak menerima infus CAR-T hari ini.', critical:true},
+    {id:'finalclear', label:'Final Medical Clearance Diberikan oleh DPJP', desc:'DPJP telah menandatangani atau mendokumentasikan persetujuan klinis final untuk infus CAR-T hari ini.', critical:true},
+    {id:'consent', label:'Informed Consent Lengkap', desc:'Formulir persetujuan tindakan CAR-T, risiko CRS, ICANS, dan prosedur emergensi sudah ditandatangani oleh pasien/wali.', critical:true}
+  ],
+  thaw:[
+    {id:'thawsop', label:'Metode Thawing Sesuai SOP Produk', desc:'Prosedur thawing mengikuti instruksi produsen (mis. water bath 37°C atau metode spesifik). Tidak ada modifikasi tanpa otorisasi.', critical:true},
+    {id:'nofilter', label:'Konfirmasi Penggunaan Filter (Sesuai Produk)', desc:'Telah dikonfirmasi apakah produk memerlukan atau melarang penggunaan filter; prosedur sesuai dengan instruksi produk.', critical:true},
+    {id:'thawtime', label:'Batas Waktu Thawing-ke-Infus Dipatuhi', desc:'Waktu dari selesai thawing hingga mulai infus tidak melebihi batas yang ditetapkan SOP atau instruksi produsen.', critical:true},
+    {id:'noirrad', label:'Tidak Ada Iradiasi / Manipulasi Setelah Thawing', desc:'Produk tidak diiradiasi dan tidak dilakukan manipulasi apapun setelah proses thawing selesai.', critical:true},
+    {id:'tubing', label:'Tubing / Line Compatible dengan Produk', desc:'IV set, tubing, dan line yang digunakan kompatibel dengan produk CAR-T (mis. non-PVC bila diperlukan).', critical:true},
+    {id:'flush', label:'Flush Procedure Sesuai Protokol Produk', desc:'Prosedur flush sebelum dan sesudah infus mengikuti instruksi produsen. Normal saline atau media yang direkomendasikan digunakan.', critical:false},
+    {id:'dmso', label:'Pemantauan Reaksi DMSO Disiapkan', desc:'Tim mengetahui gejala reaksi DMSO (mual, bau bawang putih, bradikardi transien) dan rencana penanganan tersedia.', critical:false}
+  ],
+  safety:[
+    {id:'toci2', label:'Tocilizumab Minimal 2 Dosis Tersedia', desc:'Minimal 2 dosis tocilizumab dihitung berdasarkan BB pasien tersedia dan dapat diakses dalam waktu singkat. 1 dosis saja tidak cukup untuk standar keamanan CAR-T.', critical:true},
+    {id:'steroid', label:'Kortikosteroid Emergensi Tersedia', desc:'Metilprednisolon atau deksametason IV tersedia untuk penanganan CRS Grade ≥2 atau ICANS sesuai protokol.', critical:true},
+    {id:'icu', label:'ICU / PICU Terinformasi & Siap', desc:'Tim ICU/PICU mengetahui rencana infus CAR-T hari ini dan siap menerima rujukan emergensi bila terjadi CRS berat atau ICANS.', critical:true},
+    {id:'emcart', label:'Emergency Cart Tersedia & Lengkap', desc:'Troli emergensi (resusitasi, airway management, defibrillator) telah dicek hari ini dan berada di unit.', critical:true},
+    {id:'o2suction', label:'Oksigen & Suction Tersedia', desc:'Sumber oksigen dan alat suction berfungsi baik dan siap digunakan di samping pasien.', critical:true},
+    {id:'vasopressor', label:'Pathway Vasopressor Jelas', desc:'Protokol pemberian vasopressor untuk hipotensi/syok CRS sudah jelas dan obat dapat diakses segera.', critical:true},
+    {id:'anticonv', label:'Antikonvulsan Rescue Tersedia', desc:'Diazepam IV atau lorazepam tersedia untuk penanganan kejang yang berpotensi terjadi pada ICANS.', critical:true},
+    {id:'algo', label:'Algoritma CRS/ICANS Tercetak di Unit', desc:'Panduan grading dan tatalaksana CRS/ICANS (ASTCT 2019) tersedia tercetak atau dapat diakses oleh seluruh tim di unit.', critical:false}
+  ],
+  premed:[
+    {id:'pcm', label:'Paracetamol / Acetaminophen Diberikan', desc:'Antipiretik non-steroid diberikan 30–60 menit sebelum infus sesuai dosis berat badan.', critical:false},
+    {id:'antihist', label:'Antihistamin H1 Diberikan', desc:'Difenhidramin atau antihistamin H1 lain diberikan 30–60 menit sebelum infus.', critical:false},
+    {id:'premed-time', label:'Jam Pemberian Premedikasi Tercatat', desc:'Waktu pemberian premedikasi terdokumentasi di catatan keperawatan atau rekam medis.', critical:false},
+    {id:'no-steroid', label:'Kortikosteroid Profilaksis Tidak Diberikan', desc:'Kortikosteroid tidak diberikan sebagai profilaksis rutin kecuali ada instruksi khusus dari DPJP tertulis.', critical:true}
+  ],
+  access:[
+    {id:'ivaccess', label:'Akses Vena Adekuat Terkonfirmasi', desc:'Central line atau IV perifer telah dikonfirmasi patensi dan aliran baliknya sebelum infus dimulai.', critical:true},
+    {id:'vs-done', label:'Baseline Vital Sign Tercatat &lt;1 Jam Sebelum Infus', desc:'TD, nadi, suhu, RR, dan SpO₂ sudah diukur dan tercatat dalam 1 jam sebelum jadwal infus.', critical:true}
+  ],
+  lab:[
+    {id:'lab-done', label:'Hasil Lab Hari-H Sudah Tersedia', desc:'CBC, elektrolit, fungsi ginjal/hati, CRP, dan ferritin sudah diperiksa dan hasilnya tersedia hari ini.', critical:true},
+    {id:'lab-reviewed', label:'Hasil Lab Sudah Direviewed oleh DPJP', desc:'DPJP telah mengevaluasi seluruh hasil lab hari-H dan menyatakan tidak ada kontraindikasi laboratoris untuk infus.', critical:true}
+  ],
+  neuro:[
+    {id:'neuro-done', label:'Baseline Neurologis Sudah Dinilai', desc:'Pemeriksaan baseline neurologis (ICE atau CAPD) sudah dilakukan dan skor baseline tercatat hari ini.', critical:true},
+    {id:'neuro-loc', label:'Level of Consciousness Didokumentasikan', desc:'Tingkat kesadaran, orientasi, dan kualitas kontak sudah dinilai dan dicatat sebagai baseline pre-infus.', critical:true},
+    {id:'neuro-focal', label:'Tidak Ada Defisit Neurologis Fokal Baru', desc:'Tidak ada temuan defisit motorik, sensorik, atau berbahasa baru dibandingkan pemeriksaan sebelumnya.', critical:true},
+    {id:'neuro-plan', label:'Plan Antikonvulsan (Bila High-Risk) Terdokumentasi', desc:'Bila pasien tergolong high-risk ICANS, rencana profilaksis atau rescue antikonvulsan sudah terdokumentasi dalam rekam medis.', critical:false}
+  ],
+  post:[
+    {id:'post-admit', label:'Rencana Rawat Inap / Monitoring Terdokumentasi', desc:'Keputusan rawat inap vs rawat jalan ketat dan durasi monitoring pasca-infus sudah terdokumentasi dalam rekam medis.', critical:true},
+    {id:'post-fam', label:'Edukasi Caregiver Diberikan', desc:'Keluarga/caregiver telah mendapat edukasi tentang gejala CRS dan ICANS yang harus segera dilaporkan.', critical:true},
+    {id:'post-card', label:'Kartu Emergensi CAR-T Diberikan ke Pasien / Wali', desc:'Kartu atau lembar informasi emergensi CAR-T (berisi diagnosis, produk, kontak unit) diberikan kepada pasien/wali.', critical:false},
+    {id:'post-dist', label:'Jarak Pasien dari Fasilitas ≤1 Jam (atau Sesuai Protokol)', desc:'Bila rawat jalan, jarak antara tempat tinggal pasien dan fasilitas CAR-T memenuhi persyaratan protokol produk.', critical:false},
+    {id:'post-plan7', label:'Rencana Monitoring Hari 1–7 Terdokumentasi', desc:'Jadwal kontrol, frekuensi cek lab, dan rencana manajemen komplikasi dalam 7 hari pertama sudah tersedia.', critical:true}
+  ]
+};
+
+var itemStatus = {};  // id -> 'ok' | 'na' | 'pend' | null
+
+function initChecklist(sectionId, containerId) {
+  var items = SECTIONS[sectionId];
+  var el = document.getElementById(containerId);
+  if(!el) return;
+  el.innerHTML = '';
+  items.forEach(function(item) {
+    if(!itemStatus[item.id]) itemStatus[item.id] = null;
+    var div = document.createElement('div');
+    div.className = 'ci' + (item.critical?' critical':'');
+    div.id = 'ci-'+item.id;
+    div.innerHTML =
+      '<div class="cbox"><span class="ctick">✓</span></div>'+
+      '<div class="cc">'+
+        '<div class="clbl">'+item.label+(item.critical?'<span class="ctag">CRITICAL</span>':'<span class="ctag ctag-n">INFO</span>')+'</div>'+
+        '<div class="cdesc">'+item.desc+'</div>'+
+        '<div class="item-status-row">'+
+          '<button class="ist-btn" data-id="'+item.id+'" data-st="ok">✓ Selesai</button>'+
+          '<button class="ist-btn" data-id="'+item.id+'" data-st="pend">⏳ Pending</button>'+
+          '<button class="ist-btn" data-id="'+item.id+'" data-st="na">N/A</button>'+
+        '</div>'+
+      '</div>';
+    el.appendChild(div);
+  });
+  el.querySelectorAll('.ist-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var id = btn.dataset.id, st = btn.dataset.st;
+      itemStatus[id] = (itemStatus[id]===st) ? null : st;
+      refreshItem(id);
+      updateStatus();
+    });
+  });
+}
+
+function refreshItem(id) {
+  var st = itemStatus[id];
+  var ci = document.getElementById('ci-'+id);
+  if(!ci) return;
+  ci.classList.toggle('checked', st==='ok');
+  ci.classList.toggle('na', st==='na');
+  ci.querySelectorAll('.ist-btn').forEach(function(b) {
+    b.classList.remove('sel-ok','sel-na','sel-pend');
+    if(b.dataset.st===st) b.classList.add(st==='ok'?'sel-ok':st==='na'?'sel-na':'sel-pend');
+  });
+}
+
+function getAllItems() {
+  var all = [];
+  Object.keys(SECTIONS).forEach(function(k){ SECTIONS[k].forEach(function(i){ all.push(i); }); });
+  return all;
+}
+
+function updateStatus() {
+  var all = getAllItems();
+  var done = 0, critMissing = [];
+  all.forEach(function(item) {
+    var st = itemStatus[item.id];
+    if(st==='ok'||st==='na') done++;
+    else if(item.critical) critMissing.push(item);
+  });
+  var total = all.length;
+  var pct = Math.round(done/total*100);
+  document.getElementById('pfill').style.width = pct+'%';
+  document.getElementById('ptxt').textContent = done+' / '+total+' item';
+
+  var vbox = document.getElementById('vbox');
+  var missing = all.filter(function(i){ return !itemStatus[i.id]||itemStatus[i.id]==='pend'; });
+  if(critMissing.length===0 && missing.length===0){
+    vbox.className='verdict go'; vbox.textContent='✅ GO – INFUS DAPAT DIMULAI';
+  } else if(critMissing.length>0){
+    vbox.className='verdict nogo'; vbox.textContent='🚫 NO-GO – '+critMissing.length+' CRITICAL BELUM TERPENUHI';
+  } else {
+    vbox.className='verdict partial'; vbox.textContent='⏳ '+missing.length+' ITEM TERSISA';
+  }
+
+  var mbox=document.getElementById('mbox'), ml=document.getElementById('mlist');
+  var realMissing = all.filter(function(i){ var s=itemStatus[i.id]; return !s||s==='pend'; });
+  if(realMissing.length>0){
+    mbox.style.display='block'; ml.innerHTML='';
+    realMissing.forEach(function(item){
+      var li=document.createElement('li');
+      li.textContent=item.label+(item.critical?' [CRITICAL]':'');
+      ml.appendChild(li);
+    });
+  } else { mbox.style.display='none'; }
+
+  updateTabBadges();
+}
+
+function updateTabBadges() {
+  var sectionMap = {
+    't-release':['release'],'t-clearance':['clearance'],'t-thaw':['thaw'],
+    't-safety':['safety','premed','access'],'t-lab':['lab'],'t-neuro':['neuro'],'t-post':['post']
+  };
+  Object.keys(sectionMap).forEach(function(tabId) {
+    var keys = sectionMap[tabId];
+    var total=0, done=0;
+    keys.forEach(function(k){
+      SECTIONS[k].forEach(function(i){
+        total++;
+        var st=itemStatus[i.id];
+        if(st==='ok'||st==='na') done++;
+      });
+    });
+    var tab = document.querySelector('[data-tab="'+tabId+'"]');
+    if(!tab) return;
+    var existing = tab.querySelector('.tab-badge');
+    if(existing) existing.remove();
+    var span = document.createElement('span');
+    span.className = 'tab-badge'+(done===total?' ok':'');
+    span.textContent = done+'/'+total;
+    tab.appendChild(span);
+  });
+}
+
+// ── TOCI CALC ─────────────────────────────────────────────────────────────
+function calcToci() {
+  var bb = parseFloat(document.getElementById('toci-bb').value);
+  var doses = parseInt(document.getElementById('toci-dose').value)||0;
+  var loc = document.getElementById('toci-loc').value||'–';
+  var res = document.getElementById('toci-result');
+  if(!bb||bb<=0){ res.textContent='Masukkan berat badan untuk menghitung dosis tocilizumab.'; return; }
+  var dose8 = (bb*8).toFixed(0);
+  var vials4 = Math.ceil(bb*8/80);  // 80mg/4mL vials
+  var vials20 = Math.ceil(bb*8/400); // 400mg/20mL vials
+  res.innerHTML = 'Dosis 8 mg/kg: <strong>'+dose8+' mg</strong> per dosis &nbsp;|&nbsp; '+
+    'Vial 80mg: <strong>'+vials4+' vial/dosis</strong> &nbsp;|&nbsp; Vial 400mg: <strong>'+vials20+' vial/dosis</strong><br>'+
+    'Jumlah dosis tersedia: <strong>'+(doses||'–')+'</strong> '+(doses>=2?'✅ Minimal 2 dosis terpenuhi':'⚠️ Kurang – minimal 2 dosis diperlukan')+
+    ' &nbsp;|&nbsp; Lokasi: <strong>'+esc(loc)+'</strong>';
+}
+document.getElementById('toci-bb').addEventListener('input', calcToci);
+document.getElementById('toci-dose').addEventListener('input', calcToci);
+document.getElementById('toci-loc').addEventListener('input', calcToci);
+
+// ── ICE SCORE ──────────────────────────────────────────────────────────────
+function calcICE() {
+  var fields=['ice-ori','ice-name','ice-cmd','ice-write','ice-count'];
+  var total=0, max=10;
+  fields.forEach(function(f){ total+=parseInt(document.getElementById(f).value)||0; });
+  var grade = total>=7?'Normal (Grade 0)':total>=3?'Grade 1–2':total>=1?'Grade 2–3':'Grade 3–4';
+  document.getElementById('ice-total').textContent='ICE Total: '+total+'/10 → '+grade;
+}
+['ice-ori','ice-name','ice-cmd','ice-write','ice-count'].forEach(function(f){
+  document.getElementById(f).addEventListener('change', calcICE);
+});
+
+// ── TABS ──────────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.tab-content').forEach(function(tc){ tc.classList.remove('active'); });
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ── PATIENT DATA ────────────────────────────────────────────────────────
+function getP() {
+  return {
+    name:esc(document.getElementById('pt-name').value||'–'),
+    mrn:esc(document.getElementById('pt-mrn').value||'–'),
+    dob:esc(document.getElementById('pt-dob').value||'–'),
+    bb:esc(document.getElementById('pt-bb').value||'–'),
+    dx:esc(document.getElementById('pt-dx').value||'–'),
+    product:esc(document.getElementById('pt-product').value||'–'),
+    lot:esc(document.getElementById('pt-lot').value||'–'),
+    din:esc(document.getElementById('pt-din').value||'–'),
+    bags:esc(document.getElementById('pt-bags').value||'–'),
+    vol:esc(document.getElementById('pt-vol').value||'–'),
+    exp:esc(document.getElementById('pt-exp').value||'–'),
+    cell:esc(document.getElementById('pt-cell').value||'–'),
+    date:esc(document.getElementById('pt-date').value||'–'),
+    dpjp:esc(document.getElementById('pt-dpjp').value||'–'),
+    nurse:esc(document.getElementById('pt-nurse').value||'–'),
+    toci_bb:esc(document.getElementById('toci-bb').value||'–'),
+    toci_dose:esc(document.getElementById('toci-dose').value||'–'),
+    toci_loc:esc(document.getElementById('toci-loc').value||'–'),
+    vs_td:esc(document.getElementById('vs-td').value||'–'),
+    vs_hr:esc(document.getElementById('vs-hr').value||'–'),
+    vs_t:esc(document.getElementById('vs-t').value||'–'),
+    vs_rr:esc(document.getElementById('vs-rr').value||'–'),
+    vs_spo2:esc(document.getElementById('vs-spo2').value||'–'),
+    vs_time:esc(document.getElementById('vs-time').value||'–'),
+    ice:esc(document.getElementById('ice-total').textContent||'–'),
+    capd:esc(document.getElementById('capd-score').value||'–'),
+    neuro_loc:esc(document.getElementById('neuro-loc').value||'–'),
+    neuro_speech:esc(document.getElementById('neuro-speech').value||'–'),
+    neuro_sz:esc(document.getElementById('neuro-sz').value||'–'),
+    thaw_out:esc(document.getElementById('thaw-out').value||'–'),
+    thaw_start:esc(document.getElementById('thaw-start').value||'–'),
+    thaw_end:esc(document.getElementById('thaw-end').value||'–'),
+    thaw_who:esc(document.getElementById('thaw-who').value||'–'),
+  };
+}
+
+function validatePrint() {
+  var req = {
+    'Nama Pasien':'pt-name','No. Rekam Medis':'pt-mrn','Tanggal Lahir':'pt-dob',
+    'Berat Badan':'pt-bb','Produk CAR-T':'pt-product','Lot Number':'pt-lot',
+    'Tanggal Infus':'pt-date','DPJP':'pt-dpjp'
+  };
+  var missing=[];
+  Object.keys(req).forEach(function(label){
+    var el=document.getElementById(req[label]);
+    if(!el||!el.value.trim()) missing.push(label);
+  });
+  return missing;
+}
+
+function verdictText() {
+  var all=getAllItems(), done=0, critMissing=0;
+  all.forEach(function(i){ var s=itemStatus[i.id]; if(s==='ok'||s==='na') done++; else if(i.critical) critMissing++; });
+  if(critMissing===0 && done===all.length) return '✅ GO – INFUS DAPAT DIMULAI';
+  if(critMissing>0) return '🚫 NO-GO – '+critMissing+' CRITICAL ITEM BELUM TERPENUHI';
+  return '⏳ HAMPIR LENGKAP';
+}
+
+function statusChip(st) {
+  if(st==='ok') return '<span class="chip c-ok">✓ Selesai</span>';
+  if(st==='na') return '<span class="chip c-na">N/A</span>';
+  if(st==='pend') return '<span class="chip c-nd">⏳ Pending</span>';
+  return '<span class="chip c-no">✗ Belum</span>';
+}
+
+// ── PRINT CHECKLIST ──────────────────────────────────────────────────────
+function showPrintChecklist() {
+  var missing = validatePrint();
+  if(missing.length>0){ alert('Data pasien belum lengkap. Harap isi: '+missing.join(', ')); return; }
+  var p=getP();
+  var all=getAllItems();
+  var rows = all.map(function(item){
+    var s=itemStatus[item.id]||null;
+    var tick=s==='ok'?'✅':s==='na'?'☐(N/A)':s==='pend'?'⏳':'☐';
+    return '<div class="pckrow"><span>'+tick+'</span><span>'+item.label+(item.critical?' <strong style="color:#dc2626">[C]</strong>':'')+'</span></div>';
+  }).join('');
+  var missing2=all.filter(function(i){var s=itemStatus[i.id];return !s||s==='pend';});
+  var mrows=missing2.length===0?'<p style="color:#059669;font-weight:700">Semua item terpenuhi / N/A.</p>':
+    missing2.map(function(i){return '<div class="pckrow"><span>⚠️</span><span>'+i.label+(i.critical?' [CRITICAL]':'')+'</span></div>';}).join('');
+
+  document.getElementById('modal-content').innerHTML =
+    '<h2>🧬 CAR-T Infusion Day Checklist</h2><p class="sub">drAisyi EduCare · v2.0 · For Educational & Clinical Safety Use Only</p>'+
+    '<div class="phdr"><h3>Infusion Day GO/NO-GO Checklist</h3><p>'+verdictText()+' &nbsp;|&nbsp; Dicetak: '+new Date().toLocaleString('id-ID')+'</p></div>'+
+    '<div class="psec"><h4>Data Pasien & Produk</h4>'+
+      '<div class="pr"><span class="lb">Nama</span><span class="vl">'+p.name+'</span></div>'+
+      '<div class="pr"><span class="lb">No. RM</span><span class="vl">'+p.mrn+'</span></div>'+
+      '<div class="pr"><span class="lb">Tgl Lahir</span><span class="vl">'+p.dob+'</span></div>'+
+      '<div class="pr"><span class="lb">BB</span><span class="vl">'+p.bb+' kg</span></div>'+
+      '<div class="pr"><span class="lb">Diagnosis</span><span class="vl">'+p.dx+'</span></div>'+
+      '<div class="pr"><span class="lb">Produk CAR-T</span><span class="vl">'+p.product+'</span></div>'+
+      '<div class="pr"><span class="lb">Lot Number</span><span class="vl">'+p.lot+'</span></div>'+
+      '<div class="pr"><span class="lb">DIN / Aph ID</span><span class="vl">'+p.din+'</span></div>'+
+      '<div class="pr"><span class="lb">Jumlah Bag</span><span class="vl">'+p.bags+'</span></div>'+
+      '<div class="pr"><span class="lb">Expiry</span><span class="vl">'+p.exp+'</span></div>'+
+      '<div class="pr"><span class="lb">Tanggal Infus</span><span class="vl">'+p.date+'</span></div>'+
+      '<div class="pr"><span class="lb">DPJP</span><span class="vl">'+p.dpjp+'</span></div>'+
+    '</div>'+
+    '<div class="psec"><h4>Vital Sign Baseline</h4>'+
+      '<div class="pr"><span class="lb">TD</span><span class="vl">'+p.vs_td+' mmHg</span></div>'+
+      '<div class="pr"><span class="lb">Nadi</span><span class="vl">'+p.vs_hr+' x/mnt</span></div>'+
+      '<div class="pr"><span class="lb">Suhu</span><span class="vl">'+p.vs_t+' °C</span></div>'+
+      '<div class="pr"><span class="lb">SpO₂</span><span class="vl">'+p.vs_spo2+'%</span></div>'+
+      '<div class="pr"><span class="lb">ICE Baseline</span><span class="vl">'+p.ice+'</span></div>'+
+      '<div class="pr"><span class="lb">CAPD Baseline</span><span class="vl">'+p.capd+'</span></div>'+
+    '</div>'+
+    '<div class="psec"><h4>Checklist Item</h4>'+rows+'</div>'+
+    '<div class="psec"><h4>Item Belum Terpenuhi</h4>'+mrows+'</div>'+
+    '<div class="psec"><h4>Tanda Tangan</h4>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:8px;">'+
+        '<div style="border:1px solid #cbd5e1;border-radius:8px;padding:10px;text-align:center;min-height:65px"><p style="font-size:.72rem;color:#64748b">DPJP</p><p style="font-size:.7rem;margin-top:36px;border-top:1px solid #e2e8f0;padding-top:3px">'+p.dpjp+'</p></div>'+
+        '<div style="border:1px solid #cbd5e1;border-radius:8px;padding:10px;text-align:center;min-height:65px"><p style="font-size:.72rem;color:#64748b">Farmasi / Cell Processing</p><p style="font-size:.7rem;margin-top:36px;border-top:1px solid #e2e8f0;padding-top:3px">( ___________________ )</p></div>'+
+        '<div style="border:1px solid #cbd5e1;border-radius:8px;padding:10px;text-align:center;min-height:65px"><p style="font-size:.72rem;color:#64748b">Perawat Pelaksana</p><p style="font-size:.7rem;margin-top:36px;border-top:1px solid #e2e8f0;padding-top:3px">'+p.nurse+'</p></div>'+
+      '</div></div>'+
+    '<p style="font-size:.68rem;color:#94a3b8;text-align:center;margin-top:14px">drAisyi EduCare · CAR-T Infusion Day Checklist v2.0 · For Educational & Clinical Safety Use Only · '+new Date().toLocaleDateString('id-ID')+'</p>';
+  document.getElementById('ovl').classList.add('active');
+}
+
+// ── PRINT HANDOVER ────────────────────────────────────────────────────────
+function showHandover() {
+  var missing=validatePrint();
+  if(missing.length>0){ alert('Data pasien belum lengkap. Harap isi: '+missing.join(', ')); return; }
+  var p=getP();
+  var all=getAllItems();
+  var rows=all.map(function(item){
+    return '<tr><td>'+item.label+'</td><td style="text-align:center">'+(item.critical?'🔴':'🟡')+'</td><td>'+statusChip(itemStatus[item.id])+'</td></tr>';
+  }).join('');
+
+  document.getElementById('modal-content').innerHTML =
+    '<h2>📋 CAR-T Handover Sheet – Untuk Perawat</h2><p class="sub">drAisyi EduCare · Serahterimakan lembar ini kepada perawat pelaksana sebelum infus dimulai</p>'+
+    '<div class="phdr"><h3>'+verdictText()+'</h3><p>Pasien: '+p.name+' | No.RM: '+p.mrn+' | Infus: '+p.date+'</p></div>'+
+    '<div class="psec"><h4>Identitas & Produk</h4>'+
+      '<div class="pr"><span class="lb">Nama / No.RM</span><span class="vl">'+p.name+' / '+p.mrn+'</span></div>'+
+      '<div class="pr"><span class="lb">Produk</span><span class="vl">'+p.product+'</span></div>'+
+      '<div class="pr"><span class="lb">Lot Number</span><span class="vl">'+p.lot+'</span></div>'+
+      '<div class="pr"><span class="lb">Expiry</span><span class="vl">'+p.exp+'</span></div>'+
+      '<div class="pr"><span class="lb">DPJP</span><span class="vl">'+p.dpjp+'</span></div>'+
+      '<div class="pr"><span class="lb">Perawat Pelaksana</span><span class="vl">'+p.nurse+'</span></div>'+
+    '</div>'+
+    '<div class="psec"><h4>Vital Sign & Neuro Baseline</h4>'+
+      '<div class="pr"><span class="lb">TD / Nadi / Suhu / RR / SpO₂</span><span class="vl">'+p.vs_td+' / '+p.vs_hr+' / '+p.vs_t+'°C / '+p.vs_rr+' / '+p.vs_spo2+'%</span></div>'+
+      '<div class="pr"><span class="lb">ICE Baseline</span><span class="vl">'+p.ice+'</span></div>'+
+      '<div class="pr"><span class="lb">CAPD Baseline</span><span class="vl">'+p.capd+'</span></div>'+
+      '<div class="pr"><span class="lb">Kesadaran</span><span class="vl">'+p.neuro_loc+'</span></div>'+
+      '<div class="pr"><span class="lb">Bicara / Bahasa</span><span class="vl">'+p.neuro_speech+'</span></div>'+
+      '<div class="pr"><span class="lb">Riwayat Kejang</span><span class="vl">'+p.neuro_sz+'</span></div>'+
+    '</div>'+
+    '<div class="psec"><h4>Tocilizumab</h4>'+
+      '<div class="pr"><span class="lb">BB / Dosis 8 mg/kg</span><span class="vl">'+p.toci_bb+' kg / '+(parseFloat(p.toci_bb.replace(/[^0-9.]/g,''))*8||'–').toFixed?((parseFloat(p.toci_bb)*8||0).toFixed(0)):p.toci_bb+' mg</span></div>'+
+      '<div class="pr"><span class="lb">Jumlah Dosis Tersedia</span><span class="vl">'+p.toci_dose+'</span></div>'+
+      '<div class="pr"><span class="lb">Lokasi</span><span class="vl">'+p.toci_loc+'</span></div>'+
+    '</div>'+
+    '<div class="psec"><h4>Status Checklist Seluruh Item</h4>'+
+      '<table class="htbl"><thead><tr><th>Item</th><th>Prioritas</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+    '</div>'+
+    '<div class="psec"><h4>Instruksi Monitoring untuk Perawat</h4>'+
+      '<ul style="font-size:.8rem;padding-left:16px;line-height:1.8">'+
+        '<li>Frekuensi vital sign mengikuti instruksi DPJP pada order hari-H (umumnya q15 menit saat infus berlangsung)</li>'+
+        '<li>Pantau tanda CRS: demam ≥38°C, hipotensi, takikardia, penurunan SpO₂, menggigil</li>'+
+        '<li>Pantau tanda ICANS: perubahan kesadaran, disorientasi, afasia, tremor, kejang – bandingkan dengan ICE/CAPD baseline</li>'+
+        '<li>Monitoring DMSO pasca-infus: mual, bau bawang putih, bradikardi transien</li>'+
+        '<li>Jika CRS ≥ Grade 2 atau tanda ICANS: segera hubungi DPJP dan siapkan tocilizumab</li>'+
+        '<li>Emergency cart harus berada di unit selama minimal 24 jam pertama pasca-infus</li>'+
+        '<li>Algoritma CRS/ICANS harus tersedia di unit; rujuk bila eskalasi ke ICU/PICU diperlukan</li>'+
+      '</ul></div>'+
+    '<div class="psec" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'+
+      '<div style="border:1px solid #cbd5e1;border-radius:8px;padding:10px;text-align:center;min-height:65px"><p style="font-size:.72rem;color:#64748b">Diserahkan oleh (DPJP)</p><p style="font-size:.7rem;margin-top:36px;border-top:1px solid #e2e8f0;padding-top:3px">'+p.dpjp+'</p></div>'+
+      '<div style="border:1px solid #cbd5e1;border-radius:8px;padding:10px;text-align:center;min-height:65px"><p style="font-size:.72rem;color:#64748b">Diterima oleh (Perawat)</p><p style="font-size:.7rem;margin-top:36px;border-top:1px solid #e2e8f0;padding-top:3px">'+p.nurse+'</p></div>'+
+    '</div>'+
+    '<p style="font-size:.68rem;color:#94a3b8;text-align:center;margin-top:14px">drAisyi EduCare · CAR-T Handover Sheet v2.0 · For Educational & Clinical Safety Use Only · '+new Date().toLocaleDateString('id-ID')+'</p>';
+  document.getElementById('ovl').classList.add('active');
+}
+
+// ── SAVE / LOAD ───────────────────────────────────────────────────────────
+function saveData() {
+  var data = { itemStatus: itemStatus, ts: new Date().toLocaleString('id-ID') };
+  // also save key form fields
+  ['pt-name','pt-mrn','pt-dob','pt-bb','pt-dx','pt-product','pt-lot','pt-din',
+   'pt-bags','pt-vol','pt-exp','pt-cell','pt-date','pt-dpjp','pt-nurse',
+   'toci-bb','toci-dose','toci-loc','vs-td','vs-hr','vs-t','vs-rr','vs-spo2','vs-time',
+   'ice-ori','ice-name','ice-cmd','ice-write','ice-count','capd-score','capd-interp',
+   'neuro-loc','neuro-speech','neuro-motor','neuro-sz','neuro-aed','neuro-who',
+   'thaw-out','thaw-start','thaw-end','thaw-limit','thaw-who','thaw-deliver',
+   'post-vs','post-nc','post-admit','post-dur','post-dist','post-tel',
+   'l-hb','l-wbc','l-plt','l-anc','l-na','l-k','l-cr','l-ur','l-ast','l-alt','l-bil','l-crp','l-fer','l-fib','l-cmv','l-preg','l-note'
+  ].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) data[id]=el.value;
+  });
+  try {
+    localStorage.setItem('cart_v2', JSON.stringify(data));
+    var sb=document.getElementById('savebar');
+    sb.style.display='flex';
+    document.getElementById('savetime').textContent=data.ts;
+  } catch(e) { alert('Gagal menyimpan: '+e.message); }
+}
+
+function loadData() {
+  try {
+    var raw=localStorage.getItem('cart_v2');
+    if(!raw) return;
+    var data=JSON.parse(raw);
+    if(data.itemStatus) {
+      Object.keys(data.itemStatus).forEach(function(id){
+        itemStatus[id]=data.itemStatus[id];
+        refreshItem(id);
+      });
+    }
+    Object.keys(data).forEach(function(key){
+      if(key==='itemStatus'||key==='ts') return;
+      var el=document.getElementById(key);
+      if(el) el.value=data[key];
+    });
+    var sb=document.getElementById('savebar');
+    sb.style.display='flex';
+    document.getElementById('savetime').textContent=data.ts;
+    calcToci(); calcICE(); updateStatus();
+  } catch(e) {}
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+window.addEventListener('load', function() {
+  var today=new Date().toISOString().split('T')[0];
+  document.getElementById('pt-date').value=today;
+
+  // init all sections
+  initChecklist('release','cl-release');
+  initChecklist('clearance','cl-clearance');
+  initChecklist('thaw','cl-thaw');
+  initChecklist('safety','cl-safety');
+  initChecklist('premed','cl-premed');
+  initChecklist('access','cl-access');
+  initChecklist('lab','cl-lab');
+  initChecklist('neuro','cl-neuro');
+  initChecklist('post','cl-post');
+
+  loadData();
+  updateStatus();
+  calcICE();
+
+  document.getElementById('btn-ck').addEventListener('click', showPrintChecklist);
+  document.getElementById('btn-hw').addEventListener('click', showHandover);
+  document.getElementById('btn-save').addEventListener('click', saveData);
+  document.getElementById('close-ovl').addEventListener('click', function(){ document.getElementById('ovl').classList.remove('active'); });
+  document.getElementById('clearsave').addEventListener('click', function(e){
+    e.preventDefault();
+    if(confirm('Hapus semua data tersimpan?')){ localStorage.removeItem('cart_v2'); document.getElementById('savebar').style.display='none'; }
+  });
+  document.getElementById('btn-reset').addEventListener('click', function() {
+    if(confirm('Reset semua data dan checklist?')) { localStorage.removeItem('cart_v2'); location.reload(); }
+  });
+});
+</script>
+</body>
+</html>

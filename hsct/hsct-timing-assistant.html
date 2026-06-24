@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>drAisyiEduCare — Pediatric HSCT Timing Assistant</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bl:#2563EB;--bl1:#EFF6FF;--bl2:#BFDBFE;--bl3:#1D4ED8;
+  --gr:#16A34A;--gr1:#F0FDF4;--gr2:#BBF7D0;
+  --yl:#D97706;--yl1:#FFFBEB;--yl2:#FDE68A;
+  --or:#EA580C;--or1:#FFF7ED;--or2:#FED7AA;
+  --rd:#DC2626;--rd1:#FEF2F2;--rd2:#FECACA;
+  --gy:#6B7280;--gy1:#F9FAFB;--gy2:#E5E7EB;--gy3:#374151;
+  --tx:#1F2937;--txs:#6B7280;--bd:#E5E7EB;
+  --r:10px;--sh:0 1px 4px rgba(0,0,0,.08)
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#EEF2F7;color:var(--tx);font-size:14px;line-height:1.5}
+a{color:var(--bl);text-decoration:none}
+
+/* HEADER */
+.top-bar{background:linear-gradient(135deg,#0F2A5A 0%,#1E4DB7 100%);color:#fff;padding:.9rem 1.2rem;position:sticky;top:0;z-index:200;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.top-bar-inner{max-width:980px;margin:auto;display:flex;align-items:center;gap:.9rem;flex-wrap:wrap}
+.brand-pill{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;letter-spacing:.6px;white-space:nowrap}
+.top-titles h1{font-size:15px;font-weight:700;color:#fff;line-height:1.2}
+.top-titles p{font-size:11px;color:rgba(255,255,255,.7);margin-top:1px}
+.print-btn{margin-left:auto;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600}
+.print-btn:hover{background:rgba(255,255,255,.25)}
+
+/* NAV */
+.nav-tabs{background:#fff;border-bottom:1px solid var(--bd);position:sticky;top:56px;z-index:150;overflow-x:auto}
+.nav-tabs-inner{max-width:980px;margin:auto;display:flex}
+.nav-tab{padding:.6rem 1rem;font-size:12px;font-weight:600;color:var(--txs);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+.nav-tab:hover{color:var(--bl);background:var(--bl1)}
+.nav-tab.active{color:var(--bl);border-bottom-color:var(--bl)}
+
+/* LAYOUT */
+.wrap{max-width:980px;margin:auto;padding:1rem .9rem 4rem}
+
+/* ALERTS */
+.privacy-bar{background:#FEF3C7;border:1px solid #FDE68A;border-radius:var(--r);padding:.6rem 1rem;margin-bottom:.8rem;font-size:12px;color:#92400E;display:flex;align-items:center;gap:.5rem}
+.privacy-bar span{font-weight:700}
+
+/* CARDS */
+.card{background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--bd);margin-bottom:.8rem;overflow:hidden}
+.card-head{padding:.65rem 1rem;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:.5rem;background:var(--gy1)}
+.card-head h3{font-size:12px;font-weight:700;color:var(--gy3);text-transform:uppercase;letter-spacing:.5px}
+.card-head .ch-icon{font-size:15px}
+.card-body{padding:.9rem 1rem}
+
+/* ROLE STRIP */
+.role-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.5rem;margin-bottom:.8rem}
+.role-card{background:#fff;border-radius:8px;border:1.5px solid var(--bd);padding:.6rem .75rem;font-size:11px}
+.role-card .rc-title{font-weight:700;color:var(--bl3);margin-bottom:3px;font-size:12px}
+.role-card .rc-desc{color:var(--txs);line-height:1.4}
+
+/* FORMS */
+.fg{margin-bottom:.7rem}
+.fg label,.fg .fl{display:block;font-size:11px;font-weight:700;color:var(--txs);margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px}
+.fg input[type=text],.fg input[type=number],.fg input[type=date],.fg select,.fg textarea{
+  width:100%;padding:7px 10px;border:1.5px solid var(--bd);border-radius:7px;font-size:13px;color:var(--tx);background:#fff;transition:border .15s;font-family:inherit}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--bl)}
+.fg textarea{resize:vertical;min-height:60px}
+.fg-warn{font-size:11px;color:var(--or);margin-top:2px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.7rem}
+@media(max-width:580px){.form-grid,.form-grid-3{grid-template-columns:1fr}}
+.span2{grid-column:span 2}
+@media(max-width:580px){.span2{grid-column:span 1}}
+
+/* CHECKBOXES */
+.ck-group{display:flex;flex-direction:column;gap:5px}
+.ck-item{display:flex;align-items:flex-start;gap:8px;padding:6px 9px;background:var(--gy1);border-radius:7px;border:1.5px solid transparent;cursor:pointer;transition:all .12s}
+.ck-item:hover{border-color:var(--bl2);background:var(--bl1)}
+.ck-item.on{background:var(--bl1);border-color:var(--bl2)}
+.ck-item input[type=checkbox]{width:14px;height:14px;margin-top:2px;accent-color:var(--bl);flex-shrink:0}
+.ck-item label{font-size:12.5px;cursor:pointer;flex:1;line-height:1.4}
+.ck-2col{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+@media(max-width:500px){.ck-2col{grid-template-columns:1fr}}
+
+/* DX INFO BOX */
+.dx-info{background:var(--bl1);border-left:3px solid var(--bl);border-radius:0 7px 7px 0;padding:.6rem .8rem;margin-top:.5rem;font-size:12px;color:#1E3A8A;line-height:1.5;display:none}
+.dx-info b{display:block;margin-bottom:3px;font-size:11px;text-transform:uppercase;letter-spacing:.3px;opacity:.7}
+
+/* ANALYZE BTN */
+.btn-analyze{display:block;width:100%;padding:13px;background:linear-gradient(135deg,#0F2A5A,#2563EB);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;margin-top:.8rem;letter-spacing:.3px;transition:opacity .15s}
+.btn-analyze:hover{opacity:.88}
+.btn-reset{display:block;width:100%;padding:9px;background:#fff;color:var(--gy);border:1.5px solid var(--bd);border-radius:var(--r);font-size:13px;cursor:pointer;margin-top:.4rem}
+.btn-reset:hover{background:var(--gy1)}
+
+/* ====== RESULTS ====== */
+#results-wrap{display:none}
+.res-header{background:linear-gradient(135deg,#0F2A5A,#2563EB);color:#fff;border-radius:var(--r);padding:1.1rem 1.2rem;margin-bottom:.8rem}
+.res-header h2{font-size:17px;font-weight:700;margin-bottom:3px}
+.res-header .rh-sub{font-size:12px;opacity:.75}
+
+/* ALERT BOX */
+.alert-critical{background:var(--rd1);border:1.5px solid var(--rd2);border-radius:var(--r);padding:.7rem 1rem;margin-bottom:.8rem}
+.alert-critical .act{font-size:12px;font-weight:700;color:#991B1B;margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.alert-critical ul{list-style:none}
+.alert-critical ul li{font-size:12.5px;color:#B91C1C;padding:2px 0;display:flex;align-items:flex-start;gap:6px}
+
+/* TIMING BANNER */
+.timing-banner{border-radius:var(--r);padding:1rem 1.2rem;margin-bottom:.8rem;display:flex;align-items:flex-start;gap:.9rem;border:2px solid}
+.tb-icon{font-size:32px;flex-shrink:0;margin-top:2px}
+.tb-text h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.tb-text p{font-size:12.5px;line-height:1.5;opacity:.9}
+.tb-cat{display:inline-block;padding:2px 10px;border-radius:99px;font-size:11px;font-weight:700;margin-bottom:5px;letter-spacing:.3px}
+.tA{background:#F0FDF4;border-color:#16A34A;color:#14532D}
+.tB{background:#EFF6FF;border-color:#2563EB;color:#1E3A8A}
+.tC{background:#FFFBEB;border-color:#D97706;color:#78350F}
+.tD{background:#FFF7ED;border-color:#EA580C;color:#7C2D12}
+.tE{background:#FEF2F2;border-color:#DC2626;color:#7F1D1D}
+.tF{background:#F9FAFB;border-color:#6B7280;color:#374151}
+.tA .tb-cat{background:#BBF7D0;color:#14532D}
+.tB .tb-cat{background:#BFDBFE;color:#1E3A8A}
+.tC .tb-cat{background:#FDE68A;color:#78350F}
+.tD .tb-cat{background:#FED7AA;color:#7C2D12}
+.tE .tb-cat{background:#FECACA;color:#7F1D1D}
+.tF .tb-cat{background:#E5E7EB;color:#374151}
+
+/* SCORE CARDS */
+.score-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.6rem;margin-bottom:.8rem}
+.sc{background:#fff;border-radius:var(--r);border:1px solid var(--bd);box-shadow:var(--sh);padding:.75rem;text-align:center}
+.sc-label{font-size:10px;font-weight:700;color:var(--txs);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.sc-val{font-size:20px;font-weight:700;margin-bottom:2px}
+.sc-sub{font-size:10px;color:var(--txs)}
+
+/* GAUGE */
+.gauge-wrap{margin:.3rem 0}
+.gauge-lbl{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.gauge-lbl span:first-child{font-size:12px;font-weight:600;color:var(--tx)}
+.gauge-lbl span:last-child{font-size:11px;color:var(--txs)}
+.gauge-bar{height:9px;background:var(--gy2);border-radius:99px;overflow:hidden}
+.gauge-fill{height:100%;border-radius:99px;transition:width .5s ease}
+
+/* TWO COL RESULTS */
+.res2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:.8rem}
+@media(max-width:560px){.res2{grid-template-columns:1fr}}
+.res-card{background:#fff;border-radius:var(--r);border:1px solid var(--bd);box-shadow:var(--sh);padding:.85rem}
+.res-card h4{font-size:11px;font-weight:700;color:var(--txs);text-transform:uppercase;letter-spacing:.4px;margin-bottom:.6rem;padding-bottom:.4rem;border-bottom:1px solid var(--bd)}
+
+/* FACTOR LIST */
+.flist{list-style:none;display:flex;flex-direction:column;gap:5px}
+.fitem{display:flex;align-items:flex-start;gap:7px;font-size:12.5px;padding:5px 7px;border-radius:6px;line-height:1.4}
+.fp{background:var(--gr1);color:#166534}
+.fc{background:var(--yl1);color:#78350F}
+.fe{background:var(--rd1);color:#991B1B}
+.fitem .fi{font-size:13px;margin-top:1px;flex-shrink:0}
+
+/* NARRATIVE */
+.narr{background:var(--bl1);border-left:3px solid var(--bl);border-radius:0 8px 8px 0;padding:.7rem .9rem;font-size:12.5px;line-height:1.6;color:#1E3A8A;margin-bottom:.8rem}
+
+/* RISK TABLE */
+.risk-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:.3rem}
+.risk-table th{background:var(--gy1);padding:6px 8px;text-align:left;font-weight:700;font-size:11px;color:var(--txs);text-transform:uppercase;letter-spacing:.3px}
+.risk-table td{padding:6px 8px;border-top:1px solid var(--bd);vertical-align:top;line-height:1.4}
+.risk-table td:first-child{font-weight:600;width:35%;color:var(--tx)}
+
+/* BADGE */
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:700}
+.b-gr{background:var(--gr2);color:#14532D}
+.b-yl{background:var(--yl2);color:#78350F}
+.b-or{background:var(--or2);color:#7C2D12}
+.b-rd{background:var(--rd2);color:#7F1D1D}
+.b-bl{background:var(--bl2);color:#1E3A8A}
+.b-gy{background:var(--gy2);color:#374151}
+
+/* CHECKLIST */
+.wklist{list-style:none;display:flex;flex-direction:column;gap:4px}
+.wkitem{display:flex;align-items:flex-start;gap:7px;font-size:12px;padding:5px 8px;border-radius:6px;background:var(--gy1);color:var(--tx);line-height:1.4}
+.wkitem .wi{color:var(--bl);font-size:13px;margin-top:1px;flex-shrink:0}
+.wkitem.priority{background:var(--or1);color:#7C2D12}
+.wkitem.priority .wi{color:var(--or)}
+
+/* RECS */
+.rec-item{display:flex;align-items:flex-start;gap:.65rem;padding:.55rem .75rem;background:var(--gy1);border-radius:7px;margin-bottom:5px;font-size:12.5px;color:var(--tx);line-height:1.4}
+.ri-num{background:var(--bl);color:#fff;border-radius:50%;width:19px;height:19px;min-width:19px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;margin-top:1px}
+
+/* TIMELINE */
+.tl-wrap{overflow-x:auto;padding:.5rem 0}
+.tl{display:flex;align-items:flex-start;min-width:700px}
+.tl-step{display:flex;flex-direction:column;align-items:center;flex:1;min-width:70px}
+.tl-node{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;border:2px solid var(--bd);background:#fff;position:relative;z-index:1;transition:all .2s}
+.tl-node.done{background:var(--gr);border-color:#15803D;color:#fff}
+.tl-node.active{background:var(--bl);border-color:var(--bl3);color:#fff;box-shadow:0 0 0 4px var(--bl2)}
+.tl-node.upcoming{background:#fff;border-color:var(--gy2);color:var(--gy)}
+.tl-lbl{font-size:10px;font-weight:600;text-align:center;color:var(--txs);line-height:1.3;margin-top:5px;padding:0 2px}
+.tl-lbl.active{color:var(--bl3);font-weight:700}
+.tl-conn{height:2px;flex:1;background:var(--gy2);margin-bottom:28px}
+.tl-conn.done{background:var(--gr)}
+
+/* PEARLS */
+.pearl{display:flex;align-items:flex-start;gap:.6rem;padding:7px 9px;border-radius:7px;background:linear-gradient(135deg,var(--bl1),var(--gr1));border:1px solid var(--bl2);font-size:12.5px;line-height:1.5;color:#1E3A8A;margin-bottom:5px}
+.pearl .pi{font-size:14px;flex-shrink:0;margin-top:1px}
+
+/* FAMILY SUMMARY */
+.family-box{background:var(--gr1);border:1px solid var(--gr2);border-radius:var(--r);padding:.85rem;font-size:13px;line-height:1.7;color:#14532D}
+.family-box .fb-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gr);margin-bottom:.4rem}
+
+/* DISCLAIMER */
+.disc-box{background:var(--yl1);border:1.5px solid var(--yl2);border-radius:var(--r);padding:.85rem;margin-bottom:.8rem}
+.disc-box .dt{font-size:12px;font-weight:700;color:#78350F;margin-bottom:.4rem;display:flex;align-items:center;gap:5px}
+.disc-box p{font-size:12px;color:#92400E;line-height:1.6}
+
+/* SAFETY */
+.safety-box{background:var(--rd1);border:1px solid var(--rd2);border-radius:var(--r);padding:.85rem}
+.safety-box .st{font-size:12px;font-weight:700;color:#991B1B;margin-bottom:.5rem;display:flex;align-items:center;gap:5px}
+.safety-box ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+.safety-box ul li{font-size:12px;color:#B91C1C;display:flex;align-items:flex-start;gap:6px;line-height:1.4}
+
+/* SECTION DIVIDER */
+.sec-div{font-size:11px;font-weight:700;color:var(--txs);text-transform:uppercase;letter-spacing:.5px;margin:.9rem 0 .4rem;padding-bottom:.3rem;border-bottom:1px solid var(--bd)}
+
+/* STAMP */
+.stamp{text-align:center;font-size:11px;color:var(--txs);margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--bd)}
+
+/* STEP SECTIONS */
+.step-section{display:none}
+.step-section.active{display:block}
+
+/* PRINT */
+@media print{
+  .top-bar,.nav-tabs,.btn-analyze,.btn-reset,.print-btn,.no-print{display:none!important}
+  body{background:#fff;font-size:12px}
+  #results-wrap{display:block!important}
+  .card,.res-card,.score-grid,.res2{box-shadow:none}
+  .wrap{padding:0}
+  .top-bar-print{display:block!important;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px solid #000}
+}
+.top-bar-print{display:none;font-size:13px}
+.top-bar-print h1{font-size:16px;font-weight:700}
+.top-bar-print p{font-size:11px;color:#666}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div class="brand-pill">drAisyiEduCare</div>
+    <div class="top-titles">
+      <h1>Pediatric HSCT Timing Assistant</h1>
+      <p>Clinical Decision Support · Educational Use Only · Bukan Keputusan Transplantasi Final</p>
+    </div>
+    <button class="print-btn no-print" onclick="window.print()">🖨 Cetak / PDF</button>
+  </div>
+</div>
+
+<div class="nav-tabs no-print">
+  <div class="nav-tabs-inner">
+    <div class="nav-tab active" onclick="showTab(0,this)">1. Data Pasien</div>
+    <div class="nav-tab" onclick="showTab(1,this)">2. Diagnosis & Status</div>
+    <div class="nav-tab" onclick="showTab(2,this)">3. MRD & Molekular</div>
+    <div class="nav-tab" onclick="showTab(3,this)">4. Donor</div>
+    <div class="nav-tab" onclick="showTab(4,this)">5. Klinis</div>
+    <div class="nav-tab" onclick="showTab(5,this)">6. Analisis</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- PRIVACY NOTE -->
+  <div class="privacy-bar">🔒 <span>Privasi:</span> Gunakan data terde-identifikasi. Jangan memasukkan nama lengkap, nomor rekam medis, alamat, tanggal lahir lengkap, nama institusi, atau identitas langsung pasien.
+  </div>
+
+  <!-- ROLE STRIP -->
+  <div class="role-strip no-print">
+    <div class="role-card"><div class="rc-title">👨‍⚕️ Dokter Umum/IGD</div><div class="rc-desc">Kenali kapan pasien perlu dirujuk/didiskusikan ke layanan HSCT</div></div>
+    <div class="role-card"><div class="rc-title">👶 Dokter Anak/Residen</div><div class="rc-desc">Isi status penyakit, MRD, donor, kondisi klinis, workup awal</div></div>
+    <div class="role-card"><div class="rc-title">🔬 Konsultan/Tim HSCT</div><div class="rc-desc">Validasi timing dan strategi transplantasi bersama tumor board</div></div>
+    <div class="role-card"><div class="rc-title">🤝 Perawat Koordinator</div><div class="rc-desc">Donor search, tracking workup, edukasi keluarga, jadwal</div></div>
+    <div class="role-card"><div class="rc-title">💊 Tim Suportif</div><div class="rc-desc">Infeksi, nutrisi, fungsi organ, kesiapan psikososial pasien</div></div>
+  </div>
+
+  <!-- ===== FORM ===== -->
+  <form id="main-form" onsubmit="return false">
+
+  <!-- TAB 1: PATIENT DATA -->
+  <div class="step-section active" id="tab0">
+    <div class="card">
+      <div class="card-head"><span class="ch-icon">👤</span><h3>Data Pasien (Terde-identifikasi)</h3></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="fg"><label>Kode/Inisial Pasien</label><input type="text" id="inisial" placeholder="Cth: AN/BS/Pasien-01"></div>
+          <div class="fg"><label>Tanggal Assessment</label><input type="date" id="tgl_assess"></div>
+          <div class="fg"><label>Usia (tahun)</label><input type="number" id="umur" min="0" max="18" placeholder="0–18"></div>
+          <div class="fg"><label>Berat Badan (kg)</label><input type="number" id="bb" min="1" max="200" placeholder="kg"></div>
+          <div class="fg"><label>Jenis Kelamin</label>
+            <select id="jk"><option value="">— Pilih —</option><option value="L">Laki-laki</option><option value="P">Perempuan</option></select></div>
+          <div class="fg span2"><label>Catatan Singkat (tanpa identitas)</label>
+            <textarea id="catatan" placeholder="Ringkasan klinis singkat, tanpa nama/RM/institusi/tanggal lahir lengkap..."></textarea>
+            <div class="fg-warn">⚠ Jangan cantumkan nama, nomor RM, alamat, atau identitas langsung.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:right"><button type="button" class="btn-analyze" style="width:auto;padding:9px 22px;font-size:13px" onclick="showTab(1,document.querySelectorAll('.nav-tab')[1])">Lanjut →</button></div>
+  </div>
+
+  <!-- TAB 2: DIAGNOSIS & STATUS -->
+  <div class="step-section" id="tab1">
+    <div class="card">
+      <div class="card-head"><span class="ch-icon">🔬</span><h3>Diagnosis</h3></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="fg">
+            <label>Kategori Penyakit</label>
+            <select id="dx_cat" onchange="updateDxOptions()">
+              <option value="">— Pilih Kategori —</option>
+              <option value="leukemia">Leukemia / Hematologic Malignancy</option>
+              <option value="solid">Tumor Solid (Selected Indications)</option>
+              <option value="nonmalig">Non-Malignan</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Diagnosis Spesifik</label>
+            <select id="dx_specific"></select>
+          </div>
+        </div>
+        <div class="dx-info" id="dx-info-box"><b>Informasi Indikasi HSCT</b><span id="dx-info-text"></span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="ch-icon">📊</span><h3>Status Penyakit & Timing Window</h3></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="fg">
+            <label>Status Penyakit Saat Ini</label>
+            <select id="status">
+              <option value="">— Pilih Status —</option>
+              <optgroup label="Remisi">
+                <option value="CR1">CR1 (Remisi Pertama)</option>
+                <option value="CR2">CR2 (Remisi Kedua)</option>
+                <option value="CR3plus">CR3+ (Remisi Ketiga atau lebih)</option>
+                <option value="mrd_neg_rem">Remisi MRD-Negatif</option>
+                <option value="mrd_pos_rem">Remisi MRD-Positif</option>
+                <option value="mol_relapse">Relaps Molekuler</option>
+              </optgroup>
+              <optgroup label="Relaps / Refrakter">
+                <option value="hem_relapse">Relaps Hematologis</option>
+                <option value="active_relapse">Relaps Aktif</option>
+                <option value="refrakter">Penyakit Refrakter</option>
+              </optgroup>
+              <optgroup label="Post-Terapi">
+                <option value="post_cart_neg">Post-CAR-T MRD Negatif</option>
+                <option value="post_cart_pos">Post-CAR-T MRD Positif</option>
+              </optgroup>
+              <optgroup label="Tumor Solid">
+                <option value="CR">Complete Response</option>
+                <option value="PR">Partial Response</option>
+                <option value="SD">Stable Disease</option>
+                <option value="PD">Progressive Disease</option>
+              </optgroup>
+              <optgroup label="Non-Malignan">
+                <option value="nm_stabil">Stabil</option>
+                <option value="nm_memburuk">Memburuk</option>
+                <option value="nm_gagal">Gagal Terapi Standar</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Waktu / Konteks Saat Ini</label>
+            <select id="waktu_ctx">
+              <option value="">— Pilih —</option>
+              <option value="baru_dx">Baru diagnosis, belum remisi</option>
+              <option value="baru_rem_lt1">Baru mencapai remisi (&lt;1 bulan)</option>
+              <option value="rem_1to3">Remisi 1–3 bulan</option>
+              <option value="rem_3to6">Remisi 3–6 bulan</option>
+              <option value="rem_gt6">Remisi &gt;6 bulan</option>
+              <option value="baru_relaps">Relaps baru</option>
+              <option value="post_salvage">Post-salvage therapy</option>
+              <option value="post_cart">Post-CAR-T</option>
+              <option value="tunggu_donor">Menunggu donor</option>
+              <option value="tunggu_optim">Menunggu optimasi klinis</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <div class="fl">Riwayat Penyakit (pilih semua yang berlaku)</div>
+          <div class="ck-2col" id="riwayat-grp">
+            <div class="ck-item"><input type="checkbox" id="r1" value="relaps1"><label for="r1">Riwayat relaps sebelumnya</label></div>
+            <div class="ck-item"><input type="checkbox" id="r2" value="relaps_multi"><label for="r2">Relaps multipel (≥2x)</label></div>
+            <div class="ck-item"><input type="checkbox" id="r3" value="mrd_persist"><label for="r3">MRD persisten</label></div>
+            <div class="ck-item"><input type="checkbox" id="r4" value="sitogen_hr"><label for="r4">Sitogenetik/molekuler risiko tinggi</label></div>
+            <div class="ck-item"><input type="checkbox" id="r5" value="hsct_prev"><label for="r5">Riwayat HSCT sebelumnya</label></div>
+            <div class="ck-item"><input type="checkbox" id="r6" value="cart_prev"><label for="r6">Riwayat CAR-T</label></div>
+            <div class="ck-item"><input type="checkbox" id="r7" value="ekstra"><label for="r7">Keterlibatan ekstramedular/SSP</label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:right"><button type="button" class="btn-analyze" style="width:auto;padding:9px 22px;font-size:13px" onclick="showTab(2,document.querySelectorAll('.nav-tab')[2])">Lanjut →</button></div>
+  </div>
+
+  <!-- TAB 3: MRD & MOLECULAR -->
+  <div class="step-section" id="tab2">
+    <div class="card">
+      <div class="card-head"><span class="ch-icon">🧬</span><h3>Status MRD</h3></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="fg">
+            <label>Status MRD Terkini</label>
+            <select id="mrd">
+              <option value="na">Tidak Tersedia / Tidak Relevan</option>
+              <option value="neg">Negatif</option>
+              <option value="low">Positif Rendah</option>
+              <option value="mod">Positif Sedang</option>
+              <option value="high">Positif Tinggi</option>
+              <option value="rising">Tren Meningkat (rising)</option>
+              <option value="falling">Tren Menurun (falling)</option>
+              <option value="persist">Persisten Positif</option>
+              <option value="cart_neg">Post-CAR-T Negatif</option>
+              <option value="cart_pos">Post-CAR-T Positif</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Kapan MRD Terakhir Diperiksa?</label>
+            <select id="mrd_timing">
+              <option value="recent">Dalam 4 minggu terakhir</option>
+              <option value="mod_old">1–3 bulan lalu</option>
+              <option value="old">Lebih dari 3 bulan lalu</option>
+              <option value="unknown">Tidak diketahui</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="ch-icon">🔭</span><h3>Faktor Molekuler / Sitogenetik Risiko Tinggi</h3></div>
+      <div class="card-body">
+        <div class="fg">
+          <div class="fl">Pilih semua yang berlaku (bila diketahui)</div>
+          <div class="ck-2col" id="mol-grp">
+            <div class="ck-item"><input type="checkbox" id="m1" value="BCR_ABL"><label for="m1">BCR::ABL1 (Ph+)</label></div>
+            <div class="ck-item"><input type="checkbox" id="m2" value="KMT2A"><label for="m2">KMT2A rearrangement</label></div>
+            <div class="ck-item"><input type="checkbox" id="m3" value="hypodip"><label for="m3">Hypodiploidy / Near-haploidy</label></div>
+            <div class="ck-item"><input type="checkbox" id="m4" value="iAMP21"><label for="m4">iAMP21</label></div>
+            <div class="ck-item"><input type="checkbox" id="m5" value="Ph_like"><label for="m5">Ph-like / Kinase-activated</label></div>
+            <div class="ck-item"><input type="checkbox" id="m6" value="IKZF1plus"><label for="m6">IKZF1plus</label></div>
+            <div class="ck-item"><input type="checkbox" id="m7" value="TP53"><label for="m7">TP53 alteration</label></div>
+            <div class="ck-item"><input type="checkbox" id="m8" value="FLT3"><label for="m8">FLT3-ITD</label></div>
+            <div class="ck-item"><input type="checkbox" id="m9" value="mono7"><label for="m9">Monosomi 7</label></div>
+            <div class="ck-item"><input type="checkbox" id="m10" value="complex"><label for="m10">Kariotip kompleks</label></div>
+            <div class="ck-item"><input type="checkbox" id="m11" value="adverse_aml"><label for="m11">Genetik AML adverse lainnya</label></div>
+            <div class="ck-item"><input type="checkbox" id="m12" value="none_mol"><label for="m12">Tidak ada / Tidak diketahui</label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:right"><button type="button" class="btn-analyze" style="width:auto;padding:9px 22px;font-size:13px" onclick="showTab(3,document.querySelectorAll('.nav-tab')[3])">Lanjut →</button></div>
+  </div>
+
+  <!-- TAB 4: DONOR -->
+  <div class="step-section" id="tab3">
+    <div class="card">
+      <div class="card-head"><span class="ch-icon">👥</span><h3>Ketersediaan Donor</h3></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="fg">
+            <label>Status Donor Saat Ini</label>
+            <select id="donor">
+              <option value="">— Pilih —</option>
+              <option value="MSD">MSD Tersedia</option>
+              <option value="MUD">MUD Tersedia</option>
+              <option value="haplo">Donor Haploidentik Tersedia</option>
+              <option value="CB">Cord Blood Tersedia</option>
+              <option value="MMUD">Mismatched Unrelated Tersedia</option>
+              <option value="search">Pencarian Donor Sedang Berjalan</option>
+              <option value="none">Belum Ada Donor Teridentifikasi</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Sumber Sel Punca (bila sudah ditentukan)</label>
+            <select id="graft_source">
+              <option value="unknown">Belum ditentukan</option>
+              <option value="PBSC">PBSC</option>
+              <option value="BM">Bone Marrow</option>
+              <option value="CB">Cord Blood</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <div class="fl">Kesiapan Donor (centang semua yang sudah selesai)</div>
+          <div class="ck-2col" id="donor-ready-grp">
+            <div class="ck-item"><input type="checkbox" id="d1" value="hla_done"><label for="d1">HLA typing pasien selesai</label></div>
+            <div class="ck-item"><input type="checkbox" id="d2" value="donor_hla"><label for="d2">Konfirmasi HLA donor selesai</label></div>
+            <div class="ck-item"><input type="checkbox" id="d3" value="donor_cleared"><label for="d3">Donor medical clearance selesai</label></div>
+            <div class="ck-item"><input type="checkbox" id="d4" value="infect_screen"><label for="d4">Donor infectious screening selesai</label></div>
+            <div class="ck-item"><input type="checkbox" id="d5" value="abo_cmv"><label for="d5">ABO/CMV compatibility dievaluasi</label></div>
+            <div class="ck-item"><input type="checkbox" id="d6" value="collection_date"><label for="d6">Tanggal koleksi sel punca feasible</label></div>
+            <div class="ck-item"><input type="checkbox" id="d7" value="backup_donor"><label for="d7">Donor cadangan tersedia</label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:right"><button type="button" class="btn-analyze" style="width:auto;padding:9px 22px;font-size:13px" onclick="showTab(4,document.querySelectorAll('.nav-tab')[4])">Lanjut →</button></div>
+  </div>
+
+  <!-- TAB 5: CLINICAL -->
+  <div class="step-section" id="tab4">
+    <div class="card">
+      <div class="card-head"><span class="ch-icon">🏥</span><h3>Kondisi Klinis Saat Ini</h3></div>
+      <div class="card-body">
+        <div class="ck-2col" id="kondisi-grp">
+          <div class="ck-item"><input type="checkbox" id="k0" value="none_k"><label for="k0">Tidak ada masalah klinis aktif</label></div>
+          <div class="ck-item"><input type="checkbox" id="k1" value="bact_infect"><label for="k1">Infeksi bakteri aktif</label></div>
+          <div class="ck-item"><input type="checkbox" id="k2" value="fungal_infect"><label for="k2">Infeksi jamur aktif</label></div>
+          <div class="ck-item"><input type="checkbox" id="k3" value="viral_infect"><label for="k3">Infeksi viral aktif</label></div>
+          <div class="ck-item"><input type="checkbox" id="k4" value="icu"><label for="k4">Dukungan level ICU</label></div>
+          <div class="ck-item"><input type="checkbox" id="k5" value="o2_req"><label for="k5">Kebutuhan oksigen tambahan</label></div>
+          <div class="ck-item"><input type="checkbox" id="k6" value="hemodynamic"><label for="k6">Instabilitas hemodinamik</label></div>
+          <div class="ck-item"><input type="checkbox" id="k7" value="liver_dys"><label for="k7">Disfungsi hati</label></div>
+          <div class="ck-item"><input type="checkbox" id="k8" value="kidney_dys"><label for="k8">Disfungsi ginjal</label></div>
+          <div class="ck-item"><input type="checkbox" id="k9" value="cardiac_dys"><label for="k9">Disfungsi jantung</label></div>
+          <div class="ck-item"><input type="checkbox" id="k10" value="pulm_dys"><label for="k10">Disfungsi pulmonal</label></div>
+          <div class="ck-item"><input type="checkbox" id="k11" value="mucositis"><label for="k11">Mukositis berat / Masalah GI berat</label></div>
+          <div class="ck-item"><input type="checkbox" id="k12" value="malnutrisi"><label for="k12">Malnutrisi berat</label></div>
+          <div class="ck-item"><input type="checkbox" id="k13" value="bleeding"><label for="k13">Perdarahan tidak terkontrol</label></div>
+          <div class="ck-item"><input type="checkbox" id="k14" value="gvhd_active"><label for="k14">GVHD aktif tidak terkontrol (bila post-HSCT)</label></div>
+          <div class="ck-item"><input type="checkbox" id="k15" value="psikososial"><label for="k15">Hambatan psikososial signifikan</label></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="ch-icon">📋</span><h3>Status Workup HSCT</h3></div>
+      <div class="card-body">
+        <div class="fg">
+          <div class="fl">Workup yang sudah selesai (centang)</div>
+          <div class="ck-2col" id="workup-grp">
+            <div class="ck-item"><input type="checkbox" id="w1" value="bm_morph"><label for="w1">Morfologi sumsum tulang</label></div>
+            <div class="ck-item"><input type="checkbox" id="w2" value="mrd_done"><label for="w2">Pemeriksaan MRD terbaru</label></div>
+            <div class="ck-item"><input type="checkbox" id="w3" value="cytogen"><label for="w3">Konfirmasi sitogenetik/molekuler</label></div>
+            <div class="ck-item"><input type="checkbox" id="w4" value="imaging"><label for="w4">Imaging (bila relevan)</label></div>
+            <div class="ck-item"><input type="checkbox" id="w5" value="echo"><label for="w5">Ekokardiografi</label></div>
+            <div class="ck-item"><input type="checkbox" id="w6" value="renal_fn"><label for="w6">Fungsi ginjal / GFR</label></div>
+            <div class="ck-item"><input type="checkbox" id="w7" value="liver_fn"><label for="w7">Fungsi hati</label></div>
+            <div class="ck-item"><input type="checkbox" id="w8" value="pulm_fn"><label for="w8">Fungsi paru</label></div>
+            <div class="ck-item"><input type="checkbox" id="w9" value="cmv_ebv"><label for="w9">CMV/EBV/Hepatitis/HIV</label></div>
+            <div class="ck-item"><input type="checkbox" id="w10" value="dental"><label for="w10">Dental clearance</label></div>
+            <div class="ck-item"><input type="checkbox" id="w11" value="nutrition_ass"><label for="w11">Asesmen nutrisi</label></div>
+            <div class="ck-item"><input type="checkbox" id="w12" value="psych_social"><label for="w12">Konsultasi psikologis/sosial</label></div>
+            <div class="ck-item"><input type="checkbox" id="w13" value="consent_edu"><label for="w13">Edukasi keluarga &amp; persiapan consent</label></div>
+            <div class="ck-item"><input type="checkbox" id="w14" value="fertility"><label for="w14">Diskusi preservasi fertilitas (bila relevan)</label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="btn-analyze" onclick="analyze()">🔍 Analisis Timing HSCT</button>
+    <button type="button" class="btn-reset no-print" onclick="resetAll()">↺ Reset Semua</button>
+  </div>
+
+  <!-- TAB 6: RESULTS -->
+  <div class="step-section" id="tab5">
+
+    <div id="results-wrap">
+      <div class="top-bar-print">
+        <h1>drAisyiEduCare — Pediatric HSCT Timing Assistant</h1>
+        <p>Clinical Decision Support · Educational Use Only · <span id="pr-date"></span></p>
+        <p id="pr-pasien"></p>
+      </div>
+
+      <div class="res-header">
+        <h2>📊 Hasil Analisis HSCT Timing</h2>
+        <div class="rh-sub">drAisyiEduCare · <span id="res-tanggal"></span> · Heuristik Klinis — Bukan Keputusan Final</div>
+      </div>
+
+      <!-- CRITICAL ALERTS -->
+      <div class="alert-critical" id="alert-box" style="display:none">
+        <div class="act">⚠️ PERHATIAN KLINIS PENTING</div>
+        <ul id="alert-list"></ul>
+      </div>
+
+      <!-- TIMING BANNER -->
+      <div class="timing-banner" id="timing-banner">
+        <div class="tb-icon" id="tb-icon"></div>
+        <div class="tb-text">
+          <div class="tb-cat" id="tb-cat"></div>
+          <h3 id="tb-title"></h3>
+          <p id="tb-desc"></p>
+        </div>
+      </div>
+
+      <!-- DOMAIN SCORES -->
+      <div class="sec-div">Skor Domain Klinis (Heuristik)</div>
+      <div class="score-grid" id="domain-scores"></div>
+
+      <!-- RISK GAUGES -->
+      <div class="res2">
+        <div class="res-card">
+          <h4>📈 Risiko Menunda HSCT</h4>
+          <div id="delay-risks"></div>
+        </div>
+        <div class="res-card">
+          <h4>⚡ Risiko Melakukan HSCT Terlalu Cepat</h4>
+          <div id="early-risks"></div>
+        </div>
+      </div>
+
+      <!-- FACTORS -->
+      <div class="res2">
+        <div class="res-card">
+          <h4>✅ Faktor Mendukung Percepatan Proses</h4>
+          <ul class="flist" id="factors-pro"></ul>
+        </div>
+        <div class="res-card">
+          <h4>⏸ Faktor yang Perlu Dioptimasi / Perhatian</h4>
+          <ul class="flist" id="factors-con"></ul>
+        </div>
+      </div>
+
+      <!-- NARRATIVE -->
+      <div class="narr" id="impact-narr"></div>
+
+      <!-- DONOR READINESS -->
+      <div class="card">
+        <div class="card-head"><span class="ch-icon">👥</span><h3>Kesiapan Donor</h3></div>
+        <div class="card-body" id="donor-readiness-out"></div>
+      </div>
+
+      <!-- RECOMMENDATIONS -->
+      <div class="card">
+        <div class="card-head"><span class="ch-icon">💡</span><h3>Rekomendasi Praktis</h3></div>
+        <div class="card-body" id="recs-out"></div>
+      </div>
+
+      <!-- WORKUP CHECKLIST -->
+      <div class="card">
+        <div class="card-head"><span class="ch-icon">📋</span><h3>Workup Checklist Prioritas</h3></div>
+        <div class="card-body" id="workup-out"></div>
+      </div>
+
+      <!-- TIMELINE -->
+      <div class="card">
+        <div class="card-head"><span class="ch-icon">📅</span><h3>Visual Timeline HSCT</h3></div>
+        <div class="card-body">
+          <div class="tl-wrap"><div class="tl" id="timeline"></div></div>
+          <p style="font-size:11px;color:var(--txs);text-align:center;margin-top:.4rem">★ = Estimasi posisi pasien saat ini · Interpretasi berdasarkan input klinis</p>
+        </div>
+      </div>
+
+      <!-- FAMILY SUMMARY -->
+      <div class="card">
+        <div class="card-head"><span class="ch-icon">👨‍👩‍👧</span><h3>Ringkasan Komunikasi Keluarga</h3></div>
+        <div class="card-body"><div class="family-box" id="family-out"></div></div>
+      </div>
+
+      <!-- CLINICAL PEARLS -->
+      <div class="card">
+        <div class="card-head"><span class="ch-icon">💎</span><h3>Clinical Pearls (Edukatif)</h3></div>
+        <div class="card-body" id="pearls-out"></div>
+      </div>
+
+      <!-- HSCT SUMMARY -->
+      <div class="card">
+        <div class="card-head"><span class="ch-icon">📄</span><h3>Ringkasan untuk Tim HSCT</h3></div>
+        <div class="card-body"><p class="summary-text" style="font-size:13px;line-height:1.7" id="team-summary"></p></div>
+      </div>
+
+      <!-- SAFETY & LIMITATIONS -->
+      <div class="card">
+        <div class="card-head"><span class="ch-icon">⚖️</span><h3>Keterbatasan &amp; Keamanan Penggunaan Tool</h3></div>
+        <div class="card-body">
+          <div class="safety-box">
+            <div class="st">⚠️ Penting Dibaca Sebelum Menggunakan Hasil ini</div>
+            <ul>
+              <li>◆ Scoring bersifat heuristik dan bukan validated prediction model untuk survival atau outcome HSCT.</li>
+              <li>◆ Tidak menggantikan penilaian oleh tim HSCT, tumor board, dokter penanggung jawab, atau protokol pusat transplantasi.</li>
+              <li>◆ Tidak boleh digunakan sebagai satu-satunya dasar keputusan jadwal kondisioning.</li>
+              <li>◆ Donor tersedia ≠ donor siap; seluruh proses konfirmasi tetap diperlukan.</li>
+              <li>◆ Relaps aktif atau penyakit refrakter tidak selalu berarti kondisioning dapat segera dilakukan.</li>
+              <li>◆ Infeksi aktif / disfungsi organ / instabilitas ICU biasanya memerlukan stabilisasi terlebih dahulu.</li>
+              <li>◆ MRD positif meningkatkan urgensi diskusi, tetapi tidak otomatis berarti kondisioning segera tanpa strategi.</li>
+              <li>◆ Gunakan hanya data terde-identifikasi.</li>
+              <li>◆ Semua rekomendasi memerlukan validasi klinis oleh tim yang kompeten.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- DISCLAIMER -->
+      <div class="disc-box">
+        <div class="dt">⚖️ Disclaimer</div>
+        <p>Toolkit ini adalah alat bantu edukasi dan <em>clinical decision support</em> awal. Tidak menggantikan penilaian lengkap oleh tim HSCT, tumor board, dokter penanggung jawab, infectious disease, ICU/anestesi, farmasi, transfusion medicine, donor registry, atau protokol pusat transplantasi. Scoring bersifat heuristik dan tidak boleh digunakan sebagai satu-satunya dasar keputusan transplantasi.</p>
+      </div>
+
+      <div class="stamp">drAisyiEduCare · Pediatric HSCT Timing Assistant · Clinical Decision Support · Educational Use Only</div>
+    </div><!-- /results-wrap -->
+
+  </div><!-- /tab5 -->
+
+  </form>
+</div><!-- /wrap -->
+
+<script>
+(function(){
+
+/* ===== TAB NAV ===== */
+window.showTab=function(idx,el){
+  document.querySelectorAll('.step-section').forEach(function(s,i){s.classList.toggle('active',i===idx)});
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active')});
+  if(el)el.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+
+/* ===== CHECKBOX GROUPS ===== */
+function bindCkGroup(groupId,noneVal){
+  var grp=document.getElementById(groupId);
+  if(!grp)return;
+  grp.querySelectorAll('input[type=checkbox]').forEach(function(cb){
+    cb.addEventListener('change',function(){
+      if(noneVal&&this.value===noneVal&&this.checked){
+        grp.querySelectorAll('input[type=checkbox]').forEach(function(c){if(c.value!==noneVal){c.checked=false;c.closest('.ck-item').classList.remove('on')}});
+      } else if(noneVal&&this.value!==noneVal&&this.checked){
+        var none=grp.querySelector('input[value="'+noneVal+'"]');
+        if(none){none.checked=false;none.closest('.ck-item').classList.remove('on')}
+      }
+      this.closest('.ck-item').classList.toggle('on',this.checked);
+    });
+  });
+}
+bindCkGroup('riwayat-grp','');
+bindCkGroup('mol-grp','none_mol');
+bindCkGroup('donor-ready-grp','');
+bindCkGroup('kondisi-grp','none_k');
+bindCkGroup('workup-grp','');
+
+/* ===== DX OPTIONS ===== */
+var dxData={
+  leukemia:[
+    {v:'ALL_B',l:'ALL B-cell'},
+    {v:'ALL_T',l:'ALL T-cell'},
+    {v:'AML',l:'AML'},
+    {v:'MPAL',l:'MPAL'},
+    {v:'CML',l:'CML'},
+    {v:'JMML_MDS',l:'JMML / MDS'},
+    {v:'RL_lymph',l:'Relapsed/Refractory Lymphoma'}
+  ],
+  solid:[
+    {v:'NBL_hr',l:'Neuroblastoma Risiko Tinggi'},
+    {v:'NBL_rel',l:'Neuroblastoma Relaps/Refrakter'},
+    {v:'ES',l:'Ewing Sarcoma (Selected)'},
+    {v:'RMS',l:'Rhabdomyosarcoma (Selected)'},
+    {v:'other_solid',l:'Tumor Solid Lain (Protocol-Based)'}
+  ],
+  nonmalig:[
+    {v:'SAA',l:'Severe Aplastic Anemia'},
+    {v:'FA',l:'Fanconi Anemia'},
+    {v:'IBMFS',l:'Inherited Bone Marrow Failure Syndrome'},
+    {v:'SCID',l:'SCID'},
+    {v:'CGD',l:'CGD'},
+    {v:'HLH',l:'HLH'},
+    {v:'TM',l:'Thalassemia Mayor'},
+    {v:'SCD',l:'Sickle Cell Disease'},
+    {v:'other_imm',l:'Imunodefisiensi/Penyakit Metabolik Lain'}
+  ]
+};
+var dxInfo={
+  leukemia:'Peran HSCT sangat tergantung status remisi dan MRD. Timing optimal umumnya saat MRD-negatif CR1/CR2 dengan risiko tinggi. Relaps aktif/refrakter biasanya perlu kontrol penyakit lebih dahulu.',
+  solid:'Indikasi HSCT/ABMT pada tumor solid bersifat protokol-spesifik. Tidak semua tumor solid memerlukan HSCT alogeenik. Diskusikan dengan tumor board.',
+  nonmalig:'Timing HSCT pada penyakit non-malignan mempertimbangkan usia, keparahan penyakit, kerusakan organ yang sudah terjadi, ketersediaan donor, dan kualitas hidup. HSCT lebih dini sebelum kerusakan organ ireversibel umumnya memberikan hasil lebih baik.'
+};
+window.updateDxOptions=function(){
+  var cat=document.getElementById('dx_cat').value;
+  var sel=document.getElementById('dx_specific');
+  sel.innerHTML='<option value="">— Pilih Diagnosis —</option>';
+  var infoBox=document.getElementById('dx-info-box');
+  var infoTxt=document.getElementById('dx-info-text');
+  if(!cat){infoBox.style.display='none';return}
+  (dxData[cat]||[]).forEach(function(d){
+    var o=document.createElement('option');o.value=d.v;o.textContent=d.l;sel.appendChild(o);
+  });
+  infoTxt.textContent=dxInfo[cat]||'';
+  infoBox.style.display='block';
+};
+
+/* ===== HELPERS ===== */
+function getChecked(groupId){
+  var vals=[];
+  document.querySelectorAll('#'+groupId+' input:checked').forEach(function(c){vals.push(c.value)});
+  return vals;
+}
+function getVal(id){var el=document.getElementById(id);return el?el.value:''}
+function getNum(id){return parseFloat(document.getElementById(id).value)||0}
+function clamp(v,mn,mx){return Math.min(mx,Math.max(mn,v))}
+
+/* ===== RESET ===== */
+window.resetAll=function(){
+  document.getElementById('main-form').reset();
+  document.querySelectorAll('.ck-item').forEach(function(i){i.classList.remove('on')});
+  document.getElementById('results-wrap').style.display='none';
+  document.getElementById('dx-info-box').style.display='none';
+  document.getElementById('dx_specific').innerHTML='<option value="">— Pilih Diagnosis —</option>';
+  showTab(0,document.querySelectorAll('.nav-tab')[0]);
+};
+
+/* ===== SCORING ENGINE ===== */
+function computeScores(d){
+  var diseaseUrgency=0, delayHarm=0, proceedReadiness=0, optimNeed=0, donorReady=0;
+
+  var malignant=['leukemia','solid'].includes(d.dx_cat);
+  var nonmalig=d.dx_cat==='nonmalig';
+  var isLeuk=d.dx_cat==='leukemia';
+  var isSolid=d.dx_cat==='solid';
+
+  /* ---- DISEASE URGENCY ---- */
+  var statusUrgMap={
+    active_relapse:10,refrakter:10,PD:9,hem_relapse:8,mol_relapse:7,
+    post_cart_pos:8,CR3plus:7,mrd_pos_rem:6,CR2:5,post_cart_neg:3,
+    mrd_neg_rem:2,CR1:3,CR:2,PR:4,SD:2,nm_memburuk:6,nm_gagal:8,nm_stabil:1,baru_dx:2
+  };
+  diseaseUrgency+=statusUrgMap[d.status]||0;
+
+  if(d.riwayat.includes('relaps_multi'))diseaseUrgency+=3;
+  if(d.riwayat.includes('relaps1'))diseaseUrgency+=1;
+  if(d.riwayat.includes('sitogen_hr'))diseaseUrgency+=2;
+  if(d.riwayat.includes('ekstra'))diseaseUrgency+=2;
+  if(d.mol.length>0&&!d.mol.includes('none_mol'))diseaseUrgency+=Math.min(d.mol.length*1.5,5);
+  var mrdUrgMap={high:5,persist:5,rising:6,mod:3,low:2,cart_pos:6,neg:0,falling:0,cart_neg:0,na:0};
+  diseaseUrgency+=(mrdUrgMap[d.mrd]||0);
+  if(nonmalig){
+    if(d.dx_specific==='SCID')diseaseUrgency+=6;
+    if(d.dx_specific==='HLH')diseaseUrgency+=5;
+    if(d.status==='nm_memburuk'||d.status==='nm_gagal')diseaseUrgency+=3;
+  }
+  diseaseUrgency=clamp(diseaseUrgency,0,20);
+
+  /* ---- DELAY HARM ---- */
+  if(['CR2','CR3plus','mrd_pos_rem','post_cart_pos','hem_relapse','mol_relapse'].includes(d.status))delayHarm+=5;
+  if(d.mrd==='rising')delayHarm+=6;
+  if(d.mrd==='persist'||d.mrd==='high')delayHarm+=4;
+  if(d.mrd==='mod')delayHarm+=2;
+  if(d.riwayat.includes('relaps_multi'))delayHarm+=3;
+  if(d.waktu_ctx==='rem_3to6')delayHarm+=3;
+  if(d.waktu_ctx==='rem_gt6')delayHarm+=5;
+  if(d.donor==='MSD'||d.donor==='MUD')delayHarm+=2;
+  if(d.donor==='none'||d.donor==='search')delayHarm+=1;
+  if(nonmalig&&(d.status==='nm_memburuk'||d.status==='nm_gagal'))delayHarm+=4;
+  delayHarm=clamp(delayHarm,0,20);
+
+  /* ---- PROCEED READINESS ---- */
+  var activeInfect=d.kondisi.some(function(k){return['bact_infect','fungal_infect','viral_infect'].includes(k)});
+  var severeInstab=d.kondisi.some(function(k){return['icu','hemodynamic'].includes(k)});
+  var organDys=d.kondisi.some(function(k){return['liver_dys','kidney_dys','cardiac_dys','pulm_dys'].includes(k)});
+  var diseaseCtrl=['active_relapse','refrakter','PD'].includes(d.status);
+
+  if(!activeInfect&&!severeInstab&&!organDys&&!diseaseCtrl)proceedReadiness+=5;
+  if(d.donor==='MSD'||d.donor==='MUD')proceedReadiness+=4;
+  else if(d.donor==='haplo'||d.donor==='CB')proceedReadiness+=3;
+  else if(d.donor==='search')proceedReadiness+=1;
+  proceedReadiness+=Math.min(d.donorChecks.length*0.7,4);
+  proceedReadiness+=Math.min(d.workupDone.length*0.5,5);
+  if(['CR1','CR2','mrd_neg_rem','post_cart_neg','CR'].includes(d.status))proceedReadiness+=2;
+  if(d.mrd==='neg'||d.mrd==='falling'||d.mrd==='cart_neg')proceedReadiness+=2;
+  proceedReadiness=clamp(proceedReadiness,0,20);
+
+  /* ---- OPTIMIZATION NEED ---- */
+  if(activeInfect)optimNeed+=6;
+  if(severeInstab)optimNeed+=7;
+  if(organDys)optimNeed+=4;
+  if(d.kondisi.includes('malnutrisi'))optimNeed+=2;
+  if(d.kondisi.includes('bleeding'))optimNeed+=3;
+  if(d.kondisi.includes('gvhd_active'))optimNeed+=4;
+  if(d.kondisi.includes('psikososial'))optimNeed+=2;
+  if(d.mrd_timing==='old'||d.mrd_timing==='unknown')optimNeed+=2;
+  if(['active_relapse','refrakter','PD'].includes(d.status))optimNeed+=4;
+  if(d.donor==='none')optimNeed+=3;
+  var totalWorkup=14;
+  var missing=totalWorkup-d.workupDone.length;
+  optimNeed+=Math.min(missing*0.4,4);
+  optimNeed=clamp(optimNeed,0,20);
+
+  /* ---- DONOR READINESS ---- */
+  var donorBaseMap={MSD:8,MUD:7,haplo:5,CB:5,MMUD:4,search:2,none:0};
+  donorReady+=(donorBaseMap[d.donor]||0);
+  donorReady+=Math.min(d.donorChecks.length*1.5,8);
+  donorReady=clamp(donorReady,0,20);
+
+  return{diseaseUrgency:Math.round(diseaseUrgency),delayHarm:Math.round(delayHarm),proceedReadiness:Math.round(proceedReadiness),optimNeed:Math.round(optimNeed),donorReady:Math.round(donorReady),
+    activeInfect:activeInfect,severeInstab:severeInstab,organDys:organDys,diseaseCtrl:diseaseCtrl};
+}
+
+/* ===== TIMING CATEGORY ===== */
+function getTimingCat(sc,d){
+  var icu=d.kondisi.includes('icu');
+  var hemoinst=d.kondisi.includes('hemodynamic');
+  var activeInfect=sc.activeInfect;
+  var severeInstab=sc.severeInstab;
+  var organDys=sc.organDys;
+  var diseaseNotCtrl=['active_relapse','refrakter','PD'].includes(d.status);
+  var mrdRising=d.mrd==='rising';
+  var mrdHigh=d.mrd==='high'||d.mrd==='persist'||d.mrd==='cart_pos';
+
+  // E: Hold conditioning
+  if(icu||hemoinst||(activeInfect&&sc.optimNeed>=10))return'E';
+  // D: Disease control/bridging needed
+  if(diseaseNotCtrl||(mrdRising&&sc.diseaseUrgency>=10))return'D';
+  // C: Optimize but keep window active
+  if(sc.optimNeed>=7&&sc.diseaseUrgency>=6)return'C';
+  // A: Urgent board/workup
+  if(sc.diseaseUrgency>=10&&sc.proceedReadiness>=7&&sc.optimNeed<7)return'A';
+  // B: Proceed when workup complete
+  if(sc.diseaseUrgency>=5&&sc.proceedReadiness>=5)return'B';
+  // F: Reassess
+  return'F';
+}
+
+var timingDefs={
+  A:{icon:'🔴',label:'URGENT: Diskusi Tim HSCT & Workup Segera',cls:'tA',
+     title:'Segera Bawa ke Diskusi Tim HSCT dan Lengkapi Workup',
+     desc:'Faktor risiko penyakit menunjukkan urgensi tinggi. Rekomendasikan diskusi HSCT board dalam beberapa hari ke depan, konfirmasi donor, dan lengkapi workup. Keputusan conditioning tetap memerlukan validasi tim lengkap.'},
+  B:{icon:'🟡',label:'Lanjut Setelah Workup Lengkap',cls:'tB',
+     title:'Proceed When Workup Complete; Hindari Penundaan Tidak Perlu',
+     desc:'Kondisi penyakit mendukung perencanaan HSCT. Selesaikan workup yang belum lengkap, finalisasi donor, dan tetapkan target waktu. Penundaan yang tidak perlu sebaiknya dihindari mengingat risiko penyakit.'},
+  C:{icon:'🟠',label:'Optimasi Klinis; Jaga Jendela Transplantasi',cls:'tC',
+     title:'Optimize Clinically but Keep HSCT Window Active',
+     desc:'Terdapat kondisi klinis yang perlu dioptimasi sebelum conditioning aman dilakukan, namun risiko penyakit cukup tinggi. Proses donor dan workup tetap dijalankan paralel sambil optimasi klinis.'},
+  D:{icon:'🟣',label:'Kontrol Penyakit / Bridging Diperlukan',cls:'tD',
+     title:'Disease Control / Bridging Therapy Perlu Didiskusikan Sebelum HSCT',
+     desc:'Status penyakit saat ini (relaps aktif, refrakter, atau MRD rising) memerlukan strategi kontrol penyakit atau bridging therapy sebelum kondisioning. Diskusi segera dengan tim HSCT dan onkologi sangat direkomendasikan.'},
+  E:{icon:'⛔',label:'Tunda Conditioning; Stabilisasi Klinis Dahulu',cls:'tE',
+     title:'Hold Conditioning; Prioritaskan Stabilisasi Klinis',
+     desc:'Kondisi klinis saat ini (ICU-level, instabilitas hemodinamik, atau infeksi berat) meningkatkan risiko mortalitas terkait transplantasi secara bermakna. Stabilisasi klinis harus menjadi prioritas. Pertahankan kontrol penyakit selama periode ini.'},
+  F:{icon:'🔵',label:'Reassess; Belum Urgen Berdasarkan Data Saat Ini',cls:'tF',
+     title:'Reassess; HSCT Timing Belum Mendesak Berdasarkan Input Saat Ini',
+     desc:'Berdasarkan data yang dimasukkan, tidak ditemukan urgensi transplantasi segera. Lanjutkan pemantauan ketat, ulangi MRD, dan segera lakukan reassessment bila status penyakit berubah atau faktor risiko tinggi muncul.'}
+};
+
+/* ===== MAIN ANALYZE ===== */
+window.analyze=function(){
+  var dx_cat=getVal('dx_cat');
+  var dx_specific=getVal('dx_specific');
+  var status=getVal('status');
+  var donor=getVal('donor');
+  if(!dx_cat){alert('Mohon pilih kategori penyakit (Tab 2).');showTab(1,document.querySelectorAll('.nav-tab')[1]);return}
+  if(!status){alert('Mohon pilih status penyakit (Tab 2).');showTab(1,document.querySelectorAll('.nav-tab')[1]);return}
+  if(!donor){alert('Mohon pilih status donor (Tab 4).');showTab(3,document.querySelectorAll('.nav-tab')[3]);return}
+
+  var d={
+    inisial:getVal('inisial')||'—',
+    tgl:getVal('tgl_assess'),
+    umur:getNum('umur'),
+    bb:getNum('bb'),
+    jk:getVal('jk'),
+    catatan:getVal('catatan'),
+    dx_cat:dx_cat,
+    dx_specific:dx_specific,
+    status:status,
+    waktu_ctx:getVal('waktu_ctx'),
+    riwayat:getChecked('riwayat-grp'),
+    mrd:getVal('mrd'),
+    mrd_timing:getVal('mrd_timing'),
+    mol:getChecked('mol-grp'),
+    donor:donor,
+    graft_source:getVal('graft_source'),
+    donorChecks:getChecked('donor-ready-grp'),
+    kondisi:getChecked('kondisi-grp'),
+    workupDone:getChecked('workup-grp')
+  };
+
+  var sc=computeScores(d);
+  var cat=getTimingCat(sc,d);
+  var td=timingDefs[cat];
+
+  /* --- ALERTS --- */
+  var alerts=[];
+  if(['active_relapse','refrakter'].includes(d.status))alerts.push('Status penyakit aktif (relaps/refrakter) — perlu diskusi bridging/salvage therapy sebelum kondisioning');
+  if(d.status==='PD')alerts.push('Penyakit progresif — potensi kehilangan window of opportunity, diskusi segera diperlukan');
+  if(d.mrd==='rising')alerts.push('MRD tren meningkat — risiko progresi molekuler tinggi, diskusi kontrol penyakit urgent');
+  if(d.mrd==='high'||d.mrd==='persist')alerts.push('MRD positif tinggi/persisten — diskusi strategi pre-HSCT dengan tim');
+  if(d.donor==='none')alerts.push('Donor belum teridentifikasi — pencarian donor (registri nasional/internasional) harus segera diaktivasi');
+  if(d.kondisi.includes('icu'))alerts.push('Kondisi level ICU — kondisioning HSCT perlu ditunda sampai kondisi stabil');
+  if(d.kondisi.includes('hemodynamic'))alerts.push('Instabilitas hemodinamik — memerlukan stabilisasi aktif sebelum proses HSCT dilanjutkan');
+  if(d.kondisi.includes('bact_infect')||d.kondisi.includes('fungal_infect'))alerts.push('Infeksi aktif terdeteksi — perlu evaluasi dan tatalaksana bersama tim infeksi');
+  if(d.kondisi.includes('cardiac_dys'))alerts.push('Disfungsi jantung — konsultasi kardiologi dan evaluasi fitness kardiovaskular diperlukan');
+  if(d.kondisi.includes('gvhd_active'))alerts.push('GVHD aktif tidak terkontrol — memerlukan diskusi tim HSCT dan spesialis terkait');
+  if(d.riwayat.includes('hsct_prev'))alerts.push('Riwayat HSCT sebelumnya — diperlukan diskusi board khusus untuk second transplant');
+  if(d.riwayat.includes('cart_prev'))alerts.push('Riwayat CAR-T — perlu diskusi tim mengenai bridging post-CAR-T ke HSCT');
+
+  /* --- RENDER ALERTS --- */
+  var ab=document.getElementById('alert-box');
+  var al=document.getElementById('alert-list');
+  al.innerHTML='';
+  if(alerts.length){
+    ab.style.display='block';
+    alerts.forEach(function(a){al.innerHTML+='<li>⚠ '+a+'</li>'});
+  } else {ab.style.display='none'}
+
+  /* --- TIMING BANNER --- */
+  var tb=document.getElementById('timing-banner');
+  tb.className='timing-banner '+td.cls;
+  document.getElementById('tb-icon').textContent=td.icon;
+  document.getElementById('tb-cat').textContent=td.label;
+  document.getElementById('tb-title').textContent=td.title;
+  document.getElementById('tb-desc').textContent=td.desc;
+
+  /* --- DOMAIN SCORES --- */
+  var scoreColors={diseaseUrgency:scoreColor(sc.diseaseUrgency,20,'urgency'),delayHarm:scoreColor(sc.delayHarm,20,'harm'),proceedReadiness:scoreColor(sc.proceedReadiness,20,'ready'),optimNeed:scoreColor(sc.optimNeed,20,'optim'),donorReady:scoreColor(sc.donorReady,20,'donor')};
+  var scoreDefs=[
+    {key:'diseaseUrgency',label:'Urgensi Penyakit',sub:'Tinggi = penyakit lebih agresif'},
+    {key:'delayHarm',label:'Bahaya Menunda',sub:'Tinggi = penundaan lebih berisiko'},
+    {key:'proceedReadiness',label:'Kesiapan Proceed',sub:'Tinggi = lebih siap'},
+    {key:'optimNeed',label:'Kebutuhan Optimasi',sub:'Tinggi = lebih banyak optimasi'},
+    {key:'donorReady',label:'Kesiapan Donor',sub:'Tinggi = donor lebih siap'}
+  ];
+  var sg=document.getElementById('domain-scores');
+  sg.innerHTML='';
+  scoreDefs.forEach(function(sd){
+    var v=sc[sd.key];var pct=Math.round(v/20*100);
+    sg.innerHTML+='<div class="sc"><div class="sc-label">'+sd.label+'</div><div class="sc-val" style="color:'+scoreColors[sd.key]+'">'+v+'/20</div><div class="sc-sub">'+sd.sub+'</div><div style="height:5px;background:var(--gy2);border-radius:99px;margin-top:5px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+scoreColors[sd.key]+';border-radius:99px"></div></div></div>';
+  });
+
+  /* --- DELAY RISKS --- */
+  var dr=document.getElementById('delay-risks');
+  dr.innerHTML='';
+  var delayRisks=[
+    {label:'Risiko Progresi Penyakit',val:riskFromUrgency(sc.diseaseUrgency)},
+    {label:'Risiko Relaps',val:riskFromMRD(d.mrd,d.status)},
+    {label:'Kehilangan Window Remisi',val:riskWindow(d.status,d.waktu_ctx)},
+    {label:'Keterlambatan Donor',val:d.donor==='none'?'Tinggi':d.donor==='search'?'Sedang':'Rendah'},
+    {label:'Deteriorasi Klinis',val:riskFromOptim(sc.optimNeed)}
+  ];
+  delayRisks.forEach(function(r){
+    var pct=riskToPct(r.val);
+    dr.innerHTML+='<div class="gauge-wrap"><div class="gauge-lbl"><span>'+r.label+'</span><span><span class="badge '+riskBadge(r.val)+'">'+r.val+'</span></span></div><div class="gauge-bar"><div class="gauge-fill" style="width:'+pct+'%;background:'+riskColor(r.val)+'"></div></div></div>';
+  });
+
+  /* --- EARLY RISKS --- */
+  var er=document.getElementById('early-risks');
+  er.innerHTML='';
+  var earlyRisks=[
+    {label:'Infeksi tidak terkontrol',v:d.kondisi.some(function(k){return['bact_infect','fungal_infect','viral_infect'].includes(k)})},
+    {label:'Instabilitas ICU / hemodinamik',v:d.kondisi.includes('icu')||d.kondisi.includes('hemodynamic')},
+    {label:'Disfungsi organ bermakna',v:sc.organDys},
+    {label:'Penyakit tidak terkontrol',v:sc.diseaseCtrl},
+    {label:'Donor belum fully cleared',v:d.donorChecks.length<4&&d.donor!=='none'},
+    {label:'Workup belum lengkap',v:d.workupDone.length<8},
+    {label:'Keluarga belum siap / consent',v:!d.workupDone.includes('consent_edu')||!d.workupDone.includes('psych_social')}
+  ];
+  earlyRisks.forEach(function(r){
+    var lv=r.v?'Perlu Perhatian':'Aman';
+    var col=r.v?'var(--or)':'var(--gr)';
+    var ic=r.v?'⚠':'✓';
+    er.innerHTML+='<div style="display:flex;align-items:center;gap:7px;padding:4px 0;font-size:12px;border-bottom:1px solid var(--bd)"><span style="color:'+col+';font-size:13px">'+ic+'</span><span style="flex:1">'+r.label+'</span><span style="font-size:11px;font-weight:700;color:'+col+'">'+lv+'</span></div>';
+  });
+
+  /* --- FACTORS --- */
+  var fpro=[];var fcon=[];
+  if(['CR2','CR3plus'].includes(d.status))fpro.push('Status '+d.status+' — salah satu timing yang dipertimbangkan untuk HSCT');
+  if(d.mrd==='neg'||d.mrd==='falling'||d.mrd==='cart_neg')fpro.push('MRD '+(d.mrd==='neg'?'negatif':d.mrd==='falling'?'tren menurun':'post-CAR-T negatif')+' — kondisi penyakit lebih terkontrol');
+  if(d.donor==='MSD')fpro.push('Donor MSD tersedia — opsi donor yang perlu dipertimbangkan lebih lanjut');
+  if(d.donor==='MUD'||d.donor==='haplo'||d.donor==='CB')fpro.push('Donor alternatif ('+(d.donor)+') tersedia — diskusi donor dengan tim');
+  if(d.donorChecks.length>=5)fpro.push('Proses konfirmasi donor sudah cukup maju ('+d.donorChecks.length+'/7 langkah)');
+  if(d.workupDone.length>=8)fpro.push('Workup sudah cukup lengkap ('+d.workupDone.length+'/14 item selesai)');
+  if(d.riwayat.includes('relaps1')||d.riwayat.includes('relaps_multi'))fpro.push('Riwayat relaps — memperkuat pertimbangan HSCT');
+  if(d.riwayat.includes('sitogen_hr')||d.mol.length>0&&!d.mol.includes('none_mol'))fpro.push('Faktor biologi risiko tinggi — mendukung diskusi HSCT lebih awal');
+  if(d.kondisi.includes('none_k'))fpro.push('Tidak ada masalah klinis aktif yang terdeteksi');
+  if(fpro.length===0)fpro.push('Evaluasi faktor individual lebih lanjut bersama tim HSCT');
+
+  var condLabels={bact_infect:'Infeksi bakteri aktif',fungal_infect:'Infeksi jamur aktif',viral_infect:'Infeksi viral aktif',icu:'Dukungan level ICU',hemodynamic:'Instabilitas hemodinamik',liver_dys:'Disfungsi hati',kidney_dys:'Disfungsi ginjal',cardiac_dys:'Disfungsi jantung',pulm_dys:'Disfungsi pulmonal',malnutrisi:'Malnutrisi berat',bleeding:'Perdarahan tidak terkontrol',gvhd_active:'GVHD aktif',psikososial:'Hambatan psikososial',o2_req:'Kebutuhan oksigen tambahan',mucositis:'Mukositis/GI berat'};
+  d.kondisi.forEach(function(k){if(condLabels[k])fcon.push(condLabels[k]+' — perlu dioptimasi/stabilisasi')});
+  if(d.donor==='none')fcon.push('Donor belum teridentifikasi — pencarian donor perlu dipercepat');
+  if(d.donor==='search')fcon.push('Pencarian donor masih berlangsung — pantau dan percepat proses');
+  if(d.donorChecks.length<4&&d.donor!=='none')fcon.push('Konfirmasi donor belum lengkap ('+d.donorChecks.length+'/7 langkah selesai)');
+  if(d.mrd==='rising')fcon.push('MRD tren meningkat — perlu strategi kontrol penyakit segera');
+  if(d.mrd==='high'||d.mrd==='persist')fcon.push('MRD positif tinggi/persisten — diskusi strategi pre-HSCT diperlukan');
+  if(['active_relapse','refrakter','PD'].includes(d.status))fcon.push('Status penyakit belum terkontrol — bridging/salvage perlu dipertimbangkan dulu');
+  if(d.mrd_timing==='old'||d.mrd_timing==='unknown')fcon.push('MRD terakhir >3 bulan lalu / tidak diketahui — MRD terbaru perlu diperoleh');
+  if(d.workupDone.length<7)fcon.push('Workup belum lengkap ('+d.workupDone.length+'/14 item selesai)');
+  if(!d.workupDone.includes('consent_edu'))fcon.push('Edukasi keluarga dan persiapan consent belum selesai');
+  if(fcon.length===0)fcon.push('Tidak ditemukan faktor penunda signifikan berdasarkan input saat ini');
+
+  var fpEl=document.getElementById('factors-pro');fpEl.innerHTML='';
+  fpro.forEach(function(f){fpEl.innerHTML+='<li class="fitem fp"><span class="fi">✓</span><span>'+f+'</span></li>'});
+  var fcEl=document.getElementById('factors-con');fcEl.innerHTML='';
+  fcon.forEach(function(f){fcEl.innerHTML+='<li class="fitem fc"><span class="fi">⚠</span><span>'+f+'</span></li>'});
+
+  /* --- NARRATIVE --- */
+  var narr=getNarrative(cat,d,sc);
+  document.getElementById('impact-narr').textContent=narr;
+
+  /* --- DONOR READINESS --- */
+  var dro=document.getElementById('donor-readiness-out');
+  var donorLabel={MSD:'MSD',MUD:'MUD',haplo:'Haploidentik',CB:'Cord Blood',MMUD:'MMUD',search:'Dalam Pencarian',none:'Belum Teridentifikasi'};
+  var drPct=Math.round(sc.donorReady/20*100);
+  dro.innerHTML='<div class="gauge-wrap"><div class="gauge-lbl"><span>Kesiapan Donor Overall</span><span>'+drPct+'%</span></div><div class="gauge-bar"><div class="gauge-fill" style="width:'+drPct+'%;background:'+(drPct>65?'var(--gr)':drPct>35?'var(--yl)':'var(--rd)')+'"></div></div></div>';
+  dro.innerHTML+='<p style="margin-top:.6rem;font-size:12.5px;color:var(--tx)"><b>Status:</b> '+(donorLabel[d.donor]||'—')+' · <b>Langkah konfirmasi selesai:</b> '+d.donorChecks.length+'/7</p>';
+  if(d.donor==='none'||d.donor==='search'){
+    dro.innerHTML+='<div class="narr" style="margin-top:.5rem;margin-bottom:0"><b>Prioritas Donor:</b> Donor belum tersedia atau masih dalam pencarian tidak berarti kondisi pasien lebih baik; ini berarti pencarian donor perlu segera dipercepat. Aktivasi registri donor internasional perlu dipertimbangkan bila MSD tidak tersedia.</div>';
+  }
+  var donorMissing=['hla_done','donor_hla','donor_cleared','infect_screen','abo_cmv','collection_date','backup_donor'].filter(function(k){return!d.donorChecks.includes(k)});
+  var donorLabels={hla_done:'HLA typing pasien',donor_hla:'Konfirmasi HLA donor',donor_cleared:'Medical clearance donor',infect_screen:'Infectious screening donor',abo_cmv:'ABO/CMV review',collection_date:'Tanggal koleksi feasible',backup_donor:'Donor cadangan'};
+  if(donorMissing.length){
+    dro.innerHTML+='<div class="sec-div" style="margin-top:.7rem">Langkah Donor yang Belum Selesai</div><ul class="wklist">';
+    donorMissing.forEach(function(m){dro.innerHTML+='<li class="wkitem priority"><span class="wi">◆</span>'+donorLabels[m]+'</li>'});
+    dro.innerHTML+='</ul>';
+  }
+
+  /* --- RECOMMENDATIONS --- */
+  var recs=getRecommendations(cat,d,sc);
+  var ro=document.getElementById('recs-out');ro.innerHTML='';
+  var recSections=['0–2 Minggu','2–4 Minggu','1–3 Bulan'];
+  recs.forEach(function(sec,si){
+    if(sec.length===0)return;
+    ro.innerHTML+='<div class="sec-div">'+recSections[si]+'</div>';
+    sec.forEach(function(r,i){ro.innerHTML+='<div class="rec-item"><div class="ri-num">'+(i+1)+'</div><span>'+r+'</span></div>'});
+  });
+
+  /* --- WORKUP CHECKLIST --- */
+  var wko=document.getElementById('workup-out');wko.innerHTML='';
+  var allWorkup=[
+    {v:'bm_morph',l:'Morfologi sumsum tulang'},
+    {v:'mrd_done',l:'Pemeriksaan MRD terbaru'},
+    {v:'cytogen',l:'Konfirmasi sitogenetik/molekuler'},
+    {v:'imaging',l:'Imaging (bila relevan)'},
+    {v:'echo',l:'Ekokardiografi'},
+    {v:'renal_fn',l:'Fungsi ginjal / GFR'},
+    {v:'liver_fn',l:'Fungsi hati'},
+    {v:'pulm_fn',l:'Fungsi paru'},
+    {v:'cmv_ebv',l:'CMV/EBV/Hepatitis/HIV'},
+    {v:'dental',l:'Dental clearance'},
+    {v:'nutrition_ass',l:'Asesmen nutrisi'},
+    {v:'psych_social',l:'Konsultasi psikologis/sosial'},
+    {v:'consent_edu',l:'Edukasi keluarga & persiapan consent'},
+    {v:'fertility',l:'Diskusi preservasi fertilitas (bila relevan)'}
+  ];
+  var done=d.workupDone;
+  var notDone=allWorkup.filter(function(w){return!done.includes(w.v)});
+  var isDone=allWorkup.filter(function(w){return done.includes(w.v)});
+  if(notDone.length){
+    wko.innerHTML+='<div class="sec-div">Belum Selesai (Prioritaskan)</div><ul class="wklist">';
+    notDone.forEach(function(w){wko.innerHTML+='<li class="wkitem priority"><span class="wi">◆</span>'+w.l+'</li>'});
+    wko.innerHTML+='</ul>';
+  }
+  if(isDone.length){
+    wko.innerHTML+='<div class="sec-div" style="margin-top:.6rem">Sudah Selesai</div><ul class="wklist">';
+    isDone.forEach(function(w){wko.innerHTML+='<li class="wkitem"><span class="wi">✓</span>'+w.l+'</li>'});
+    wko.innerHTML+='</ul>';
+  }
+
+  /* --- TIMELINE --- */
+  var tlIdx=getTimelineIdx(cat,d,sc);
+  renderTimeline(tlIdx);
+
+  /* --- FAMILY SUMMARY --- */
+  var fam=getFamilyText(cat,d);
+  var fo=document.getElementById('family-out');
+  fo.innerHTML='<div class="fb-title">Panduan Komunikasi Keluarga (Disesuaikan oleh Tim)</div><p>'+fam+'</p>';
+
+  /* --- CLINICAL PEARLS --- */
+  var pearls=getPearls(d,sc,cat);
+  var po=document.getElementById('pearls-out');po.innerHTML='';
+  pearls.forEach(function(p){po.innerHTML+='<div class="pearl"><span class="pi">💎</span><span>'+p+'</span></div>'});
+
+  /* --- TEAM SUMMARY --- */
+  var ts=getTeamSummary(d,sc,cat,td);
+  document.getElementById('team-summary').textContent=ts;
+
+  /* --- PRINT INFO --- */
+  document.getElementById('pr-date').textContent=d.tgl?'Tanggal: '+d.tgl:'';
+  document.getElementById('pr-pasien').textContent='Kode Pasien: '+d.inisial+(d.umur?' · Usia: '+d.umur+' th':'')+(d.jk?' · '+{L:'Laki-laki',P:'Perempuan'}[d.jk]||'':'');
+  document.getElementById('res-tanggal').textContent=d.tgl||'—';
+
+  /* --- SHOW RESULTS --- */
+  document.getElementById('results-wrap').style.display='block';
+  showTab(5,document.querySelectorAll('.nav-tab')[5]);
+};
+
+/* ===== HELPER FUNCTIONS ===== */
+function scoreColor(v,max,type){
+  var pct=v/max;
+  if(type==='ready'||type==='donor')return pct>0.65?'var(--gr)':pct>0.35?'var(--yl)':'var(--rd)';
+  return pct>0.65?'var(--rd)':pct>0.35?'var(--yl)':'var(--gr)';
+}
+function riskFromUrgency(u){if(u>=14)return'Sangat Tinggi';if(u>=9)return'Tinggi';if(u>=5)return'Sedang';return'Rendah'}
+function riskFromMRD(mrd,status){
+  if(mrd==='rising')return'Sangat Tinggi';
+  if(mrd==='high'||mrd==='persist'||mrd==='cart_pos')return'Tinggi';
+  if(mrd==='mod'||['active_relapse','refrakter'].includes(status))return'Sedang';
+  return'Rendah';
+}
+function riskWindow(status,ctx){
+  if(['CR3plus','mol_relapse','hem_relapse'].includes(status))return'Tinggi';
+  if(ctx==='rem_gt6'||ctx==='rem_3to6')return'Sedang-Tinggi';
+  if(['CR2','mrd_pos_rem'].includes(status))return'Sedang';
+  return'Rendah';
+}
+function riskFromOptim(o){if(o>=12)return'Tinggi';if(o>=7)return'Sedang';return'Rendah'}
+function riskToPct(r){return{Rendah:20,'Sedang-Tinggi':60,'Sedang':45,Tinggi:75,'Sangat Tinggi':92}[r]||20}
+function riskColor(r){return{'Sangat Tinggi':'var(--rd)',Tinggi:'var(--or)','Sedang-Tinggi':'#F59E0B',Sedang:'var(--yl)',Rendah:'var(--gr)'}[r]||'var(--gy)'}
+function riskBadge(r){return{'Sangat Tinggi':'b-rd',Tinggi:'b-or','Sedang-Tinggi':'b-yl',Sedang:'b-yl',Rendah:'b-gr'}[r]||'b-gy'}
+
+function getNarrative(cat,d,sc){
+  var nm={
+    A:'Berdasarkan analisis multi-domain, profil risiko penyakit menunjukkan urgensi untuk segera mendiskusikan kasus ini di tim HSCT dan melengkapi workup transplantasi. Penundaan workup berisiko mempersempit window oportunitas transplantasi. Keputusan akhir dan jadwal kondisioning tetap memerlukan validasi lengkap oleh tim multidisiplin.',
+    B:'Kondisi penyakit mendukung perencanaan transplantasi. Workup yang masih belum lengkap perlu diselesaikan secara terstruktur. Penundaan yang tidak diperlukan sebaiknya dihindari, mengingat risiko perubahan status penyakit dari waktu ke waktu. Libatkan tim HSCT untuk menetapkan target waktu yang realistis.',
+    C:'Terdapat kondisi klinis yang perlu dioptimasi sebelum kondisioning dapat dilakukan dengan aman. Namun, risiko penyakit dasar cukup bermakna sehingga window transplantasi perlu tetap dijaga. Proses donor dan workup dijalankan paralel. Tentukan target maksimal waktu optimasi bersama tim untuk mencegah penundaan berlebihan.',
+    D:'Status penyakit saat ini (relaps aktif, refrakter, atau MRD rising) menunjukkan bahwa kondisioning langsung biasanya tidak tepat tanpa kontrol penyakit terlebih dahulu. Diskusi segera dengan tim onkologi dan HSCT diperlukan untuk merencanakan bridging/salvage therapy dan menentukan target response sebelum HSCT. Donor search tetap dilanjutkan.',
+    E:'Kondisi klinis saat ini (level ICU, instabilitas, atau infeksi berat tidak terkontrol) secara umum meningkatkan risiko mortalitas terkait transplantasi secara bermakna. Prioritas segera adalah stabilisasi klinis. Kontrol penyakit dasar tetap diperlukan selama periode ini. Reassessment kesiapan HSCT dilakukan setelah kondisi stabil.',
+    F:'Berdasarkan data yang dimasukkan, tidak ditemukan urgensi transplantasi segera saat ini. Pemantauan ketat terhadap status penyakit, MRD, dan faktor risiko perlu dilanjutkan. Segera lakukan reassessment bila terdapat perubahan status penyakit, MRD meningkat, atau faktor risiko tinggi baru muncul.'
+  };
+  return nm[cat]||'';
+}
+
+function getRecommendations(cat,d,sc){
+  var w0=[],w2=[],m1=[];
+  if(cat==='A'){
+    w0.push('Jadwalkan diskusi tim HSCT dalam beberapa hari ke depan');
+    w0.push('Konfirmasi status penyakit dan MRD terkini');
+    if(d.donor!=='none')w0.push('Aktivasi konfirmasi donor dan langkah yang masih belum selesai');
+    if(d.donor==='none')w0.push('Aktivasi pencarian donor segera — konsultasi registri donor');
+    w0.push('Lengkapi workup organ yang masih belum selesai');
+    w0.push('Mulai skrining infeksi pre-HSCT');
+    w2.push('Finalisasi semua workup yang belum selesai');
+    w2.push('Edukasi keluarga dan persiapan consent bila belum dilakukan');
+    w2.push('Diskusi rencana kondisioning bersama tim');
+    m1.push('Tetapkan target tanggal kondisioning bersama tim HSCT');
+    m1.push('Monitoring ketat status penyakit selama persiapan');
+  } else if(cat==='B'){
+    w0.push('Identifikasi workup yang masih belum selesai dan prioritaskan');
+    w0.push('Konfirmasi status donor dan langkah konfirmasi yang masih pending');
+    w0.push('Ulangi MRD bila belum terbaru atau sudah >4 minggu');
+    w2.push('Selesaikan semua workup yang tersisa');
+    w2.push('Finalisasi rencana kondisioning bersama tim HSCT');
+    w2.push('Edukasi keluarga dan persiapan consent');
+    m1.push('Tetapkan tanggal target kondisioning; hindari penundaan tidak perlu');
+    m1.push('Monitoring status penyakit dan MRD secara berkala');
+  } else if(cat==='C'){
+    w0.push('Mulai tatalaksana kondisi klinis yang perlu dioptimasi (infeksi, nutrisi, organ)');
+    w0.push('Konsultasi spesialis yang relevan sesuai kondisi (infeksi, gizi, kardiologi, dll.)');
+    w0.push('Lanjutkan proses donor dan workup secara paralel');
+    w2.push('Evaluasi respons optimasi klinis secara berkala');
+    w2.push('Tentukan batas waktu maksimal optimasi bersama tim HSCT');
+    w2.push('Pertahankan kontrol penyakit selama periode optimasi');
+    m1.push('Re-evaluasi kesiapan kondisioning setelah optimasi klinis');
+    m1.push('Lanjutkan workup; finalisasi bila kondisi sudah membaik');
+  } else if(cat==='D'){
+    w0.push('Diskusi segera dengan tim onkologi dan HSCT mengenai opsi bridging/salvage');
+    w0.push('Evaluasi ulang status penyakit dan MRD secara menyeluruh');
+    w0.push('Donor search tetap dilanjutkan selama proses bridging');
+    w2.push('Monitoring respons bridging/salvage therapy');
+    w2.push('Rencanakan evaluasi sumsum tulang/MRD pasca-bridging');
+    m1.push('Reassessment kesiapan HSCT berdasarkan respons terapi');
+    m1.push('Diskusi board HSCT setelah respons bridging diperoleh');
+  } else if(cat==='E'){
+    w0.push('Prioritas stabilisasi klinis: infeksi, organ, hemodinamik, ICU');
+    w0.push('Konsultasi multidisiplin segera (infeksi, ICU/anestesi, organ spesifik)');
+    w0.push('Pertahankan kontrol penyakit dasar selama stabilisasi');
+    w2.push('Evaluasi kondisi klinis secara berkala — target stabil dalam 2–4 minggu');
+    w2.push('Diskusikan timeline reassessment HSCT dengan tim');
+    m1.push('Reassessment kandidasi HSCT setelah kondisi stabil');
+    m1.push('Update workup setelah perbaikan klinis');
+  } else {
+    w0.push('Lanjutkan terapi dan monitoring status penyakit');
+    w0.push('Ulangi MRD dan asesmen penyakit sesuai protokol');
+    w2.push('Pertimbangkan donor search dini bila terdapat fitur risiko tinggi');
+    m1.push('Reassessment timing HSCT bila ada perubahan status penyakit');
+    m1.push('Diskusikan dengan tim onkologi mengenai rencana jangka panjang');
+  }
+  return[w0,w2,m1];
+}
+
+function getTimelineIdx(cat,d,sc){
+  var steps={E:5,D:1,A:3,B:3,C:4,F:0};
+  if(d.donor==='none')return 3;
+  if(['active_relapse','refrakter','PD'].includes(d.status))return 1;
+  if(sc.optimNeed>=7)return 5;
+  if(d.workupDone.length>=10&&d.donorChecks.length>=5)return 6;
+  if(d.workupDone.length>=6)return 4;
+  return steps[cat]||2;
+}
+
+function renderTimeline(activeIdx){
+  var steps=[
+    {e:'🏥',l:'Diagnosis & Stratifikasi'},
+    {e:'✅',l:'Kontrol Penyakit / Remisi'},
+    {e:'🧬',l:'MRD & Biologi'},
+    {e:'👥',l:'Pencarian Donor'},
+    {e:'📋',l:'Workup Pre-HSCT'},
+    {e:'🔧',l:'Optimasi Klinis'},
+    {e:'🤝',l:'HSCT Board Final'},
+    {e:'💊',l:'Kondisioning'},
+    {e:'🌟',l:'Infus Sel Punca'},
+    {e:'📡',l:'Monitoring Post-HSCT'}
+  ];
+  var el=document.getElementById('timeline');el.innerHTML='';
+  steps.forEach(function(s,i){
+    if(i>0){var c=document.createElement('div');c.className='tl-conn'+(i<=activeIdx?' done':'');el.appendChild(c)}
+    var st=document.createElement('div');st.className='tl-step';
+    var nd=document.createElement('div');
+    nd.className='tl-node '+(i===activeIdx?'active':i<activeIdx?'done':'upcoming');
+    nd.textContent=i===activeIdx?'★':s.e;
+    var lb=document.createElement('div');lb.className='tl-lbl'+(i===activeIdx?' active':'');lb.textContent=s.l;
+    st.appendChild(nd);st.appendChild(lb);el.appendChild(st);
+  });
+}
+
+function getFamilyText(cat,d){
+  var opts={
+    A:'Berdasarkan evaluasi yang telah dilakukan, dokter perlu mendiskusikan rencana transplantasi sel punca untuk putra/putri Anda dalam waktu dekat. Tim medis akan segera melengkapi pemeriksaan yang diperlukan dan mendiskusikan rencana ini lebih lanjut. Keputusan akhir akan diambil setelah semua pemeriksaan selesai dan tim transplantasi telah mendiskusikannya bersama.',
+    B:'Tim medis sedang mempersiapkan rencana transplantasi sel punca untuk putra/putri Anda. Beberapa pemeriksaan masih perlu diselesaikan sebelum proses dapat dilanjutkan. Tim akan memberikan informasi lebih lanjut saat semua persiapan sudah lengkap. Mohon kesabarannya dan jangan ragu untuk bertanya kepada tim medis.',
+    C:'Kondisi putra/putri Anda memerlukan beberapa perbaikan terlebih dahulu sebelum transplantasi dapat dilakukan dengan aman. Tim sedang bekerja untuk mengoptimalkan kondisi tersebut. Proses persiapan transplantasi tetap berjalan secara paralel. Tim akan memberikan update berkala mengenai perkembangan kondisi.',
+    D:'Kondisi penyakit putra/putri Anda saat ini memerlukan penanganan tambahan sebelum transplantasi dapat direncanakan. Tim sedang mendiskusikan pilihan terapi terbaik untuk mempersiapkan kondisi yang lebih baik sebelum transplantasi. Keputusan akan disampaikan setelah diskusi tim selesai.',
+    E:'Kondisi kesehatan putra/putri Anda saat ini memerlukan perhatian dan penanganan segera agar stabil terlebih dahulu. Tim medis fokus pada stabilisasi kondisi ini. Setelah kondisi membaik, tim akan kembali mendiskusikan rencana transplantasi. Mohon terus bekerja sama dengan tim medis selama masa perawatan ini.',
+    F:'Berdasarkan evaluasi saat ini, tim medis akan terus memantau kondisi putra/putri Anda secara ketat. Bila ada perubahan kondisi, tim akan segera mendiskusikan langkah selanjutnya termasuk kemungkinan transplantasi. Jaga komunikasi yang baik dengan tim perawatan.'
+  };
+  return(opts[cat]||'Tim medis akan memberikan penjelasan lebih lanjut mengenai rencana perawatan berdasarkan evaluasi menyeluruh.')+' Semua keputusan diambil bersama oleh tim multidisiplin yang kompeten demi kepentingan terbaik pasien.';
+}
+
+function getPearls(d,sc,cat){
+  var p=[];
+  var mrd=d.mrd;var status=d.status;
+  if(mrd==='neg'||mrd==='falling')p.push('MRD negatif sebelum HSCT umumnya dikaitkan dengan outcome yang lebih baik, namun interpretasi tetap tergantung diagnosis, metode pemeriksaan, dan time point. Konfirmasi dengan tim sesuai protokol.');
+  if(mrd==='high'||mrd==='persist'||mrd==='rising')p.push('MRD positif atau persisten sering meningkatkan urgensi diskusi HSCT, namun dapat pula mengindikasikan kebutuhan strategi kontrol penyakit lebih dulu. Keputusan tidak boleh semata-mata berdasarkan MRD tanpa konteks klinis lengkap.');
+  if(mrd==='rising')p.push('MRD yang tren meningkat (rising) biasanya memerlukan diskusi kontrol penyakit segera — bukan langsung kondisioning tanpa strategi yang matang.');
+  if(d.donor==='none'||d.donor==='search')p.push('Keterlambatan pencarian donor meningkatkan risiko kehilangan window transplantasi. Donor search sebaiknya diaktivasi segera setelah indikasi HSCT teridentifikasi, termasuk registri internasional bila perlu.');
+  if(d.donor==='MSD')p.push('MSD umumnya menjadi pertimbangan donor pertama, namun keputusan jenis donor tetap harus mempertimbangkan faktor lain seperti usia donor, CMV status, ABO, dan faktor center-specific. Diskusikan dengan tim transplantasi.');
+  if(d.donor==='haplo')p.push('Transplantasi haploidentik dengan pendekatan PTCy atau platform lainnya menunjukkan hasil yang semakin baik dan dapat menjadi alternatif bila MSD/MUD tidak tersedia. Keputusan harus berdasarkan pengalaman dan protokol pusat.');
+  if(['active_relapse','refrakter'].includes(status))p.push('Relaps aktif atau penyakit refrakter tidak secara otomatis berarti kondisioning dapat segera dilakukan. Kontrol penyakit melalui salvage atau bridging therapy sering diperlukan terlebih dahulu untuk menurunkan risiko transplantasi.');
+  if(d.riwayat.includes('hsct_prev'))p.push('Riwayat HSCT sebelumnya memerlukan diskusi board khusus. Second transplant membawa risiko tambahan dan memerlukan evaluasi individual yang sangat cermat.');
+  if(d.riwayat.includes('cart_prev'))p.push('Pasien post-CAR-T yang direncanakan HSCT memerlukan diskusi khusus mengenai timing, conditioning intensity, dan risiko toksisitas kumulatif.');
+  if(d.kondisi.includes('bact_infect')||d.kondisi.includes('fungal_infect'))p.push('Infeksi aktif umumnya memerlukan stabilisasi sebelum kondisioning, namun bukan merupakan kontraindikasi absolut dalam semua situasi. Diskusikan dengan tim infeksi dan transplantasi untuk keputusan individual.');
+  if(d.dx_cat==='nonmalig')p.push('Pada penyakit non-malignan, HSCT lebih awal sebelum terjadi kerusakan organ ireversibel umumnya memberikan hasil lebih baik. Timing harus mempertimbangkan usia, kelas risiko, ketersediaan donor, dan kondisi klinis.');
+  if(d.dx_specific==='SCID')p.push('SCID merupakan emergensi imunologi. HSCT perlu dipertimbangkan sesegera mungkin setelah diagnosis ditegakkan. Jenis kondisioning disesuaikan dengan diagnosis dan kondisi klinis.');
+  if(d.dx_specific==='TM')p.push('Pada Thalassemia Mayor, outcome HSCT berkaitan dengan usia, kelas Pesaro, dan kondisi organ. Diskusi risiko-manfaat individual sangat penting sebelum keputusan diambil.');
+  p.push('Semua keputusan timing HSCT harus didasarkan pada diskusi multidisiplin yang mempertimbangkan keseimbangan antara risiko penyakit, risiko mortalitas terkait transplantasi, kesiapan klinis, dan preferensi keluarga yang terinformasi.');
+  return p.slice(0,6);
+}
+
+function getTeamSummary(d,sc,cat,td){
+  var dxCatLabel={leukemia:'Leukemia/Hematologic Malignancy',solid:'Tumor Solid',nonmalig:'Non-Malignan'};
+  var statusLabel={CR1:'CR1',CR2:'CR2',CR3plus:'CR3+',mrd_neg_rem:'Remisi MRD-Negatif',mrd_pos_rem:'Remisi MRD-Positif',mol_relapse:'Relaps Molekuler',hem_relapse:'Relaps Hematologis',active_relapse:'Relaps Aktif',refrakter:'Refrakter',post_cart_neg:'Post-CAR-T MRD Negatif',post_cart_pos:'Post-CAR-T MRD Positif',CR:'Complete Response',PR:'Partial Response',SD:'Stable Disease',PD:'Progressive Disease',nm_stabil:'Non-Malignan Stabil',nm_memburuk:'Non-Malignan Memburuk',nm_gagal:'Gagal Terapi Standar',baru_dx:'Baru Diagnosis'};
+  var mrdLabel={na:'tidak tersedia',neg:'negatif',low:'positif rendah',mod:'positif sedang',high:'positif tinggi',rising:'positif tren meningkat',falling:'positif tren menurun',persist:'persisten positif',cart_neg:'post-CAR-T negatif',cart_pos:'post-CAR-T positif'};
+  var donorLabel={MSD:'MSD tersedia',MUD:'MUD tersedia',haplo:'donor haploidentik tersedia',CB:'cord blood tersedia',MMUD:'MMUD tersedia',search:'donor dalam pencarian',none:'donor belum teridentifikasi'};
+  var s='Assessment HSCT Timing — drAisyiEduCare. ';
+  s+='Kode pasien: '+(d.inisial||'—')+(d.umur?', usia '+d.umur+' tahun':'')+'. ';
+  s+='Diagnosis: '+(dxCatLabel[d.dx_cat]||'—')+', status: '+(statusLabel[d.status]||d.status||'—')+'. ';
+  s+='MRD: '+(mrdLabel[d.mrd]||'—')+'. ';
+  s+='Donor: '+(donorLabel[d.donor]||'—')+'. ';
+  if(d.kondisi.length&&!d.kondisi.includes('none_k'))s+='Kondisi klinis yang tercatat: '+(d.kondisi.filter(function(k){return k!=='none_k'}).join(', '))+'. ';
+  s+='Workup selesai: '+d.workupDone.length+'/14 item. ';
+  s+='Domain scores (heuristik, /20): Urgensi Penyakit='+sc.diseaseUrgency+', Bahaya Menunda='+sc.delayHarm+', Kesiapan Proceed='+sc.proceedReadiness+', Kebutuhan Optimasi='+sc.optimNeed+', Kesiapan Donor='+sc.donorReady+'. ';
+  s+='Kategori timing: '+td.label+'. ';
+  s+='Catatan: Hasil ini bersifat heuristik dan merupakan alat bantu awal. Keputusan akhir harus ditetapkan melalui diskusi multidisiplin tim HSCT yang kompeten.';
+  return s;
+}
+
+})();
+</script>
+</body>
+</html>

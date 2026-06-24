@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>drAisyi — Pediatric Cancer Survivor Navigator v1.6</title>
+<style>
+:root{
+  --red:#c0152a;--red-dark:#8b0e1e;--red-light:#fde8ea;
+  --white:#fff;--gray-light:#f7f8fa;--gray-mid:#e4e8ee;--gray:#64748b;
+  --dark:#1a202c;--teal:#0e7c6b;--teal-light:#d0f5ef;
+  --green:#15803d;--green-light:#dcfce7;
+  --yellow:#b45309;--yellow-light:#fef3c7;
+  --radius:10px;--shadow:0 2px 14px rgba(192,21,42,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#fdf5f6;color:var(--dark);font-size:14px}
+.header{background:linear-gradient(135deg,var(--red-dark) 0%,var(--red) 55%,#e84057 100%);color:#fff;padding:0 28px;display:flex;align-items:center;gap:18px;box-shadow:0 4px 20px rgba(139,14,30,.35);min-height:72px}
+.brand-logo{display:flex;flex-direction:column;align-items:flex-start;border-right:2px solid rgba(255,255,255,.25);padding-right:18px;margin-right:4px}
+.brand-dr{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;opacity:.85}
+.brand-aisyi{font-size:28px;font-weight:900;letter-spacing:-1px;line-height:1;font-style:italic}
+.brand-dot{color:#ffd4d8}
+.header-info h1{font-size:15px;font-weight:700;line-height:1.3}
+.header-info p{font-size:10px;opacity:.8;margin-top:2px}
+.header-right{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.header-badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:3px 11px;font-size:10px}
+.ver-badge{background:rgba(255,255,255,.25);border-radius:4px;padding:2px 7px;font-size:9px;font-weight:700}
+.main{display:flex;min-height:calc(100vh - 72px)}
+.sidebar{width:230px;min-width:210px;background:#fff;border-right:1.5px solid var(--gray-mid);padding:14px 0;overflow-y:auto;flex-shrink:0}
+.content{flex:1;padding:20px;overflow-y:auto}
+.nav-section{padding:7px 14px 2px;font-size:9px;font-weight:700;text-transform:uppercase;color:#aab;letter-spacing:1.2px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 16px;cursor:pointer;transition:all .15s;border-left:3px solid transparent;color:var(--dark);font-size:12px}
+.nav-item:hover{background:var(--red-light);color:var(--red)}
+.nav-item.active{background:var(--red-light);color:var(--red);border-left-color:var(--red);font-weight:700}
+.nav-item .ico{font-size:14px;width:16px;text-align:center}
+.nav-divider{height:1px;background:var(--gray-mid);margin:5px 10px}
+.page{display:none}.page.active{display:block}
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:14px}
+.card-title{font-size:13.5px;font-weight:700;color:var(--dark);margin-bottom:12px;display:flex;align-items:center;gap:8px;border-bottom:2px solid var(--red-light);padding-bottom:8px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.form-group{display:flex;flex-direction:column;gap:3px}
+.form-group label{font-size:10.5px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.5px}
+.form-group input,.form-group select{border:1.5px solid var(--gray-mid);border-radius:7px;padding:7px 9px;font-size:12.5px;color:var(--dark);background:#fff;width:100%}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--red)}
+.radio-group{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.radio-item{display:flex;align-items:center;gap:7px;padding:5px 11px;background:var(--gray-light);border-radius:6px;cursor:pointer;transition:background .15s;border:1.5px solid transparent}
+.radio-item:hover{background:var(--red-light)}
+.radio-item input[type=radio]{accent-color:var(--red);width:13px;height:13px}
+.radio-item label{font-size:12px;color:var(--dark);cursor:pointer}
+.radio-item.selected{background:var(--red-light);border-color:var(--red)}
+.check-section{margin-bottom:11px}
+.check-section-title{font-size:10.5px;font-weight:700;color:var(--red-dark);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding:3px 8px;background:var(--red-light);border-radius:5px}
+.check-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:4px}
+.check-item{display:flex;align-items:center;gap:7px;padding:5px 9px;background:var(--gray-light);border-radius:6px;cursor:pointer;transition:background .15s}
+.check-item:hover{background:var(--red-light)}
+.check-item input[type=checkbox]{accent-color:var(--red);width:13px;height:13px}
+.check-item label{font-size:11.5px;color:var(--dark);cursor:pointer}
+.dose-row{display:flex;align-items:center;gap:9px;margin:5px 0;padding:5px 9px;background:var(--gray-light);border-radius:7px;flex-wrap:wrap}
+.dose-row label{font-size:11.5px;color:var(--gray);min-width:210px;font-weight:500}
+.dose-row input{border:1.5px solid var(--gray-mid);border-radius:6px;padding:5px 9px;font-size:12.5px;width:100px}
+.dose-row .unit{font-size:11px;color:var(--red);font-weight:600}
+.dose-unknown{font-size:11px;color:var(--gray);display:flex;align-items:center;gap:5px}
+.dose-unknown input{width:13px;height:13px;accent-color:var(--gray)}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s;border:none}
+.btn-primary{background:var(--red);color:#fff}.btn-primary:hover{background:var(--red-dark)}
+.btn-success{background:var(--teal);color:#fff}.btn-success:hover{filter:brightness(1.1)}
+.btn-outline{background:#fff;color:var(--red);border:2px solid var(--red)}.btn-outline:hover{background:var(--red-light)}
+.btn-lg{padding:12px 24px;font-size:14px}
+.btn-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
+.risk{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.risk-low{background:var(--green-light);color:var(--green)}
+.risk-mod{background:var(--yellow-light);color:var(--yellow)}
+.risk-high{background:var(--red-light);color:var(--red)}
+.risk-unknown{background:#f0f0f0;color:#555}
+.risk-na{background:var(--gray-light);color:var(--gray)}
+.organ-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:11px}
+.organ-card{background:#fff;border-radius:var(--radius);border:1.5px solid var(--gray-mid);padding:13px}
+.organ-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.organ-card-title{font-weight:700;font-size:12px;display:flex;align-items:center;gap:5px}
+.organ-list{list-style:none}
+.organ-list li{padding:3px 0;font-size:11.5px;color:var(--gray);border-bottom:1px dashed var(--gray-mid);display:flex;gap:5px;line-height:1.5}
+.organ-list li:last-child{border:none}
+.organ-list li::before{content:"→";color:var(--red);font-size:10px;flex-shrink:0;margin-top:2px}
+.reason-box{background:#f8faff;border-left:3px solid #3b82f6;border-radius:0 5px 5px 0;padding:6px 9px;margin-top:6px;font-size:10.5px;color:#1e3a8a;line-height:1.5}
+.reason-box strong{font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:2px}
+.timeline{position:relative;padding-left:26px}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--red-light)}
+.tl-item{position:relative;margin-bottom:16px}
+.tl-dot{position:absolute;left:-22px;top:3px;width:13px;height:13px;border-radius:50%;background:var(--red);border:3px solid #fff;box-shadow:0 0 0 2px var(--red)}
+.tl-time{font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.tl-content{background:#fff;border-radius:7px;border:1px solid var(--gray-mid);padding:10px}
+.tl-content h4{font-size:12px;font-weight:700;margin-bottom:5px}
+.tl-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.tl-tag{background:var(--red-light);color:var(--red);border-radius:12px;padding:2px 8px;font-size:10.5px;font-weight:600}
+.summary-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px dashed var(--gray-mid);font-size:12.5px}
+.summary-row:last-child{border:none}
+.priority-item{display:flex;align-items:flex-start;gap:9px;padding:9px;background:var(--gray-light);border-radius:7px;margin-bottom:7px;font-size:12.5px;line-height:1.5}
+.priority-icon{font-size:16px;flex-shrink:0}
+.passport{background:linear-gradient(135deg,var(--red-dark) 0%,var(--red) 65%,#e84057 100%);color:#fff;border-radius:13px;padding:24px;max-width:680px;margin:0 auto}
+.passport-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,.25);padding-bottom:12px}
+.passport-brand{font-size:20px;font-weight:900;font-style:italic;letter-spacing:-.5px}
+.passport-brand span{opacity:.7;font-size:12px;display:block;font-style:normal;font-weight:500;margin-top:2px}
+.passport-title-main{font-size:13px;font-weight:700;margin-top:4px}
+.passport-logo{font-size:36px}
+.passport-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.passport-field{background:rgba(255,255,255,.13);border-radius:7px;padding:10px 13px}
+.passport-field-label{font-size:9px;text-transform:uppercase;opacity:.7;letter-spacing:1px;margin-bottom:3px}
+.passport-field-value{font-size:12.5px;font-weight:700}
+.passport-field-list{font-size:11.5px;line-height:1.7}
+.alert{border-radius:7px;padding:10px 13px;margin:7px 0;font-size:12px;display:flex;gap:7px;line-height:1.5}
+.alert-info{background:#eff6ff;color:#1e3a8a;border:1px solid #bfdbfe}
+.alert-warning{background:var(--yellow-light);color:#713f12;border:1px solid #fde68a}
+.alert-danger{background:var(--red-light);color:var(--red-dark);border:1px solid #fca5a5}
+.alert-success{background:var(--green-light);color:#14532d;border:1px solid #86efac}
+.disclaimer{background:#fffbeb;border:1.5px solid #fde68a;border-radius:7px;padding:10px 13px;margin:12px 0;font-size:11.5px;color:#92400e;display:flex;gap:7px;align-items:flex-start;line-height:1.5}
+.hero{background:linear-gradient(135deg,#fff0f2 0%,#fde8ea 100%);border-radius:11px;padding:22px;margin-bottom:16px;text-align:center;border:1.5px solid #ffc5cb}
+.hero-logo{font-size:14px;font-weight:900;font-style:italic;color:var(--red);margin-bottom:3px}
+.hero h2{font-size:18px;color:var(--dark);font-weight:800}
+.hero p{color:var(--gray);margin-top:5px;font-size:12.5px}
+.hero-stats{display:flex;justify-content:center;gap:22px;margin-top:14px;flex-wrap:wrap}
+.hero-stat-val{font-size:20px;font-weight:800;color:var(--red)}
+.hero-stat-label{font-size:10px;color:var(--gray)}
+.growth-result{background:var(--red-light);border-radius:7px;padding:11px;margin-top:10px;border:1px solid #ffc5cb}
+.growth-result h4{font-size:12.5px;font-weight:700;color:var(--red);margin-bottom:7px}
+.growth-metric{display:flex;justify-content:space-between;padding:3px 0;font-size:12.5px;border-bottom:1px dashed rgba(192,21,42,.15)}
+.vaccine-table{width:100%;border-collapse:collapse;font-size:11.5px}
+.vaccine-table th{background:var(--red);color:#fff;padding:7px 10px;text-align:left}
+.vaccine-table td{padding:6px 10px;border-bottom:1px solid var(--gray-mid)}
+.vaccine-table tr:nth-child(even){background:var(--gray-light)}
+.unknown-warn{background:#fef9c3;border:1px solid #fde68a;border-radius:5px;padding:6px 10px;font-size:11px;color:#713f12;margin:5px 0;display:flex;gap:5px}
+.guideline-ref{background:#eff6ff;border-radius:5px;padding:6px 10px;font-size:10.5px;color:#1e3a8a;margin-top:7px;border-left:3px solid #3b82f6}
+.edu-card{background:#fff;border-radius:var(--radius);border-left:4px solid var(--red);padding:13px;margin-bottom:11px}
+.edu-title{font-weight:700;color:var(--red);margin-bottom:7px;font-size:13px}
+.edu-body{font-size:12.5px;color:var(--gray);line-height:1.75}
+.warning-signs{background:var(--red-light);border-radius:6px;padding:10px 12px;margin-top:9px}
+.warning-signs h4{color:var(--red);font-size:11.5px;font-weight:700;margin-bottom:5px}
+.warning-signs ul{list-style:none}
+.warning-signs ul li{font-size:11.5px;color:var(--red-dark);padding:2px 0}
+.warning-signs ul li::before{content:"⚠ "}
+.step-card{border-radius:8px;padding:12px;text-align:center;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.step-card:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(0,0,0,.1)}
+.source-box{border-radius:8px;padding:11px;text-align:center;border:1.5px solid}
+.new-badge{background:#7c3aed;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px;vertical-align:middle}
+.fix-badge{background:#0e7c6b;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px;vertical-align:middle}
+@media print{
+  body>*{display:none!important}
+  #print-portal{display:block!important;padding:20px;font-family:Arial,sans-serif;font-size:11.5px;color:#1a202c}
+  #print-portal .card{box-shadow:none;border:1px solid #ddd;break-inside:avoid;margin-bottom:10px;padding:12px}
+  #print-portal .organ-card{border:1px solid #ddd;break-inside:avoid}
+}
+@media(max-width:768px){
+  .main{flex-direction:column}
+  .sidebar{width:100%;border-right:none;border-bottom:1px solid var(--gray-mid);padding:7px;display:flex;flex-wrap:wrap;gap:4px;overflow-x:auto}
+  .nav-section,.nav-divider{display:none}
+  .nav-item{padding:4px 9px;font-size:11px;border-left:none;border-radius:20px;border:1px solid var(--gray-mid);white-space:nowrap}
+  .nav-item.active{background:var(--red);color:#fff;border-color:var(--red)}
+  .form-grid,.form-grid-3,.organ-grid,.passport-grid{grid-template-columns:1fr}
+  .header{padding:10px 14px}
+  .brand-aisyi{font-size:20px}
+  .header-info h1{font-size:12px}
+  .header-right{display:none}
+}
+</style>
+</head>
+<body>
+<div id="print-portal" style="display:none"></div>
+
+<div class="header">
+  <div class="brand-logo">
+    <div class="brand-dr">dr</div>
+    <div class="brand-aisyi">Aisyi<span class="brand-dot">.</span></div>
+  </div>
+  <div class="header-info">
+    <h1>Pediatric Cancer Survivor &amp; Late Effects Navigator</h1>
+    <p>Panduan berbasis bukti &mdash; tata laksana jangka panjang penyintas kanker anak | 20 Modul Surveilans</p>
+  </div>
+  <div class="header-right">
+    <div class="header-badge">COG v6.0 &middot; IGHG &middot; PanCare</div>
+    <div class="ver-badge">v1.6 — COG v6.0 Corrected</div>
+    <div style="font-size:9px;opacity:.65">drAisyi Berbagi &mdash; RSKD Jakarta</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="sidebar">
+    <div class="nav-section">Menu Utama</div>
+    <div class="nav-item active" onclick="showPage('home')"><span class="ico">🏠</span> Beranda</div>
+    <div class="nav-item" onclick="showPage('profile')"><span class="ico">👤</span> Profil Pasien</div>
+    <div class="nav-section">Data Terapi</div>
+    <div class="nav-item" onclick="showPage('treatment')"><span class="ico">💊</span> Riwayat Terapi</div>
+    <div class="nav-item" onclick="showPage('doses')"><span class="ico">⚗️</span> Dosis Kumulatif</div>
+    <div class="nav-divider"></div>
+    <div class="nav-section">Modul Organ</div>
+    <div class="nav-item" onclick="showPage('cardiac')"><span class="ico">❤️</span> Jantung</div>
+    <div class="nav-item" onclick="showPage('endocrine')"><span class="ico">🔬</span> Endokrin</div>
+    <div class="nav-item" onclick="showPage('growth')"><span class="ico">📏</span> Tumbuh Kembang</div>
+    <div class="nav-item" onclick="showPage('fertility')"><span class="ico">🌱</span> Fertilitas</div>
+    <div class="nav-item" onclick="showPage('neuro')"><span class="ico">🧠</span> Neurokognitif</div>
+    <div class="nav-item" onclick="showPage('hearing')"><span class="ico">👂</span> Pendengaran</div>
+    <div class="nav-item" onclick="showPage('eye')"><span class="ico">👁️</span> Mata</div>
+    <div class="nav-item" onclick="showPage('dental')"><span class="ico">🦷</span> Gigi &amp; Mulut</div>
+    <div class="nav-item" onclick="showPage('liver')"><span class="ico">🫀</span> Hati &amp; Infeksi</div>
+    <div class="nav-item" onclick="showPage('psychosocial')"><span class="ico">🧘</span> Psikososial</div>
+    <div class="nav-item" onclick="showPage('neuro2')"><span class="ico">⚡</span> Neuropati Perifer</div>
+    <div class="nav-item" onclick="showPage('metabolic')"><span class="ico">📊</span> Metabolik &amp; KV</div>
+    <div class="nav-item" onclick="showPage('surgery')"><span class="ico">🔧</span> Bedah Spesifik</div>
+    <div class="nav-item" onclick="showPage('secondary')"><span class="ico">🔍</span> Kanker Sekunder</div>
+    <div class="nav-item" onclick="showPage('bone')"><span class="ico">🦴</span> Tulang</div>
+    <div class="nav-item" onclick="showPage('renal')"><span class="ico">🫘</span> Ginjal</div>
+    <div class="nav-item" onclick="showPage('pulmonary')"><span class="ico">🫁</span> Paru</div>
+    <div class="nav-item" onclick="showPage('immune')"><span class="ico">🛡️</span> Imunitas</div>
+    <div class="nav-divider"></div>
+    <div class="nav-section">Laporan</div>
+    <div class="nav-item" onclick="showPage('timeline')"><span class="ico">📅</span> Lini Masa</div>
+    <div class="nav-item" onclick="showPage('summary')"><span class="ico">📋</span> Ringkasan</div>
+    <div class="nav-item" onclick="showPage('passport')"><span class="ico">🪪</span> Paspor Penyintas</div>
+    <div class="nav-item" onclick="showPage('education')"><span class="ico">📚</span> Edukasi Keluarga</div>
+  </div>
+
+  <div class="content">
+
+    <!-- BERANDA -->
+    <div class="page active" id="page-home">
+      <div class="hero">
+        <div class="hero-logo">drAisyi</div>
+        <h2>🎗️ Pediatric Cancer Survivor Navigator v1.6</h2>
+        <p>20 modul surveilans &mdash; diperbarui sesuai COG LTFU v6.0 (Oktober 2023)</p>
+        <div class="hero-stats">
+          <div class="hero-stat"><div class="hero-stat-val">20</div><div class="hero-stat-label">Modul Surveilans</div></div>
+          <div class="hero-stat"><div class="hero-stat-val">COG v6</div><div class="hero-stat-label">LTFU 2023</div></div>
+          <div class="hero-stat"><div class="hero-stat-val">IGHG</div><div class="hero-stat-label">Harmonisasi Int'l</div></div>
+          <div class="hero-stat"><div class="hero-stat-val">v1.6</div><div class="hero-stat-label">COG v6.0 Corrected</div></div>
+        </div>
+      </div>
+      <div class="alert alert-success">✅ <span><strong>v1.6 — Koreksi COG LTFU v6.0:</strong> (1) MTX dihapus dari risk factor tulang | (2) Kolorektal: usia 30 + stool DNA | (3) Echo threshold anthra &lt;100 mg/m² | (4) HPV 3 dosis di tabel vaksin</span></div>
+      <div class="disclaimer">&#9888; <span><strong>Perhatian Klinis:</strong> Alat ini bersifat <em>decision support</em>, bukan pengganti penilaian klinis. Data tidak lengkap dapat menyebabkan stratifikasi risiko tidak akurat.</span></div>
+      <div class="card">
+        <div class="card-title">🚀 Panduan Penggunaan</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px">
+          <div class="step-card" style="background:#fff0f2;border:1.5px solid #ffc5cb" onclick="showPage('profile')"><div style="font-size:24px;margin-bottom:5px">👤</div><div style="font-weight:800;font-size:12px;color:var(--red)">Langkah 1</div><div style="font-size:11px;color:var(--gray);margin-top:2px">Profil Pasien</div></div>
+          <div class="step-card" style="background:#fef3c7;border:1.5px solid #fde68a" onclick="showPage('treatment')"><div style="font-size:24px;margin-bottom:5px">💊</div><div style="font-weight:800;font-size:12px;color:var(--yellow)">Langkah 2</div><div style="font-size:11px;color:var(--gray);margin-top:2px">Riwayat Terapi</div></div>
+          <div class="step-card" style="background:var(--teal-light);border:1.5px solid #a7f3d0" onclick="showPage('doses')"><div style="font-size:24px;margin-bottom:5px">⚗️</div><div style="font-weight:800;font-size:12px;color:var(--teal)">Langkah 3</div><div style="font-size:11px;color:var(--gray);margin-top:2px">Dosis Kumulatif</div></div>
+          <div class="step-card" style="background:var(--green-light);border:1.5px solid #86efac" onclick="generateAll()"><div style="font-size:24px;margin-bottom:5px">&#9889;</div><div style="font-weight:800;font-size:12px;color:var(--green)">Langkah 4</div><div style="font-size:11px;color:var(--gray);margin-top:2px">Buat Rencana</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFIL -->
+    <div class="page" id="page-profile">
+      <div class="card">
+        <div class="card-title">👤 Informasi Dasar Pasien</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Nama Pasien (Opsional)</label><input type="text" id="pt-name" placeholder="mis. An. X" maxlength="100"></div>
+          <div class="form-group"><label>Jenis Kelamin *</label><select id="pt-gender"><option value="">-- Pilih --</option><option value="male">Laki-laki</option><option value="female">Perempuan</option></select></div>
+          <div class="form-group"><label>Tanggal Lahir</label><input type="date" id="pt-dob"></div>
+          <div class="form-group"><label>Usia Sekarang (tahun) *</label><input type="number" id="pt-age" min="0" max="50" placeholder="mis. 15"></div>
+          <div class="form-group"><label>Usia saat Diagnosis (tahun) *</label><input type="number" id="pt-age-dx" min="0" max="30" placeholder="mis. 5"></div>
+          <div class="form-group"><label>Tahun Diagnosis</label><input type="number" id="pt-year-dx" min="1980" max="2030" placeholder="mis. 2015"></div>
+          <div class="form-group"><label>Tahun Selesai Terapi</label><input type="number" id="pt-year-eot" min="1980" max="2030" placeholder="mis. 2017"></div>
+          <div class="form-group"><label>Tahun sejak Selesai Terapi</label><input type="number" id="pt-yrs-eot" min="0" max="50" placeholder="mis. 7"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🏥 Diagnosis Primer *</div>
+        <div class="form-group" style="max-width:420px">
+          <label>Diagnosis</label>
+          <select id="pt-dx">
+            <option value="">-- Pilih --</option>
+            <optgroup label="Leukemia"><option value="ALL">LLA/ALL</option><option value="AML">LMA/AML</option><option value="CML">LMK/CML</option></optgroup>
+            <optgroup label="Limfoma"><option value="NHL">Limfoma Non-Hodgkin</option><option value="HL">Limfoma Hodgkin</option></optgroup>
+            <optgroup label="Tumor Padat"><option value="Neuroblastoma">Neuroblastoma</option><option value="Wilms">Tumor Wilms</option><option value="Hepatoblastoma">Hepatoblastoma</option><option value="Osteosarcoma">Osteosarkoma</option><option value="Ewing">Sarkoma Ewing</option><option value="Medulloblastoma">Medulloblastoma</option><option value="Retinoblastoma">Retinoblastoma</option></optgroup>
+            <optgroup label="Lainnya"><option value="LCH">LCH</option><option value="AA">Anemia Aplastik</option><option value="Thalassemia">Thalassemia</option><option value="Other">Lainnya</option></optgroup>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary" onclick="showPage('treatment')">Selanjutnya &rarr;</button></div>
+    </div>
+
+    <!-- RIWAYAT TERAPI -->
+    <div class="page" id="page-treatment">
+      <div class="card">
+        <div class="card-title">💊 Kemoterapi</div>
+        <div class="check-section"><div class="check-section-title">Antrasiklin</div><div class="check-grid">
+          <div class="check-item"><input type="checkbox" id="tx-doxo"><label for="tx-doxo">Doxorubicin</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-dauno"><label for="tx-dauno">Daunorubicin</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-idaru"><label for="tx-idaru">Idarubicin</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-epiru"><label for="tx-epiru">Epirubicin</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-mito"><label for="tx-mito">Mitoxantrone (konversi 10:1)</label></div>
+        </div></div>
+        <div class="check-section"><div class="check-section-title">Agen Alkilasi</div><div class="check-grid">
+          <div class="check-item"><input type="checkbox" id="tx-cyclo"><label for="tx-cyclo">Cyclophosphamide</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-ifos"><label for="tx-ifos">Ifosfamide</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-busu"><label for="tx-busu">Busulfan</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-melph"><label for="tx-melph">Melphalan</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-procarb"><label for="tx-procarb">Procarbazine</label></div>
+        </div></div>
+        <div class="check-section"><div class="check-section-title">Platinum</div><div class="check-grid">
+          <div class="check-item"><input type="checkbox" id="tx-cisp"><label for="tx-cisp">Cisplatin</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-carbo"><label for="tx-carbo">Carboplatin</label></div>
+        </div></div>
+        <div class="check-section"><div class="check-section-title">Antimetabolit</div><div class="check-grid">
+          <div class="check-item"><input type="checkbox" id="tx-mtx"><label for="tx-mtx">Methotrexate (HD)</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-arac"><label for="tx-arac">Sitarabin HD</label></div>
+        </div></div>
+        <div class="check-section"><div class="check-section-title">Steroid &amp; Lainnya</div><div class="check-grid">
+          <div class="check-item"><input type="checkbox" id="tx-pred"><label for="tx-pred">Prednison</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-dexa"><label for="tx-dexa">Deksametason</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-aspa"><label for="tx-aspa">Asparaginase</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-bleo"><label for="tx-bleo">Bleomycin</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-vcr"><label for="tx-vcr">Vincristine</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-vp16"><label for="tx-vp16">Etoposide (VP-16)</label></div>
+        </div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔬 HSCT *</div>
+        <div class="radio-group" id="hsct-group">
+          <div class="radio-item" id="ri-hsct-no"><input type="radio" name="hsct" id="hsct-no" value="none" onchange="updateRadioStyle('hsct-group')"><label for="hsct-no">Tidak dilakukan</label></div>
+          <div class="radio-item" id="ri-hsct-auto"><input type="radio" name="hsct" id="hsct-auto" value="auto" onchange="updateRadioStyle('hsct-group')"><label for="hsct-auto">Autologus</label></div>
+          <div class="radio-item" id="ri-hsct-allo"><input type="radio" name="hsct" id="hsct-allo" value="allo" onchange="updateRadioStyle('hsct-group')"><label for="hsct-allo">Alogenik</label></div>
+          <div class="radio-item" id="ri-hsct-unk"><input type="radio" name="hsct" id="hsct-unk" value="unknown" onchange="updateRadioStyle('hsct-group')"><label for="hsct-unk">Tidak diketahui</label></div>
+        </div>
+        <div style="margin-top:10px"><div class="check-section-title">Kondisioning &amp; Komplikasi</div><div class="check-grid">
+          <div class="check-item"><input type="checkbox" id="tx-tbi"><label for="tx-tbi">TBI</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-bu-cond"><label for="tx-bu-cond">Kondisioning Busulfan</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-gvhd"><label for="tx-gvhd">GVHD Kronik</label></div>
+        </div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🧬 CAR-T *</div>
+        <div class="radio-group" id="cart-group">
+          <div class="radio-item" id="ri-cart-no"><input type="radio" name="cart" id="cart-no" value="none" onchange="updateRadioStyle('cart-group')"><label for="cart-no">Tidak dilakukan</label></div>
+          <div class="radio-item" id="ri-cart-cd19"><input type="radio" name="cart" id="cart-cd19" value="cd19" onchange="updateRadioStyle('cart-group')"><label for="cart-cd19">CAR-T CD19</label></div>
+          <div class="radio-item" id="ri-cart-bcma"><input type="radio" name="cart" id="cart-bcma" value="bcma" onchange="updateRadioStyle('cart-group')"><label for="cart-bcma">CAR-T BCMA</label></div>
+          <div class="radio-item" id="ri-cart-other"><input type="radio" name="cart" id="cart-other" value="other" onchange="updateRadioStyle('cart-group')"><label for="cart-other">CAR-T lainnya</label></div>
+          <div class="radio-item" id="ri-cart-unk"><input type="radio" name="cart" id="cart-unk" value="unknown" onchange="updateRadioStyle('cart-group')"><label for="cart-unk">Tidak diketahui</label></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">☢️ Radioterapi</div>
+        <div class="check-grid">
+          <div class="check-item"><input type="checkbox" id="tx-rt-cranial"><label for="tx-rt-cranial">Kranial (CRT)</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-rt-chest"><label for="tx-rt-chest">Dada / Mediastinum</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-rt-neck"><label for="tx-rt-neck">Leher</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-rt-abd"><label for="tx-rt-abd">Abdomen</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-rt-pelvic"><label for="tx-rt-pelvic">Pelvis</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-rt-orbital"><label for="tx-rt-orbital">Orbital / Mata</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-rt-ear"><label for="tx-rt-ear">Telinga / Temporal</label></div>
+          <div class="check-item"><input type="checkbox" id="tx-tbi2"><label for="tx-tbi2">TBI</label></div>
+        </div>
+        <div style="margin-top:10px" class="form-grid-3">
+          <div class="form-group"><label>Dosis RT Kranial (Gy)</label><input type="number" id="rt-cranial-dose" placeholder="mis. 18"><label class="dose-unknown" style="margin-top:3px"><input type="checkbox" id="rt-cranial-unk"> Tidak diketahui</label></div>
+          <div class="form-group"><label>Dosis RT Dada (Gy)</label><input type="number" id="rt-chest-dose" placeholder="mis. 25"><label class="dose-unknown" style="margin-top:3px"><input type="checkbox" id="rt-chest-unk"> Tidak diketahui</label></div>
+          <div class="form-group"><label>Usia saat RT (tahun)</label><input type="number" id="rt-age" placeholder="mis. 6"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔧 Riwayat Operasi (Bedah Spesifik)</div>
+        <div class="check-grid">
+          <div class="check-item"><input type="checkbox" id="sx-nephrectomy"><label for="sx-nephrectomy">Nefrektomi</label></div>
+          <div class="check-item"><input type="checkbox" id="sx-splenectomy"><label for="sx-splenectomy">Splenektomi</label></div>
+          <div class="check-item"><input type="checkbox" id="sx-amputation"><label for="sx-amputation">Amputasi anggota gerak</label></div>
+          <div class="check-item"><input type="checkbox" id="sx-enucleation"><label for="sx-enucleation">Enukleasi bola mata</label></div>
+          <div class="check-item"><input type="checkbox" id="sx-thoracic"><label for="sx-thoracic">Bedah torak</label></div>
+          <div class="check-item"><input type="checkbox" id="sx-abdominal"><label for="sx-abdominal">Bedah abdomen mayor</label></div>
+          <div class="check-item"><input type="checkbox" id="sx-cranial"><label for="sx-cranial">Bedah kranial / CNS</label></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🩸 Riwayat Transfusi &amp; Infeksi</div>
+        <div class="check-grid">
+          <div class="check-item"><input type="checkbox" id="hx-transfusion"><label for="hx-transfusion">Pernah transfusi darah</label></div>
+          <div class="check-item"><input type="checkbox" id="hx-hbv"><label for="hx-hbv">Riwayat HBV / hepatitis B</label></div>
+          <div class="check-item"><input type="checkbox" id="hx-hcv"><label for="hx-hcv">Riwayat HCV / hepatitis C</label></div>
+          <div class="check-item"><input type="checkbox" id="hx-vod"><label for="hx-vod">Riwayat SOS/VOD</label></div>
+          <div class="check-item"><input type="checkbox" id="hx-iron"><label for="hx-iron">Iron overload / transfusi multipel</label></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="showPage('profile')">&larr; Kembali</button>
+        <button class="btn btn-primary" onclick="showPage('doses')">Selanjutnya &rarr;</button>
+      </div>
+    </div>
+
+    <!-- DOSIS KUMULATIF -->
+    <div class="page" id="page-doses">
+      <div class="card">
+        <div class="card-title">⚗️ Input Dosis Kumulatif</div>
+        <div class="alert alert-warning">&#9888; <span>Data kosong <strong>tidak otomatis berarti risiko rendah</strong>. Centang "Tidak diketahui" jika dosis tidak tersedia di rekam medis.</span></div>
+        <div class="dose-row"><label>Antrasiklin kumulatif (ekuivalen doxorubicin) — Mitoxantrone: kalikan dosis × 10</label><input type="number" id="dose-anthra" placeholder="250"><span class="unit">mg/m²</span><label class="dose-unknown"><input type="checkbox" id="unk-anthra"> Tidak diketahui</label></div>
+        <div class="dose-row"><label>Cyclophosphamide Equivalent Dose (CED)</label><input type="number" id="dose-ced" placeholder="5000"><span class="unit">mg/m²</span><label class="dose-unknown"><input type="checkbox" id="unk-ced"> Tidak diketahui</label></div>
+        <div class="dose-row"><label>Ifosfamide kumulatif</label><input type="number" id="dose-ifos" placeholder="60000"><span class="unit">mg/m²</span><label class="dose-unknown"><input type="checkbox" id="unk-ifos"> Tidak diketahui</label></div>
+        <div class="dose-row"><label>Methotrexate IV kumulatif</label><input type="number" id="dose-mtx" placeholder="8000"><span class="unit">mg/m²</span><label class="dose-unknown"><input type="checkbox" id="unk-mtx"> Tidak diketahui</label></div>
+        <div class="dose-row"><label>Cisplatin kumulatif</label><input type="number" id="dose-cisp-val" placeholder="400"><span class="unit">mg/m²</span><label class="dose-unknown"><input type="checkbox" id="unk-cisp"> Tidak diketahui</label></div>
+        <div class="dose-row"><label>Etoposide (VP-16) kumulatif</label><input type="number" id="dose-vp16" placeholder="2000"><span class="unit">mg/m²</span><label class="dose-unknown"><input type="checkbox" id="unk-vp16"> Tidak diketahui</label></div>
+        <div class="dose-row"><label>Dosis TBI</label><input type="number" id="dose-tbi" placeholder="12"><span class="unit">Gy</span><label class="dose-unknown"><input type="checkbox" id="unk-tbi"> Tidak diketahui</label></div>
+        <div class="dose-row"><label>Kortikosteroid total (bulan)</label><input type="number" id="dose-steroid" placeholder="12"><span class="unit">bulan</span><label class="dose-unknown"><input type="checkbox" id="unk-steroid"> Tidak diketahui</label></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="showPage('treatment')">&larr; Kembali</button>
+        <button class="btn btn-success btn-lg" onclick="generateAll()">&#9889; Buat Rencana Survivorship</button>
+      </div>
+    </div>
+
+    <!-- MODULE PAGES -->
+    <div class="page" id="page-cardiac"><div class="card"><div class="card-title">❤️ Surveilans Jantung</div><div id="cardiac-content"><div class="alert alert-info">ℹ️ Klik "Buat Rencana Survivorship" setelah mengisi data.</div></div></div></div>
+    <div class="page" id="page-endocrine"><div class="card"><div class="card-title">🔬 Surveilans Endokrin</div><div id="endocrine-content"><div class="alert alert-info">ℹ️ Klik "Buat Rencana Survivorship" setelah mengisi data.</div></div></div></div>
+
+    <!-- TUMBUH KEMBANG -->
+    <div class="page" id="page-growth">
+      <div class="card">
+        <div class="card-title">📏 Modul Klinik Tumbuh Kembang</div>
+        <div class="alert alert-info">ℹ️ Usia &lt;18 tahun: BMI harus diinterpretasikan menggunakan <strong>persentil BMI-for-age WHO/CDC</strong>, bukan cutoff dewasa.</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Tinggi Badan (cm)</label><input type="number" id="g-height" placeholder="140"></div>
+          <div class="form-group"><label>Berat Badan (kg)</label><input type="number" id="g-weight" placeholder="35"></div>
+          <div class="form-group"><label>Tinggi Ayah (cm)</label><input type="number" id="g-father" placeholder="170"></div>
+          <div class="form-group"><label>Tinggi Ibu (cm)</label><input type="number" id="g-mother" placeholder="158"></div>
+          <div class="form-group"><label>Status Pubertas</label><select id="g-puberty"><option value="">--</option><option value="prepubertal">Prepubertal (Tanner I)</option><option value="early">Pubertas awal (II)</option><option value="mid">Pubertas tengah (III-IV)</option><option value="late">Pubertas akhir (V)</option><option value="postpubertal">Pascapubertas</option></select></div>
+          <div class="form-group"><label>Height Velocity (cm/tahun)</label><input type="number" id="g-hv" placeholder="5" step="0.1"></div>
+        </div>
+        <div class="btn-row"><button class="btn btn-primary" onclick="calcGrowth()">📏 Hitung &amp; Nilai</button></div>
+        <div id="growth-result"></div>
+      </div>
+      <div class="card"><div class="card-title">📊 Rekomendasi</div><div id="growth-recs"><div class="alert alert-info">ℹ️ Masukkan data dan buat rencana.</div></div></div>
+    </div>
+
+    <div class="page" id="page-fertility"><div class="card"><div class="card-title">🌱 Surveilans Fertilitas</div><div id="fertility-content"><div class="alert alert-info">ℹ️ Klik "Buat Rencana Survivorship".</div></div></div></div>
+    <div class="page" id="page-neuro"><div class="card"><div class="card-title">🧠 Surveilans Neurokognitif</div><div id="neuro-content"><div class="alert alert-info">ℹ️ Klik "Buat Rencana Survivorship".</div></div></div></div>
+    <div class="page" id="page-hearing"><div class="card"><div class="card-title">👂 Surveilans Pendengaran (Ototoksisitas)</div><div id="hearing-content"><div class="alert alert-info">ℹ️ Klik "Buat Rencana Survivorship".</div></div></div></div>
+    <div class="page" id="page-eye"><div class="card"><div class="card-title">👁️ Surveilans Mata</div><div id="eye-content"><div class="alert alert-info">ℹ️ Klik "Buat Rencana Survivorship".</div></div></div></div>
+    <div class="page" id="page-dental"><div class="card"><div class="card-title">🦷 Kesehatan Gigi &amp; Rongga Mulut</div><div id="dental-content"><div class="alert alert-info">ℹ️ Klik "Buat Rencana Survivorship".</div></div></div></div>
+    <div class="page" id="page-liver"><div class="card"><div class="card-title">🫀 Surveilans Hati &amp; Infeksi Terkait Transfusi</div><div id="liver-content"><div class="alert alert-info">ℹ️ Klik "Buat Rencana Survivorship".</div></div></div></div>
+    <div class="page" id="page-psychosocial"><div class="card"><div class="card-title">🧘 Surveilans Psikososial &amp; Kesehatan Mental</div><div id="psychosocial-content"><div class="alert alert-info">ℹ️ Klik "Buat Rencana Survivorship".</div></div></div></div>
+    <div class="page" id="page-neuro2"><div class="card"><div class="card-title">⚡ Surveilans Neuropati Perifer</div><div id="neuro2-content"><div class="alert alert-info">ℹ️ Klik "Buat Rencana Survivorship".</div></div></div></div>
+    <div class="page" id="page-metabolic"><div class="card"><div class="card-title">📊 Sindrom Metabolik &amp; Risiko Kardiovaskular</div><div id="metabolic-content"><div class="alert alert-info">ℹ️ Klik "Buat Rencana Survivorship".</div></div></div></div>
+    <div class="page" id="page-surgery"><div class="card"><div class="card-title">🔧 Efek Lanjut Bedah Spesifik</div><div id="surgery-content"><div class="alert alert-info">ℹ️ Klik "Buat Rencana Survivorship".</div></div></div></div>
+    <div class="page" id="page-secondary"><div class="card"><div class="card-title">🔍 Skrining Kanker Sekunder</div><div id="secondary-content"><div class="alert alert-info">ℹ️ Klik "Buat Rencana Survivorship".</div></div></div></div>
+    <div class="page" id="page-bone"><div class="card"><div class="card-title">🦴 Surveilans Tulang</div><div id="bone-content"><div class="alert alert-info">ℹ️ Klik "Buat Rencana Survivorship".</div></div></div></div>
+    <div class="page" id="page-renal"><div class="card"><div class="card-title">🫘 Surveilans Ginjal</div><div id="renal-content"><div class="alert alert-info">ℹ️ Klik "Buat Rencana Survivorship".</div></div></div></div>
+    <div class="page" id="page-pulmonary"><div class="card"><div class="card-title">🫁 Surveilans Paru</div><div id="pulmonary-content"><div class="alert alert-info">ℹ️ Klik "Buat Rencana Survivorship".</div></div></div></div>
+    <div class="page" id="page-immune"><div class="card"><div class="card-title">🛡️ Rekonstituasi Imun &amp; Revaksinasi</div><div id="immune-content"><div class="alert alert-info">ℹ️ Klik "Buat Rencana Survivorship".</div></div></div></div>
+    <div class="page" id="page-timeline"><div class="card"><div class="card-title">📅 Lini Masa Survivorship</div><div id="timeline-content"><div class="alert alert-info">ℹ️ Buat rencana untuk melihat lini masa.</div></div></div></div>
+
+    <!-- RINGKASAN -->
+    <div class="page" id="page-summary">
+      <div class="disclaimer">&#9888; COG LTFU v6.0 (Okt 2023) &bull; IGHG &bull; PanCare. Keputusan klinis harus diindividualisasi.</div>
+      <div id="summary-content"><div class="alert alert-info">ℹ️ Lengkapi data dan klik "Buat Rencana Survivorship".</div></div>
+      <div class="btn-row" id="print-btns" style="display:none">
+        <button class="btn btn-primary" onclick="printSummary()">🖨️ Cetak Ringkasan</button>
+        <button class="btn btn-outline" onclick="showPage('passport')">🪪 Paspor Penyintas</button>
+      </div>
+    </div>
+
+    <!-- PASPOR -->
+    <div class="page" id="page-passport">
+      <div class="card">
+        <div class="card-title">🪪 Paspor Penyintas Kanker Anak</div>
+        <div id="passport-content"><div class="alert alert-info">ℹ️ Buat rencana terlebih dahulu.</div></div>
+        <div class="btn-row" id="passport-print-btn" style="display:none"><button class="btn btn-primary" onclick="printPassport()">🖨️ Cetak Paspor</button></div>
+      </div>
+    </div>
+
+    <!-- EDUKASI -->
+    <div class="page" id="page-education">
+      <div class="card">
+        <div class="card-title">📚 Edukasi Keluarga</div>
+        <div class="edu-card"><div class="edu-title">🎗️ Mengapa Kontrol Rutin Setelah Kanker?</div><div class="edu-body">Pengobatan kanker dapat berdampak pada organ sehat di kemudian hari — inilah <strong>"efek lanjut"</strong>. Pemantauan rutin mendeteksi masalah sejak dini saat penanganan masih lebih mudah.</div></div>
+        <div class="edu-card"><div class="edu-title">❤️ Jantung</div><div class="edu-body">Antrasiklin dan radioterapi dada dapat melemahkan otot jantung jangka panjang.</div><div class="warning-signs"><h4>Segera ke Dokter Jika:</h4><ul><li>Sesak napas saat aktivitas ringan</li><li>Nyeri dada, kaki bengkak, pingsan</li></ul></div></div>
+        <div class="edu-card"><div class="edu-title">👂 Pendengaran</div><div class="edu-body">Cisplatin dapat merusak sel rambut koklea secara permanen. Tes pendengaran berkala sangat penting.</div><div class="warning-signs"><h4>Tanda yang Perlu Diwaspadai:</h4><ul><li>Anak tidak merespons suara normal</li><li>Sering meminta mengulang pembicaraan</li><li>Nilai menurun di sekolah (mungkin karena gangguan dengar)</li></ul></div></div>
+        <div class="edu-card"><div class="edu-title">🧠 Belajar &amp; Daya Ingat</div><div class="edu-body">Radioterapi otak dan methotrexate dosis tinggi dapat memengaruhi daya ingat dan konsentrasi.</div><div class="warning-signs"><h4>Tanda yang Perlu Diwaspadai:</h4><ul><li>Nilai sekolah turun signifikan</li><li>Sulit berkonsentrasi</li><li>Perubahan perilaku</li></ul></div></div>
+        <div class="edu-card"><div class="edu-title">🧘 Kesehatan Mental</div><div class="edu-body">Penyintas kanker berisiko lebih tinggi mengalami depresi, kecemasan, dan kelelahan. Ini bukan kelemahan — ini efek lanjut yang nyata dan dapat ditangani.</div></div>
+        <div class="edu-card"><div class="edu-title">📋 Tips Umum</div><div class="edu-body">&bull; Simpan semua rekam medis terapi<br>&bull; Hadiri semua jadwal kontrol<br>&bull; Beritahu setiap dokter tentang riwayat kanker anak<br>&bull; Gaya hidup sehat: makan bergizi, olahraga rutin, tidak merokok</div></div>
+        <div class="disclaimer">&#9888; Selalu konsultasikan dengan tim survivorship untuk saran yang dipersonalisasi.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── UTILITIES ─────────────────────────────────
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function gEl(id){return document.getElementById(id);}
+function gVal(id){var e=gEl(id);return e?e.value.trim():'';}
+function gNum(id){var v=parseFloat(gVal(id));return isNaN(v)?null:v;}
+function gChk(id){var e=gEl(id);return e?e.checked:false;}
+function gRadio(name){var els=document.querySelectorAll('input[name="'+name+'"]');for(var i=0;i<els.length;i++){if(els[i].checked)return els[i].value;}return '';}
+function isUnk(id){return gChk('unk-'+id);}
+function getDose(id){if(isUnk(id))return 'unknown';var v=gNum('dose-'+id);return v===null?null:v;}
+function li(t){return '<li>'+t+'</li>';}
+function card2(title,badge,listHTML,reason){
+  var r=reason?'<div class="reason-box"><strong>📖 Dasar &amp; Alasan</strong>'+reason+'</div>':'';
+  return '<div class="organ-card"><div class="organ-card-header"><div class="organ-card-title">'+title+'</div>'+badge+'</div><ul class="organ-list">'+listHTML+'</ul>'+r+'</div>';
+}
+function warnUnk(msg){return '<div class="unknown-warn">⚠️ '+msg+'</div>';}
+function ref(t){return '<div class="guideline-ref">📖 '+t+'</div>';}
+function tag(t){return '<span class="tl-tag">'+t+'</span>';}
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+  gEl('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(n){
+    var oc=n.getAttribute('onclick')||'';
+    if(oc.indexOf("'"+id+"'")!==-1)n.classList.add('active');
+  });
+  window.scrollTo(0,0);
+}
+
+function updateRadioStyle(groupId){
+  var g=gEl(groupId);if(!g)return;
+  g.querySelectorAll('.radio-item').forEach(function(item){
+    var radio=item.querySelector('input[type=radio]');
+    item.classList.toggle('selected',radio&&radio.checked);
+  });
+}
+
+function riskBadge(level){
+  if(level==='high')return '<span class="risk risk-high">🔴 Risiko Tinggi</span>';
+  if(level==='mod') return '<span class="risk risk-mod">🟡 Risiko Sedang</span>';
+  if(level==='low') return '<span class="risk risk-low">🟢 Risiko Rendah</span>';
+  if(level==='unknown')return '<span class="risk risk-unknown">❓ Tidak Dapat Dinilai</span>';
+  return '<span class="risk risk-na">&#9898; Tidak Berlaku</span>';
+}
+
+// ── COMPUTE RISKS ────────────────────────────
+function computeRisks(){
+  var hsctVal=gRadio('hsct'), cartVal=gRadio('cart');
+  var d={
+    anthra:getDose('anthra'),ced:getDose('ced'),ifos:getDose('ifos'),
+    mtxDose:getDose('mtx'),cispDose:getDose('cisp'),tbiDose:getDose('tbi'),
+    steroid:getDose('steroid'),vp16Dose:getDose('vp16'),
+    rtChestGy:gChk('rt-chest-unk')?'unknown':gNum('rt-chest-dose'),
+    rtCranialGy:gChk('rt-cranial-unk')?'unknown':gNum('rt-cranial-dose'),
+    rtAge:gNum('rt-age'),age:gNum('pt-age'),ageDx:gNum('pt-age-dx'),
+    gender:gVal('pt-gender'),dx:gVal('pt-dx'),yrsEOT:gNum('pt-yrs-eot'),
+    hsctVal:hsctVal,cartVal:cartVal,
+    hsctAllo:hsctVal==='allo',hsctAuto:hsctVal==='auto',
+    hsctUnk:hsctVal==='unknown',hsctNone:hsctVal==='none',
+    cartCD19:cartVal==='cd19',cartBCMA:cartVal==='bcma',
+    cartOther:cartVal==='other',cartUnk:cartVal==='unknown',
+    gvhd:gChk('tx-gvhd'),buCond:gChk('tx-bu-cond'),
+    tbiTx:gChk('tx-tbi')||gChk('tx-tbi2'),
+    rtCranialCk:gChk('tx-rt-cranial'),rtChestCk:gChk('tx-rt-chest'),
+    rtNeck:gChk('tx-rt-neck'),rtAbd:gChk('tx-rt-abd'),rtPelvic:gChk('tx-rt-pelvic'),
+    rtOrbital:gChk('tx-rt-orbital'),rtEar:gChk('tx-rt-ear'),
+    mtxCk:gChk('tx-mtx'),aracCk:gChk('tx-arac'),bleo:gChk('tx-bleo'),
+    cyclo:gChk('tx-cyclo'),ifosCk:gChk('tx-ifos'),busuCk:gChk('tx-busu'),
+    melph:gChk('tx-melph'),procarb:gChk('tx-procarb'),cispCk:gChk('tx-cisp'),
+    carboCk:gChk('tx-carbo'),dexa:gChk('tx-dexa'),pred:gChk('tx-pred'),
+    doxo:gChk('tx-doxo'),dauno:gChk('tx-dauno'),idaru:gChk('tx-idaru'),
+    epiru:gChk('tx-epiru'),mito:gChk('tx-mito'),
+    vcr:gChk('tx-vcr'),vp16:gChk('tx-vp16'),
+    sxNeph:gChk('sx-nephrectomy'),sxSpleen:gChk('sx-splenectomy'),
+    sxAmp:gChk('sx-amputation'),sxEnuc:gChk('sx-enucleation'),
+    sxThorax:gChk('sx-thoracic'),sxAbd:gChk('sx-abdominal'),sxCranial:gChk('sx-cranial'),
+    hxTransfusion:gChk('hx-transfusion'),hxHBV:gChk('hx-hbv'),
+    hxHCV:gChk('hx-hcv'),hxVOD:gChk('hx-vod'),hxIron:gChk('hx-iron')
+  };
+  d.hasAnthra=d.doxo||d.dauno||d.idaru||d.epiru||d.mito;
+  d.hasAlk=d.cyclo||d.ifosCk||d.busuCk||d.melph||d.procarb;
+  d.hasCart=d.cartCD19||d.cartBCMA||d.cartOther;
+  d.hasSteroid=d.pred||d.dexa;
+  d.hasHSCT=d.hsctAllo||d.hsctAuto;
+  d.hasPlatinum=d.cispCk||d.carboCk;
+
+  // ── CARDIAC (COG v6.0 corrected) ──
+  // Echo NOT recommended if anthra <100 mg/m² AND cardiac RT <15 Gy (COG v6.0 Table 3)
+  var cardRisk='low',cardUnkWarn=false;
+  if(d.hasAnthra){
+    if(d.anthra==='unknown'){cardRisk='unknown';cardUnkWarn=true;}
+    else if(d.anthra===null){if(cardRisk==='low')cardRisk='mod';cardUnkWarn=true;}
+    else if(d.anthra>=250)cardRisk='high';
+    else if(d.anthra>=100)cardRisk='mod';
+    // anthra <100 mg/m² = low — echo NOT routinely recommended (COG v6.0)
+  }
+  if(d.rtChestCk){
+    if(d.rtChestGy==='unknown'){if(cardRisk!=='high'){cardRisk='unknown';cardUnkWarn=true;}}
+    else if(d.rtChestGy===null){cardUnkWarn=true;if(cardRisk==='low')cardRisk='mod';}
+    else if(d.rtChestGy>=30)cardRisk='high';
+    else if(d.rtChestGy>=15&&cardRisk!=='high')cardRisk='mod';
+    // RT <15 Gy cardiac = low contribution
+  }
+  if(d.tbiTx&&cardRisk==='low')cardRisk='mod';
+
+  var thyRisk='low';
+  if(d.rtNeck||d.rtCranialCk||d.tbiTx){
+    if(d.rtCranialGy==='unknown')thyRisk='unknown';
+    else thyRisk=(d.tbiTx||(d.rtCranialGy!==null&&d.rtCranialGy>=40))?'high':'mod';
+  }
+  var ghRisk='low';
+  if(d.rtCranialCk){
+    if(d.rtCranialGy==='unknown')ghRisk='unknown';
+    else ghRisk=(d.rtCranialGy!==null&&d.rtCranialGy>=18)?'high':'mod';
+  }else if(d.tbiTx)ghRisk='high';
+  var dmRisk=(d.steroid&&d.steroid!=='unknown'&&d.steroid>6)||d.hsctAllo||d.tbiTx?'mod':'low';
+
+  var fertRisk='low',fertUnkWarn=false;
+  if(d.rtPelvic||(d.tbiTx&&d.ageDx&&d.ageDx<10))fertRisk='high';
+  else if(d.hasAlk){
+    if(d.ced==='unknown'){fertRisk='unknown';fertUnkWarn=true;}
+    else if(d.ced===null){fertRisk='mod';fertUnkWarn=true;}
+    else if(d.ced>=8000)fertRisk='high';
+    else fertRisk='mod';
+  }
+  if(d.hsctAllo&&d.tbiTx)fertRisk='high';
+
+  var neuroRisk='low';
+  if(d.rtCranialCk){
+    if(d.rtCranialGy==='unknown')neuroRisk='unknown';
+    else neuroRisk=(d.rtCranialGy!==null&&d.rtCranialGy>=18)?'high':'mod';
+  }
+  if(d.mtxCk&&neuroRisk==='low')neuroRisk='mod';
+
+  var hearRisk='low';
+  if(d.cispCk){
+    if(d.cispDose==='unknown'||d.cispDose===null){hearRisk='unknown';}
+    else if(d.cispDose>=400)hearRisk='high';
+    else hearRisk='mod';
+  }
+  if(d.carboCk&&hearRisk==='low')hearRisk='mod';
+  if((d.rtCranialCk||d.rtEar)&&hearRisk!=='high')hearRisk='mod';
+  if(d.tbiTx&&hearRisk==='low')hearRisk='mod';
+
+  var eyeRisk='low';
+  if(d.rtCranialCk||d.rtOrbital||d.tbiTx)eyeRisk='mod';
+  if(d.rtOrbital)eyeRisk='high';
+  if((d.hasSteroid&&d.steroid&&d.steroid!=='unknown'&&d.steroid>6))eyeRisk=eyeRisk==='low'?'mod':eyeRisk;
+  if(d.dx==='Retinoblastoma')eyeRisk='high';
+  if(d.gvhd&&d.hsctAllo)eyeRisk=eyeRisk==='low'?'mod':eyeRisk;
+
+  var dentalRisk='low';
+  if(d.ageDx&&d.ageDx<6)dentalRisk='high';
+  else if(d.ageDx&&d.ageDx<12)dentalRisk='mod';
+  if(d.rtCranialCk||d.rtNeck)dentalRisk='high';
+  if((d.gvhd&&d.hsctAllo)||d.hasHSCT)dentalRisk=dentalRisk==='low'?'mod':dentalRisk;
+
+  var liverRisk='low';
+  if(d.hxHCV||d.hxHBV)liverRisk='high';
+  if(d.hxVOD)liverRisk='high';
+  if(d.hxIron||d.hxTransfusion)liverRisk=liverRisk==='low'?'mod':liverRisk;
+  if(d.hasHSCT)liverRisk=liverRisk==='low'?'mod':liverRisk;
+
+  var psychoRisk='mod';
+  if(d.rtCranialCk||d.sxAmp||d.sxEnuc||(d.ageDx&&d.ageDx<6))psychoRisk='high';
+
+  var neuro2Risk='low';
+  if(d.vcr)neuro2Risk='mod';
+  if(d.hasPlatinum)neuro2Risk=neuro2Risk==='low'?'mod':neuro2Risk;
+  if(d.cispCk&&d.cispDose&&d.cispDose!=='unknown'&&d.cispDose>=300)neuro2Risk='high';
+
+  var metaRisk='low';
+  if(d.rtCranialCk||d.tbiTx||d.hasHSCT)metaRisk='high';
+  else if(d.hasSteroid&&d.steroid&&d.steroid!=='unknown'&&d.steroid>3)metaRisk='mod';
+  else if(d.hasAnthra||d.rtChestCk)metaRisk='mod';
+
+  var surgRisk=d.sxNeph||d.sxSpleen||d.sxAmp||d.sxEnuc||d.sxThorax||d.sxAbd||d.sxCranial?'mod':'low';
+
+  var secRisk='low',secUnkWarn=false;
+  if(d.rtChestCk||d.rtCranialCk||d.rtPelvic)secRisk='mod';
+  if(d.tbiTx)secRisk='high';
+  if(d.vp16){
+    if(d.vp16Dose==='unknown'||d.vp16Dose===null){secUnkWarn=true;if(secRisk==='low')secRisk='mod';}
+    else if(d.vp16Dose>=2000)secRisk='high';
+    else if(secRisk==='low')secRisk='mod';
+  }
+  if(d.hsctAllo&&secRisk==='low')secRisk='mod';
+
+  // ── BONE (COG v6.0 corrected: MTX REMOVED as risk factor) ──
+  var boneRisk='low';
+  if(d.hasSteroid&&d.steroid&&d.steroid!=='unknown'&&d.steroid>6)boneRisk='mod';
+  if(d.hsctAllo&&d.gvhd)boneRisk='high';
+  // MTX removed per COG v6.0 Table 3: "No association found between MTX and decreased BMD"
+  if(d.tbiTx)boneRisk='high';
+
+  var renalRisk='low';
+  if(d.cispCk){if(d.cispDose==='unknown'||d.cispDose===null)renalRisk='mod';else if(d.cispDose>=400)renalRisk='high';else renalRisk='mod';}
+  if(d.ifosCk){if(d.ifos==='unknown'||d.ifos===null){if(renalRisk!=='high')renalRisk='mod';}else if(d.ifos>=60000)renalRisk='high';else if(renalRisk!=='high')renalRisk='mod';}
+  if(d.hsctAllo&&renalRisk==='low')renalRisk='mod';
+
+  var pulmRisk='low';
+  if(d.bleo)pulmRisk='mod';
+  if(d.tbiTx||(d.busuCk&&d.ced!=='unknown'&&d.ced>=8000))pulmRisk='high';
+  if(d.gvhd&&d.hsctAllo&&pulmRisk!=='high')pulmRisk='mod';
+
+  return{d:d,cardRisk:cardRisk,cardUnkWarn:cardUnkWarn,
+    thyRisk:thyRisk,ghRisk:ghRisk,dmRisk:dmRisk,
+    fertRisk:fertRisk,fertUnkWarn:fertUnkWarn,neuroRisk:neuroRisk,
+    hearRisk:hearRisk,eyeRisk:eyeRisk,dentalRisk:dentalRisk,liverRisk:liverRisk,
+    psychoRisk:psychoRisk,neuro2Risk:neuro2Risk,metaRisk:metaRisk,surgRisk:surgRisk,
+    secRisk:secRisk,secUnkWarn:secUnkWarn,boneRisk:boneRisk,renalRisk:renalRisk,pulmRisk:pulmRisk};
+}
+
+// ── VALIDATE & GENERATE ──────────────────────
+function validateInputs(){
+  var e=[];
+  if(!gVal('pt-gender'))e.push('Jenis kelamin');
+  if(!gVal('pt-age'))e.push('Usia sekarang');
+  if(!gVal('pt-age-dx'))e.push('Usia saat diagnosis');
+  if(!gVal('pt-dx'))e.push('Diagnosis primer');
+  if(!gRadio('hsct'))e.push('Status HSCT');
+  if(!gRadio('cart'))e.push('Status CAR-T');
+  return e;
+}
+
+function generateAll(){
+  var errs=validateInputs();
+  if(errs.length>0){alert('Harap lengkapi:\n\n'+errs.map(function(e){return '• '+e;}).join('\n'));return;}
+  var r=computeRisks();
+  genCardiac(r);genEndocrine(r);genFertility(r);genNeuro(r);
+  genHearing(r);genEye(r);genDental(r);genLiver(r);
+  genPsychosocial(r);genNeuro2(r);genMetabolic(r);genSurgery(r);
+  genSecondary(r);genBone(r);genRenal(r);genPulmonary(r);
+  genImmune(r);genTimeline(r);genSummary(r);genPassport(r);genGrowthRecs(r);
+  showPage('summary');
+  gEl('print-btns').style.display='flex';
+  gEl('passport-print-btn').style.display='flex';
+}
+
+// ── ORGAN GENERATORS ─────────────────────────
+function genCardiac(r){
+  var d=r.d,cR=r.cardRisk;
+  // COG v6.0: echo NOT recommended if anthra <100 mg/m² AND RT cardiac <15 Gy
+  var echoRec;
+  if(cR==='low'){
+    echoRec='<strong>Tidak direkomendasikan rutin</strong> — Anthra &lt;100 mg/m² dan RT dada &lt;15 Gy (COG v6.0 Table 3). Pantau tekanan darah dan gejala setiap kunjungan.';
+  } else {
+    echoRec=cR==='high'?'Ekokardiografi setiap 1-2 tahun':cR==='mod'?'Ekokardiografi setiap 2-5 tahun':'Sesuai penilaian klinis';
+  }
+  var html='<div style="margin-bottom:12px"><strong>Risiko Jantung:</strong> '+riskBadge(cR)+'</div>';
+  if(cR==='low'&&d.hasAnthra)html+='<div class="alert alert-success">✅ <span><strong>COG v6.0 (baru):</strong> Echo rutin TIDAK direkomendasikan untuk anthra &lt;100 mg/m² dan RT dada &lt;15 Gy. Pantau tekanan darah dan gejala setiap kunjungan.</span></div>';
+  if(r.cardUnkWarn)html+=warnUnk('Dosis antrasiklin/RT dada tidak diketahui. Evaluasi kardiologi direkomendasikan sebagai precaution.');
+  html+='<div class="organ-grid">';
+  html+=card2('❤️ Pemeriksaan Jantung',riskBadge(cR),li(echoRec)+li('EKG: Setiap tahun atau sesuai indikasi')+li('BNP/NT-proBNP: Jika gejala atau risiko tinggi')+(cR==='high'?li('Troponin: Baseline'):'')+li('Tekanan darah: Setiap kunjungan'),'COG v6.0: Anthra ≥250 mg/m² atau RT dada ≥30 Gy = risiko tinggi. Anthra &lt;100 mg/m² + RT &lt;15 Gy = echo tidak rutin.');
+  html+=card2('📋 Tindak Lanjut','',li(cR==='high'?'Kontrol kardiologi tahunan':cR==='mod'?'Kardiologi setiap 3-5 tahun':'Penilaian berkala jika ada gejala')+(d.rtChestCk?li('RT dada: Profil lipid tahunan, waspadai penyakit koroner'):'')+li('Konseling: hindari rokok, obesitas, hipertensi')+(cR==='high'?li('Pertimbangkan ACE inhibitor/beta-blocker jika disfungsi LV'):''));
+  html+='</div>'+ref('<strong>COG LTFU v6.0 (Table 3):</strong> Cardiomyopathy &amp; Cardiac Toxicity. Echo de-escalation update.');
+  html+='<div class="disclaimer">&#9888; Keputusan klinis harus diindividualisasi.</div>';
+  gEl('cardiac-content').innerHTML=html;
+}
+
+function genEndocrine(r){
+  var d=r.d;
+  var html='<div class="organ-grid">';
+  html+=card2('🦋 Tiroid',riskBadge(r.thyRisk),li('TSH, FT4: Setiap tahun jika RT leher/kranial/TBI')+(r.thyRisk!=='low'?li('USG tiroid: Jika nodul teraba'):'')+li('Autoantibodi tiroid: Jika dicurigai'),'RT leher/kranial ≥40 Gy atau TBI = risiko tinggi. <em>COG LTFU v6.0</em>');
+  html+=card2('📈 Hormon Pertumbuhan',riskBadge(r.ghRisk),li('IGF-1, IGFBP-3: Setiap tahun selama fase tumbuh')+(r.ghRisk!=='low'?li('Uji stimulasi GH jika HV &lt;4 cm/tahun'):'')+li('Height velocity: Setiap 6 bulan'),'CRT ≥18 Gy atau TBI → defisiensi GH. <em>COG LTFU v6.0</em>');
+  html+=card2('🩸 Metabolik',riskBadge(r.dmRisk),li('Gula darah puasa/HbA1c: Setiap tahun')+li('Profil lipid: Setiap tahun jika steroid/HSCT')+li('Tekanan darah: Setiap kunjungan')+li('Lingkar pinggang: Setiap tahun'));
+  html+=card2('🌡️ Adrenal','<span class="risk risk-na">Kontekstual</span>',li(d.dexa||d.pred?'Paparan steroid panjang: evaluasi insufisiensi adrenal':'Risiko rendah jika tidak ada steroid berkepanjangan')+li('Kortisol pagi jika klinis dicurigai'));
+  html+=card2('⚡ Pubertas','',li('LH, FSH, Estradiol/Testosteron: Jika pubertas abnormal')+li('Usia tulang: Jika ada kekhawatiran pertumbuhan')+(d.rtCranialCk?li('CRT: Pantau pubertas prekoks sejak usia 6 tahun'):''));
+  html+='</div>'+ref('<strong>COG LTFU v6.0:</strong> Endocrine Late Effects.');
+  html+='<div class="disclaimer">&#9888; Keputusan klinis harus diindividualisasi.</div>';
+  gEl('endocrine-content').innerHTML=html;
+}
+
+function calcGrowth(){
+  var h=parseFloat(gVal('g-height')),w=parseFloat(gVal('g-weight'));
+  if(!h||!w){alert('Masukkan tinggi dan berat badan.');return;}
+  var bmi=(w/((h/100)*(h/100))).toFixed(1),age=gNum('pt-age')||0;
+  var bmiNote='',bmiColor='var(--green)';
+  if(age<18){bmiNote='Usia &lt;18 th: gunakan persentil BMI-for-age WHO/CDC';bmiColor='var(--yellow)';}
+  else{if(bmi<18.5){bmiNote='Berat Kurang';bmiColor='var(--yellow)';}else if(bmi<25){bmiNote='Normal';}else if(bmi<30){bmiNote='Berat Lebih';bmiColor='#ea580c';}else{bmiNote='Obesitas';bmiColor='var(--red)';}}
+  var fh=parseFloat(gVal('g-father')),mh=parseFloat(gVal('g-mother')),gnd=gVal('pt-gender');
+  var mphStr='—',mphNote='';
+  if(fh&&mh){var mph=gnd==='male'?((fh+mh+13)/2).toFixed(1):gnd==='female'?((fh+mh-13)/2).toFixed(1):null;if(mph){mphStr=mph+' cm (±8.5 cm)';var diff=(h-mph).toFixed(1);mphNote='Selisih: '+(diff>0?'+':'')+diff+' cm';}}
+  var hv=parseFloat(gVal('g-hv')),hvNote='';
+  if(hv)hvNote=hv<4?'&#9888; HV &lt;4 cm/tahun — evaluasi defisiensi GH':hv<6?'HV borderline':'HV normal';
+  var pubMap={prepubertal:'Prepubertal (I)',early:'Pubertas awal (II)',mid:'Pubertas tengah (III-IV)',late:'Pubertas akhir (V)',postpubertal:'Pascapubertas'};
+  var html='<div class="growth-result"><h4>Hasil Penilaian Pertumbuhan</h4>';
+  html+='<div class="growth-metric"><span>Tinggi Badan</span><span><strong>'+h+' cm</strong></span></div>';
+  html+='<div class="growth-metric"><span>Berat Badan</span><span><strong>'+w+' kg</strong></span></div>';
+  html+='<div class="growth-metric"><span>BMI</span><span><strong>'+bmi+' kg/m²</strong> <span style="color:'+bmiColor+'">'+bmiNote+'</span></span></div>';
+  html+='<div class="growth-metric"><span>Mid-Parental Height</span><span><strong>'+mphStr+'</strong> <span style="font-size:10.5px;color:var(--gray)">'+mphNote+'</span></span></div>';
+  if(hv)html+='<div class="growth-metric"><span>Height Velocity</span><span><strong>'+hv+' cm/tahun</strong> <span style="font-size:10.5px;color:var(--gray)">'+hvNote+'</span></span></div>';
+  html+='<div class="growth-metric"><span>Status Pubertas</span><span><strong>'+(pubMap[gVal('g-puberty')]||'Belum diisi')+'</strong></span></div></div>';
+  if(age<18)html+='<div class="alert alert-warning">&#9888; <span>Usia &lt;18 tahun: gunakan <strong>persentil BMI-for-age WHO/CDC</strong> untuk interpretasi definitif.</span></div>';
+  gEl('growth-result').innerHTML=html;
+  genGrowthRecs(computeRisks());
+}
+
+function genGrowthRecs(r){
+  var html='<div class="organ-grid">';
+  html+=card2('📏 Pemantauan',riskBadge(r.ghRisk),li('Tinggi/berat badan: Setiap 6 bulan')+li('Height velocity: Setiap tahun')+li('Stadium Tanner: Setiap kunjungan')+li('Usia tulang: Jika ada kekhawatiran'));
+  html+=card2('⚗️ Endokrin','',li('IGF-1, IGFBP-3: Setiap tahun jika pernah CRT')+li('Uji stimulasi GH jika HV &lt;4 cm/tahun')+li('TSH/FT4 setiap tahun jika CRT/leher')+li('Rujuk Endokrinologi Anak jika defisiensi GH'));
+  html+='</div>'+ref('BMI anak: persentil WHO/CDC. MPH: rumus Tanner. <em>COG LTFU v6.0, Growth</em>');
+  gEl('growth-recs').innerHTML=html;
+}
+
+function genFertility(r){
+  var d=r.d,fR=r.fertRisk,isFem=(d.gender==='female');
+  var html='<div class="alert alert-'+(fR==='high'?'danger':fR==='mod'?'warning':'success')+'"><span><strong>Risiko Gonadotoksisitas:</strong> '+riskBadge(fR)+'</span></div>';
+  if(r.fertUnkWarn)html+=warnUnk('CED tidak diketahui. Risiko fertilitas tidak dapat distratifikasi akurat.');
+  html+='<div class="organ-grid">';
+  var si=isFem?li('FSH, LH, Estradiol: Setiap tahun mulai pubertas')+li('AMH: Evaluasi cadangan ovarium (usia ≥10 tahun)')+li('USG pelvis: Jika amenorea')+li('Inhibin B: Jika AMH tidak tersedia'):li('FSH, LH, Testosteron: Setiap tahun mulai pubertas')+li('Analisis semen: Usia ≥18 tahun')+li('Volume testis (orkidometer): Setiap kunjungan')+li('Inhibin B: Penanda fungsi sel Sertoli');
+  html+=card2((isFem?'👩 Perempuan':'👨 Laki-laki'),riskBadge(fR),si,'Alkylating CED ≥4.000 mg/m² dan RT gonadal/TBI → risiko tinggi. <em>IGHG Fertility; COG LTFU v6.0</em>');
+  html+=card2('🌱 Konseling','',( fR==='high'?li('Rujuk ke Endokrinologi Reproduksi sedini mungkin'):'')+li('Diskusikan preservasi fertilitas')+li(isFem?'POI: HRT jika diindikasikan':'Testosteron replacement jika hipogonadisme')+(d.tbiTx?li('TBI: Risiko sangat tinggi — sebagian besar perlu HRT'):''));
+  html+='</div>'+ref('<strong>IGHG Fertility; COG LTFU v6.0:</strong> Gonadal Toxicity.');
+  html+='<div class="disclaimer">&#9888; Keputusan klinis harus diindividualisasi.</div>';
+  gEl('fertility-content').innerHTML=html;
+}
+
+function genNeuro(r){
+  var d=r.d,nR=r.neuroRisk;
+  var ageStr=d.ageDx?(d.ageDx<=6?'&lt;6 tahun — KERENTANAN TERTINGGI':d.ageDx<=10?'7-10 tahun — Kerentanan tinggi':'&gt;10 tahun — Risiko lebih rendah'):'Belum diisi';
+  var html='<div class="organ-grid">';
+  html+=card2('🧠 Faktor Risiko',riskBadge(nR),li(d.rtCranialCk?('CRT '+(d.rtCranialGy==='unknown'?'(dosis tidak diketahui)':((d.rtCranialGy||'?')+' Gy'))+' — '+(d.rtCranialGy==='unknown'?'tidak dapat dinilai':d.rtCranialGy>=18?'RISIKO TINGGI':'Risiko sedang')):'Tidak ada CRT')+li(d.mtxCk?'HD-MTX: Risiko leukoencephalopathy':'Tidak ada MTX')+(d.aracCk?li('HD-AraC: Risiko toksisitas serebelum'):'')+li('Usia terapi: '+ageStr),'CRT ≥18 Gy + usia &lt;6 tahun = risiko tertinggi. <em>COG LTFU v6.0</em>');
+  html+=card2('📝 Pemeriksaan','',( nR!=='low'?li('Evaluasi neuropsikologi komprehensif: Saat masuk sekolah'):li('Pemantauan prestasi sekolah: Setiap tahun'))+li('Tes IQ (WISC/WPPSI): Baseline dan tindak lanjut')+li('Kecepatan pemrosesan, memori kerja, atensi')+li('Skrining ADHD')+(d.rtCranialCk?li('MRI otak: Jika gejala neurologis baru'):''));
+  html+=card2('🏫 Dukungan Sekolah','',li('Informasikan sekolah tentang riwayat kanker')+li('Minta evaluasi belajar formal jika diperlukan')+li('Terapi okupasi untuk motorik halus')+li('Psikolog/konselor')+li('Pekerja sosial: reintegrasi sekolah'));
+  html+='</div>'+ref('<strong>COG LTFU v6.0:</strong> Neurocognitive &amp; Neurological Effects.');
+  html+='<div class="disclaimer">&#9888; Keputusan klinis harus diindividualisasi.</div>';
+  gEl('neuro-content').innerHTML=html;
+}
+
+function genHearing(r){
+  var d=r.d,hR=r.hearRisk;
+  var html='<div style="margin-bottom:10px"><strong>Risiko Ototoksisitas (IGHG 2019):</strong> '+riskBadge(hR)+'</div>';
+  if(d.cispCk&&(d.cispDose===null||d.cispDose==='unknown'))html+=warnUnk('Dosis cisplatin tidak diketahui. Risiko gangguan pendengaran tidak dapat distratifikasi akurat.');
+  html+='<div class="organ-grid">';
+  html+=card2('👂 Faktor Risiko (IGHG 2019)',riskBadge(hR),
+    li(d.cispCk?'<strong>Cisplatin</strong> ('+(d.cispDose&&d.cispDose!=='unknown'?d.cispDose:'dosis tidak diketahui')+' mg/m²): Ototoksisitas ireversibel':'Tidak ada cisplatin')+
+    (d.carboCk?li('<strong>Carboplatin dosis tinggi (&gt;1.500 mg/m²)</strong>: Risiko ototoksisitas tambahan'):'')+
+    (d.rtCranialCk||d.rtEar?li('<strong>RT kepala/otak ≥30 Gy</strong>: Risiko sensorineural hearing loss'):'')+
+    (d.tbiTx?li('TBI: Risiko ototoksisitas tambahan'):'')+
+    (hR==='low'?li('Tidak ada faktor risiko ototoksisitas mayor'):''),
+    'IGHG 2019 (Clemens et al., Lancet Oncol 2019).');
+  html+=card2('🔬 Jadwal Surveilans (IGHG 2019)','',
+    li('<strong>Audiometri &lt;6 tahun:</strong> Setiap tahun — mulai akhir terapi')+
+    li('<strong>Audiometri 6–12 tahun:</strong> Setiap 2 tahun')+
+    li('<strong>Audiometri &gt;12 tahun:</strong> Setiap 5 tahun')+
+    li('Audiometri frekuensi tinggi (&gt;8.000 Hz): Direkomendasikan jika tersedia')+
+    li('Usia &lt;6 tahun: OAE atau ABR jika audiometri konvensional tidak memungkinkan'));
+  html+=card2('🚨 Jika Abnormal (IGHG 2019)','',
+    li('Kehilangan &gt;15 dB (1.000–8.000 Hz): Rujuk audiolog')+
+    li('Pertimbangkan alat bantu dengar jika signifikan')+
+    li('Informasikan sekolah: duduk di depan kelas'));
+  html+='</div>'+ref('<strong>IGHG 2019:</strong> Clemens E et al. Lancet Oncol 2019;20:e29-e41. | <strong>COG LTFU v6.0:</strong> Hearing Loss.');
+  html+='<div class="disclaimer">&#9888; Keputusan klinis harus diindividualisasi.</div>';
+  gEl('hearing-content').innerHTML=html;
+}
+
+function genEye(r){
+  var d=r.d,eR=r.eyeRisk;
+  var html='<div style="margin-bottom:10px"><strong>Risiko Efek Lanjut Mata:</strong> '+riskBadge(eR)+'</div>';
+  html+='<div class="organ-grid">';
+  html+=card2('👁️ Faktor Risiko',riskBadge(eR),(d.rtOrbital?li('RT orbital: Katarak, retinopati, keratokonjungtivitis'):'')+(d.rtCranialCk?li('CRT: Katarak, retinopati radiasi, optik neuropati'):'')+( d.tbiTx?li('TBI: Katarak — insidens tinggi, sering bilateral'):'')+(d.hasSteroid&&d.steroid&&d.steroid!=='unknown'&&d.steroid>6?li('Steroid jangka panjang: Katarak subkapsular posterior'):'')+(d.gvhd&&d.hsctAllo?li('GVHD kronik: Dry eye, keratokonjungtivitis sicca'):'')+( d.dx==='Retinoblastoma'?li('Retinoblastoma: Surveilans jangka panjang, risiko kanker sekunder orbita'):'')+(eR==='low'?li('Tidak ada faktor risiko mata mayor'):''),'TBI dan steroid → katarak. <em>COG LTFU v6.0, Ophthalmic</em>');
+  html+=card2('🔬 Pemeriksaan Mata','',li('Pemeriksaan oftalmologi: Setiap 1-2 tahun jika ada faktor risiko')+(d.tbiTx||d.rtOrbital?li('Slit-lamp exam: Deteksi katarak awal'):'')+li('Tajam penglihatan: Setiap kunjungan')+(d.gvhd?li('Schirmer test: Jika dry eye GVHD'):'')+( d.dx==='Retinoblastoma'?li('EUA/funduskopi: Seumur hidup'):''));
+  html+='</div>'+ref('<strong>COG LTFU v6.0:</strong> Ophthalmic Effects.');
+  html+='<div class="disclaimer">&#9888; Keputusan klinis harus diindividualisasi.</div>';
+  gEl('eye-content').innerHTML=html;
+}
+
+function genDental(r){
+  var d=r.d,dR=r.dentalRisk;
+  var html='<div style="margin-bottom:10px"><strong>Risiko Efek Lanjut Gigi &amp; Mulut:</strong> '+riskBadge(dR)+'</div>';
+  html+='<div class="organ-grid">';
+  html+=card2('🦷 Faktor Risiko',riskBadge(dR),(d.ageDx&&d.ageDx<6?li('Terapi usia &lt;6 tahun: Risiko tertinggi agenesis, akar pendek'):'')+(d.ageDx&&d.ageDx>=6&&d.ageDx<12?li('Terapi usia 6-12 tahun: Risiko sedang'):'')+(d.rtCranialCk||d.rtNeck?li('RT kranial/leher: Xerostomia, karies, trismus'):'')+(d.hasHSCT?li('HSCT: Hiposalivasi, mukositis kronik'):'')+(d.gvhd?li('GVHD kronik: Xerostomia, risiko keganasan rongga mulut'):'')+(dR==='low'?li('Risiko rendah — tetap lakukan pemeriksaan gigi rutin'):''));
+  html+=card2('🔬 Pemantauan','',li('Pemeriksaan gigi: Setiap 6 bulan')+( d.rtCranialCk||d.rtNeck?li('Panoramik X-ray: Evaluasi perkembangan gigi'):''));
+  html+=card2('💊 Intervensi','',li('Fluoride: Jika risiko karies tinggi')+li('Saliva buatan: Jika xerostomia')+li('Edukasi kebersihan mulut intensif'));
+  html+='</div>'+ref('<strong>COG LTFU v6.0:</strong> Dental Effects.');
+  html+='<div class="disclaimer">&#9888; Keputusan klinis harus diindividualisasi.</div>';
+  gEl('dental-content').innerHTML=html;
+}
+
+function genLiver(r){
+  var d=r.d,lR=r.liverRisk;
+  var html='<div style="margin-bottom:10px"><strong>Risiko Efek Lanjut Hati:</strong> '+riskBadge(lR)+'</div>';
+  html+='<div class="organ-grid">';
+  html+=card2('🫀 Faktor Risiko',riskBadge(lR),(d.hxHCV?li('HCV: Risiko sirosis, hepatokarsinoma'):'')+(d.hxHBV?li('HBV: Risiko reaktivasi, hepatitis kronik'):'')+(d.hxVOD?li('SOS/VOD: Risiko fibrosis, hipertensi portal'):'')+(d.hxIron||d.hxTransfusion?li('Iron overload: Hemosiderosis hati'):'')+(d.hasHSCT?li('HSCT: GVHD hati, SOS/VOD'):'')+(lR==='low'?li('Tidak ada faktor risiko hati mayor'):''));
+  html+=card2('🔬 Pemantauan','',li('SGOT/SGPT, bilirubin: Setiap tahun')+(d.hxHCV?li('HCV RNA: Jika anti-HCV positif'):'')+(d.hxHBV?li('HBsAg, HBV DNA: Setiap tahun; profilaksis antiviral'):'')+( d.hxIron?li('Ferritin, MRI liver T2*: Evaluasi iron overload'):''));
+  html+=card2('💉 Vaksinasi Hati','',li('Hepatitis B: Jika belum imun')+li('Hepatitis A: Jika belum imun'));
+  html+='</div>'+ref('<strong>COG LTFU v6.0:</strong> Hepatic Toxicity.');
+  html+='<div class="disclaimer">&#9888; Keputusan klinis harus diindividualisasi.</div>';
+  gEl('liver-content').innerHTML=html;
+}
+
+function genPsychosocial(r){
+  var d=r.d,pR=r.psychoRisk;
+  var html='<div style="margin-bottom:10px"><strong>Risiko Psikososial:</strong> '+riskBadge(pR)+'</div>';
+  html+='<div class="organ-grid">';
+  html+=card2('🧘 Faktor Risiko',riskBadge(pR),li('Semua penyintas: Risiko depresi, kecemasan, kelelahan')+(d.rtCranialCk?li('CRT: Depresi, penurunan kualitas hidup'):'')+(d.sxAmp?li('Amputasi: Citra tubuh, rehabilitasi'):'')+(d.sxEnuc?li('Enukleasi: Perubahan fisik, risiko psikososial tinggi'):'')+(d.hasHSCT?li('HSCT: PTSD, isolasi, reintegrasi'):''));
+  html+=card2('📝 Asesmen','',li('Skrining depresi &amp; kecemasan: Setiap tahun (PHQ-A, GAD-7)')+li('Kelelahan: PROMIS Fatigue setiap kunjungan')+li('Kualitas hidup: PedsQL setiap tahun')+li('Asesmen keluarga: Dampak pada orang tua'));
+  html+=card2('💊 Intervensi','',li('Rujukan psikolog/psikiater: Jika skrining positif')+li('CBT: Pilihan pertama untuk depresi/kecemasan')+li('Aktivitas fisik terstruktur: Mengurangi kelelahan'));
+  html+='</div>'+ref('<strong>COG LTFU v6.0:</strong> Psychosocial. PanCare SURPASS Tool.');
+  html+='<div class="disclaimer">&#9888; Keputusan klinis harus diindividualisasi.</div>';
+  gEl('psychosocial-content').innerHTML=html;
+}
+
+function genNeuro2(r){
+  var d=r.d,n2R=r.neuro2Risk;
+  var html='<div style="margin-bottom:10px"><strong>Risiko Neuropati Perifer:</strong> '+riskBadge(n2R)+'</div>';
+  html+='<div class="organ-grid">';
+  html+=card2('⚡ Faktor Risiko',riskBadge(n2R),(d.vcr?li('Vincristine: Neuropati perifer sensorimotorik'):'')+( d.cispCk?li('Cisplatin: Neuropati sensorik, bisa ireversibel'):'')+(d.carboCk?li('Carboplatin: Neuropati ringan-sedang'):'')+(n2R==='low'?li('Tidak ada faktor risiko neuropati mayor'):''));
+  html+=card2('🔬 Pemantauan','',li('Anamnesis: Kesemutan, mati rasa, kelemahan — setiap kunjungan')+li('Pemeriksaan neurologis: Refleks, sensasi, kekuatan motorik')+( n2R!=='low'?li('NCS/EMG: Jika gejala neuropati'):''));
+  html+=card2('💊 Intervensi','',li('Fisioterapi dan latihan keseimbangan')+li('Alas kaki sesuai: Cegah luka pada kaki')+li('Neurologi: Jika berat atau progresif'));
+  html+='</div>'+ref('<strong>COG LTFU v6.0:</strong> Peripheral Neuropathy.');
+  html+='<div class="disclaimer">&#9888; Keputusan klinis harus diindividualisasi.</div>';
+  gEl('neuro2-content').innerHTML=html;
+}
+
+function genMetabolic(r){
+  var d=r.d,mR=r.metaRisk;
+  var html='<div style="margin-bottom:10px"><strong>Risiko Sindrom Metabolik &amp; KV:</strong> '+riskBadge(mR)+'</div>';
+  html+='<div class="organ-grid">';
+  html+=card2('📊 Faktor Risiko',riskBadge(mR),(d.rtCranialCk?li('CRT: Disfungsi hipotalamus → obesitas, resistensi insulin'):'')+(d.tbiTx?li('TBI: Risiko sindrom metabolik sangat tinggi'):'')+(d.hasHSCT?li('HSCT: Hipertensi, diabetes, dislipidemia'):'')+(d.hasSteroid&&d.steroid&&d.steroid!=='unknown'&&d.steroid>3?li('Steroid: Obesitas, hipertensi, dislipidemia'):'')+(mR==='low'?li('Risiko rendah — dorong gaya hidup sehat'):''));
+  html+=card2('🔬 Pemantauan','',li('BB, lingkar pinggang, BMI: Setiap kunjungan')+li('Tekanan darah: Setiap kunjungan')+li('Gula darah/HbA1c: Setiap tahun')+li('Profil lipid: Setiap 1-2 tahun'));
+  html+=card2('💪 Intervensi','',li('Konseling nutrisi: Diet sehat')+li('Aktivitas fisik: ≥60 menit/hari anak')+li('Tidak merokok: Perkuat sejak remaja'));
+  html+='</div>'+ref('<strong>COG LTFU v6.0:</strong> Metabolic Syndrome &amp; Cardiovascular Risk.');
+  html+='<div class="disclaimer">&#9888; Keputusan klinis harus diindividualisasi.</div>';
+  gEl('metabolic-content').innerHTML=html;
+}
+
+function genSurgery(r){
+  var d=r.d,sR=r.surgRisk;
+  if(!d.sxNeph&&!d.sxSpleen&&!d.sxAmp&&!d.sxEnuc&&!d.sxThorax&&!d.sxAbd&&!d.sxCranial){
+    gEl('surgery-content').innerHTML='<div class="alert alert-info">ℹ️ Tidak ada riwayat operasi mayor yang dipilih.</div>';
+    return;
+  }
+  var html='<div style="margin-bottom:10px"><strong>Risiko Efek Lanjut Bedah:</strong> '+riskBadge(sR)+'</div>';
+  html+='<div class="organ-grid">';
+  if(d.sxNeph)html+=card2('🫘 Nefrektomi',riskBadge('mod'),li('Ginjal tunggal: Hiperfiltasi → proteinuria → CKD')+li('eGFR + urinalisis: Setiap 6-12 bulan')+li('Tekanan darah: Setiap kunjungan')+li('Hindari NSAID dan nefrotoksik'));
+  if(d.sxSpleen)html+=card2('🛡️ Splenektomi',riskBadge('high'),li('OPSI: Risiko sepsis mengancam jiwa seumur hidup')+li('Vaksinasi WAJIB: Pneumokokus, meningokokus, Hib')+li('Profilaksis antibiotik: Seumur hidup')+li('Edukasi: Segera UGD jika demam ≥38.5°C')+li('Kartu peringatan "Asplenia"'));
+  if(d.sxAmp)html+=card2('🦾 Amputasi',riskBadge('mod'),li('Phantom limb pain: Asesmen setiap kunjungan')+li('Evaluasi prosthesis: Setiap 6-12 bulan')+li('Fisioterapi: Rutin dan berkelanjutan')+li('Psikososial: Asesmen citra tubuh'));
+  if(d.sxEnuc)html+=card2('👁️ Enukleasi',riskBadge('mod'),li('Prosthesis okular: Setiap 6-12 bulan')+li('Tajam penglihatan mata kontralateral: Setiap kunjungan')+li('Perlindungan mata sehat: Kacamata pelindung wajib'));
+  if(d.sxThorax)html+=card2('🫁 Bedah Torak',riskBadge('mod'),li('PFT: Setiap 1-2 tahun')+li('Deformitas dinding dada: Evaluasi ortopedi jika ada'));
+  if(d.sxAbd)html+=card2('🔧 Bedah Abdomen',riskBadge('mod'),li('Obstruksi usus: Awasi tanda ileus')+li('Hernia: Pemeriksaan abdomen setiap kunjungan'));
+  if(d.sxCranial)html+=card2('🧠 Bedah Kranial',riskBadge('mod'),li('Evaluasi neurologis: Setiap 6 bulan')+li('MRI otak: Setiap 1-2 tahun')+li('Endokrinologi: Jika dekat hipotalamus/hipofisis'));
+  html+='</div>'+ref('<strong>COG LTFU v6.0:</strong> Surgical Late Effects.');
+  html+='<div class="disclaimer">&#9888; Keputusan klinis harus diindividualisasi.</div>';
+  gEl('surgery-content').innerHTML=html;
+}
+
+function genSecondary(r){
+  var d=r.d,sR=r.secRisk;
+  var age=d.age||0,ageDx=d.ageDx||0;
+
+  // Breast (IGHG 2020, Bukti A)
+  var breastScreen='',breastUrgent=false;
+  if(d.rtChestCk&&d.gender==='female'){
+    if(d.rtChestGy&&d.rtChestGy!=='unknown'&&d.rtChestGy>=10){
+      var startAge=Math.max(25,ageDx+8);
+      breastScreen='<strong>WAJIB (IGHG 2020, Bukti A):</strong> Mamografi + MRI payudara tahunan mulai usia '+startAge+' tahun. Usia sekarang: '+age+' tahun — '+(age>=startAge?'<span style="color:var(--red);font-weight:700">⚠ SUDAH SAATNYA SKRINING</span>':'mulai usia '+startAge);
+      breastUrgent=age>=startAge;
+    } else if(d.rtChestCk){
+      breastScreen='RT dada terkonfirmasi — verifikasi dosis. Jika ≥10 Gy: skrining payudara WAJIB.';
+    }
+  }
+
+  // Thyroid (IGHG 2018)
+  var thyScreen='';
+  if(d.rtNeck||d.rtCranialCk||d.tbiTx){
+    thyScreen='<strong>IGHG 2018:</strong> Palpasi leher atau USG tiroid mulai 5 tahun pasca-RT, setiap 1-2 tahun.';
+  }
+
+  // CNS (IGHG 2020)
+  var cnsScreen='';
+  if(d.rtCranialCk){
+    cnsScreen='<strong>IGHG 2020:</strong> Anamnesis + pemeriksaan neurologis setiap kunjungan LTFU. MRI rutin tidak direkomendasikan untuk asimptomatik.';
+  }
+
+  // ── KOLOREKTAL — COG v6.0 CORRECTED: usia 30, 5 tahun pasca-RT, + stool DNA ──
+  var crcScreen='';
+  if(d.rtAbd||d.rtPelvic){
+    crcScreen='<strong>COG LTFU v6.0 (diperbarui):</strong> Mulai 5 tahun pasca-RT <em>atau</em> usia 30 tahun (mana yang lebih lama): (1) <strong>Kolonoskopi setiap 5 tahun</strong>, <em>ATAU</em> (2) <strong>Multitarget stool DNA setiap 3 tahun</strong> — pilih sesuai preferensi pasien dan ketersediaan.';
+  }
+
+  var html='<div style="margin-bottom:10px">'+riskBadge(sR)+' <strong>Risiko Keganasan Sekunder</strong></div>';
+  if(r.secUnkWarn)html+=warnUnk('Dosis VP-16 tidak diketahui. Risiko t-AML tidak dapat distratifikasi akurat.');
+  if(breastUrgent)html+='<div class="alert alert-danger">🔴 <span><strong>SEGERA:</strong> Sudah mencapai usia skrining payudara. Jadwalkan mamografi + MRI segera (IGHG 2020).</span></div>';
+
+  html+='<div class="organ-grid">';
+  html+=card2('🔍 Faktor Risiko',riskBadge(sR),
+    (d.rtChestCk&&d.gender==='female'?li('RT dada ≥10 Gy (perempuan) → Kanker payudara (Bukti A, IGHG 2020)'):'')+
+    (d.rtCranialCk?li('RT kranial → Meningioma, glioma (IGHG 2020)'):'')+
+    (d.rtNeck||d.tbiTx?li('RT leher/TBI → Kanker tiroid (Bukti A, IGHG 2018)'):'')+
+    (d.rtAbd||d.rtPelvic?li('RT abdomen/pelvis → Kanker kolorektal, endometrium (COG v6.0)'):'')+
+    (d.vp16?li('Etoposide → t-AML topoisomerase II'):'')+
+    (d.tbiTx?li('TBI → Risiko keganasan sekunder multipel'):'')+
+    (sR==='low'?li('Tidak ada faktor risiko keganasan sekunder mayor'):''));
+
+  var screenItems='';
+  if(breastScreen)screenItems+=li(breastScreen);
+  if(thyScreen)screenItems+=li(thyScreen);
+  if(cnsScreen)screenItems+=li(cnsScreen);
+  if(crcScreen)screenItems+=li(crcScreen);
+  screenItems+=li('Pemeriksaan kulit: Setiap tahun — semua penyintas');
+  if(d.hsctAllo)screenItems+=li('Pemeriksaan rongga mulut + kulit: Setiap tahun (HSCT + GVHD kronik)');
+  screenItems+=li('Anamnesis &amp; pemeriksaan fisik lengkap: Setiap kunjungan LTFU');
+
+  html+=card2('📋 Skrining Berdasarkan Panduan',riskBadge(sR),screenItems,
+    'IGHG Breast 2020 | IGHG Thyroid 2018 | IGHG CNS 2020 | COG LTFU v6.0');
+  html+='</div>';
+  html+=ref('<strong>COG LTFU v6.0:</strong> Subsequent Neoplasms. <strong>IGHG:</strong> Breast (JCO 2020) &bull; Thyroid (2018) &bull; CNS (Lancet Oncol 2021).');
+  html+='<div class="disclaimer">&#9888; Keputusan klinis harus diindividualisasi.</div>';
+  gEl('secondary-content').innerHTML=html;
+}
+
+function genBone(r){
+  var d=r.d,bR=r.boneRisk;
+  var html='<div class="alert alert-success">✅ <span><strong>COG v6.0 (diperbarui):</strong> Methotrexate <strong>dihapus</strong> dari faktor risiko penurunan kepadatan tulang — tidak ditemukan asosiasi. DXA hanya jika ada faktor risiko lain.</span></div>';
+  html+='<div class="organ-grid">';
+  html+=card2('🦴 Faktor Risiko (COG v6.0)',riskBadge(bR),(d.pred||d.dexa?li('Steroid ('+(d.steroid&&d.steroid!=='unknown'?d.steroid:'?')+' bulan): Osteonekrosis + osteoporosis'):'')+( d.tbiTx?li('TBI: Osteoporosis risiko tinggi'):'')+(d.hsctAllo&&d.gvhd?li('HSCT alogenik + GVHD: Risiko kehilangan tulang tertinggi'):'')+li('<strong>MTX: BUKAN faktor risiko tulang (COG v6.0)</strong>')+(bR==='low'?li('Tidak ada faktor risiko tulang mayor teridentifikasi'):''),'COG v6.0 Table 3: MTX dihapus. Faktor risiko utama: steroid &gt;1 bulan, TBI, HSCT-alo + GVHD.');
+  html+=card2('🔬 Pemeriksaan','',li('DXA scan: Baseline jika ada faktor risiko; ulangi setiap 2-5 tahun')+li('Vitamin D (25-OH-VitD): Setiap tahun')+li('Kalsium, Fosfor: Setiap tahun')+(bR==='high'?li('Foto polos panggul: Jika nyeri panggul — waspadai osteonekrosis'):''));
+  html+=card2('💊 Intervensi','',li('Suplementasi Vitamin D jika defisiensi (target &gt;50 nmol/L)')+li('Kalsium cukup (diet + suplemen)')+li('Olahraga menumpu berat badan')+(bR==='high'?li('Bisfosfonat: Jika osteoporosis berat'):'')+li('Hindari rokok, batasi alkohol'));
+  html+='</div>'+ref('<strong>COG LTFU v6.0 (Table 3):</strong> Bone Mineral Density. MTX removed as risk factor.');
+  html+='<div class="disclaimer">&#9888; Keputusan klinis harus diindividualisasi.</div>';
+  gEl('bone-content').innerHTML=html;
+}
+
+function genRenal(r){
+  var d=r.d,rR=r.renalRisk;
+  var html='<div class="organ-grid">';
+  html+=card2('🫘 Faktor Risiko',riskBadge(rR),(d.ifosCk?li('Ifosfamide ('+(d.ifos&&d.ifos!=='unknown'?d.ifos:'?')+' mg/m²): Sindrom Fanconi, disfungsi tubular'):'')+( d.cispCk?li('Cisplatin ('+(d.cispDose&&d.cispDose!=='unknown'?d.cispDose:'?')+' mg/m²): GFR turun, hipomagnesemia'):'')+(d.hsctAllo?li('HSCT alogenik: Nefropati GVHD'):'')+( d.tbiTx?li('TBI: Nefritis radiasi'):'')+(rR==='low'?li('Tidak ada faktor risiko ginjal mayor'):''));
+  html+=card2('🔬 Pemantauan','',li('Urinalisis + protein/kreatinin: Setiap tahun')+li('eGFR (Schwartz/CKD-EPI): Setiap tahun')+li('Elektrolit (Na, K, Mg, Fosfor): Setiap tahun')+(d.ifosCk?li('Glukosa urin, asam amino: Skrining Fanconi'):'')+( d.cispCk?li('Magnesium serum: Setiap tahun'):'')+li('Tekanan darah: Setiap kunjungan'));
+  html+='</div>'+ref('<strong>COG LTFU v6.0:</strong> Renal Toxicity.');
+  html+='<div class="disclaimer">&#9888; Keputusan klinis harus diindividualisasi.</div>';
+  gEl('renal-content').innerHTML=html;
+}
+
+function genPulmonary(r){
+  var d=r.d,pR=r.pulmRisk;
+  var html='<div class="organ-grid">';
+  html+=card2('🫁 Faktor Risiko',riskBadge(pR),(d.bleo?li('Bleomycin: Pneumonitis interstitial/fibrosis'):'')+(d.tbiTx?li('TBI: Pneumonitis radiasi + penyakit restriktif'):'')+( d.busuCk?li('Busulfan: Pneumonia interstitial'):'')+(d.gvhd&&d.hsctAllo?li('GVHD kronik: Bronkiolitis obliterans'):'')+(d.rtChestCk?li('RT dada: Pneumonitis + fibrosis'):'')+(pR==='low'?li('Tidak ada faktor risiko paru mayor'):''));
+  html+=card2('📋 Pemantauan','',li('PFT (Spirometri): 1 tahun pasca-terapi; setiap 2-5 tahun jika abnormal')+li('DLCO: Penting untuk bleomycin/TBI')+(pR==='high'?li('CT toraks HRCT: Jika ada gejala'):'')+( d.gvhd?li('6-Minute Walk Test: Untuk penyakit paru GVHD'):'')+li('Vaksinasi influenza tahunan')+li('Vaksinasi pneumokokus'));
+  html+='</div>'+ref('<strong>COG LTFU v6.0:</strong> Pulmonary Toxicity.');
+  html+='<div class="disclaimer">&#9888; Keputusan klinis harus diindividualisasi.</div>';
+  gEl('pulmonary-content').innerHTML=html;
+}
+
+function genImmune(r){
+  var d=r.d;
+  if(!d.hasHSCT&&!d.hasCart&&!d.hsctUnk){
+    gEl('immune-content').innerHTML='<div class="alert alert-info">ℹ️ Modul ini paling relevan untuk penerima HSCT dan CAR-T.</div>';
+    return;
+  }
+  var aType=d.hsctAllo?'danger':'warning';
+  var aMsg=d.hsctAllo?'🔴 HSCT Alogenik: Imunosupresi berkepanjangan, GVHD — pemantauan ketat':(d.hasCart?'🟡 CAR-T: Pantau aplasia sel B dan hipogamaglobulinemia':'🟡 HSCT Autologus: Pemantauan rekonstituasi imun diperlukan');
+  var html='<div class="alert alert-'+aType+'">'+aMsg+'</div>';
+  html+='<div class="alert alert-success">✅ <span><strong>COG v6.0 baru:</strong> HPV 3 dosis ditambahkan. Shared decision-making untuk usia 27-45 tahun.</span></div>';
+  html+='<table class="vaccine-table"><tr><th>Vaksin</th><th>Mulai</th><th>Dosis</th><th>Catatan</th></tr>';
+  // ── HPV added per COG v6.0 ──
+  [['Influenza (inaktif)','3-6 bln','Tahunan','Inaktif saat GVHD aktif'],
+   ['Pneumokokus (PCV)','3-6 bln','3-4 dosis','Lanjut PPSV23 bln 12-24'],
+   ['Hib','6 bln','3 dosis','—'],
+   ['Meningokokus ACWY','6 bln','2 dosis','—'],
+   ['Hepatitis B','6 bln','3 dosis','Cek anti-HBs'],
+   ['Hepatitis A','6-12 bln','2 dosis','—'],
+   ['TdaP','6 bln','3 dosis','—'],
+   ['IPV','6 bln','3 dosis','—'],
+   ['HPV (rekombinan)','6-12 bln','3 dosis (0, 1-2, 6 bln)','Usia 9-26 th; shared decision-making usia 27-45 th — COG v6.0 baru'],
+   ['MMR (hidup)','24 bln','2 dosis','Tidak ada GVHD aktif &amp; ≥6 bln bebas imunosupresan'],
+   ['Varisela (hidup)','24 bln','2 dosis','Seronegatif VZV &amp; tidak ada GVHD']
+  ].forEach(function(row){html+='<tr><td>'+row.join('</td><td>')+'</td></tr>';});
+  html+='</table>';
+  html+='<div style="margin-top:12px" class="organ-grid">';
+  html+=card2('🧪 Imunoglobulin','',li('IgG/IgM/IgA: Setiap bulan 6 bulan pertama, lalu setiap 3 bulan')+(d.hasCart?li('CAR-T: IVIG jika IgG &lt;400 mg/dL dengan infeksi berulang'):'')+li('Subset limfosit: Setiap 3 bulan tahun pertama'));
+  html+=card2('🦠 Infeksi','',li('CMV PCR: Mingguan 100 hari pertama (HSCT alogenik)')+li('EBV PCR: Jika risiko PTLD')+li('Profilaksis PCP: Hingga CD4 &gt;200 sel/µL')+(d.gvhd?li('GVHD kronik: Profilaksis antijamur + PCP jangka panjang'):''));
+  html+='</div>'+ref('<strong>COG LTFU v6.0:</strong> Revaksinasi mulai ≥3 bulan pasca-HSCT. HPV ditambahkan v6.0.');
+  gEl('immune-content').innerHTML=html;
+}
+
+function genTimeline(r){
+  var d=r.d;
+  var name=esc(gVal('pt-name'))||'Penyintas';
+  var dx=esc(gVal('pt-dx'))||'Belum diisi';
+  function tlItem(dot,time,title,tags){
+    var ds=dot==='teal'?' style="background:var(--teal);box-shadow:0 0 0 2px var(--teal)"':'';
+    return '<div class="tl-item"><div class="tl-dot"'+ds+'></div><div class="tl-time">'+time+'</div><div class="tl-content"><h4>'+title+'</h4><div class="tl-tags">'+tags+'</div></div></div>';
+  }
+  var html='<p style="margin-bottom:12px;font-size:12.5px"><strong>'+name+'</strong> | '+dx+' | EOT: '+(esc(gVal('pt-year-eot'))||'N/A')+'</p>';
+  html+='<div class="timeline">';
+  html+=tlItem('','🏥 Saat Diagnosis','Baseline',tag('Tumbuh kembang')+tag('Ekokardiografi')+tag('Pubertas')+tag('Fertilitas')+tag('Audiologi baseline (cisplatin)'));
+  html+=tlItem('','✅ Selesai Terapi','EOT Assessment',tag('Echo jika anthra ≥100 mg/m²')+tag('Pertumbuhan')+tag('TSH/FT4')+tag('DXA jika steroid')+tag('Neuropsikologi jika CRT')+tag('Audiometri'));
+  var y1=tag('TSH/FT4')+tag('IGF-1')+tag('BB/TB')+tag('Audiometri');
+  if(r.cardRisk!=='low')y1+=tag('Echo');
+  if(r.renalRisk!=='low')y1+=tag('eGFR+elektrolit');
+  if(r.pulmRisk!=='low')y1+=tag('PFT');
+  if(d.hasHSCT)y1+=tag('Vaksinasi + HPV');
+  y1+=tag('Skrining psikososial');
+  html+=tlItem('','📅 Tahun 1','Pemantauan Intensif',y1);
+  var y25=tag('Panel endokrin')+tag('Echo 2-5 thn')+tag('DXA (jika steroid/TBI)')+tag('Kanker sekunder')+tag('Fungsi ginjal')+tag('Psikososial');
+  if(r.neuroRisk!=='low')y25+=tag('Neuropsikologi');
+  if(r.fertRisk!=='low')y25+=tag('FSH/LH/AMH atau SA');
+  if(r.hearRisk!=='low')y25+=tag('Audiometri');
+  html+=tlItem('','📅 Tahun 2-5','Surveilans Rutin',y25);
+  var y510=tag('Reevaluasi jantung')+tag('Metabolik KV')+tag('Densitas tulang')+tag('Fertilitas')+tag('Psikososial');
+  if(d.rtChestCk&&d.gender==='female')y510+=tag('MRI payudara (jika ≥25 th)');
+  if(d.rtNeck||d.tbiTx)y510+=tag('USG tiroid');
+  if(d.rtAbd||d.rtPelvic)y510+=tag('Kolonoskopi/stool DNA mulai usia 30');
+  html+=tlItem('','📅 Tahun 5-10','Jangka Panjang',y510);
+  html+=tlItem('teal','♾️ Seumur Hidup','Pemantauan Seumur Hidup',tag('Klinik survivorship tahunan')+tag('Skrining kanker sekunder')+tag('Kardiovaskular')+tag('Tulang')+tag('Kesehatan mental')+tag('Metabolik')+tag('Paspor penyintas update'));
+  html+='</div>';
+  gEl('timeline-content').innerHTML=html;
+}
+
+function genSummary(r){
+  var d=r.d;
+  var name=esc(gVal('pt-name'))||'Pasien';
+  var dx=esc(gVal('pt-dx'))||'—';
+  var gStr=d.gender==='male'?'Laki-laki':d.gender==='female'?'Perempuan':'N/A';
+  function sRow(l,v){return '<div class="summary-row"><span>'+l+'</span><span>'+v+'</span></div>';}
+  var html='<div class="card"><div class="card-title">👤 Ringkasan Pasien</div>';
+  html+=sRow('Nama',name)+sRow('Diagnosis',dx)+sRow('Usia',(d.age||'N/A')+' tahun')+sRow('Usia saat Dx',(d.ageDx||'N/A')+' tahun')+sRow('Jenis Kelamin',gStr)+sRow('EOT',esc(gVal('pt-year-eot'))||'N/A')+sRow('Sejak EOT',(d.yrsEOT||'N/A')+' tahun');
+  html+='</div>';
+  html+='<div class="card"><div class="card-title">🚦 Gambaran Risiko — 20 Modul</div><div class="organ-grid">';
+  var mods=[
+    ['❤️ Jantung',r.cardRisk,'cardiac'],['🦋 Tiroid',r.thyRisk,'endocrine'],['📈 Hormon Pertumbuhan',r.ghRisk,'growth'],
+    ['🌱 Fertilitas',r.fertRisk,'fertility'],['🧠 Neurokognitif',r.neuroRisk,'neuro'],
+    ['👂 Pendengaran',r.hearRisk,'hearing'],['👁️ Mata',r.eyeRisk,'eye'],['🦷 Gigi &amp; Mulut',r.dentalRisk,'dental'],
+    ['🫀 Hati &amp; Infeksi',r.liverRisk,'liver'],['🧘 Psikososial',r.psychoRisk,'psychosocial'],
+    ['⚡ Neuropati Perifer',r.neuro2Risk,'neuro2'],['📊 Metabolik &amp; KV',r.metaRisk,'metabolic'],
+    ['🔧 Bedah Spesifik',r.surgRisk,'surgery'],['🔍 Kanker Sekunder',r.secRisk,'secondary'],
+    ['🦴 Tulang',r.boneRisk,'bone'],['🫘 Ginjal',r.renalRisk,'renal'],['🫁 Paru',r.pulmRisk,'pulmonary']
+  ];
+  mods.forEach(function(m){html+='<div class="organ-card" style="cursor:pointer" onclick="showPage(\''+m[2]+'\')"><div class="organ-card-header"><div class="organ-card-title">'+m[0]+'</div>'+riskBadge(m[1])+'</div></div>';});
+  html+='</div></div>';
+  html+='<div class="card"><div class="card-title">⭐ Tindakan Prioritas</div>';
+  if(r.cardRisk==='high')html+='<div class="priority-item"><div class="priority-icon">🔴</div><div><strong>MENDESAK — Jantung:</strong> Jadwalkan ekokardiografi &amp; rujukan kardiologi.</div></div>';
+  if(r.cardRisk==='low'&&d.hasAnthra)html+='<div class="priority-item"><div class="priority-icon">✅</div><div><strong>Jantung (COG v6.0):</strong> Echo TIDAK diperlukan rutin — anthra &lt;100 mg/m² dan RT dada &lt;15 Gy. Pantau tekanan darah dan gejala.</div></div>';
+  if(r.hearRisk!=='low')html+='<div class="priority-item"><div class="priority-icon">👂</div><div><strong>Pendengaran:</strong> Jadwalkan audiometri.</div></div>';
+  if(d.sxSpleen)html+='<div class="priority-item"><div class="priority-icon">🔴</div><div><strong>MENDESAK — Splenektomi:</strong> Pastikan vaksinasi asplenia lengkap dan profilaksis antibiotik.</div></div>';
+  if(r.neuroRisk!=='low')html+='<div class="priority-item"><div class="priority-icon">🟡</div><div><strong>Neurokognitif:</strong> Evaluasi neuropsikologi dan dukungan sekolah.</div></div>';
+  if(r.fertRisk==='high')html+='<div class="priority-item"><div class="priority-icon">🔴</div><div><strong>Fertilitas:</strong> Rujuk Endokrinologi Reproduksi.</div></div>';
+  if(d.rtChestCk&&d.gender==='female')html+='<div class="priority-item"><div class="priority-icon">🔴</div><div><strong>Skrining Payudara WAJIB:</strong> MRI payudara mulai usia 25 atau 8 tahun pasca-RT dada (IGHG 2020).</div></div>';
+  if(r.psychoRisk!=='low')html+='<div class="priority-item"><div class="priority-icon">🧘</div><div><strong>Psikososial:</strong> Skrining depresi, kecemasan, kelelahan setiap kunjungan.</div></div>';
+  if(d.hxHCV)html+='<div class="priority-item"><div class="priority-icon">🫀</div><div><strong>HCV:</strong> Evaluasi HCV RNA — terapi DAA sangat efektif.</div></div>';
+  if(r.metaRisk!=='low')html+='<div class="priority-item"><div class="priority-icon">📊</div><div><strong>Metabolik:</strong> Pantau tekanan darah, gula darah, lipid setiap tahun.</div></div>';
+  if(d.hasHSCT||d.hasCart)html+='<div class="priority-item"><div class="priority-icon">🛡️</div><div><strong>Rekonstituasi Imun:</strong> Tinjau jadwal revaksinasi termasuk HPV 3 dosis (COG v6.0).</div></div>';
+  if(r.boneRisk!=='low')html+='<div class="priority-item"><div class="priority-icon">🦴</div><div><strong>Tulang:</strong> DXA scan, Vitamin D. <em>Catatan: MTX bukan faktor risiko tulang (COG v6.0)</em></div></div>';
+  if(d.rtAbd||d.rtPelvic)html+='<div class="priority-item"><div class="priority-icon">🔍</div><div><strong>Kolorektal (COG v6.0):</strong> Mulai skrining usia 30 atau 5 tahun pasca-RT — kolonoskopi atau stool DNA.</div></div>';
+  html+='<div class="priority-item"><div class="priority-icon">📅</div><div><strong>Klinik Survivorship:</strong> Kunjungan multidisiplin komprehensif tahunan.</div></div>';
+  html+='</div>';
+  html+='<div class="guideline-ref">📖 COG LTFU v6.0 (Oktober 2023) &bull; IGHG &bull; PanCare. drAisyi Survivor Navigator v1.6 — Juni 2025.</div>';
+  html+='<div class="disclaimer">&#9888; Keputusan klinis harus diindividualisasi. Data tidak lengkap dapat menyebabkan stratifikasi tidak akurat.</div>';
+  gEl('summary-content').innerHTML=html;
+}
+
+function genPassport(r){
+  var d=r.d;
+  var name=esc(gVal('pt-name'))||'—', dx=esc(gVal('pt-dx'))||'—';
+  var gStr=d.gender==='male'?'Laki-laki':d.gender==='female'?'Perempuan':'—';
+  var txList=[];
+  if(d.hasAnthra)txList.push('Antrasiklin('+(d.anthra&&d.anthra!=='unknown'?d.anthra:'?')+' mg/m²)');
+  if(d.hasAlk)txList.push('Agen alkilasi (CED:'+(d.ced&&d.ced!=='unknown'?d.ced:'?')+')');
+  if(d.cispCk)txList.push('Cisplatin');if(d.mtxCk)txList.push('MTX-HD');
+  if(d.rtCranialCk)txList.push('CRT '+(d.rtCranialGy&&d.rtCranialGy!=='unknown'?d.rtCranialGy:'?')+'Gy');
+  if(d.rtChestCk)txList.push('RT dada '+(d.rtChestGy&&d.rtChestGy!=='unknown'?d.rtChestGy:'?')+'Gy');
+  if(d.tbiTx)txList.push('TBI');if(d.hsctAllo)txList.push('HSCT-Alo');if(d.hsctAuto)txList.push('HSCT-Auto');
+  if(d.cartCD19)txList.push('CAR-T CD19');if(d.sxSpleen)txList.push('Splenektomi');
+  function pf(l,v){return '<div class="passport-field"><div class="passport-field-label">'+l+'</div><div class="passport-field-value">'+v+'</div></div>';}
+  function pfL(l,v){return '<div class="passport-field" style="grid-column:1/-1"><div class="passport-field-label">'+l+'</div><div class="passport-field-list">'+v+'</div></div>';}
+  function rL(lv){return lv==='high'?'TINGGI':lv==='mod'?'SEDANG':lv==='unknown'?'TDK DAPAT DINILAI':'RENDAH';}
+  var rem=[];
+  if(r.cardRisk!=='low')rem.push('Ekokardiografi berkala');
+  if(d.rtCranialCk||d.tbiTx)rem.push('TSH/FT4 tahunan');
+  if(d.rtChestCk&&d.gender==='female')rem.push('WAJIB: MRI payudara mulai usia 25');
+  if(d.sxSpleen)rem.push('ASPLENIA: Profilaksis antibiotik seumur hidup + segera UGD jika demam');
+  if(r.hearRisk!=='low')rem.push('Audiometri berkala');
+  if(d.rtAbd||d.rtPelvic)rem.push('Kolonoskopi/stool DNA mulai usia 30 (COG v6.0)');
+  rem.push('Survivorship clinic tahunan');
+  var html='<div class="passport"><div class="passport-header"><div><div class="passport-brand">drAisyi<span>Pediatric Oncology Survivorship v1.6</span></div><div class="passport-title-main">🪪 Paspor Penyintas Kanker Anak</div></div><div class="passport-logo">🎗️</div></div>';
+  html+='<div class="passport-grid">';
+  html+=pf('Nama',name)+pf('Jenis Kelamin',gStr)+pf('Diagnosis',dx)+pf('Tahun Dx',esc(gVal('pt-year-dx'))||'—')+pf('Usia saat Dx',(d.ageDx||'—')+' tahun')+pf('EOT',esc(gVal('pt-year-eot'))||'—');
+  html+=pfL('Paparan Terapi',txList.length?txList.join(' &middot; '):'Belum diisi');
+  html+=pfL('Profil Risiko','❤️ Jantung:'+rL(r.cardRisk)+' | 👂 Pendengaran:'+rL(r.hearRisk)+' | 🌱 Fertilitas:'+rL(r.fertRisk)+'<br>🧠 Neurokognitif:'+rL(r.neuroRisk)+' | 🔍 Kanker Sekunder:'+rL(r.secRisk)+' | 📊 Metabolik:'+rL(r.metaRisk));
+  html+=pfL('Pengingat Penting',rem.map(function(s){return '&bull; '+s;}).join('<br>'));
+  html+='</div>';
+  html+='<div style="margin-top:12px;font-size:9.5px;opacity:.65;text-align:center">drAisyi Pediatric Cancer Survivor &amp; Late Effects Navigator v1.6 &middot; COG LTFU v6.0 &middot; '+new Date().toLocaleDateString('id-ID')+'</div>';
+  html+='</div>';
+  gEl('passport-content').innerHTML=html;
+}
+
+function doPrint(sourceId){
+  var src=gEl(sourceId);
+  if(!src||!src.innerHTML||src.innerHTML.indexOf('alert-info')!==-1){alert('Harap buat rencana survivorship terlebih dahulu.');return;}
+  var portal=gEl('print-portal');
+  portal.innerHTML='<div style="font-family:Arial,sans-serif;padding:18px"><div style="background:#c0152a;color:white;padding:10px 16px;border-radius:7px;margin-bottom:14px"><strong>drAisyi &mdash; Pediatric Cancer Survivor &amp; Late Effects Navigator v1.6</strong><div style="font-size:10px;opacity:.85;margin-top:2px">COG LTFU v6.0 (Okt 2023) &bull; IGHG &bull; PanCare &bull; Dicetak: '+new Date().toLocaleDateString('id-ID')+'</div></div>'+src.innerHTML+'</div>';
+  portal.style.display='block';
+  window.print();
+  portal.style.display='none';
+}
+function printSummary(){doPrint('summary-content');}
+function printPassport(){doPrint('passport-content');}
+</script>
+</body>
+</html>

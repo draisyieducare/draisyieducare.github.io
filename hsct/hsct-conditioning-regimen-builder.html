@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>drAisyiEduCare — Pediatric HSCT Conditioning Regimen Builder</title>
+<style>
+:root{
+  --primary:#4A90D9;--primary-light:#EBF4FF;--primary-dark:#2C6FAC;
+  --green:#5BA88A;--green-light:#E8F5F0;--green-dark:#3a7a5f;
+  --yellow:#F7C948;--yellow-light:#FFFBEB;
+  --orange:#F0943A;--orange-light:#FFF5EB;
+  --danger:#E05252;--danger-light:#FFF0F0;
+  --gray-50:#F8FAFC;--gray-100:#F1F5F9;--gray-200:#E2E8F0;
+  --gray-300:#CBD5E1;--gray-400:#94A3B8;--gray-500:#64748B;
+  --gray-600:#475569;--gray-700:#334155;--gray-800:#1E293B;
+  --white:#fff;--radius:12px;--radius-sm:8px;
+  --shadow:0 4px 12px rgba(0,0,0,0.07);--shadow-lg:0 8px 24px rgba(0,0,0,0.09);
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--gray-50);color:var(--gray-800);line-height:1.6;min-height:100vh}
+
+/* PRIVACY BANNER */
+.privacy-banner{background:#1a3050;color:#a8c8f0;font-size:0.76rem;text-align:center;padding:6px 20px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.privacy-banner strong{color:#d0e8ff}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:100;background:linear-gradient(135deg,#1a4a7a 0%,#2C6FAC 60%,#4A90D9 100%);color:white;box-shadow:0 2px 12px rgba(0,0,0,0.2)}
+.header-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{width:42px;height:42px;background:rgba(255,255,255,0.18);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.brand-text h1{font-size:1rem;font-weight:700}
+.brand-text p{font-size:0.7rem;opacity:0.82;margin-top:1px}
+.brand-name{font-size:0.72rem;font-weight:800;letter-spacing:0.06em;opacity:0.7;margin-top:2px}
+.hbadge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:4px 12px;font-size:0.7rem;font-weight:600;letter-spacing:0.04em;white-space:nowrap}
+
+/* LAYOUT */
+.container{max-width:1280px;margin:0 auto;padding:20px}
+
+/* ROLE STRIP */
+.role-strip{background:white;border:1px solid var(--gray-200);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;box-shadow:var(--shadow)}
+.role-strip-title{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--gray-400);margin-bottom:10px}
+.role-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.role-item{display:flex;gap:8px;padding:8px 10px;background:var(--gray-50);border-radius:6px;align-items:flex-start}
+.role-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.role-text strong{display:block;font-size:0.79rem;color:var(--gray-700)}
+.role-text span{font-size:0.73rem;color:var(--gray-500)}
+
+/* SECTION CARD */
+.card{background:white;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--gray-200);padding:20px;margin-bottom:16px}
+.card-header{margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--gray-100);display:flex;align-items:center;gap:8px}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--primary);color:white;font-size:0.73rem;font-weight:700;flex-shrink:0}
+.sec-title{font-size:1rem;font-weight:700;color:var(--gray-700)}
+.sec-sub{font-size:0.77rem;color:var(--gray-400);font-weight:400;margin-left:4px}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.form-grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg label{font-size:0.79rem;font-weight:600;color:var(--gray-600);display:flex;align-items:center;gap:4px}
+.req{color:var(--danger)}
+.fg input,.fg select{padding:8px 11px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-size:0.88rem;font-family:var(--font);color:var(--gray-800);background:white;transition:border-color 0.2s,box-shadow 0.2s;width:100%}
+.fg input:focus,.fg select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(74,144,217,0.12)}
+
+/* CHECKBOX GRIDS */
+.cb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:7px;margin-top:4px}
+.cb-item{display:flex;align-items:center;gap:7px;padding:7px 10px;border:1.5px solid var(--gray-200);border-radius:6px;cursor:pointer;font-size:0.82rem;transition:border-color 0.2s,background 0.2s;user-select:none}
+.cb-item:hover{border-color:var(--primary);background:var(--primary-light)}
+.cb-item.on{border-color:var(--primary);background:var(--primary-light)}
+.cb-item input{width:15px;height:15px;accent-color:var(--primary);cursor:pointer;flex-shrink:0}
+.cb-item.danger-item{border-color:#F5A8A8;background:var(--danger-light)}
+.cb-item.danger-item.on{border-color:var(--danger);background:#FFE0E0}
+
+/* ORGAN FUNCTION */
+.organ-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.organ-item{background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:10px 12px}
+.organ-label{font-size:0.78rem;font-weight:700;color:var(--gray-700);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.organ-icon{font-size:14px}
+.organ-item select{width:100%;padding:6px 8px;border:1.5px solid var(--gray-200);border-radius:5px;font-size:0.82rem;font-family:var(--font);background:white;color:var(--gray-800)}
+.organ-item select:focus{outline:none;border-color:var(--primary)}
+.organ-normal select{border-color:#A8D5C2}
+.organ-mild select{border-color:var(--yellow)}
+.organ-moderate select{border-color:var(--orange)}
+.organ-severe select{border-color:var(--danger)}
+
+/* BUTTONS */
+.btn-group{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.btn{padding:11px 24px;border-radius:var(--radius-sm);font-size:0.88rem;font-weight:600;cursor:pointer;transition:all 0.2s;border:none;display:flex;align-items:center;gap:7px;font-family:var(--font)}
+.btn-primary{background:linear-gradient(135deg,#2C6FAC,#4A90D9);color:white;box-shadow:0 4px 12px rgba(74,144,217,0.3)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(74,144,217,0.4)}
+.btn-secondary{background:var(--gray-100);color:var(--gray-700);border:1.5px solid var(--gray-200)}
+.btn-secondary:hover{background:var(--gray-200)}
+.btn-print{background:linear-gradient(135deg,#3a7a5f,#5BA88A);color:white;box-shadow:0 4px 12px rgba(91,168,138,0.3)}
+.btn-print:hover{transform:translateY(-1px)}
+.btn-lg{padding:13px 28px;font-size:0.95rem}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:0.72rem;font-weight:700;letter-spacing:0.04em;white-space:nowrap}
+.b-mac{background:#FFE4E4;color:#9B2020}
+.b-rtc{background:#FFF3E0;color:#8B4A00}
+.b-ric{background:#E8F5E9;color:#2E7D32}
+.b-nma{background:#E3F2FD;color:#1565C0}
+.b-pref{background:#E8F5F0;color:#2E6B50;border:1px solid #A8D5C2}
+.b-alt{background:#EBF4FF;color:#2052a0;border:1px solid #A8C8F0}
+.b-caut{background:#FFF5EB;color:#8B4A00;border:1px solid #F5C88A}
+.b-avoid{background:#FFF0F0;color:#9B2020;border:1px solid #F5A8A8}
+.b-spec{background:#F0E8FF;color:#5a1a9a;border:1px solid #C8A8F0}
+.b-est{background:#E8F5F0;color:#2E6B50}
+.b-common{background:#EBF4FF;color:#2052a0}
+.b-proto{background:#FFF5EB;color:#8B4A00}
+.b-invest{background:#F0E8FF;color:#5a1a9a}
+
+/* ALERTS */
+.alert{padding:12px 14px;border-radius:var(--radius-sm);margin-bottom:9px;display:flex;gap:10px;align-items:flex-start;font-size:0.85rem}
+.alert-icon{font-size:17px;flex-shrink:0;margin-top:1px}
+.alert-danger{background:var(--danger-light);border:1.5px solid #F5A8A8;color:#7a1a1a}
+.alert-warning{background:var(--orange-light);border:1.5px solid #F5C88A;color:#7a3a00}
+.alert-info{background:var(--primary-light);border:1.5px solid #A8C8F0;color:#1a3a6a}
+.alert-success{background:var(--green-light);border:1.5px solid #A8D5C2;color:#1a4a30}
+.alert-content strong{display:block;margin-bottom:2px;font-size:0.87rem}
+.alert-who{font-size:0.73rem;margin-top:4px;opacity:0.8;font-style:italic}
+
+/* REGIMEN CARD */
+.rc{border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;border:1.5px solid var(--gray-200);position:relative;overflow:hidden}
+.rc::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%}
+.rc-pref::before{background:var(--green)}
+.rc-alt::before{background:var(--primary)}
+.rc-caut::before{background:var(--orange)}
+.rc-avoid::before{background:var(--danger)}
+.rc-spec::before{background:#8040c0}
+.rc-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.rc-name{font-size:0.97rem;font-weight:700;color:var(--gray-800)}
+.rc-full{font-size:0.8rem;color:var(--gray-500);margin-bottom:5px}
+.rc-desc{font-size:0.81rem;color:var(--gray-600);margin-bottom:7px}
+.rc-ind{font-size:0.81rem;background:var(--primary-light);border-radius:5px;padding:6px 10px;margin-bottom:7px;color:var(--primary-dark)}
+.rc-safe{font-size:0.8rem;background:var(--yellow-light);border-left:3px solid var(--yellow);border-radius:4px;padding:6px 9px;color:#6a5000}
+.rc-evidence{font-size:0.73rem;margin-top:7px;padding-top:7px;border-top:1px solid var(--gray-100);color:var(--gray-500)}
+
+/* INTENSITY METER */
+.meter-wrap{margin:14px 0}
+.meter-track{display:flex;border-radius:30px;overflow:hidden;height:30px;box-shadow:inset 0 2px 4px rgba(0,0,0,0.08)}
+.mseg{flex:1;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;letter-spacing:0.04em;color:rgba(255,255,255,0.65);transition:all 0.3s;position:relative}
+.mseg.act{color:white}
+.mseg.act::after{content:'▲';position:absolute;bottom:-17px;font-size:9px;color:var(--gray-600)}
+.s-nma{background:#B8D4F5}.s-ric{background:#5BA88A}.s-rtc{background:#F0943A}.s-mac{background:#E05252}
+.s-nma.act{background:#2C6FAC;box-shadow:0 0 0 3px rgba(44,111,172,0.3)}
+.s-ric.act{background:#3a7a5f;box-shadow:0 0 0 3px rgba(91,168,138,0.3)}
+.s-rtc.act{background:#c05a00;box-shadow:0 0 0 3px rgba(240,148,58,0.3)}
+.s-mac.act{background:#b02020;box-shadow:0 0 0 3px rgba(224,82,82,0.3)}
+.meter-lbls{display:flex;margin-top:20px}
+.meter-lbls span{flex:1;text-align:center;font-size:0.69rem;color:var(--gray-500);font-weight:600}
+.meter-note{margin-top:10px;padding:8px 12px;background:var(--gray-50);border-radius:6px;font-size:0.82rem;color:var(--gray-600)}
+
+/* ACCORDION */
+.acc-item{border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);margin-bottom:7px;overflow:hidden}
+.acc-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--gray-50);cursor:pointer;font-weight:600;font-size:0.85rem;transition:background 0.2s;gap:8px}
+.acc-header:hover{background:var(--primary-light)}
+.acc-title-inner{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.acc-body{padding:0 14px;max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.3s}
+.acc-body.open{max-height:3000px;padding:12px 14px}
+.acc-arrow{font-size:11px;transition:transform 0.3s;flex-shrink:0}
+.acc-arrow.open{transform:rotate(180deg)}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.detail-box{padding:8px 11px;border-radius:6px;font-size:0.8rem}
+.d-green{background:var(--green-light);border-left:3px solid var(--green)}
+.d-red{background:var(--danger-light);border-left:3px solid var(--danger)}
+.d-yellow{background:var(--yellow-light);border-left:3px solid var(--yellow)}
+.d-blue{background:var(--primary-light);border-left:3px solid var(--primary)}
+.d-title{font-weight:700;color:var(--gray-700);margin-bottom:4px;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em}
+.d-list{list-style:none;padding:0}
+.d-list li{padding:2px 0;font-size:0.8rem;color:var(--gray-700);display:flex;align-items:flex-start;gap:5px}
+.d-list li::before{content:'•';color:var(--gray-400);flex-shrink:0}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--gray-200)}
+table{width:100%;border-collapse:collapse;font-size:0.78rem}
+thead tr{background:linear-gradient(135deg,#2C6FAC,#4A90D9);color:white}
+thead th{padding:10px 12px;text-align:left;font-weight:600;font-size:0.75rem;white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--gray-100)}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--gray-50)}
+tbody td{padding:9px 12px;vertical-align:top;color:var(--gray-700);font-size:0.77rem}
+tbody td:first-child{font-weight:700;color:var(--gray-800)}
+
+/* CHECKLIST */
+.cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:7px;margin-top:8px}
+.cl-group{margin-bottom:12px}
+.cl-group-title{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--gray-400);margin-bottom:7px;padding:4px 0;border-bottom:1px solid var(--gray-200)}
+.cl-item{display:flex;align-items:flex-start;gap:8px;padding:8px 11px;background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:6px;font-size:0.81rem;cursor:pointer;transition:all 0.2s}
+.cl-item:hover{border-color:var(--green);background:var(--green-light)}
+.cl-item.done{background:var(--green-light);border-color:var(--green);color:#2a6a40}
+.cl-item input{width:15px;height:15px;accent-color:var(--green);cursor:pointer;flex-shrink:0;margin-top:2px}
+
+/* MODULE BOXES */
+.module-box{border-radius:var(--radius-sm);padding:16px;margin-bottom:0}
+.tdm-box{background:#FFF8E1;border:2px solid #F7C948}
+.tbi-box{background:#E8F0FF;border:2px solid #7090D0}
+.sero-box{background:#F0E8FF;border:2px solid #A080D0}
+.family-box{background:linear-gradient(135deg,#E8F5F0,#F0F8FF);border:2px solid #A8D5C2}
+.module-box h3{font-size:0.9rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.module-box p,.module-box li{font-size:0.83rem;line-height:1.7}
+.module-list{padding-left:16px;margin-top:6px}
+.module-list li{margin-bottom:4px}
+
+/* SUMMARY + NARRATIVE */
+.narrative-box{background:var(--primary-light);border:1.5px solid #A8C8F0;border-radius:var(--radius-sm);padding:15px 18px;font-size:0.87rem;line-height:1.8;color:var(--gray-700)}
+.summary-box{background:white;border:2px solid var(--primary);border-radius:var(--radius-sm);padding:18px;font-size:0.87rem;line-height:1.8;color:var(--gray-700)}
+
+/* PEARL */
+.pearl{display:flex;gap:10px;padding:9px 12px;background:var(--yellow-light);border:1.5px solid #f0d060;border-radius:6px;margin-bottom:7px;font-size:0.83rem;align-items:flex-start}
+.pearl-n{width:22px;height:22px;background:var(--yellow);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.77rem;flex-shrink:0;color:#5a4000}
+
+/* EVIDENCE */
+.ev-box{background:linear-gradient(135deg,#f0f7ff,var(--primary-light));border:1.5px solid #A8C8F0;border-radius:var(--radius-sm);padding:14px 18px}
+.ev-item{display:flex;gap:9px;margin-bottom:9px;font-size:0.82rem;color:var(--gray-700);align-items:flex-start}
+.ev-item:last-child{margin-bottom:0}
+
+/* SAFETY LIMITS */
+.limits-box{background:#FFF5EB;border:2px solid var(--orange);border-radius:var(--radius-sm);padding:14px 18px}
+.limits-box h3{color:#8B4A00;margin-bottom:8px;font-size:0.9rem}
+.limits-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:5px;margin-top:6px}
+.limits-item{display:flex;gap:7px;font-size:0.8rem;color:#6a3000;align-items:flex-start}
+.limits-item::before{content:'⊘';flex-shrink:0;margin-top:1px}
+
+/* DISCLAIMER */
+.disc-box{background:var(--orange-light);border:2px solid var(--orange);border-radius:var(--radius-sm);padding:16px 18px;font-size:0.82rem;color:#5a3000;line-height:1.7}
+.disc-box strong{color:#b05000;display:block;margin-bottom:6px;font-size:0.88rem}
+
+/* OUTPUT HEADER */
+.out-header{background:linear-gradient(135deg,#1a4a7a,#2C6FAC);color:white;border-radius:var(--radius);padding:18px 22px;margin-bottom:18px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.out-header h2{font-size:1.05rem;font-weight:700;margin-bottom:6px}
+.meta-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.mchip{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:3px 10px;font-size:0.72rem;font-weight:600}
+
+/* GOALS CARD */
+.goals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:4px}
+.goal-item{padding:9px 12px;border-radius:6px;font-size:0.81rem;font-weight:600;text-align:center}
+.g-disease{background:#FFE8E8;color:#8B2020;border:1px solid #F5A8A8}
+.g-engraft{background:#E8F5E9;color:#2E7D32;border:1px solid #A8D5A8}
+.g-immune{background:#E3F2FD;color:#1565C0;border:1px solid #90CAF9}
+.g-tox{background:#FFF3E0;color:#8B4A00;border:1px solid #FFCC80}
+
+/* NAV CHIPS */
+.nav-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.nav-chip{padding:5px 12px;border-radius:20px;font-size:0.75rem;font-weight:600;background:white;border:1.5px solid var(--gray-200);color:var(--gray-600);cursor:pointer;transition:all 0.2s;text-decoration:none}
+.nav-chip:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+
+/* DNA REPAIR ALERT */
+.dna-alert{background:#FFF0F0;border:2.5px solid var(--danger);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:16px;display:flex;gap:12px;align-items:flex-start}
+
+/* SECTION TITLE */
+.stitle{font-size:1rem;font-weight:700;color:var(--gray-700);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.stitle .ico{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.ico-b{background:var(--primary-light);color:var(--primary-dark)}
+.ico-g{background:var(--green-light);color:var(--green-dark)}
+.ico-y{background:var(--yellow-light);color:#9a7a00}
+.ico-r{background:var(--danger-light);color:#b03030}
+.ico-o{background:var(--orange-light);color:#b05000}
+.ico-p{background:#F0E8FF;color:#6030a0}
+
+/* RESULT LABEL */
+.rlabel{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-bottom:7px;margin-top:4px}
+
+/* HIDDEN */
+.hidden{display:none!important}
+
+/* PROVISIONAL BADGE */
+.prov-note{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:4px;background:#FFF5EB;border:1px solid var(--orange);font-size:0.7rem;color:#8B4A00;font-weight:600;margin-bottom:10px}
+
+/* SEPARATOR */
+.sep{height:1px;background:var(--gray-200);margin:14px 0}
+
+/* TOOLTIP */
+.tip-wrap{position:relative;display:inline-flex}
+.tip-icon{width:16px;height:16px;border-radius:50%;background:var(--gray-300);color:var(--gray-600);font-size:9px;display:inline-flex;align-items:center;justify-content:center;cursor:help;font-weight:700;flex-shrink:0;margin-left:3px}
+.tip-text{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--gray-800);color:white;padding:6px 9px;border-radius:6px;font-size:0.72rem;white-space:normal;max-width:220px;z-index:50;pointer-events:none;opacity:0;transition:opacity 0.2s;line-height:1.4;text-align:center;width:200px}
+.tip-wrap:hover .tip-text{opacity:1}
+
+/* INTRO */
+.intro-card{background:linear-gradient(135deg,#1a4a7a 0%,#4A90D9 100%);color:white;border-radius:var(--radius);padding:20px;margin-bottom:18px;display:flex;gap:16px;align-items:center}
+.intro-icon{font-size:40px;flex-shrink:0}
+.intro-card h2{font-size:1.05rem;font-weight:700;margin-bottom:5px}
+.intro-card p{font-size:0.81rem;opacity:0.88;line-height:1.6}
+
+/* PRINT */
+@media print{
+  .privacy-banner,.no-print{display:none!important}
+  header{position:static!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .card,.rc,.acc-item{box-shadow:none;border:1px solid #ddd;break-inside:avoid}
+  body{background:white}
+  .acc-body{max-height:none!important;padding:12px 14px!important}
+  .container{padding:10px}
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .form-grid,.form-grid-3,.detail-grid,.limits-list,.goals-grid,.organ-grid,.role-grid,.cl-grid,.cb-grid{grid-template-columns:1fr}
+  .btn-group{flex-direction:column}
+  .btn{width:100%;justify-content:center}
+  .out-header{flex-direction:column}
+}
+@media(max-width:600px){
+  .intro-card{flex-direction:column;text-align:center}
+  .intro-icon{font-size:30px}
+}
+</style>
+</head>
+<body>
+
+<!-- PRIVACY BANNER -->
+<div class="privacy-banner">
+  <strong>🔒 PRIVASI:</strong> Gunakan data ter-deidentifikasi. Jangan masukkan nama lengkap, nomor rekam medis, nama institusi, atau identitas pasien langsung.
+  <strong>⚕️ EDUKASI:</strong> Output bukan instruksi terapi — hanya untuk diskusi tim HSCT multidisiplin.
+</div>
+
+<!-- STICKY HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-icon">🧬</div>
+      <div class="brand-text">
+        <h1>Pediatric HSCT Conditioning Regimen Builder</h1>
+        <p>Diagnosis · Disease Status · Donor · Comorbidity · Regimen Discussion Support</p>
+        <div class="brand-name">drAisyiEduCare</div>
+      </div>
+    </div>
+    <span class="hbadge">Educational · Clinical Discussion Only · Not a Prescription Tool</span>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- ========== INPUT SECTION ========== -->
+<div id="inputSection">
+
+<div class="intro-card">
+  <div class="intro-icon">🩺</div>
+  <div>
+    <h2>Selamat Datang — Pediatric HSCT Conditioning Regimen Builder</h2>
+    <p>Tool ini menghasilkan opsi conditioning regimen sebagai <strong>bahan diskusi awal</strong> tim HSCT anak. Lengkapi semua input klinis, lalu klik <strong>Generate Diskusi Regimen</strong>. Output bersifat <em>provisional</em> — bukan order terapi, bukan dosis final, bukan pengganti protokol lokal atau diskusi multidisiplin.</p>
+  </div>
+</div>
+
+<!-- ROLE STRIP -->
+<div class="role-strip">
+  <div class="role-strip-title">Panduan Penggunaan per Peran Tim</div>
+  <div class="role-grid">
+    <div class="role-item"><div class="role-icon">👨‍⚕️</div><div class="role-text"><strong>Tim HSCT</strong><span>Keputusan regimen final, protokol, consent</span></div></div>
+    <div class="role-item"><div class="role-icon">💊</div><div class="role-text"><strong>Farmasi Klinik</strong><span>Dosis, TDM, interaksi, penyesuaian organ</span></div></div>
+    <div class="role-item"><div class="role-icon">☢️</div><div class="role-text"><strong>Radioterapi</strong><span>Feasibilitas TBI, konseling late effects</span></div></div>
+    <div class="role-item"><div class="role-icon">🦠</div><div class="role-text"><strong>Infeksi</strong><span>Kesiapan infeksi, profilaksis, reaktivasi</span></div></div>
+    <div class="role-item"><div class="role-icon">🏥</div><div class="role-text"><strong>ICU / Anestesi</strong><span>Disfungsi organ, eskalasi kritis</span></div></div>
+    <div class="role-item"><div class="role-icon">👩‍⚕️</div><div class="role-text"><strong>Koordinator HSCT</strong><span>Checklist, edukasi keluarga, jadwal</span></div></div>
+  </div>
+</div>
+
+<!-- CARD 1: PATIENT DATA -->
+<div class="card">
+  <div class="card-header">
+    <span class="step-num">1</span>
+    <span class="sec-title">Data Pasien & Konteks Transplantasi</span>
+    <span class="sec-sub">(Gunakan kode/inisial — tanpa nama lengkap atau nomor rekam medis)</span>
+  </div>
+  <div class="form-grid">
+    <div class="fg">
+      <label>Kode / Inisial Pasien <span class="tip-wrap"><span class="tip-icon">?</span><span class="tip-text">Gunakan inisial atau kode — jangan nama lengkap atau nomor rekam medis asli</span></span></label>
+      <input type="text" id="patCode" placeholder="mis. Px-001 atau inisial" maxlength="20">
+    </div>
+    <div class="fg">
+      <label>Usia (tahun) <span class="req">*</span></label>
+      <input type="number" id="age" min="0" max="21" step="0.5" placeholder="mis. 8">
+    </div>
+    <div class="fg">
+      <label>Berat Badan (kg)</label>
+      <input type="number" id="weight" min="1" max="150" step="0.1" placeholder="mis. 25">
+    </div>
+    <div class="fg">
+      <label>BSA (m²) <span class="tip-wrap"><span class="tip-icon">?</span><span class="tip-text">Body Surface Area — opsional, untuk catatan farmasi</span></span></label>
+      <input type="number" id="bsa" min="0.1" max="3.0" step="0.01" placeholder="mis. 0.9">
+    </div>
+  </div>
+  <div class="sep"></div>
+  <div class="form-grid" style="margin-top:0">
+    <div class="fg">
+      <label>Tipe Transplantasi <span class="req">*</span></label>
+      <select id="transplantType">
+        <option value="">-- Pilih --</option>
+        <option value="first-allo">First Allo-HSCT</option>
+        <option value="second-allo">Second Allo-HSCT</option>
+        <option value="auto">Auto-HSCT</option>
+        <option value="post-cart">Post-CAR-T Consolidation</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Urgensi Transplantasi <span class="req">*</span></label>
+      <select id="urgency">
+        <option value="">-- Pilih --</option>
+        <option value="elective">Elektif / Terencana</option>
+        <option value="standard">Standar</option>
+        <option value="urgent">Urgent — Risiko Tinggi</option>
+        <option value="salvage">Salvage / Refrakter</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Tujuan HSCT <span class="req">*</span></label>
+      <select id="hsctPurpose">
+        <option value="">-- Pilih --</option>
+        <option value="malignant">Malignansi</option>
+        <option value="non-malignant">Non-Malignant</option>
+        <option value="immunodeficiency">Imunodefisiensi</option>
+        <option value="hemoglobinopathy">Hemoglobinopati</option>
+        <option value="marrow-failure">Bone Marrow Failure</option>
+      </select>
+    </div>
+  </div>
+  <div class="sep"></div>
+  <div style="margin-bottom:8px;font-size:0.8rem;font-weight:700;color:var(--gray-600)">Ketersediaan Fasilitas Pusat (centang yang tersedia):</div>
+  <div class="cb-grid">
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="center" value="tdm"> TDM Busulfan Tersedia</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="center" value="tbi"> Fasilitas TBI Tersedia</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="center" value="treosulfan"> Treosulfan Tersedia</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="center" value="thiotepa"> Thiotepa Tersedia</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="center" value="atg"> ATG Tersedia</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="center" value="alemtuzumab"> Alemtuzumab Tersedia</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="center" value="haplo"> Platform Haplo Berpengalaman</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="center" value="cord"> Pengalaman Cord Blood</label>
+  </div>
+</div>
+
+<!-- CARD 2: DIAGNOSIS -->
+<div class="card">
+  <div class="card-header">
+    <span class="step-num">2</span>
+    <span class="sec-title">Diagnosis & Status Penyakit</span>
+  </div>
+  <div class="form-grid">
+    <div class="fg">
+      <label>Diagnosis Utama <span class="req">*</span></label>
+      <select id="diagnosis" onchange="onDxChange()">
+        <option value="">-- Pilih Diagnosis --</option>
+        <optgroup label="── Malignant ──">
+          <option value="ALL B-cell">ALL B-cell</option>
+          <option value="ALL T-cell">ALL T-cell</option>
+          <option value="AML">AML</option>
+          <option value="MPAL">MPAL</option>
+          <option value="MDS/JMML">MDS / JMML</option>
+          <option value="CML">CML Advanced Phase</option>
+          <option value="Lymphoma">Lymphoma Relapsed/Refractory</option>
+          <option value="Neuroblastoma">Neuroblastoma Risiko Tinggi</option>
+          <option value="Other-malignant">Malignansi Lain (protokol spesifik)</option>
+        </optgroup>
+        <optgroup label="── Non-Malignant ──">
+          <option value="SAA">Severe Aplastic Anemia (SAA)</option>
+          <option value="Fanconi">Fanconi Anemia</option>
+          <option value="IBMFS">Inherited Bone Marrow Failure Syndrome lainnya</option>
+          <option value="Thalassemia">Thalassemia Mayor</option>
+          <option value="SCD">Sickle Cell Disease</option>
+          <option value="SCID">SCID</option>
+          <option value="CGD">CGD</option>
+          <option value="HLH">HLH</option>
+          <option value="IEI">Inborn Error of Immunity lainnya</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Status Penyakit <span class="req">*</span></label>
+      <select id="diseaseStatus">
+        <option value="">-- Pilih --</option>
+        <option value="CR1-MRD-neg">CR1 MRD Negatif</option>
+        <option value="CR1-MRD-pos">CR1 MRD Positif</option>
+        <option value="CR2-MRD-neg">CR2 MRD Negatif</option>
+        <option value="CR2-MRD-pos">CR2 MRD Positif</option>
+        <option value="CR3plus">CR3+ / Relaps ≥3</option>
+        <option value="mol-relapse">Molecular Relapse</option>
+        <option value="active-relapse">Active Relapse</option>
+        <option value="refractory">Refrakter</option>
+        <option value="high-burden">High Disease Burden</option>
+        <option value="stable-nm">Stable Non-Malignant Disease</option>
+        <option value="progressive-nm">Progressive Non-Malignant Disease</option>
+        <option value="severe-organ-nm">Non-Malignant + Organ Damage Berat</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Urgensi Kondisioning</label>
+      <select id="urgencyDetail">
+        <option value="standard">Standar — kondisi terkontrol</option>
+        <option value="urgent">Mendesak — risiko tinggi</option>
+        <option value="disease-control-first">Kontrol penyakit dulu sebelum kondisioning</option>
+        <option value="active-infection">Infeksi aktif — perlu diskusi penundaan</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- CARD 3: MRD + MOLECULAR RISK -->
+<div class="card">
+  <div class="card-header">
+    <span class="step-num">3</span>
+    <span class="sec-title">Status MRD & Risiko Molekular / Sitogenetik</span>
+  </div>
+  <div class="form-grid" style="margin-bottom:14px">
+    <div class="fg">
+      <label>Status MRD</label>
+      <select id="mrd">
+        <option value="na">Tidak Berlaku / Tidak Diperiksa</option>
+        <option value="neg">MRD Negatif</option>
+        <option value="low-pos">MRD Low Positive</option>
+        <option value="high-pos">MRD High Positive</option>
+        <option value="rising">MRD Rising / Meningkat</option>
+        <option value="post-cart-neg">Post-CAR-T MRD Negatif</option>
+        <option value="post-cart-pos">Post-CAR-T MRD Positif</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Risiko Biologis Keseluruhan</label>
+      <select id="overallRisk">
+        <option value="standard">Standard Risk</option>
+        <option value="intermediate">Intermediate Risk</option>
+        <option value="high">High Risk</option>
+        <option value="very-high">Very High Risk</option>
+        <option value="unknown">Belum Diketahui</option>
+      </select>
+    </div>
+  </div>
+  <div style="font-size:0.79rem;font-weight:700;color:var(--gray-600);margin-bottom:7px">Fitur Molekular / Sitogenetik (centang semua yang relevan):</div>
+  <div class="cb-grid">
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="mol" value="BCR-ABL"> BCR::ABL1 / Ph+</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="mol" value="KMT2A"> KMT2A Rearrangement</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="mol" value="hypo"> Hypodiploidy / Near-haploidy</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="mol" value="iAMP21"> iAMP21</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="mol" value="Ph-like"> Ph-like ALL</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="mol" value="IKZF1"> IKZF1del / IKZF1plus</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="mol" value="TP53"> TP53 Alteration</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="mol" value="FLT3"> FLT3-ITD (AML)</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="mol" value="complex"> Complex Karyotype</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="mol" value="mono7"> Monosomy 7</label>
+    <label class="cb-item danger-item" onclick="cbToggle(this)"><input type="checkbox" name="mol" value="dnarepair"> ⚠️ DNA Repair Disorder (Fanconi dll.)</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="mol" value="none"> Tidak Ada / Tidak Diketahui</label>
+  </div>
+</div>
+
+<!-- CARD 4: DONOR & GRAFT -->
+<div class="card">
+  <div class="card-header">
+    <span class="step-num">4</span>
+    <span class="sec-title">Donor, Sumber Graft & Platform</span>
+  </div>
+  <div class="form-grid">
+    <div class="fg">
+      <label>Jenis Donor <span class="req">*</span></label>
+      <select id="donorType">
+        <option value="">-- Pilih --</option>
+        <option value="MSD">Matched Sibling Donor (MSD)</option>
+        <option value="MUD">Matched Unrelated Donor (MUD)</option>
+        <option value="MMUD">Mismatched Unrelated (MMUD)</option>
+        <option value="Haplo">Haploidentical</option>
+        <option value="CB">Cord Blood</option>
+        <option value="TBD">Belum Final</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Sumber Graft</label>
+      <select id="graftSource">
+        <option value="">-- Pilih --</option>
+        <option value="BM">Bone Marrow (BM)</option>
+        <option value="PBSC">PBSC</option>
+        <option value="CB">Cord Blood</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Platform GVHD Prophylaxis</label>
+      <select id="platform">
+        <option value="">-- Pilih / Belum Ditentukan --</option>
+        <option value="cnimtx">Standard CNI + MTX</option>
+        <option value="ptcy">PTCy-based</option>
+        <option value="tcd">T-cell Depletion</option>
+        <option value="atg-based">ATG-based</option>
+        <option value="alemtuzumab">Alemtuzumab-based</option>
+        <option value="cb-platform">Cord Blood Platform</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Status DSA (Donor-Specific Antibody)</label>
+      <select id="dsa">
+        <option value="unknown">Belum Diperiksa</option>
+        <option value="neg">DSA Negatif</option>
+        <option value="low">DSA Low Positive</option>
+        <option value="high">DSA High Positive</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- CARD 5: ORGAN FUNCTION -->
+<div class="card">
+  <div class="card-header">
+    <span class="step-num">5</span>
+    <span class="sec-title">Fungsi Organ & Komorbiditas</span>
+    <span class="sec-sub">(Pilih status untuk setiap sistem organ)</span>
+  </div>
+  <div class="organ-grid" id="organGrid">
+    <div class="organ-item" id="oi-liver">
+      <div class="organ-label"><span class="organ-icon">🫀</span> Fungsi Hati</div>
+      <select id="liver" onchange="updateOrganStyle('liver')">
+        <option value="normal">Normal</option>
+        <option value="mild">Disfungsi Ringan</option>
+        <option value="moderate">Disfungsi Sedang</option>
+        <option value="severe">Disfungsi Berat</option>
+        <option value="cholestasis">Kolestasis</option>
+        <option value="iron-overload">Iron Overload</option>
+        <option value="prior-sos">Riwayat SOS/VOD</option>
+      </select>
+    </div>
+    <div class="organ-item" id="oi-kidney">
+      <div class="organ-label"><span class="organ-icon">🫘</span> Fungsi Ginjal</div>
+      <select id="kidney" onchange="updateOrganStyle('kidney')">
+        <option value="normal">Normal</option>
+        <option value="mild">GFR Sedikit Turun</option>
+        <option value="moderate">GFR Turun Bermakna</option>
+        <option value="severe">GFR Berat / Dialisis</option>
+        <option value="tubular">Disfungsi Tubular</option>
+      </select>
+    </div>
+    <div class="organ-item" id="oi-cardiac">
+      <div class="organ-label"><span class="organ-icon">❤️</span> Fungsi Jantung</div>
+      <select id="cardiac" onchange="updateOrganStyle('cardiac')">
+        <option value="normal">Normal</option>
+        <option value="mild">EF/FS Sedikit Turun</option>
+        <option value="cardiomyopathy">Kardiomiopati</option>
+        <option value="prior-anthracycline">Riwayat Anthracycline Tinggi</option>
+        <option value="phtn">Hipertensi Pulmonal</option>
+      </select>
+    </div>
+    <div class="organ-item" id="oi-lung">
+      <div class="organ-label"><span class="organ-icon">🫁</span> Fungsi Paru</div>
+      <select id="lung" onchange="updateOrganStyle('lung')">
+        <option value="normal">Normal</option>
+        <option value="mild">Gangguan Ringan</option>
+        <option value="obstructive">Obstruktif / Restriktif</option>
+        <option value="o2-dependent">Butuh Oksigen</option>
+        <option value="prior-lung-inf">Riwayat Infeksi Paru</option>
+      </select>
+    </div>
+    <div class="organ-item" id="oi-infection">
+      <div class="organ-label"><span class="organ-icon">🦠</span> Status Infeksi</div>
+      <select id="infection" onchange="updateOrganStyle('infection')">
+        <option value="none">Tidak Ada Infeksi Aktif</option>
+        <option value="controlled">Infeksi Terkontrol</option>
+        <option value="active-bact">Infeksi Bakteri Aktif</option>
+        <option value="active-fungal">Infeksi Fungal Aktif</option>
+        <option value="active-viral">Infeksi Viral Aktif</option>
+        <option value="sepsis">Sepsis / ICU</option>
+      </select>
+    </div>
+    <div class="organ-item" id="oi-nutrition">
+      <div class="organ-label"><span class="organ-icon">🍎</span> Status Nutrisi</div>
+      <select id="nutrition" onchange="updateOrganStyle('nutrition')">
+        <option value="adequate">Adekuat</option>
+        <option value="mild-malnut">Malnutrisi Ringan-Sedang</option>
+        <option value="severe-malnut">Malnutrisi Berat</option>
+        <option value="cachexia">Kaheksia / Sarkopenia</option>
+        <option value="obesity">Obesitas</option>
+      </select>
+    </div>
+  </div>
+  <div class="sep"></div>
+  <div style="font-size:0.79rem;font-weight:700;color:var(--gray-600);margin-bottom:7px">Riwayat Terapi Sebelumnya (centang yang relevan):</div>
+  <div class="cb-grid">
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="priorRx" value="prior-hsct"> Riwayat HSCT Sebelumnya</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="priorRx" value="prior-cart"> Riwayat CAR-T</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="priorRx" value="prior-tbi"> Riwayat TBI / Radiasi</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="priorRx" value="high-anthracycline"> Kumulative Anthracycline Tinggi</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="priorRx" value="prior-mucositis"> Riwayat Mukositis Berat</label>
+    <label class="cb-item" onclick="cbToggle(this)"><input type="checkbox" name="priorRx" value="prior-icu"> Riwayat Toksisitas ICU Berat</label>
+  </div>
+</div>
+
+<!-- BUTTONS -->
+<div class="btn-group no-print">
+  <button class="btn btn-primary btn-lg" onclick="buildOutput()">⚡ Generate Diskusi Regimen</button>
+  <button class="btn btn-secondary" onclick="resetAll()">↺ Reset Semua</button>
+</div>
+
+</div><!-- end inputSection -->
+
+<!-- ========== OUTPUT SECTION ========== -->
+<div id="outputSection" class="hidden">
+
+  <!-- DNA REPAIR ALERT (conditional) -->
+  <div id="dnaRepairAlert" class="dna-alert hidden">
+    <span style="font-size:20px">🚨</span>
+    <div>
+      <strong style="color:#9B2020;font-size:0.92rem">PERINGATAN KRITIS — DNA Repair Disorder / Fanconi Anemia</strong>
+      <p style="font-size:0.82rem;margin-top:4px;color:#7a1a1a">Kondisi ini memerlukan pendekatan kondisioning yang <strong>sangat berbeda</strong>. Regimen myeloablative intensif (MAC) konvensional, TBI dosis standar, BuCy, dan BuCyMel berisiko <strong>toksisitas fatal</strong>. Diperlukan regimen reduced intensity / reduced toxicity dengan alkylator dosis sangat rendah dan disesuaikan. <strong>Wajib konsultasi tim HSCT berpengalaman dan farmasi klinik sebelum keputusan apapun.</strong></p>
+    </div>
+  </div>
+
+  <!-- OUTPUT HEADER -->
+  <div class="out-header" id="outHeader">
+    <div>
+      <h2 id="outTitle">Hasil Diskusi Regimen Conditioning</h2>
+      <p style="font-size:0.79rem;opacity:0.8" class="prov-note-inline">Provisional — Perlu Verifikasi Protokol Pusat — Bukan Instruksi Terapi</p>
+      <div class="meta-chips" id="metaChips"></div>
+    </div>
+    <div class="btn-group no-print" style="margin-top:0">
+      <button class="btn btn-print" onclick="window.print()">🖨️ Print / PDF</button>
+      <button class="btn btn-secondary" onclick="backToInput()">← Ubah Data</button>
+    </div>
+  </div>
+
+  <!-- CONDITIONING GOALS -->
+  <div class="card" id="goalsCard">
+    <div class="stitle"><span class="ico ico-b">🎯</span> Tujuan Kondisioning (Provisional)</div>
+    <div class="goals-grid" id="goalsOutput"></div>
+    <div style="font-size:0.76rem;color:var(--gray-400);margin-top:8px;font-style:italic">Tujuan kondisioning bersifat multidimensi — keputusan intensitas harus mempertimbangkan seluruh domain klinis pasien.</div>
+  </div>
+
+  <!-- INTENSITY PROFILE -->
+  <div class="card" id="intensityCard">
+    <div class="stitle"><span class="ico ico-b">📊</span> Intensity Profile — Diskusi Awal</div>
+    <div class="meter-wrap">
+      <div class="meter-track">
+        <div class="mseg s-nma" id="mseg-nma">NMA</div>
+        <div class="mseg s-ric" id="mseg-ric">RIC</div>
+        <div class="mseg s-rtc" id="mseg-rtc">RTC</div>
+        <div class="mseg s-mac" id="mseg-mac">MAC</div>
+      </div>
+      <div class="meter-lbls"><span>Non-Myeloablative</span><span>Reduced Intensity</span><span>Reduced Toxicity</span><span>Myeloablative</span></div>
+    </div>
+    <div class="meter-note" id="intensityNote"></div>
+    <div style="font-size:0.75rem;color:var(--gray-400);margin-top:6px">⚠️ Intensity profile ini bersifat <em>provisional</em> — dapat berubah sesuai kondisi klinis aktual, protokol pusat, dan diskusi tim HSCT.</div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <div class="nav-chips no-print">
+    <a class="nav-chip" href="#r-preferred">① Opsi Utama</a>
+    <a class="nav-chip" href="#r-alt">② Alternatif & Caution</a>
+    <a class="nav-chip" href="#r-detail">③ Detail Regimen</a>
+    <a class="nav-chip" href="#r-alerts">④ Safety Alerts</a>
+    <a class="nav-chip" href="#r-tdm">⑤ TDM / TBI</a>
+    <a class="nav-chip" href="#r-sero">⑥ Serotherapy</a>
+    <a class="nav-chip" href="#r-rationale">⑦ Rationale</a>
+    <a class="nav-chip" href="#r-table">⑧ Tabel</a>
+    <a class="nav-chip" href="#r-checklist">⑨ Checklist</a>
+    <a class="nav-chip" href="#r-summary">⑩ Ringkasan</a>
+    <a class="nav-chip" href="#r-family">⑪ Keluarga</a>
+    <a class="nav-chip" href="#r-evidence">⑫ Evidence</a>
+  </div>
+
+  <!-- R1: PREFERRED OPTIONS -->
+  <div class="card" id="r-preferred">
+    <div class="card-header"><div class="stitle"><span class="ico ico-g">✅</span> Opsi Conditioning yang Dapat Didiskusikan (Preferred)</div></div>
+    <div class="prov-note">⚠️ Provisional — Perlu Verifikasi Protokol Lokal & Diskusi Tim HSCT</div>
+    <div id="prefOutput"></div>
+  </div>
+
+  <!-- R2: ALTERNATIVES -->
+  <div class="card" id="r-alt">
+    <div class="card-header"><div class="stitle"><span class="ico ico-b">🔄</span> Alternatif, Conditional & Generally Avoid</div></div>
+    <div id="altOutput"></div>
+  </div>
+
+  <!-- R3: DETAIL PROS/CONS -->
+  <div class="card" id="r-detail">
+    <div class="card-header"><div class="stitle"><span class="ico ico-y">⚖️</span> Detail Kelebihan, Kekurangan & Monitoring</div></div>
+    <div id="detailOutput"></div>
+  </div>
+
+  <!-- R4: SAFETY ALERTS -->
+  <div class="card" id="r-alerts">
+    <div class="card-header"><div class="stitle"><span class="ico ico-r">🚨</span> Patient Safety Alerts</div></div>
+    <div id="alertsOutput"></div>
+  </div>
+
+  <!-- R5: TDM + TBI MODULES -->
+  <div class="card" id="r-tdm">
+    <div class="card-header"><div class="stitle"><span class="ico ico-y">⚗️</span> Modul Pertimbangan Khusus</div></div>
+    <div id="tdmOutput"></div>
+    <div id="tbiOutput"></div>
+  </div>
+
+  <!-- R6: SEROTHERAPY -->
+  <div class="card" id="r-sero">
+    <div class="card-header"><div class="stitle"><span class="ico ico-p">💉</span> Konteks Serotherapy & GVHD Prophylaxis</div></div>
+    <div id="seroOutput"></div>
+  </div>
+
+  <!-- R7: RATIONALE -->
+  <div class="card" id="r-rationale">
+    <div class="card-header"><div class="stitle"><span class="ico ico-b">📝</span> Rationale Klinis Provisional</div></div>
+    <div id="rationaleOutput"></div>
+  </div>
+
+  <!-- R8: COMPARISON TABLE -->
+  <div class="card" id="r-table">
+    <div class="card-header"><div class="stitle"><span class="ico ico-b">📋</span> Tabel Perbandingan Regimen</div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Regimen</th><th>Intensity</th><th>Konteks Terbaik</th>
+          <th>Kelebihan Utama</th><th>Risiko Utama</th>
+          <th>TDM?</th><th>Late Effects</th><th>Evidence</th><th>Kategori</th>
+        </tr></thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- R9: CHECKLIST -->
+  <div class="card" id="r-checklist">
+    <div class="card-header"><div class="stitle"><span class="ico ico-g">✔️</span> Pre-Conditioning Checklist</div></div>
+    <p style="font-size:0.81rem;color:var(--gray-500);margin-bottom:10px">Tandai item yang telah dikonfirmasi. Checklist ini bukan pengganti protokol lokal.</p>
+    <div id="checklistOutput"></div>
+  </div>
+
+  <!-- R10: TEAM SUMMARY -->
+  <div class="card" id="r-summary">
+    <div class="card-header"><div class="stitle"><span class="ico ico-b">👥</span> Ringkasan Tim HSCT</div></div>
+    <div class="summary-box" id="summaryOutput"></div>
+    <p style="font-size:0.74rem;color:var(--gray-400);margin-top:8px">Ringkasan ini dapat dicetak untuk keperluan diskusi tim HSCT. Bukan order terapi.</p>
+  </div>
+
+  <!-- R11: FAMILY COMMUNICATION -->
+  <div class="card" id="r-family">
+    <div class="card-header"><div class="stitle"><span class="ico ico-g">👨‍👩‍👧</span> Ringkasan untuk Komunikasi Keluarga</div></div>
+    <div class="family-box module-box" id="familyOutput"></div>
+    <p style="font-size:0.74rem;color:var(--gray-400);margin-top:8px">Teks ini adalah panduan komunikasi keluarga — perlu disesuaikan oleh tim klinis sebelum digunakan.</p>
+  </div>
+
+  <!-- R12: CLINICAL PEARLS -->
+  <div class="card" id="r-pearls">
+    <div class="card-header"><div class="stitle"><span class="ico ico-y">💡</span> Clinical Pearls</div></div>
+    <div id="pearlsOutput"></div>
+  </div>
+
+  <!-- R13: EVIDENCE -->
+  <div class="card" id="r-evidence">
+    <div class="card-header"><div class="stitle"><span class="ico ico-b">📚</span> Evidence & Consensus Notes</div></div>
+    <div class="ev-box">
+      <div class="ev-item"><span>📖</span><div><strong>Prinsip Umum Kondisioning HSCT:</strong> Pemilihan regimen conditioning harus mempertimbangkan tujuan transplantasi (disease eradication vs. engraftment), profil toksisitas, kondisi organ, jenis donor, platform GVHD, dan pengalaman pusat. Tidak ada satu regimen yang universally superior.</div></div>
+      <div class="ev-item"><span>📖</span><div><strong>Konsensus Transplantasi (EBMT/ASTCT — konsep umum):</strong> Panduan conditioning pada pediatri mencakup prinsip balancing anti-disease intensity dengan toxicity. Banyak regimen bersifat protocol- dan center-dependent. Selalu verifikasi dengan protokol lokal yang berlaku.</div></div>
+      <div class="ev-item"><span>🔬</span><div><strong>Area Masih Aktif Diteliti:</strong> Beberapa regimen (termasuk treosulfan-based, thiotepa-containing, busulfan vs. TBI pada ALL, intensitas pada AML anak) masih dalam evaluasi studi prospektif. Tidak ada klaim superioritas absolut yang dapat dibuat tanpa konteks protokol spesifik.</div></div>
+      <div class="ev-item"><span>⚠️</span><div><strong>Catatan Penting:</strong> Tool ini menggunakan prinsip EBM umum. Evidence confidence dikategorikan sebagai: <span class="badge b-est">Established</span> <span class="badge b-common">Commonly Used</span> <span class="badge b-proto">Protocol-Dependent</span> <span class="badge b-invest">Investigational/Specialist</span>. Selalu ikuti protokol lokal dan diskusi multidisiplin.</div></div>
+    </div>
+  </div>
+
+  <!-- R14: SAFETY LIMITATIONS -->
+  <div class="card">
+    <div class="limits-box">
+      <h3>⊘ Safety & Limitations — Baca Sebelum Menggunakan Output</h3>
+      <div class="limits-list">
+        <div class="limits-item">Bukan alat prescribing — tidak menghasilkan order terapi</div>
+        <div class="limits-item">Bukan kalkulator dosis — tidak ada dosis final</div>
+        <div class="limits-item">Tidak ada regimen yang otomatis benar untuk semua pasien</div>
+        <div class="limits-item">Memerlukan review tim HSCT dan farmasi klinik</div>
+        <div class="limits-item">Memerlukan verifikasi protokol pusat sebelum implementasi</div>
+        <div class="limits-item">Busulfan memerlukan TDM dan penyesuaian protokol</div>
+        <div class="limits-item">TBI memerlukan evaluasi radioterapi dan konseling late effects</div>
+        <div class="limits-item">DNA repair disorder memerlukan expert review khusus</div>
+        <div class="limits-item">Infeksi aktif atau disfungsi organ dapat mengubah rencana</div>
+        <div class="limits-item">Ketersediaan obat dan pengalaman pusat sangat menentukan</div>
+        <div class="limits-item">Output hanya untuk diskusi awal — bukan keputusan final</div>
+        <div class="limits-item">Informed consent keluarga adalah kewajiban tim klinis</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- R15: DISCLAIMER -->
+  <div class="card">
+    <div class="disc-box">
+      <strong>⚠️ DISCLAIMER WAJIB DIBACA</strong>
+      <p>Toolkit ini adalah alat bantu <strong>edukasi dan clinical decision support awal</strong>. Output berupa opsi dan rationale untuk diskusi tim HSCT — <strong>bukan instruksi terapi langsung, bukan order regimen, dan bukan pengganti protokol pusat</strong>. Regimen final, dosis, jadwal, TDM, penyesuaian organ, GVHD prophylaxis, serotherapy, dan supportive care <strong>harus ditetapkan oleh tim HSCT multidisiplin</strong> sesuai kondisi pasien, protokol lokal, farmasi klinik, ketersediaan obat, serta informed consent keluarga. drAisyiEduCare tidak bertanggung jawab atas keputusan klinis yang diambil berdasarkan output tool ini.</p>
+      <p style="margin-top:6px"><strong>Privacy:</strong> Jangan memasukkan nama lengkap, nomor rekam medis, tanggal lahir lengkap, nama institusi, atau identitas pasien langsung pada tool ini.</p>
+    </div>
+  </div>
+
+  <div class="btn-group no-print" style="margin-top:4px">
+    <button class="btn btn-print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    <button class="btn btn-secondary" onclick="backToInput()">← Kembali ke Form</button>
+  </div>
+
+</div><!-- end outputSection -->
+</div><!-- end container -->
+<script>
+// =============================================
+// REGIMEN DATABASE — drAisyiEduCare HSCT Builder v2
+// =============================================
+const RDB = {
+  FluBu:{
+    id:'FluBu',name:'FluBu',fullName:'Fludarabine + Busulfan',
+    intensity:'RTC',lvl:3,
+    goal:'Reduced Toxicity Myeloablation — eradikasi penyakit dengan kontrol toksisitas',
+    desc:'Backbone conditioning yang luas digunakan, menggabungkan aktivitas myeloablative dengan profil toksisitas lebih menguntungkan dibanding BuCy klasik.',
+    pros:['Aktivitas anti-leukemia kuat, toksisitas lebih terkontrol vs BuCy','Data klinis sangat luas pada berbagai diagnosis','Dapat dioptimalkan dengan TDM busulfan','Fleksibel untuk berbagai jenis donor dan platform'],
+    cons:['Risiko SOS/VOD tetap ada (komponen busulfan)','Mukositis derajat sedang','Neurotoksisitas bila AUC tidak terkontrol','Memerlukan fasilitas TDM untuk optimasi'],
+    organCaut:{liver:'Risiko SOS/VOD meningkat pada disfungsi hati — pertimbangkan profilaksis UDCA, TDM ketat, atau ganti regimen.',kidney:'Fludarabine perlu penyesuaian dosis pada GFR rendah.',cardiac:'Tidak ada kontraindikasi kardiak spesifik busulfan.',lung:'Busulfan pulmonary toxicity jarang — evaluasi fungsi paru sebelumnya.'},
+    monitoring:['TDM busulfan (target AUC per protokol)','LFT serial (SGOT, SGPT, bilirubin)','Fungsi ginjal serial','Monitor SOS/VOD (berat badan, ascites, ikterus)','Seizure prophylaxis per protokol'],
+    tdmRequired:true,tdmNote:'TDM busulfan sangat dianjurkan — target AUC bervariasi per protokol. Konsultasi farmasi klinik untuk dosis dan penyesuaian.',
+    serotherapy:'Kompatibel dengan ATG, alemtuzumab, atau PTCy tergantung platform dan donor.',
+    lateEffects:'Infertilitas, risiko sekunder malignasi (rendah), hipotiroid, gangguan pertumbuhan.',
+    evidenceConf:'established',
+    donorFit:'Semua jenis donor — kompatibel dengan berbagai platform GVHD prophylaxis.',
+    dx:['ALL B-cell','ALL T-cell','AML','MPAL','MDS/JMML','CML','Thalassemia','SCD','SCID','CGD','IEI']
+  },
+  BuCy:{
+    id:'BuCy',name:'BuCy',fullName:'Busulfan + Cyclophosphamide',
+    intensity:'MAC',lvl:4,
+    goal:'Myeloablative Conditioning — eradikasi penyakit residual maksimal',
+    desc:'Regimen MAC klasik dengan aktivitas myeloablative sangat kuat. Standard of care historis pada berbagai indikasi.',
+    pros:['Aktivitas myeloablative sangat kuat','Pengalaman klinis dan data jangka panjang sangat luas','Efektif pada hemoglobinopati (thalassemia, SCD)','Banyak data safety pada pediatri'],
+    cons:['Risiko SOS/VOD lebih tinggi (kombinasi Bu+Cy)','Kardiotoksisitas cyclophosphamide dosis tinggi','Infertilitas dan gonadotoksisitas signifikan','Tidak dianjurkan pada disfungsi organ berat'],
+    organCaut:{liver:'Risiko SOS/VOD sangat signifikan pada disfungsi hati atau riwayat SOS — pertimbangkan alternatif.',kidney:'Metabolit Cy dapat menumpuk pada CKD.',cardiac:'Cy dosis tinggi: risiko kardiomiopati — evaluasi ECHO sebelum pemberian.',lung:'Busulfan pulmonary toxicity — evaluasi fungsi paru.'},
+    monitoring:['TDM busulfan (wajib)','ECHO sebelum dan setelah Cy','LFT serial, SOS monitoring','Fungsi ginjal','Seizure prophylaxis','Mesna/hidrasi untuk Cy'],
+    tdmRequired:true,tdmNote:'TDM busulfan wajib. Evaluasi kardiak sebelum cyclophosphamide. Mesna dan hidrasi adequat untuk profilaksis hemoragik sistitis.',
+    serotherapy:'Kompatibel dengan ATG atau platform GVHD lain.',
+    lateEffects:'Infertilitas, gonadotoksisitas, risiko sekunder malignasi, gangguan pertumbuhan, kardiotoksisitas jangka panjang.',
+    evidenceConf:'established',
+    donorFit:'MSD, MUD — dapat dimodifikasi untuk donor lain dengan platform tambahan.',
+    dx:['ALL B-cell','ALL T-cell','AML','MPAL','MDS/JMML','CML','Thalassemia','SCD']
+  },
+  'TBI-based':{
+    id:'TBI-based',name:'TBI-Based',fullName:'Total Body Irradiation + Cyclophosphamide / Fludarabine',
+    intensity:'MAC',lvl:4,
+    goal:'TBI-based MAC — penetrasi sanctuary sites, aktivitas anti-leukemia tinggi',
+    desc:'Kondisioning berbasis radiasi seluruh tubuh. Penetrasi ke SSP dan testis. Tidak bergantung metabolisme hati.',
+    pros:['Aktivitas anti-leukemia kuat, terutama ALL','Penetrasi sanctuary sites (SSP, testis)','Tidak bergantung metabolisme hepatik busulfan','Data survival jangka panjang pada ALL risiko tinggi'],
+    cons:['Late effects signifikan: gangguan pertumbuhan, neurokognitif, endokrin, kesuburan','Tidak tersedia di semua pusat','Umumnya dihindari usia <4–6 tahun','Risiko sekunder malignasi, katarak, kardiovaskular jangka panjang'],
+    organCaut:{liver:'Tidak ada peningkatan SOS/VOD, namun toksisitas hepatik TBI mungkin.',kidney:'TBI dapat mempengaruhi ginjal jangka panjang.',cardiac:'Risiko kardiotoksisitas jangka panjang.',lung:'Risiko pneumonitis TBI — evaluasi fungsi paru sebelumnya.'},
+    monitoring:['Evaluasi radioterapi sebelum TBI','Fungsi paru (spirometri, DLCO)','Late effects monitoring jangka panjang','Konseling endokrin, kesuburan','Evaluasi neurokognitif'],
+    tdmRequired:false,tdmNote:'TBI tidak memerlukan TDM obat, namun memerlukan planning dosimetri radioterapi yang cermat.',
+    serotherapy:'Kompatibel dengan berbagai platform GVHD prophylaxis.',
+    lateEffects:'SIGNIFIKAN: gangguan pertumbuhan, kognitif, endokrin, kesuburan, sekunder malignasi, katarak, kardiovaskular.',
+    evidenceConf:'established',
+    donorFit:'Semua jenis donor.',
+    dx:['ALL B-cell','ALL T-cell','MPAL','Lymphoma','CML']
+  },
+  FluMel:{
+    id:'FluMel',name:'FluMel',fullName:'Fludarabine + Melphalan',
+    intensity:'RIC',lvl:2,
+    goal:'Reduced Intensity — imunosupresi kuat dengan aktivitas anti-tumor memadai, toleransi lebih baik',
+    desc:'Platform RIC yang banyak digunakan pada pasien dengan komorbid organ atau kebutuhan imunosupresi kuat dengan intensitas lebih rendah.',
+    pros:['Toleransi lebih baik pada komorbid organ','Risiko SOS/VOD lebih rendah vs busulfan','Cocok untuk haplo dengan PTCy','Dapat digunakan pada pasien yang tidak toleran MAC'],
+    cons:['Risiko relaps lebih tinggi vs MAC pada penyakit risiko tinggi','Mukositis (melphalan)','Nefrotoksisitas potensial','Fludarabine perlu penyesuaian dosis pada CKD'],
+    organCaut:{liver:'Profil lebih aman dari busulfan pada disfungsi hati, namun monitor LFT.',kidney:'Fludarabine: penyesuaian dosis pada GFR rendah. Melphalan: pertimbangkan penyesuaian.',cardiac:'Tidak ada kontraindikasi spesifik kardiak.',lung:'Profil lebih aman vs busulfan/TBI pada disfungsi paru.'},
+    monitoring:['Fungsi ginjal serial','LFT','Mukositis monitoring','Hematologi serial'],
+    tdmRequired:false,tdmNote:'TDM tidak rutin untuk FluMel, namun penyesuaian dosis Flu berdasarkan GFR diperlukan.',
+    serotherapy:'Sangat kompatibel dengan PTCy (haplo), ATG, alemtuzumab.',
+    lateEffects:'Infertilitas, risiko relaps lebih tinggi pada penyakit agresif.',
+    evidenceConf:'established',
+    donorFit:'Semua donor — terutama sering dengan haplo/PTCy dan donor alternatif.',
+    dx:['AML','ALL B-cell','ALL T-cell','MDS/JMML','Lymphoma','HLH','MPAL','IEI']
+  },
+  TreoFlu:{
+    id:'TreoFlu',name:'TreoFlu',fullName:'Treosulfan + Fludarabine (± Thiotepa)',
+    intensity:'RTC',lvl:3,
+    goal:'Reduced Toxicity Myeloablation — myeloablative dengan profil toksisitas lebih menguntungkan',
+    desc:'Regimen RTC yang semakin banyak digunakan — myeloablative namun profil toksisitas organ lebih baik dari busulfan-based klasik. Ketersediaan bervariasi per negara.',
+    pros:['Profil toksisitas lebih menguntungkan vs BuCy/TBI','Risiko SOS/VOD lebih rendah','Tidak memerlukan TDM seperti busulfan','Dapat digunakan pada malignant dan non-malignant','Cocok pada komorbid ringan-sedang'],
+    cons:['Pengalaman lebih terbatas vs FluBu/BuCy','Beberapa indikasi masih dalam evaluasi studi prospektif','Ketersediaan obat terbatas di beberapa negara','Data jangka panjang lebih terbatas'],
+    organCaut:{liver:'Profil lebih aman dari busulfan — opsi pada disfungsi hati ringan-sedang.',kidney:'Profil lebih baik dari melphalan pada disfungsi ginjal ringan.',cardiac:'Tidak ada kontraindikasi kardiak spesifik.',lung:'Profil lebih aman dari TBI/busulfan pada disfungsi paru.'},
+    monitoring:['LFT serial','Fungsi ginjal','Hematologi','Monitor engraftment'],
+    tdmRequired:false,tdmNote:'TDM tidak diperlukan untuk treosulfan. Namun verifikasi ketersediaan obat di pusat sebelum rencana conditioning.',
+    serotherapy:'Kompatibel dengan berbagai platform.',
+    lateEffects:'Profil late effects lebih baik — data jangka panjang masih berkembang.',
+    evidenceConf:'commonly-used',
+    donorFit:'Semua jenis donor.',
+    dx:['AML','ALL B-cell','ALL T-cell','MPAL','MDS/JMML','Thalassemia','SCD','SCID','HLH','IEI','Fanconi','SAA']
+  },
+  BuCyMel:{
+    id:'BuCyMel',name:'BuCyMel',fullName:'Busulfan + Cyclophosphamide + Melphalan',
+    intensity:'Intensified MAC',lvl:5,
+    goal:'Intensified MAC — eradikasi maksimal pada penyakit dengan risiko relaps sangat tinggi',
+    desc:'Intensifikasi MAC untuk kasus sangat selektif. TRM signifikan lebih tinggi. BUKAN pilihan rutin.',
+    pros:['Intensitas myeloablative sangat tinggi','Dipertimbangkan pada kasus dengan disease burden sangat tinggi dan risiko relaps ekstrem'],
+    cons:['TRM (Transplant-Related Mortality) signifikan lebih tinggi','Toksisitas sangat berat: SOS/VOD berat, mukositis fatal, infeksi','Data pediatri sangat terbatas','Memerlukan pusat berpengalaman tinggi'],
+    organCaut:{liver:'KONTRAINDIKASI RELATIF pada disfungsi hati apapun.',kidney:'Toksisitas kumulatif sangat tinggi.',cardiac:'Cy dosis tinggi: risiko kardiak berat.',lung:'Risiko pulmonal kumulatif sangat tinggi.'},
+    monitoring:['Semua parameter intensif','ECHO serial','SOS monitoring intensif','ICU standby'],
+    tdmRequired:true,tdmNote:'TDM busulfan wajib. Monitoring intensif semua organ. HANYA di pusat dengan ICU transplantasi berpengalaman.',
+    serotherapy:'Perlu pertimbangan sangat cermat karena beban imunosupresi sangat tinggi.',
+    lateEffects:'Sangat signifikan di semua domain.',
+    evidenceConf:'specialist-only',
+    donorFit:'Pertimbangkan sangat selektif.',
+    dx:['AML','ALL B-cell','ALL T-cell','MPAL']
+  },
+  TreoFluThio:{
+    id:'TreoFluThio',name:'TreoFlu+Thio',fullName:'Treosulfan + Fludarabine + Thiotepa',
+    intensity:'RTC/MAC',lvl:3,
+    goal:'Intensified RTC — penambahan Thiotepa untuk penetrasi CNS dan aktivitas lebih tinggi',
+    desc:'Penambahan Thiotepa pada TreoFlu untuk meningkatkan intensitas dan penetrasi CNS. Digunakan pada indikasi spesifik.',
+    pros:['Penetrasi CNS lebih baik (Thiotepa)','Intensitas lebih tinggi dari TreoFlu standar','Profil toksisitas masih lebih baik dari BuCy','Ketersediaan thiotepa di beberapa pusat'],
+    cons:['Ketersediaan thiotepa terbatas','Data lebih terbatas dibanding TreoFlu standar','Neurotoksisitas thiotepa','Toksisitas lebih tinggi dari TreoFlu standar'],
+    organCaut:{liver:'Monitor SOS/VOD — lebih rendah dari busulfan.',kidney:'Monitor fungsi ginjal.',cardiac:'Monitor.',lung:'Monitor fungsi paru.'},
+    monitoring:['LFT serial','Fungsi ginjal','Neurologi (thiotepa)','Hematologi'],
+    tdmRequired:false,tdmNote:'Verifikasi ketersediaan thiotepa di pusat. Pertimbangkan protokol spesifik yang menggunakan regimen ini.',
+    serotherapy:'Kompatibel dengan berbagai platform.',
+    lateEffects:'Profil late effects masih dievaluasi.',
+    evidenceConf:'protocol-dependent',
+    donorFit:'Semua donor.',
+    dx:['ALL B-cell','ALL T-cell','AML','MPAL','Lymphoma']
+  },
+  FluCy:{
+    id:'FluCy',name:'FluCy (±ATG)',fullName:'Fludarabine + Cyclophosphamide (± ATG)',
+    intensity:'RIC',lvl:2,
+    goal:'Immunosuppressive conditioning untuk engraftment pada non-malignant disease',
+    desc:'Platform RIC dengan imunosupresi kuat. Dirancang untuk engraftment pada kondisi non-malignant — bukan untuk eradikasi malignansi.',
+    pros:['Imunosupresi kuat untuk engraftment','Profil toksisitas lebih ringan dari MAC','Banyak digunakan pada SAA, SCID, IEI','Tidak memerlukan TDM busulfan'],
+    cons:['Risiko graft rejection lebih tinggi dari MAC','Tidak efektif untuk eradikasi malignansi berat','Kardiotoksisitas cyclophosphamide perlu dievaluasi'],
+    organCaut:{liver:'Profil lebih aman dari busulfan.',kidney:'Cy perlu hidrasi adekuat.',cardiac:'Evaluasi ECHO sebelum Cy — risiko kardiotoksisitas.',lung:'Profil paru lebih baik dari TBI.'},
+    monitoring:['Fungsi jantung','Fungsi ginjal (hidrasi Cy)','Engraftment monitoring','Infeksi pasca ATG (bila digunakan)'],
+    tdmRequired:false,tdmNote:'Tidak diperlukan TDM. Namun jika ditambahkan ATG, monitoring reaksi infusional dan viral reactivation pasca ATG sangat penting.',
+    serotherapy:'Sering dikombinasikan dengan ATG untuk meningkatkan imunosupresi terutama pada donor non-MSD.',
+    lateEffects:'Risiko graft failure lebih tinggi; infertilitas (Cy).',
+    evidenceConf:'established',
+    donorFit:'MSD (tanpa ATG atau dengan minimal ATG), dapat dimodifikasi untuk non-MSD dengan ATG.',
+    dx:['SAA','SCID','CGD','IEI','Fanconi','IBMFS']
+  },
+  CyATG:{
+    id:'CyATG',name:'CyATG',fullName:'Cyclophosphamide + ATG',
+    intensity:'RIC/NMA',lvl:1,
+    goal:'Immunosuppressive conditioning untuk SAA — fokus pada engraftment bukan myeloablasi',
+    desc:'Kondisioning imunosupresif klasik untuk SAA dengan MSD. Tujuan utama: imunosupresi agar graft diterima, bukan eradikasi malignansi.',
+    pros:['Standar conditioning SAA-MSD','Engraftment sangat baik pada SAA dengan MSD','Data klinis sangat luas pada SAA','Profil toksisitas dapat diprediksi'],
+    cons:['Risiko rejection lebih tinggi pada donor non-MSD','Kardiotoksisitas Cy','Reaksi infusional dan serum sickness ATG','Kurang efektif pada non-MSD tanpa modifikasi'],
+    organCaut:{liver:'Profil lebih aman dari busulfan.',kidney:'Hidrasi adekuat untuk Cy.',cardiac:'ECHO sebelum Cy — risiko kardiotoksisitas.',lung:'Profil paru lebih baik dari TBI.'},
+    monitoring:['Fungsi jantung (ECHO)','Monitor reaksi ATG selama infus','Hidrasi Cy','Viral reactivation pasca ATG','Engraftment monitoring'],
+    tdmRequired:false,tdmNote:'Tidak diperlukan TDM busulfan. Monitor reaksi ATG (premedikasi rutin). Mesna dan hidrasi untuk Cy.',
+    serotherapy:'ATG adalah komponen utama regimen ini — bukan tambahan.',
+    lateEffects:'Risiko graft failure bila donor non-MSD; infertilitas (Cy).',
+    evidenceConf:'established',
+    donorFit:'Terutama untuk MSD. Untuk non-MSD dipertimbangkan FluCyATG.',
+    dx:['SAA']
+  },
+  FluCyATG:{
+    id:'FluCyATG',name:'FluCyATG',fullName:'Fludarabine + Cyclophosphamide + ATG',
+    intensity:'RIC',lvl:2,
+    goal:'Immunosuppressive RIC untuk SAA non-MSD dan beberapa IEI',
+    desc:'Platform RIC dengan imunosupresi lebih intensif untuk SAA dengan donor alternatif dan beberapa kondisi non-malignant.',
+    pros:['Imunosupresi intensif untuk donor non-MSD','Banyak digunakan SAA dengan MUD/haplo','Profil toksisitas dapat dikelola'],
+    cons:['Kardiotoksisitas Cy','Risiko infeksi pasca ATG lebih tinggi','Serum sickness ATG','Monitoring infeksi intensif diperlukan'],
+    organCaut:{liver:'Profil lebih aman dari busulfan.',kidney:'Hidrasi dan monitor pada Cy.',cardiac:'ECHO sebelum Cy.',lung:'Profil lebih aman dari TBI.'},
+    monitoring:['Fungsi jantung (ECHO)','Viral reactivation monitoring intensif pasca ATG','Hidrasi Cy','LFT','Engraftment'],
+    tdmRequired:false,tdmNote:'Monitor reaksi ATG. Viral reactivation (CMV, EBV, HHV6) harus dimonitor intensif pasca ATG.',
+    serotherapy:'ATG komponen utama — pilih jenis ATG sesuai ketersediaan dan protokol pusat.',
+    lateEffects:'Risiko graft failure pada beberapa kondisi; infertilitas (Cy).',
+    evidenceConf:'established',
+    donorFit:'MUD, MMUD, haplo untuk SAA; berbagai donor untuk IEI.',
+    dx:['SAA','SCID','CGD','IEI','IBMFS']
+  }
+};
+
+// =============================================
+// HELPERS
+// =============================================
+function cbToggle(el){el.classList.toggle('on',el.querySelector('input').checked)}
+function getChecked(name){return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(i=>i.value)}
+function v(id){return document.getElementById(id)?document.getElementById(id).value:''}
+
+function iBadge(lvl){
+  if(lvl<=1)return'<span class="badge b-nma">NMA</span>';
+  if(lvl===2)return'<span class="badge b-ric">RIC</span>';
+  if(lvl===3)return'<span class="badge b-rtc">RTC</span>';
+  if(lvl===4)return'<span class="badge b-mac">MAC</span>';
+  return'<span class="badge b-mac" style="background:#FFD0D0">Intensified MAC</span>';
+}
+function tBadge(tier){
+  if(tier==='pref')return'<span class="badge b-pref">✅ Dapat Dipertimbangkan</span>';
+  if(tier==='alt')return'<span class="badge b-alt">🔵 Reasonable Alternative</span>';
+  if(tier==='caut')return'<span class="badge b-caut">⚠️ Gunakan dengan Hati-hati</span>';
+  if(tier==='spec')return'<span class="badge b-spec">🔬 Specialist-Only</span>';
+  if(tier==='avoid')return'<span class="badge b-avoid">🚫 Umumnya Dihindari</span>';
+  return'<span class="badge">Note</span>';
+}
+function evBadge(ec){
+  if(ec==='established')return'<span class="badge b-est">Established</span>';
+  if(ec==='commonly-used')return'<span class="badge b-common">Commonly Used</span>';
+  if(ec==='protocol-dependent')return'<span class="badge b-proto">Protocol-Dependent</span>';
+  return'<span class="badge b-invest">Specialist-Only</span>';
+}
+function updateOrganStyle(organ){
+  const el=document.getElementById(organ);
+  const oi=document.getElementById('oi-'+organ);
+  if(!el||!oi)return;
+  const v=el.value;
+  oi.className='organ-item';
+  if(v==='normal')oi.classList.add('organ-normal');
+  else if(v==='mild'||v==='controlled')oi.classList.add('organ-mild');
+  else if(['moderate','obstructive','cardiomyopathy','prior-anthracycline','mild-malnut','active-bact','active-fungal','active-viral'].includes(v))oi.classList.add('organ-moderate');
+  else if(['severe','sepsis','severe-malnut','cachexia','o2-dependent'].includes(v)||v.includes('severe'))oi.classList.add('organ-severe');
+}
+
+// =============================================
+// RECOMMENDATION ENGINE
+// =============================================
+function getBaseRecs(inp){
+  const {dx,ds,donorType,age,mol,centerCaps,priorRx,transplantType}=inp;
+  const ageN=parseFloat(age)||0;
+  const canTBI=ageN>=4&&centerCaps.includes('tbi');
+  const hasTreo=centerCaps.includes('treosulfan');
+  const hasTDM=centerCaps.includes('tdm');
+  const hasThio=centerCaps.includes('thiotepa');
+  const isMSD=donorType==='MSD';
+  const hasDNA=mol.includes('dnarepair')||dx==='Fanconi';
+  const isActiveDis=['active-relapse','refractory','high-burden'].includes(ds);
+  const isLateRem=['CR2-MRD-neg','CR2-MRD-pos','CR3plus','mol-relapse'].includes(ds);
+  const isMRDPos=['CR1-MRD-pos','CR2-MRD-pos'].includes(ds);
+  const isHighRisk=mol.some(m=>['BCR-ABL','KMT2A','hypo','iAMP21','Ph-like','TP53','FLT3','complex','mono7'].includes(m))||['very-high','high'].includes(v('overallRisk'));
+  const isSecondHSCT=transplantType==='second-allo';
+  const priorTBI=priorRx.includes('prior-tbi');
+
+  let P=[],A=[],C=[],S=[],AV=[];
+  const p=(id,ind)=>P.push({id,ind,tier:'pref'});
+  const a=(id,ind)=>A.push({id,ind,tier:'alt'});
+  const c=(id,ind)=>C.push({id,ind,tier:'caut'});
+  const s=(id,ind)=>S.push({id,ind,tier:'spec'});
+  const av=(id,ind)=>AV.push({id,ind,tier:'avoid'});
+
+  if(hasDNA){
+    // Fanconi / DNA repair — special handling
+    if(hasTreo)p('TreoFlu','DNA repair disorder — TreoFlu dapat dipertimbangkan sebagai pendekatan RTC dengan alkylator dosis lebih aman');
+    p('FluCy','Flu-based RIC — minimal alkylator, imunosupresi kuat untuk engraftment');
+    c('FluBu','Hanya bila busulfan dosis sangat rendah (exposure-adjusted) dan TDM ketat tersedia — diskusikan dengan ahli');
+    av('BuCy','Hindari — risiko toksisitas fatal pada DNA repair disorder');
+    av('TBI-based','Hindari TBI dosis standar — risiko toksisitas fatal pada DNA repair disorder');
+    av('BuCyMel','Hindari mutlak — kontraindikasi pada DNA repair disorder');
+    return {P,A,C,S,AV};
+  }
+
+  switch(dx){
+    case 'ALL B-cell':case 'ALL T-cell':case 'MPAL':
+      if(isActiveDis||isLateRem||isMRDPos||isHighRisk){
+        if(canTBI&&!priorTBI)p('TBI-based','ALL risiko tinggi / CR2 / MRD positif — TBI dapat dipertimbangkan bila usia ≥4–6 tahun dan fasilitas tersedia');
+        p('FluBu','Chemo-based MAC/RTC — dapat dipertimbangkan sebagai alternatif TBI atau bila TBI tidak tersedia/sesuai');
+        if(hasTreo)a('TreoFlu','RTC dengan profil toksisitas lebih baik — tersedia di pusat ini');
+        a('BuCy','MAC alternatif — dipertimbangkan bila intensitas lebih tinggi diperlukan');
+        if(isActiveDis)a('FluMel','RIC — dapat dipertimbangkan bila ada komorbid organ atau sebagai bridging');
+        if(hasThio)a('TreoFluThio','Intensifikasi RTC dengan Thiotepa — bila tersedia dan protokol mendukung');
+        if(isActiveDis&&isHighRisk)s('BuCyMel','Intensifikasi sangat selektif — specialist-only, hanya pusat berpengalaman sangat tinggi');
+        if(canTBI===false&&ageN<4&&ageN>0)a('FluBu','Usia sangat muda (<4 tahun) — chemo-based lebih dianjurkan daripada TBI');
+      } else {
+        if(canTBI&&!priorTBI)a('TBI-based','ALL CR1 tertentu — dapat dipertimbangkan bila fasilitas tersedia dan sesuai protokol');
+        p('FluBu','CR1 ALL — chemo-based RTC/MAC dapat dipertimbangkan');
+        if(hasTreo)a('TreoFlu','RTC alternatif dengan profil toksisitas lebih menguntungkan');
+        a('BuCy','MAC bila diperlukan intensitas lebih tinggi');
+      }
+      break;
+
+    case 'AML':
+      if(isActiveDis){
+        p('FluMel','AML relaps/refrakter — RIC dapat dipertimbangkan pada toleransi organ terbatas');
+        p('FluBu','RTC/MAC dapat dipertimbangkan bila toleransi lebih baik');
+        if(hasTreo)a('TreoFlu','RTC alternatif');
+        s('BuCyMel','Intensifikasi — specialist-only, bukan pilihan rutin');
+      } else if(isLateRem||isMRDPos||isHighRisk){
+        p('FluBu','AML CR2/MRD positif/risiko tinggi — RTC dapat dipertimbangkan');
+        p('BuCy','MAC intensif dapat dipertimbangkan pada kasus risiko tinggi dengan toleransi organ baik');
+        if(hasTreo)a('TreoFlu','RTC — profil toksisitas lebih menguntungkan, masih dalam evaluasi studi prospektif AML anak');
+        a('FluMel','RIC bila komorbid organ membatasi MAC');
+        s('BuCyMel','Specialist-only — hanya kasus sangat selektif');
+      } else {
+        p('FluBu','AML CR1 — RTC dapat dipertimbangkan');
+        p('BuCy','AML CR1 risiko tinggi — MAC dapat dipertimbangkan');
+        if(hasTreo)a('TreoFlu','RTC alternatif dengan profil toksisitas lebih baik');
+        a('FluMel','RIC bila ada komorbid organ');
+      }
+      break;
+
+    case 'MDS/JMML':
+      p('FluBu','MDS/JMML — RTC dapat dipertimbangkan sebagai opsi utama');
+      if(hasTreo)a('TreoFlu','RTC alternatif — profil toksisitas lebih baik');
+      a('BuCy','MAC bila intensitas lebih tinggi diperlukan');
+      a('FluMel','RIC bila komorbid tinggi');
+      break;
+
+    case 'CML':
+      p('BuCy','CML advanced phase — MAC dapat dipertimbangkan');
+      p('FluBu','RTC alternatif yang dapat dipertimbangkan');
+      if(canTBI&&!priorTBI)a('TBI-based','Bila fasilitas tersedia dan sesuai');
+      a('FluMel','RIC bila komorbid organ');
+      break;
+
+    case 'Lymphoma':
+      p('FluMel','Lymphoma relapsed/refractory — RIC platform yang banyak digunakan');
+      if(canTBI&&!priorTBI)a('TBI-based','Lymphoma tertentu — bila fasilitas tersedia');
+      p('FluBu','RTC dapat dipertimbangkan');
+      if(hasTreo)a('TreoFlu','RTC alternatif');
+      break;
+
+    case 'Neuroblastoma':
+      P=[{id:'_neuro',ind:'Neuroblastoma risiko tinggi memerlukan pendekatan high-dose kemoterapi yang sangat spesifik dan bervariasi (mis. Carboplatin-Etoposide-Melphalan, BuMel). Regimen conditioning sangat tergantung protokol studi aktif. Konsultasikan dengan tim onkologi solid tumor pediatri dan protokol HSCT/auto-HSCT terkini.',tier:'note'}];
+      return {P,A,C,S,AV};
+
+    case 'Other-malignant':
+      P=[{id:'_other',ind:'Diagnosis malignansi lain memerlukan pendekatan protokol-spesifik. Konsultasikan conditioning regimen dengan tim HSCT dan protokol studi yang relevan.',tier:'note'}];
+      return {P,A,C,S,AV};
+
+    case 'SAA':
+      if(isMSD){
+        p('CyATG','SAA dengan MSD — opsi yang paling banyak digunakan secara historis');
+        a('FluCy','Alternatif RIC — dapat dipertimbangkan bila ada komorbid kardiak');
+        a('FluCyATG','Bila diperlukan imunosupresi lebih kuat');
+      } else {
+        p('FluCyATG','SAA non-MSD (MUD/Haplo/MMUD) — imunosupresi intensif dapat dipertimbangkan');
+        a('FluCy','RIC alternatif dengan modifikasi imunosupresi');
+      }
+      break;
+
+    case 'Fanconi':
+      if(hasTreo)p('TreoFlu','Fanconi Anemia — TreoFlu dapat dipertimbangkan sebagai RTC dengan profil toksisitas lebih aman');
+      p('FluCy','Flu-based RIC — minimal alkylator, untuk Fanconi');
+      c('FluBu','Hanya dengan busulfan dosis sangat rendah dan TDM ketat — diskusikan dengan ahli');
+      av('BuCy','Hindari — risiko toksisitas berat pada Fanconi');
+      av('TBI-based','Hindari TBI dosis standar pada Fanconi');
+      av('BuCyMel','Kontraindikasi pada Fanconi');
+      break;
+
+    case 'IBMFS':
+      p('FluBu','IBMFS — RTC dapat dipertimbangkan sesuai protokol');
+      if(hasTreo)a('TreoFlu','RTC alternatif');
+      a('FluCy','RIC bila diperlukan intensitas lebih rendah');
+      a('FluCyATG','RIC dengan ATG');
+      break;
+
+    case 'Thalassemia':
+      p('BuCy','Thalassemia Mayor — MAC dengan pengalaman klinis sangat luas');
+      p('FluBu','RTC alternatif — toksisitas lebih rendah');
+      if(hasTreo)a('TreoFlu','RTC dengan profil toksisitas lebih baik — pertimbangkan pada organ damage atau usia lebih tua');
+      break;
+
+    case 'SCD':
+      p('FluBu','SCD — RTC dapat dipertimbangkan, banyak digunakan');
+      a('BuCy','MAC bila intensitas lebih tinggi diperlukan dan toleransi baik');
+      if(hasTreo)a('TreoFlu','RTC alternatif');
+      break;
+
+    case 'SCID':
+      if(hasTreo)p('TreoFlu','SCID — RTC/RIC, fokus engraftment imun dengan toksisitas rendah');
+      p('FluBu','Exposure-adjusted busulfan — dapat dipertimbangkan untuk SCID');
+      a('FluCy','RIC ringan — beberapa tipe SCID dapat engraft dengan conditioning minimal');
+      a('FluCyATG','RIC dengan ATG bila diperlukan');
+      break;
+
+    case 'CGD':
+      p('FluBu','CGD — RTC dapat dipertimbangkan');
+      if(hasTreo)a('TreoFlu','RTC alternatif');
+      a('FluCy','RIC bila ada komorbid organ berat');
+      break;
+
+    case 'HLH':
+      p('FluMel','HLH — RIC platform yang banyak digunakan');
+      if(hasTreo)p('TreoFlu','RTC alternatif untuk HLH — tersedia di pusat ini');
+      a('FluCy','RIC — beberapa pendekatan menambahkan ATG atau alemtuzumab sesuai protokol pusat');
+      break;
+
+    case 'IEI':
+      if(hasTreo)p('TreoFlu','IEI — RTC dapat dipertimbangkan');
+      p('FluBu','IEI — RTC dapat dipertimbangkan');
+      a('FluCyATG','RIC dengan imunosupresi kuat');
+      a('FluMel','RIC bila komorbid tinggi');
+      break;
+
+    default:
+      P=[{id:'_nodx',ind:'Pilih diagnosis untuk rekomendasi spesifik.',tier:'note'}];
+  }
+
+  // Second HSCT adjustment
+  if(isSecondHSCT){
+    P=P.map(r=>{
+      const reg=RDB[r.id];
+      if(reg&&reg.lvl>=4)return{...r,ind:r.ind+' — perlu pertimbangan ekstra karena ini second HSCT (toksisitas kumulatif)'};
+      return r;
+    });
+  }
+
+  // Prior TBI adjustment
+  if(priorTBI){
+    P=P.filter(r=>{
+      if(r.id==='TBI-based'){AV.push({...r,tier:'avoid',ind:'Riwayat TBI — umumnya TBI ulang tidak dianjurkan'});return false;}return true;
+    });
+    A=A.filter(r=>{
+      if(r.id==='TBI-based'){AV.push({...r,tier:'avoid',ind:'Riwayat TBI — umumnya TBI ulang tidak dianjurkan'});return false;}return true;
+    });
+  }
+
+  // TDM warning for busulfan if no TDM
+  if(!hasTDM){
+    P=P.map(r=>{
+      if(r.id==='FluBu'||r.id==='BuCy')return{...r,ind:r.ind+' — ⚠️ TDM busulfan tidak tersedia di pusat ini: pertimbangkan risiko vs manfaat dan konsultasi farmasi klinik'};
+      return r;
+    });
+  }
+
+  return {P,A,C,S,AV};
+}
+
+function adjustOrgans(recs, organs){
+  const{liver,kidney,cardiac,lung,infection,nutrition}=organs;
+  const sevLiver=['severe','prior-sos','cholestasis'].includes(liver);
+  const modLiver=['mild','moderate','iron-overload'].includes(liver);
+  const sevKid=['severe'].includes(kidney);
+  const sevCard=['cardiomyopathy'].includes(cardiac)||['mild','cardiomyopathy','prior-anthracycline','phtn'].includes(cardiac);
+  const sevLung=['o2-dependent'].includes(lung)||['obstructive'].includes(lung);
+  const sevInf=['active-bact','active-fungal','active-viral','sepsis'].includes(infection);
+  const sevNut=['severe-malnut','cachexia'].includes(nutrition);
+
+  // If severe liver or prior SOS: move busulfan-heavy from P to C
+  if(sevLiver){
+    let moved=[];
+    recs.P=recs.P.filter(r=>{
+      const reg=RDB[r.id];
+      if(!reg)return true;
+      if(r.id==='BuCy'||r.id==='BuCyMel'||(r.id==='FluBu'&&liver==='prior-sos')){
+        moved.push({...r,tier:'caut',ind:r.ind+' — ⚠️ Disfungsi hati berat/riwayat SOS meningkatkan risiko signifikan: pertimbangkan ulang intensitas'});
+        return false;
+      }
+      return true;
+    });
+    recs.C=[...moved,...recs.C];
+    // Move BuCy from A to AV
+    recs.A=recs.A.filter(r=>{
+      if(r.id==='BuCy'&&liver==='prior-sos'){recs.AV.push({...r,tier:'avoid',ind:'Riwayat SOS/VOD — hindari busulfan intensif'});return false;}
+      return true;
+    });
+  }
+
+  // Severe cardiac: move Cy-based from P to C
+  if(sevCard){
+    recs.P=recs.P.map(r=>{
+      if(r.id==='BuCy'||r.id==='CyATG'||r.id==='FluCy'||r.id==='FluCyATG')
+        return{...r,ind:r.ind+' — ⚠️ Disfungsi jantung: evaluasi ECHO ketat, pertimbangkan modifikasi dosis Cy atau ganti regimen'};
+      return r;
+    });
+  }
+
+  // Active severe infection: add note
+  if(sevInf){
+    recs.P=recs.P.map(r=>({...r,ind:r.ind+' — 🚨 INFEKSI AKTIF: diskusikan penundaan conditioning vs urgensi transplantasi'}));
+  }
+
+  return recs;
+}
+
+function determineIntensity(recs,organs,dx,mol){
+  const{liver,kidney,cardiac,lung,nutrition}=organs;
+  const hasDNA=mol.includes('dnarepair')||dx==='Fanconi';
+  const nonMal=['SAA','SCID','CGD','HLH','IEI','Fanconi','IBMFS'].includes(dx);
+  const sevOrgan=['severe','prior-sos','cholestasis'].includes(liver)||['cardiomyopathy'].includes(cardiac)||['o2-dependent'].includes(lung)||liver==='prior-sos';
+  const modOrgan=['mild','moderate'].includes(liver)||['mild','cardiomyopathy','prior-anthracycline'].includes(cardiac)||['obstructive'].includes(lung)||['mild-malnut','severe-malnut','cachexia'].includes(nutrition);
+
+  if(hasDNA)return'RIC';
+  if(sevOrgan)return'RIC';
+  if(nonMal)return'RIC';
+  if(dx==='Thalassemia'||dx==='SCD')return'RTC';
+  if(modOrgan)return'RTC';
+  if(recs.P.length>0&&RDB[recs.P[0].id])return RDB[recs.P[0].id].intensity.split('/')[0];
+  return'RTC';
+}
+
+// =============================================
+// ALERTS
+// =============================================
+function buildAlerts(inp, recs){
+  const{dx,mol,organs,priorRx,centerCaps,donorType,transplantType,dsa,mrd}=inp;
+  const{liver,kidney,cardiac,lung,infection,nutrition}=organs;
+  let alerts=[];
+  const crit=(t,b,who)=>alerts.push({sev:'danger',t,b,who});
+  const high=(t,b,who)=>alerts.push({sev:'warning',t,b,who});
+  const mod=(t,b,who)=>alerts.push({sev:'info',t,b,who});
+
+  const hasDNA=mol.includes('dnarepair')||dx==='Fanconi';
+  const hasBusulfan=recs.P.some(r=>r.id==='FluBu'||r.id==='BuCy'||r.id==='BuCyMel');
+  const hasTBI=recs.P.some(r=>r.id==='TBI-based')||recs.A.some(r=>r.id==='TBI-based');
+  const ageN=parseFloat(inp.age)||0;
+
+  if(hasDNA)crit('DNA Repair Disorder — Wajib Pendekatan Khusus','Pasien dengan DNA repair disorder atau Fanconi Anemia memerlukan conditioning yang sangat berbeda. MAC konvensional, TBI dosis standar, BuCy, BuCyMel berisiko toksisitas fatal. Wajib regimen reduced intensity dengan alkylator dosis sangat rendah. Konsultasi expert HSCT sebelum keputusan apapun.','Tim HSCT + Farmasi Klinik');
+
+  if(['severe','prior-sos','cholestasis'].includes(liver))crit('Disfungsi Hati Berat / Riwayat SOS/VOD — Risiko Tinggi','Disfungsi hati berat atau riwayat SOS/VOD meningkatkan risiko rekurensi SOS/VOD secara signifikan pada regimen busulfan/alkylator intensif. Pertimbangkan regimen alternatif (FluMel, TreoFlu) atau busulfan dengan TDM sangat ketat dan profilaksis UDCA/defibrotide.','Tim HSCT + Hepatologi + Farmasi');
+
+  if(['active-bact','active-fungal','active-viral','sepsis'].includes(infection))crit('Infeksi Aktif — Pertimbangkan Penundaan Conditioning','Infeksi aktif saat conditioning secara signifikan meningkatkan transplant-related mortality. Diskusikan urgensi transplantasi vs risiko infeksi — penundaan conditioning hingga infeksi terkontrol sangat dianjurkan bila klinis memungkinkan.','Tim HSCT + Tim Infeksi');
+
+  if(hasBusulfan&&!centerCaps.includes('tdm'))high('Busulfan Tanpa TDM Tersedia','Regimen busulfan-based dipilih namun TDM busulfan tidak tersedia di pusat ini. Tanpa TDM, optimasi AUC tidak dapat dilakukan sehingga risiko under-dosing (relaps) atau over-dosing (toksisitas berat) meningkat. Diskusikan dengan farmasi klinik dan pertimbangkan apakah busulfan aman digunakan.','Farmasi Klinik + Tim HSCT');
+
+  if(hasTBI&&ageN>0&&ageN<4)crit('TBI Dipertimbangkan pada Usia <4 Tahun','TBI umumnya dihindari pada anak usia <4 tahun karena risiko late effects yang sangat signifikan (neurokognitif, pertumbuhan, endokrin). Pertimbangkan chemo-based conditioning alternatif. Bila TBI dipertimbangkan, konsultasi radioterapi dan late effects specialist wajib.','Tim HSCT + Radioterapi + Tim Late Effects');
+
+  if(hasTBI&&priorRx.includes('prior-tbi'))crit('Riwayat TBI + Rencana TBI Ulang','Pasien dengan riwayat TBI sebelumnya — TBI ulang umumnya tidak dianjurkan karena kumulatif toksisitas sangat berat. Pertimbangkan chemo-based conditioning.','Tim HSCT + Radioterapi');
+
+  if(['moderate','severe','prior-anthracycline','cardiomyopathy','phtn'].includes(cardiac))high('Disfungsi Jantung — Cyclophosphamide','Disfungsi jantung meningkatkan risiko kardiotoksisitas cyclophosphamide. Evaluasi ECHO terkini dan konsultasi kardiologi sebelum conditioning. Pertimbangkan regimen tanpa Cy atau modifikasi dosis.','Tim HSCT + Kardiologi');
+
+  if(['moderate','severe','o2-dependent','obstructive'].includes(lung))high('Disfungsi Paru — TBI / Busulfan','Disfungsi paru meningkatkan risiko toksisitas paru akibat TBI atau busulfan. Evaluasi fungsi paru (spirometri, DLCO) sebelum conditioning. Pertimbangkan modifikasi atau ganti regimen.','Tim HSCT + Pulmonologi');
+
+  if(['moderate','severe','dialysis'].includes(kidney))high('Disfungsi Ginjal — Penyesuaian Dosis','Disfungsi ginjal memerlukan penyesuaian dosis fludarabine dan melphalan. Monitor ketat fungsi ginjal. Hindari nefrotoksin bersamaan. Konsultasi farmasi klinik.','Farmasi Klinik + Nefrologi');
+
+  if(['severe-malnut','cachexia'].includes(nutrition))high('Malnutrisi Berat — Risiko Toksisitas Tinggi','Malnutrisi berat meningkatkan risiko toksisitas conditioning, mukositis berat, dan infeksi. Pertimbangkan optimasi nutrisi sebelum transplant dan pertimbangkan intensitas regimen lebih rendah.','Nutrisionist + Tim HSCT');
+
+  if(priorRx.includes('prior-hsct'))high('Riwayat HSCT Sebelumnya — Toksisitas Kumulatif','Second HSCT berisiko toksisitas organ kumulatif lebih tinggi. Pertimbangkan penurunan intensitas regimen, evaluasi organ komprehensif, dan diskusi manfaat vs risiko secara realistis dengan keluarga.','Tim HSCT');
+
+  if(priorRx.includes('high-anthracycline'))high('Kumulatif Anthracycline Tinggi — Risiko Kardiak','Cumulative anthracycline tinggi meningkatkan risiko kardiotoksisitas saat conditioning. Evaluasi ECHO terkini dan pertimbangkan regimen yang meminimalkan tambahan kardiotoksisitas.','Kardiologi + Tim HSCT');
+
+  if(donorType==='CB'&&!centerCaps.includes('cord'))mod('Cord Blood — Pengalaman Pusat Terbatas','Cord blood conditioning memerlukan pertimbangan khusus terkait cell dose, engraftment delay, dan platform. Konfirmasi pengalaman dan protokol pusat untuk cord blood transplantation.','Tim HSCT');
+
+  if(donorType==='Haplo'&&dsa&&dsa!=='neg'&&dsa!=='unknown')high('Haploidentical + DSA Positif / Tidak Diketahui','DSA positif pada haplo transplant meningkatkan risiko primary graft failure signifikan. Konfirmasi status DSA dan pertimbangkan desensitisasi atau cari donor alternatif.','Tim HSCT + Imunologi');
+
+  if(['high-pos','rising'].includes(mrd))mod('MRD Positif / Rising — Risiko Relaps Lebih Tinggi','MRD positif atau rising meningkatkan risiko relaps post-HSCT. Pertimbangkan intensitas conditioning lebih tinggi bila organ memungkinkan dan diskusikan strategi post-transplant (maintenance, DLI) dalam perencanaan awal.','Tim HSCT');
+
+  if(transplantType==='second-allo')mod('Second Allo-HSCT — Pertimbangan Khusus','Second HSCT membawa risiko lebih tinggi. Diskusikan secara mendalam manfaat, risiko, dan ekspektasi realistis dengan keluarga. Pertimbangkan intensitas conditioning lebih rendah.','Tim HSCT');
+
+  if(alerts.length===0)alerts.push({sev:'success',t:'Tidak Ada Alert Kritis Teridentifikasi Otomatis',b:'Berdasarkan data yang dimasukkan, tidak ada peringatan keselamatan kritis yang otomatis teridentifikasi. Tetap lakukan penilaian klinis komprehensif per pasien — tool ini tidak dapat menggantikan evaluasi klinis menyeluruh.',who:'Tim HSCT'});
+
+  return alerts;
+}
+
+// =============================================
+// OUTPUT GENERATORS
+// =============================================
+function renderGoals(dx,ds,inp){
+  const goals=[];
+  const mal=['ALL B-cell','ALL T-cell','AML','MPAL','MDS/JMML','CML','Lymphoma','Neuroblastoma','Other-malignant'];
+  const isMal=mal.includes(dx);
+  const isNM=['SAA','Fanconi','IBMFS','Thalassemia','SCD'].includes(dx);
+  const isIEI=['SCID','CGD','HLH','IEI'].includes(dx);
+
+  if(isMal)goals.push({cls:'g-disease',text:'🎯 Eradikasi Penyakit Residual'});
+  if(isMal||isNM)goals.push({cls:'g-engraft',text:'🌱 Engraftment Graft Donor'});
+  goals.push({cls:'g-immune',text:'🛡️ Imunosupresi untuk Penerimaan Graft'});
+  if(isIEI||dx==='SCID')goals.push({cls:'g-immune',text:'🔬 Rekonstruksi Imun (Immune Reconstitution)'});
+  if(['Thalassemia','SCD'].includes(dx))goals.push({cls:'g-engraft',text:'🔴 Koreksi Defek Hematologi'});
+
+  const lvInp=inp.organs.liver;
+  const sevOrg=['severe','prior-sos','cholestasis'].includes(lvInp);
+  if(sevOrg||inp.mol.includes('dnarepair'))goals.push({cls:'g-tox',text:'⚕️ Minimalisasi Toksisitas Organ'});
+
+  return goals.map(g=>`<div class="goal-item ${g.cls}">${g.text}</div>`).join('');
+}
+
+function renderRegimenCard(item,cssClass){
+  const reg=RDB[item.id];
+  if(!reg){
+    if(item.id&&(item.id.startsWith('_')||item.tier==='note'))
+      return`<div class="alert alert-info"><div class="alert-icon">ℹ️</div><div class="alert-content"><strong>Catatan Khusus</strong><p>${item.ind}</p></div></div>`;
+    return'';
+  }
+  const provText=item.tier==='pref'?'Opsi yang dapat dipertimbangkan (provisional)':item.tier==='alt'?'Reasonable alternative (provisional)':item.tier==='caut'?'Gunakan hanya dengan pertimbangan sangat ketat':'Specialist-only — bukan pilihan rutin';
+  return`<div class="rc rc-${cssClass}">
+    <div class="rc-head">${iBadge(reg.lvl)}${tBadge(item.tier)}<span class="rc-name">${reg.name}</span></div>
+    <div class="rc-full">${reg.fullName}</div>
+    <div class="rc-desc">${reg.desc}</div>
+    <div class="rc-ind"><strong>Konteks / Provisional Indication:</strong> ${item.ind}</div>
+    <div class="rc-safe"><strong>⚠️ Safety Note:</strong> ${reg.tdmNote||reg.serotherapy}</div>
+    <div class="rc-evidence"><strong>Evidence:</strong> ${evBadge(reg.evidenceConf)} &nbsp;|&nbsp; <strong>Donor Fit:</strong> ${reg.donorFit} &nbsp;|&nbsp; <em style="color:var(--orange)">${provText}</em></div>
+  </div>`;
+}
+
+function renderDetail(item){
+  const reg=RDB[item.id];
+  if(!reg)return'';
+  const pros=reg.pros.map(p=>`<li>${p}</li>`).join('');
+  const cons=reg.cons.map(c=>`<li>${c}</li>`).join('');
+  const mon=reg.monitoring.map(m=>`<li>${m}</li>`).join('');
+  const organCautHtml=Object.entries(reg.organCaut||{}).map(([k,v])=>`<li><strong>${k}:</strong> ${v}</li>`).join('');
+  return`<div class="acc-item">
+    <div class="acc-header" onclick="accToggle(this)">
+      <div class="acc-title-inner">${iBadge(reg.lvl)}<strong>${reg.name}</strong> — ${reg.fullName} ${evBadge(reg.evidenceConf)}</div>
+      <span class="acc-arrow">▼</span>
+    </div>
+    <div class="acc-body">
+      <div class="detail-grid">
+        <div class="detail-box d-green"><div class="d-title">✅ Kelebihan</div><ul class="d-list">${pros}</ul></div>
+        <div class="detail-box d-red"><div class="d-title">⚠️ Kekurangan / Risiko</div><ul class="d-list">${cons}</ul></div>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-box d-blue"><div class="d-title">📋 Monitoring Diperlukan</div><ul class="d-list">${mon}</ul></div>
+        <div class="detail-box d-yellow"><div class="d-title">🫀 Organ-Specific Cautions</div><ul class="d-list">${organCautHtml}</ul></div>
+      </div>
+      <div class="detail-box d-yellow" style="margin-top:8px"><div class="d-title">💉 Serotherapy Note</div><p>${reg.serotherapy}</p></div>
+      <div class="detail-box d-blue" style="margin-top:8px"><div class="d-title">⏳ Late Effects</div><p>${reg.lateEffects}</p></div>
+    </div>
+  </div>`;
+}
+
+function renderTDM(recs){
+  const hasBu=recs.P.concat(recs.A).some(r=>r.id==='FluBu'||r.id==='BuCy'||r.id==='BuCyMel');
+  if(!hasBu)return'';
+  return`<div class="module-box tdm-box">
+    <h3>⚗️ Pertimbangan Busulfan TDM (Therapeutic Drug Monitoring)</h3>
+    <p>Satu atau lebih regimen berbasis <strong>busulfan</strong> termasuk dalam diskusi kondisioning ini. Busulfan memerlukan pertimbangan TDM khusus:</p>
+    <ul class="module-list">
+      <li>Target AUC busulfan bervariasi per protokol dan diagnosis — tidak dicantumkan di sini.</li>
+      <li>TDM sangat dianjurkan untuk mengoptimalkan exposure dan meminimalkan toksisitas serta risiko relaps.</li>
+      <li>Bila TDM tidak tersedia: diskusikan implikasi dengan farmasi klinik dan pertimbangkan alternatif regimen.</li>
+      <li>Profilaksis seizure selama busulfan diperlukan per protokol (phenytoin, levetiracetam, atau clonazepam — ikuti protokol lokal).</li>
+      <li>Profilaksis SOS/VOD (UDCA, defibrotide) perlu direncanakan bersama farmasi klinik, terutama pada risiko tinggi.</li>
+      <li>Interaksi obat busulfan (azole antifungal terutama itrakonazol, metronidazol) harus dievaluasi oleh farmasi.</li>
+    </ul>
+    <p style="margin-top:8px;font-style:italic;font-size:0.79rem;color:#8a6a00">⚠️ Tool ini TIDAK memberikan dosis busulfan. Dosis dan protokol TDM harus ditetapkan oleh tim HSCT dan farmasi klinik sesuai protokol lokal.</p>
+  </div>`;
+}
+
+function renderTBI(recs, age, priorRx, centerCaps){
+  const hasTBIOption=recs.P.concat(recs.A,recs.C).some(r=>r.id==='TBI-based');
+  if(!hasTBIOption)return'';
+  const ageN=parseFloat(age)||0;
+  const priorTBI=priorRx.includes('prior-tbi');
+  const tbiAvail=centerCaps.includes('tbi');
+  return`<div class="module-box tbi-box" style="margin-top:12px">
+    <h3>☢️ Pertimbangan TBI (Total Body Irradiation)</h3>
+    ${priorTBI?'<p><strong>⚠️ PERHATIAN:</strong> Terdapat riwayat TBI sebelumnya — TBI ulang umumnya tidak dianjurkan karena kumulatif toksisitas.</p>':''}
+    ${ageN>0&&ageN<4?'<p><strong>⚠️ PERHATIAN:</strong> Usia pasien <4 tahun — TBI umumnya dihindari pada usia ini.</p>':''}
+    ${!tbiAvail?'<p><strong>⚠️ PERHATIAN:</strong> Fasilitas TBI tidak tersedia di pusat ini — opsi chemo-based perlu dipertimbangkan.</p>':''}
+    <p>Bila TBI dipertimbangkan, hal berikut perlu dikonfirmasi bersama tim terkait:</p>
+    <ul class="module-list">
+      <li>Usia pasien (umumnya dihindari <4–6 tahun) dan ketersediaan fasilitas radioterapi</li>
+      <li>Riwayat radiasi sebelumnya — TBI ulang umumnya tidak dianjurkan</li>
+      <li>Evaluasi fungsi paru (spirometri, DLCO) sebelum TBI</li>
+      <li>Konseling late effects: pertumbuhan, neurokognitif, endokrin, kesuburan, sekunder malignasi</li>
+      <li>Diskusi dengan tim radioterapi tentang dosimetri, fraksionasi, dan teknik</li>
+      <li>Informed consent keluarga khusus untuk TBI dan late effects</li>
+    </ul>
+    <p style="margin-top:8px;font-style:italic;font-size:0.79rem;color:#2a4a8a">Tool ini TIDAK memberikan rencana dosimetri TBI. Perencanaan TBI memerlukan konsultasi radioterapi dan tim late effects.</p>
+  </div>`;
+}
+
+function renderSero(inp){
+  const{donorType,platform,centerCaps,dsa}=inp;
+  let notes=[];
+  if(donorType==='MSD')notes.push('MSD: Serotherapy (ATG/alemtuzumab) umumnya tidak rutin pada MSD — tergantung protokol dan platform GVHD.');
+  if(donorType==='MUD')notes.push('MUD: ATG atau alemtuzumab dapat dipertimbangkan tergantung protokol pusat dan platform GVHD prophylaxis.');
+  if(donorType==='MMUD')notes.push('MMUD: Serotherapy lebih sering dipertimbangkan untuk manajemen GVHD — ikuti protokol pusat.');
+  if(donorType==='Haplo')notes.push('Haplo: Pendekatan serotherapy sangat tergantung platform — PTCy (umumnya tanpa ATG), T-cell depletion, atau ATG-based. Konfirmasi dengan protokol pusat.');
+  if(donorType==='CB')notes.push('Cord Blood: Protokol serotherapy untuk CB bervariasi — konfirmasi dengan protokol pusat.');
+  if(platform==='ptcy')notes.push('Platform PTCy: Post-transplant cyclophosphamide adalah komponen GVHD prophylaxis — bukan bagian conditioning. Pastikan koordinasi dengan farmasi untuk jadwal PTCy.');
+  if(platform==='atg-based')notes.push('Platform ATG-based: Pilih jenis ATG (rabbit/horse), dosis, dan jadwal sesuai protokol pusat. Monitoring viral reactivation intensif pasca ATG.');
+  if(platform==='alemtuzumab')notes.push('Platform Alemtuzumab: Monitoring viral reactivation sangat penting. Risiko immune reconstitution delay lebih tinggi.');
+  if(dsa&&dsa!=='neg'&&dsa!=='unknown')notes.push('DSA Positif/Belum Diperiksa: Pada haplo atau MMUD, DSA positif meningkatkan risiko graft failure. Konfirmasi status DSA dan pertimbangkan desensitisasi bila diperlukan.');
+  if(!centerCaps.includes('atg')&&!centerCaps.includes('alemtuzumab'))notes.push('Ketersediaan ATG dan alemtuzumab: Konfirmasi ketersediaan di pusat sebelum merencanakan serotherapy.');
+  if(notes.length===0)notes.push('Pilih jenis donor dan platform GVHD untuk mendapatkan konteks serotherapy yang lebih spesifik.');
+
+  return`<div class="module-box sero-box">
+    <h3>💉 Konteks Serotherapy & Platform GVHD</h3>
+    <ul class="module-list">
+      ${notes.map(n=>`<li>${n}</li>`).join('')}
+    </ul>
+    <p style="margin-top:8px;font-style:italic;font-size:0.79rem;color:#5a2a9a">⚠️ Pemilihan serotherapy, GVHD prophylaxis, jadwal, dan dosis HARUS mengikuti protokol pusat transplantasi dan didiskusikan bersama tim HSCT dan farmasi klinik. Tool ini hanya memberikan konteks — bukan panduan prescribing.</p>
+  </div>`;
+}
+
+function renderRationale(inp, recs, intensity){
+  const{dx,ds,mrd,donorType,organs,mol,age,weight,priorRx,transplantType}=inp;
+  const topP=recs.P.filter(r=>RDB[r.id]);
+  const topA=recs.A.filter(r=>RDB[r.id]);
+  const hasDNA=mol.includes('dnarepair')||dx==='Fanconi';
+  const{liver}=organs;
+  const sevOrg=['severe','prior-sos','cholestasis'].includes(liver);
+  const intMap={NMA:'non-myeloablative (NMA)',RIC:'reduced intensity (RIC)',RTC:'reduced toxicity myeloablative (RTC)',MAC:'myeloablative (MAC)','Intensified MAC':'intensified myeloablative (MAC+)'};
+
+  let p1=`<strong>Konteks Klinis:</strong> Pasien${age?' usia '+age+' tahun':''} dengan diagnosis <strong>${dx}</strong>, status penyakit <strong>${ds}</strong>`;
+  if(mrd&&mrd!=='na')p1+=`, MRD: ${mrd}`;
+  p1+=`, donor <strong>${donorType}</strong>, tipe transplantasi <strong>${transplantType||'—'}</strong>.`;
+
+  let p2='';
+  const molStr=mol.filter(m=>m!=='none').join(', ');
+  if(molStr)p2+=`Fitur molekular/sitogenetik yang relevan: <strong>${molStr}</strong>. `;
+  const organIssues=Object.entries(organs).filter(([k,v])=>v!=='normal'&&v!=='none'&&v!=='adequate'&&v!=='neg').map(([k,v])=>`${k}: ${v}`).join('; ');
+  if(organIssues)p2+=`Status organ: ${organIssues}.`;
+
+  let p3='';
+  if(hasDNA){
+    p3=`Karena terdapat DNA repair disorder, pendekatan kondisioning harus menggunakan <strong>regimen reduced intensity / reduced toxicity</strong> yang disesuaikan khusus. MAC konvensional dan TBI dosis standar dikontraindikasikan relatif. Diperlukan konsultasi tim HSCT dan farmasi klinik yang berpengalaman.`;
+  } else if(sevOrg){
+    p3=`Adanya disfungsi organ signifikan memerlukan <strong>pendekatan kondisioning lebih konservatif</strong>. Intensitas perlu disesuaikan untuk keseimbangan antara kontrol penyakit dan toksisitas organ. Opsi RIC atau RTC lebih diutamakan untuk dibahas.`;
+  } else {
+    p3=`Berdasarkan profil klinis, pendekatan <strong>${intMap[intensity]||intensity}</strong> dapat dipertimbangkan untuk didiskusikan oleh tim HSCT. Keputusan intensitas final harus mempertimbangkan toleransi pasien, risiko relaps, toksisitas, dan protokol pusat.`;
+  }
+
+  let p4='';
+  if(topP.length>0&&!topP[0].id.startsWith('_')){
+    const pn=topP.slice(0,2).map(r=>r.id).join(' dan/atau ');
+    const an=topA.length>0?topA.slice(0,3).map(r=>r.id).join(', '):'—';
+    p4=`Opsi yang dapat dipertimbangkan untuk didiskusikan tim meliputi <strong>${pn}</strong>. Alternatif yang mungkin sesuai: <strong>${an}</strong>. Pemilihan final bergantung pada protokol pusat, ketersediaan obat, TDM, toleransi organ aktual, dan diskusi multidisiplin.`;
+  }
+
+  const p5=`<em style="color:var(--gray-500)">📌 Seluruh output ini bersifat provisional dan merupakan bahan diskusi untuk tim HSCT multidisiplin. Bukan order terapi, bukan dosis final, bukan pengganti protokol lokal atau evaluasi klinis komprehensif. Keputusan conditioning final memerlukan diskusi tim HSCT, farmasi klinik, dan informed consent keluarga.</em>`;
+
+  return`<div class="narrative-box">${[p1,p2,p3,p4,p5].filter(Boolean).join('<br><br>')}</div>`;
+}
+
+function renderTable(recs){
+  const seen=new Set();
+  let rows='';
+  [...recs.P,...recs.A,...recs.C,...recs.S,...recs.AV].forEach(item=>{
+    if(seen.has(item.id))return;
+    const reg=RDB[item.id];
+    if(!reg)return;
+    seen.add(item.id);
+    const p1=reg.pros[0]||'—';
+    const c1=reg.cons[0]||'—';
+    rows+=`<tr>
+      <td>${reg.name}</td>
+      <td>${iBadge(reg.lvl)} ${reg.intensity}</td>
+      <td style="font-size:0.74rem;max-width:140px">${(reg.dx||[]).slice(0,3).join(', ')}${(reg.dx||[]).length>3?', ...':''}</td>
+      <td style="font-size:0.74rem;max-width:140px">${p1}</td>
+      <td style="font-size:0.74rem;max-width:140px">${c1}</td>
+      <td style="text-align:center">${reg.tdmRequired?'<span style="color:var(--orange);font-weight:700">Ya</span>':'Tidak'}</td>
+      <td style="font-size:0.74rem;max-width:120px">${reg.lateEffects.substring(0,80)}${reg.lateEffects.length>80?'...':''}</td>
+      <td>${evBadge(reg.evidenceConf)}</td>
+      <td>${tBadge(item.tier)}</td>
+    </tr>`;
+  });
+  return rows||'<tr><td colspan="9" style="text-align:center;color:var(--gray-400)">Tidak ada data</td></tr>';
+}
+
+const CL_ITEMS={
+  'Disease & Penyakit':['Status penyakit dikonfirmasi (patologi/sitologi/imaging terkini)','MRD terbaru sebelum conditioning','Penilaian SSP / extramedullary bila relevan','Rencana bridging / disease control bila diperlukan sebelum conditioning'],
+  'Donor & Graft':['Donor final dikonfirmasi','HLA matching dan kompatibilitas diverifikasi','Status DSA diperiksa (terutama haplo/MMUD)','Sumber graft dan rencana koleksi dikonfirmasi','Backup donor dipertimbangkan'],
+  'Evaluasi Organ':['ECHO / EKG (fungsi jantung)','Kreatinin, GFR, urinalisis (fungsi ginjal)','SGOT, SGPT, bilirubin, albumin (fungsi hati)','Ferritin / iron overload assessment (bila relevan)','Rontgen / spirometri / saturasi (fungsi paru)','Pembersihan gigi (dental clearance)'],
+  'Infeksi':['CMV, EBV, hepatitis B/C, HIV status','Evaluasi fungal bila riwayat infeksi fungal','Infeksi aktif terkontrol sebelum conditioning','Rencana profilaksis antimikroba (antifungal, antiviral, antibakteri)'],
+  'Farmasi & Kondisioning':['Ketersediaan obat conditioning dikonfirmasi','Rencana TDM busulfan (bila digunakan)','Penyesuaian dosis renal/hepatik oleh farmasi','Rencana seizure prophylaxis (bila busulfan)','Rencana mesna/hidrasi (bila cyclophosphamide)','Rencana profilaksis SOS/VOD','Rencana antiemetik','Rencana pain management mukositis','Cek interaksi obat (antifungal + busulfan)'],
+  'Suportif & Komunikasi':['Penilaian nutrisi dan rencana dukungan nutrisi','Diskusi fertility preservation (bila relevan)','Rencana akses vaskular (CVC/PICC)','Informed consent keluarga terdokumentasi','Rencana eskalasi ICU bila terjadi komplikasi','Rencana transfusi (threshold dan produk)','Tim koordinasi kondisioning lengkap']
+};
+
+function renderChecklist(){
+  return Object.entries(CL_ITEMS).map(([group,items])=>`
+    <div class="cl-group">
+      <div class="cl-group-title">${group}</div>
+      <div class="cl-grid">
+        ${items.map(item=>`<label class="cl-item" onclick="this.classList.toggle('done');this.querySelector('input').checked=!this.querySelector('input').checked">
+          <input type="checkbox"><span>${item}</span></label>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function renderSummary(inp,recs,intensity){
+  const{dx,ds,donorType,organs}=inp;
+  const topP=recs.P.filter(r=>RDB[r.id]).slice(0,2).map(r=>r.id).join(' / ')||'perlu diskusi lebih lanjut';
+  const topA=recs.A.filter(r=>RDB[r.id]).slice(0,3).map(r=>r.id).join(', ')||'—';
+  const organIssues=Object.entries(organs).filter(([k,v])=>!['normal','none','adequate'].includes(v)).map(([k,v])=>`${k}: ${v}`);
+  const factors=organIssues.length>0?organIssues.join('; '):'Tidak ada komorbid organ mayor yang diidentifikasi';
+  return`<strong>Provisional HSCT Conditioning Discussion Summary</strong><br><br>
+Pasien dengan <strong>diagnosis ${dx}</strong>, status <strong>${ds}</strong>, donor <strong>${donorType}</strong>.<br><br>
+Berdasarkan evaluasi multi-domain, opsi kondisioning yang dapat dipertimbangkan untuk didiskusikan tim adalah <strong>${topP}</strong>. Alternatif yang mungkin sesuai: <strong>${topA}</strong>.<br><br>
+Intensitas provisional yang dipertimbangkan: <strong>${intensity}</strong>. Faktor yang mempengaruhi: ${factors}.<br><br>
+<em>Output ini bersifat provisional — keputusan final memerlukan verifikasi protokol pusat, evaluasi klinis terkini, diskusi farmasi klinik, dan informed consent keluarga. Bukan order terapi.</em>`;
+}
+
+function renderFamily(intensity,dx){
+  const mal=['ALL B-cell','ALL T-cell','AML','MPAL','MDS/JMML','CML','Lymphoma','Neuroblastoma'].includes(dx);
+  const intText={
+    MAC:'Conditioning yang direncanakan termasuk dalam kategori <strong>intensif (myeloablative)</strong>. Ini berarti kemoterapi yang diberikan sebelum transplantasi cukup kuat untuk menghancurkan sel sumsum tulang yang ada dan mengontrol sel penyakit. Efek yang diharapkan adalah membuka ruang di sumsum tulang untuk sel donor. Karena intensitasnya, efek samping mungkin lebih terasa, namun tim akan memantau dan membantu mengelolanya.',
+    RTC:'Conditioning yang direncanakan termasuk dalam kategori <strong>reduced toxicity myeloablative</strong>. Ini berarti kemoterapi yang diberikan cukup kuat untuk mempersiapkan sumsum tulang, namun dengan pendekatan yang dirancang agar efek sampingnya lebih dapat dikelola dibanding conditioning sangat intensif. Tim akan memantau kondisi anak secara ketat selama proses ini.',
+    RIC:'Conditioning yang direncanakan termasuk dalam kategori <strong>reduced intensity</strong>. Pendekatan ini menggunakan kemoterapi yang lebih ringan dibanding conditioning penuh, berfokus pada menekan sistem imun agar sel donor dapat diterima. Ini sering dipilih bila ada pertimbangan komorbiditas atau kondisi khusus pasien.',
+    NMA:'Conditioning yang direncanakan termasuk dalam kategori <strong>non-myeloablative</strong> — paling ringan intensitasnya. Fokus utama adalah imunosupresi agar sel donor dapat menempel dan berkembang. Pilihan ini biasanya mempertimbangkan kondisi khusus pasien.'
+  };
+  const baseText=intText[intensity]||intText.RTC;
+  return`<h3>🗣️ Panduan Komunikasi kepada Keluarga (Bahasa Awam)</h3>
+<p><strong>Apa itu conditioning?</strong><br>Sebelum transplantasi dilakukan, anak perlu menjalani proses yang disebut "conditioning" — yaitu pemberian kemoterapi (dan kadang radiasi) selama beberapa hari. Tujuannya adalah:</p>
+<ul class="module-list">
+  <li>Membuka ruang di sumsum tulang untuk sel-sel donor yang akan masuk.</li>
+  <li>Menekan sistem kekebalan tubuh anak agar sel donor dapat diterima tanpa ditolak.</li>
+  ${mal?'<li>Membantu mengontrol sel penyakit yang mungkin masih tersisa.</li>':''}
+</ul>
+<p style="margin-top:8px">${baseText}</p>
+<p style="margin-top:8px"><strong>Apa yang perlu keluarga tahu?</strong></p>
+<ul class="module-list">
+  <li>Efek samping conditioning dapat meliputi mual, penurunan darah, sariawan, dan risiko infeksi. Tim akan membantu mengelolanya.</li>
+  <li>Setiap anak unik — pengalaman setiap pasien bisa berbeda.</li>
+  <li>Tim HSCT akan selalu memantau kondisi anak dan siap membantu.</li>
+  <li>Pertanyaan apapun silakan ditanyakan langsung ke tim dokter dan perawat.</li>
+</ul>
+<p style="margin-top:8px;font-size:0.77rem;color:var(--gray-500);font-style:italic">⚠️ Teks ini adalah panduan komunikasi — tim klinis perlu menyesuaikan dengan kondisi pasien spesifik dan keputusan final regimen sebelum disampaikan kepada keluarga.</p>`;
+}
+
+const PEARLS=[
+  'Conditioning harus menyeimbangkan <strong>eradikasi penyakit, engraftment, imunosupresi, dan toksisitas</strong> — tidak ada regimen tunggal yang optimal untuk semua kondisi.',
+  'MRD positif atau risiko biologis tinggi dapat mempengaruhi pertimbangan intensitas conditioning, namun keputusan harus mempertimbangkan toleransi organ dan tujuan transplantasi.',
+  'Pada <strong>non-malignant disease</strong>, tujuan utama conditioning adalah engraftment dan imunosupresi — bukan eradikasi malignansi. Intensitas yang berlebihan meningkatkan risiko tanpa manfaat.',
+  'Busulfan memerlukan <strong>TDM (Therapeutic Drug Monitoring)</strong> untuk optimasi AUC — target dan protokol bervariasi, selalu ikuti protokol lokal dan farmasi klinik.',
+  '<strong>DNA repair disorder (Fanconi Anemia dll.)</strong> memerlukan pendekatan conditioning yang sangat berbeda — MAC konvensional memiliki risiko fatal. Wajib konsultasi expert.',
+  'TBI memiliki aktivitas anti-leukemia yang baik namun membawa risiko <strong>late effects signifikan</strong> pada anak, terutama usia sangat muda. Selalu diskusikan pro/kontra dengan keluarga.',
+  'Keputusan conditioning adalah <strong>keputusan tim multidisiplin</strong> — melibatkan HSCT specialist, farmasi klinik, radioterapi (bila TBI), infeksi, kardiologi, hepatologi, dan spesialis lain sesuai kebutuhan pasien.',
+  'Output tool ini bersifat <strong>provisional dan hanya untuk diskusi awal</strong> — selalu verifikasi dengan protokol lokal sebelum implementasi apapun.'
+];
+
+// =============================================
+// MAIN BUILD FUNCTION
+// =============================================
+function buildOutput(){
+  const dx=v('diagnosis');const ds=v('diseaseStatus');
+  const age=v('age');const donorType=v('donorType');const transplantType=v('transplantType');
+  const urgency=v('urgency');const mrd=v('mrd');const dsa=v('dsa');
+  const mol=getChecked('mol');const centerCaps=getChecked('center');
+  const priorRx=getChecked('priorRx');const platform=v('platform');
+  const organs={liver:v('liver'),kidney:v('kidney'),cardiac:v('cardiac'),lung:v('lung'),infection:v('infection'),nutrition:v('nutrition')};
+
+  if(!dx){alert('Harap pilih diagnosis.');return;}
+  if(!ds){alert('Harap pilih status penyakit.');return;}
+  if(!donorType){alert('Harap pilih jenis donor.');return;}
+  if(!transplantType){alert('Harap pilih tipe transplantasi.');return;}
+
+  const inp={dx,ds,age,donorType,graftSource:v('graftSource'),transplantType,urgency,mrd,mol,centerCaps,priorRx,organs,platform,dsa};
+  let recs=getBaseRecs(inp);
+  recs=adjustOrgans(recs,organs);
+  const intensity=determineIntensity(recs,organs,dx,mol);
+  const alerts=buildAlerts(inp,recs);
+  const hasDNA=mol.includes('dnarepair')||dx==='Fanconi';
+
+  // Show output
+  document.getElementById('inputSection').classList.add('hidden');
+  document.getElementById('outputSection').classList.remove('hidden');
+  document.getElementById('dnaRepairAlert').classList.toggle('hidden',!hasDNA);
+
+  // Header
+  document.getElementById('outTitle').textContent=`Diskusi Regimen: ${dx}`;
+  const mrdLabel={na:'MRD N/A',neg:'MRD Neg','low-pos':'MRD Low+','high-pos':'MRD High+','rising':'MRD Rising','post-cart-neg':'Post-CAR-T MRD-','post-cart-pos':'Post-CAR-T MRD+'};
+  document.getElementById('metaChips').innerHTML=[
+    `<span class="mchip">🩺 ${dx}</span>`,
+    `<span class="mchip">📋 ${ds}</span>`,
+    `<span class="mchip">👤 ${donorType}</span>`,
+    age?`<span class="mchip">🎂 ${age}y</span>`:'',
+    `<span class="mchip">📊 ${intensity}</span>`,
+    mrd&&mrd!=='na'?`<span class="mchip">🔬 ${mrdLabel[mrd]||mrd}</span>`:''
+  ].filter(Boolean).join('');
+
+  // Intensity meter
+  ['nma','ric','rtc','mac'].forEach(s=>document.getElementById('mseg-'+s).classList.remove('act'));
+  const imap={NMA:'nma',RIC:'ric',RTC:'rtc',MAC:'mac','Intensified MAC':'mac'};
+  const mseg=imap[intensity]||'rtc';
+  document.getElementById('mseg-'+mseg).classList.add('act');
+  const inotes={NMA:'Non-Myeloablative — fokus imunosupresi, myelosupresi minimal. Risiko graft failure lebih tinggi, toksisitas lebih rendah.',RIC:'Reduced Intensity — imunosupresi kuat, myelosupresi parsial. Keseimbangan engraftment vs toksisitas.',RTC:'Reduced Toxicity Myeloablative — myeloablative dengan profil toksisitas lebih menguntungkan. Banyak digunakan pada berbagai diagnosis.',MAC:'Myeloablative — destruksi sumsum tulang penuh untuk eradikasi penyakit dan ruang graft. Aktivitas maksimal, toksisitas lebih tinggi.'};
+  document.getElementById('intensityNote').innerHTML=`<strong>${intensity}:</strong> ${inotes[intensity]||inotes.RTC} <em style="color:var(--orange)">[Provisional]</em>`;
+
+  // Goals
+  document.getElementById('goalsOutput').innerHTML=renderGoals(dx,ds,inp);
+
+  // Preferred
+  let prefHtml='';
+  if(recs.P.length===0){prefHtml='<div class="alert alert-info"><div class="alert-icon">ℹ️</div><div class="alert-content"><p>Tidak ada opsi preferred yang teridentifikasi dengan input saat ini. Lihat bagian alternatif dan caution.</p></div></div>';}
+  else{recs.P.forEach(r=>{prefHtml+=renderRegimenCard(r,'pref');});}
+  document.getElementById('prefOutput').innerHTML=prefHtml;
+
+  // Alternatives / Caution / Avoid
+  let altHtml='';
+  if(recs.A.length>0){altHtml+='<div class="rlabel">Reasonable Alternatives</div>';recs.A.forEach(r=>{altHtml+=renderRegimenCard(r,'alt');});}
+  if(recs.C.length>0){altHtml+='<div class="rlabel" style="margin-top:10px">Gunakan dengan Hati-hati (Conditional)</div>';recs.C.forEach(r=>{altHtml+=renderRegimenCard(r,'caut');});}
+  if(recs.S.length>0){altHtml+='<div class="rlabel" style="margin-top:10px">Specialist-Only</div>';recs.S.forEach(r=>{altHtml+=renderRegimenCard(r,'spec');});}
+  if(recs.AV.length>0){altHtml+='<div class="rlabel" style="margin-top:10px">Umumnya Dihindari</div>';recs.AV.forEach(r=>{altHtml+=renderRegimenCard(r,'avoid');});}
+  if(!altHtml)altHtml='<div class="alert alert-info"><div class="alert-icon">ℹ️</div><div class="alert-content"><p>Diskusikan dengan tim HSCT.</p></div></div>';
+  document.getElementById('altOutput').innerHTML=altHtml;
+
+  // Detail
+  const allItems=[...recs.P,...recs.A,...recs.C,...recs.S,...recs.AV];
+  const seen=new Set();let detHtml='';
+  allItems.forEach(r=>{if(seen.has(r.id)||!RDB[r.id])return;seen.add(r.id);detHtml+=renderDetail(r);});
+  document.getElementById('detailOutput').innerHTML=detHtml||'<p style="color:var(--gray-400)">—</p>';
+
+  // Alerts
+  let alertHtml='';
+  const aicons={danger:'🚨',warning:'⚠️',info:'ℹ️',success:'✅'};
+  alerts.forEach(al=>{alertHtml+=`<div class="alert alert-${al.sev}"><div class="alert-icon">${aicons[al.sev]||'ℹ️'}</div><div class="alert-content"><strong>${al.t}</strong><p>${al.b}</p>${al.who?`<div class="alert-who">→ Tinjau bersama: ${al.who}</div>`:''}</div></div>`;});
+  document.getElementById('alertsOutput').innerHTML=alertHtml;
+
+  // TDM + TBI modules
+  document.getElementById('tdmOutput').innerHTML=renderTDM(recs);
+  document.getElementById('tbiOutput').innerHTML=renderTBI(recs,age,priorRx,centerCaps);
+
+  // Serotherapy
+  document.getElementById('seroOutput').innerHTML=renderSero(inp);
+
+  // Rationale
+  document.getElementById('rationaleOutput').innerHTML=renderRationale(inp,recs,intensity);
+
+  // Table
+  document.getElementById('tableBody').innerHTML=renderTable(recs);
+
+  // Checklist
+  document.getElementById('checklistOutput').innerHTML=renderChecklist();
+
+  // Summary
+  document.getElementById('summaryOutput').innerHTML=renderSummary(inp,recs,intensity);
+
+  // Family
+  document.getElementById('familyOutput').innerHTML=renderFamily(intensity,dx);
+
+  // Pearls
+  document.getElementById('pearlsOutput').innerHTML=PEARLS.map((p,i)=>`<div class="pearl"><span class="pearl-n">${i+1}</span><span>${p}</span></div>`).join('');
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// =============================================
+// UI HELPERS
+// =============================================
+function accToggle(h){
+  const b=h.nextElementSibling;const ar=h.querySelector('.acc-arrow');
+  b.classList.toggle('open');ar.classList.toggle('open');
+}
+function onDxChange(){
+  const dx=v('diagnosis');
+  const nmDx=['SAA','Fanconi','IBMFS','Thalassemia','SCD','SCID','CGD','HLH','IEI'];
+  if(nmDx.includes(dx)){document.getElementById('hsctPurpose').value=nmDx.slice(0,2).includes(dx)?'marrow-failure':'immunodeficiency';}
+  else if(dx){document.getElementById('hsctPurpose').value='malignant';}
+  if(dx==='Fanconi'){
+    const dnaEl=document.querySelector('input[name="mol"][value="dnarepair"]');
+    if(dnaEl&&!dnaEl.checked){dnaEl.checked=true;dnaEl.closest('.cb-item').classList.add('on');}
+  }
+}
+function backToInput(){
+  document.getElementById('outputSection').classList.add('hidden');
+  document.getElementById('inputSection').classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function resetAll(){
+  document.querySelectorAll('select').forEach(s=>s.selectedIndex=0);
+  document.querySelectorAll('input[type=text],input[type=number]').forEach(i=>i.value='');
+  document.querySelectorAll('input[type=checkbox]').forEach(i=>{i.checked=false;const p=i.closest('.cb-item');if(p)p.classList.remove('on');});
+  document.querySelectorAll('.organ-item').forEach(oi=>oi.className='organ-item');
+}
+</script>
+</body>
+</html>

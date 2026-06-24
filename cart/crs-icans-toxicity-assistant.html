@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRS/ICANS Toxicity Assistant v2 | drAisyi EduCare</title>
+<style>
+:root {
+  --teal:#0d9488;--teal-d:#0f766e;--teal-l:#ccfbf1;--teal-xl:#f0fdfa;
+  --purple:#7c3aed;--purple-l:#ede9fe;--purple-b:#ddd6fe;
+  --g1c:#15803d;--g1b:#dcfce7;--g1br:#86efac;
+  --g2c:#b45309;--g2b:#fef3c7;--g2br:#fde68a;
+  --g3c:#c2410c;--g3b:#ffedd5;--g3br:#fed7aa;
+  --g4c:#991b1b;--g4b:#fee2e2;--g4br:#fca5a5;
+  --gray50:#f9fafb;--gray100:#f3f4f6;--gray200:#e5e7eb;
+  --gray600:#4b5563;--gray700:#374151;--gray800:#1f2937;
+  --r:12px;--sh:0 4px 20px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',sans-serif;background:var(--teal-xl);color:var(--gray800);min-height:100vh;}
+
+.hdr{background:linear-gradient(135deg,var(--teal-d),var(--teal) 60%,#2dd4bf);color:#fff;padding:18px 24px 14px;text-align:center;box-shadow:0 4px 16px rgba(13,148,136,.3);}
+.brand{font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.85;margin-bottom:4px;}
+.brand span{background:rgba(255,255,255,.2);padding:2px 10px;border-radius:20px;}
+.hdr h1{font-size:19px;font-weight:800;margin:5px 0 2px;}
+.hdr p{font-size:12px;opacity:.85;}
+.badge{display:inline-block;margin-top:7px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700;}
+.v-badge{background:rgba(255,255,255,.2);border-radius:10px;padding:2px 8px;font-size:10px;margin-left:6px;opacity:.9;}
+
+.wrap{max-width:880px;margin:0 auto;padding:18px 14px 40px;}
+
+.card{background:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:18px;margin-bottom:16px;}
+.ctitle{font-size:12px;font-weight:700;color:var(--teal-d);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.ctitle::before{content:'';display:block;width:4px;height:16px;background:var(--teal);border-radius:2px;}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+@media(max-width:580px){.g2,.g3{grid-template-columns:1fr 1fr;}}
+@media(max-width:380px){.g2,.g3{grid-template-columns:1fr;}}
+
+.fld{display:flex;flex-direction:column;gap:4px;}
+label{font-size:12px;font-weight:600;color:var(--gray700);}
+label .sub{font-weight:400;color:var(--gray600);font-size:11px;}
+input[type=number],select{border:1.5px solid var(--gray200);border-radius:8px;padding:8px 11px;font-size:14px;color:var(--gray800);background:var(--gray50);transition:border-color .2s,box-shadow .2s;width:100%;}
+input[type=number]:focus,select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.15);}
+
+.rg{display:flex;flex-wrap:wrap;gap:7px;margin-top:3px;}
+.rb{position:relative;}
+.rb input{position:absolute;opacity:0;width:0;}
+.rb label{display:inline-block;padding:6px 12px;border:1.5px solid var(--gray200);border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;background:var(--gray50);color:var(--gray700);transition:all .2s;}
+.rb input:checked+label{background:var(--teal);color:#fff;border-color:var(--teal);}
+.rb.warn input:checked+label{background:#dc2626;border-color:#dc2626;}
+
+.chk-list{display:flex;flex-direction:column;gap:6px;}
+.ci{display:flex;align-items:flex-start;gap:8px;}
+.ci input[type=checkbox]{width:15px;height:15px;accent-color:var(--teal);cursor:pointer;margin-top:2px;flex-shrink:0;}
+.ci label{font-size:13px;color:var(--gray700);cursor:pointer;font-weight:400;line-height:1.5;}
+
+.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.tb{padding:7px 13px;border-radius:20px;font-size:12px;font-weight:600;border:1.5px solid var(--gray200);background:#fff;color:var(--gray600);cursor:pointer;transition:all .2s;}
+.tb.active{background:var(--teal);color:#fff;border-color:var(--teal);}
+.tc{display:none;}.tc.active{display:block;}
+
+.btn-main{width:100%;padding:13px;background:linear-gradient(135deg,var(--teal-d),var(--teal));color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(13,148,136,.3);letter-spacing:.5px;}
+.btn-main:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(13,148,136,.4);}
+.btn-sec{width:100%;padding:9px;background:#fff;color:var(--gray600);border:1.5px solid var(--gray200);border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:8px;}
+.btn-sec:hover{background:var(--gray100);}
+
+/* RESULT */
+#result{display:none;}
+.gbanner{border-radius:var(--r);padding:18px 22px;margin-bottom:14px;border-left:6px solid;display:flex;align-items:center;gap:14px;}
+.gicon{font-size:34px;}
+.gtxt h2{font-size:20px;font-weight:800;margin-bottom:2px;}
+.gtxt p{font-size:13px;opacity:.85;}
+
+.rs{margin-bottom:11px;}
+.rs h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--teal-d);margin-bottom:7px;display:flex;align-items:center;gap:5px;}
+.rl{list-style:none;display:flex;flex-direction:column;gap:4px;}
+.rl li{font-size:13px;color:var(--gray700);padding:6px 10px 6px 26px;background:var(--gray50);border-radius:8px;position:relative;line-height:1.5;}
+.rl li::before{content:'▸';position:absolute;left:9px;color:var(--teal);font-size:11px;top:8px;}
+
+.abox{border-radius:10px;padding:11px 13px;margin-top:12px;border:1.5px solid;display:flex;gap:9px;align-items:flex-start;}
+.abox .ai{font-size:18px;flex-shrink:0;margin-top:1px;}
+.abox .ab{font-size:13px;line-height:1.6;}
+.abox .ab strong{display:block;margin-bottom:2px;font-size:12px;text-transform:uppercase;letter-spacing:.5px;}
+.a-red{background:#fee2e2;border-color:#fca5a5;color:#7f1d1d;}
+.a-orange{background:#ffedd5;border-color:#fdba74;color:#7c2d12;}
+.a-purple{background:var(--purple-l);border-color:var(--purple-b);color:#4c1d95;}
+.a-green{background:#dcfce7;border-color:#86efac;color:#14532d;}
+.a-gray{background:#f3f4f6;border-color:#d1d5db;color:#374151;}
+.a-blue{background:#eff6ff;border-color:#bfdbfe;color:#1e3a8a;}
+
+.sec-divider{height:1px;background:linear-gradient(90deg,var(--teal),transparent);margin:14px 0;}
+
+/* Flags row */
+.flags-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.flag-pill{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;border:1.5px solid;}
+.fp-crs1{background:var(--g1b);border-color:var(--g1br);color:var(--g1c);}
+.fp-crs2{background:var(--g2b);border-color:var(--g2br);color:var(--g2c);}
+.fp-crs3{background:var(--g3b);border-color:var(--g3br);color:var(--g3c);}
+.fp-crs4{background:var(--g4b);border-color:var(--g4br);color:var(--g4c);}
+.fp-icans{background:var(--purple-l);border-color:var(--purple-b);color:var(--purple);}
+.fp-sepsis{background:#fdf2f8;border-color:#f0abfc;color:#86198f;}
+.fp-hlh{background:#fef9c3;border-color:#fde047;color:#713f12;}
+.fp-organ{background:#eff6ff;border-color:#bfdbfe;color:#1e3a8a;}
+.fp-none{background:var(--gray100);border-color:var(--gray200);color:var(--gray600);}
+
+/* ICANS card */
+.icans-sub{background:var(--purple-l);border-radius:10px;padding:12px;margin-top:10px;}
+.icans-sub .is-title{font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+
+/* Ref table */
+.rtbl{width:100%;border-collapse:collapse;font-size:12px;}
+.rtbl th{background:var(--teal);color:#fff;padding:8px 10px;text-align:left;font-weight:700;}
+.rtbl td{padding:7px 10px;border-bottom:1px solid var(--gray100);vertical-align:top;line-height:1.5;}
+.rtbl tr:nth-child(even) td{background:var(--gray50);}
+.g1t{color:var(--g1c);font-weight:700;} .g2t{color:var(--g2c);font-weight:700;}
+.g3t{color:var(--g3c);font-weight:700;} .g4t{color:var(--g4c);font-weight:700;}
+
+.info-pill{display:inline-block;background:var(--teal-l);color:var(--teal-d);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;margin-left:4px;}
+.warn-pill{display:inline-block;background:#fee2e2;color:#991b1b;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;}
+
+.disc{font-size:10px;color:var(--gray600);text-align:center;padding:12px 16px;background:#fff;border-radius:10px;border:1px solid var(--gray200);margin-top:14px;line-height:1.6;}
+.disc strong{color:var(--teal-d);}
+
+.print-btn{display:block;margin:10px auto 0;padding:7px 20px;background:#fff;border:1.5px solid var(--teal);color:var(--teal);border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;}
+
+/* Section header with color bar */
+.sh{font-size:13px;font-weight:700;color:var(--gray800);padding:8px 12px;border-radius:8px;margin:12px 0 8px;display:flex;align-items:center;gap:6px;}
+.sh-teal{background:var(--teal-l);color:var(--teal-d);}
+.sh-purple{background:var(--purple-l);color:var(--purple);}
+.sh-red{background:#fee2e2;color:#991b1b;}
+.sh-yellow{background:#fef9c3;color:#713f12;}
+.sh-blue{background:#eff6ff;color:#1e3a8a;}
+
+@media print{.no-print{display:none!important;}#result{display:block!important;}}
+
+/* toggle section */
+.toggle-hdr{cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center;}
+.toggle-hdr::after{content:'▾';font-size:14px;}
+.toggle-hdr.collapsed::after{content:'▸';}
+.toggle-body{margin-top:10px;}
+.toggle-body.hidden{display:none;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="brand"><span>drAisyi EduCare</span></div>
+  <h1>🧬 CRS / ICANS Toxicity Grading & Escalation Assistant <span class="v-badge">v2.0</span></h1>
+  <p>Immune Effector Cell (IEC) Therapy — Toxicity Assessment Tool</p>
+  <div class="badge">ASTCT 2019 Consensus Grading · Lee et al. BBMT 2019</div>
+</div>
+
+<div class="wrap">
+
+<div class="tabs no-print">
+  <button class="tb active" onclick="sTab('assess')">📋 Penilaian</button>
+  <button class="tb" onclick="sTab('ref')">📖 Referensi Cepat</button>
+  <button class="tb" onclick="sTab('timeline')">⏱️ Timeline</button>
+</div>
+
+<!-- ===== TAB PENILAIAN ===== -->
+<div class="tc active" id="tc-assess">
+
+<!-- KONTEKS -->
+<div class="card">
+  <div class="ctitle">Konteks Klinis</div>
+  <div class="g3">
+    <div class="fld">
+      <label>Hari Pasca Infus</label>
+      <input type="number" id="dayPost" min="0" max="90" placeholder="cth: 3">
+    </div>
+    <div class="fld">
+      <label>Jenis Terapi IEC</label>
+      <select id="therapyType">
+        <option value="">Pilih...</option>
+        <option value="cart_cd19">CAR-T CD19</option>
+        <option value="cart_bcma">CAR-T BCMA</option>
+        <option value="cart_other">CAR-T lainnya</option>
+        <option value="blinatumomab">Blinatumomab</option>
+        <option value="bispecific">Bispecific Ab lain</option>
+        <option value="iec_invest">IEC investigasional</option>
+      </select>
+    </div>
+    <div class="fld">
+      <label>Status Episode CRS</label>
+      <select id="episodeStatus">
+        <option value="new">Penilaian baru / belum dapat terapi</option>
+        <option value="post_toci">Sudah dapat tocilizumab</option>
+        <option value="post_steroid">Sudah dapat steroid</option>
+        <option value="post_antipyretic">Sudah dapat antipiretik saja</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- DEMAM -->
+<div class="card">
+  <div class="ctitle toggle-hdr" onclick="toggleCard(this)">🌡️ Status Demam</div>
+  <div class="toggle-body">
+    <div class="fld" style="margin-bottom:10px;">
+      <label>Suhu saat ini (°C)</label>
+      <input type="number" id="temp" min="35" max="42" step="0.1" placeholder="cth: 38.5">
+    </div>
+    <div class="fld">
+      <label>Riwayat demam dalam episode ini</label>
+      <div class="rg" id="rg-fever">
+        <div class="rb"><input type="radio" name="fever" id="f_yes" value="yes"><label for="f_yes">✅ Ya, pernah demam ≥38°C</label></div>
+        <div class="rb"><input type="radio" name="fever" id="f_no" value="no"><label for="f_no">❌ Belum pernah demam</label></div>
+        <div class="rb"><input type="radio" name="fever" id="f_unk" value="unk"><label for="f_unk">❓ Belum dinilai</label></div>
+      </div>
+    </div>
+    <div id="antipyretic-note" style="margin-top:8px;display:none;">
+      <div class="abox a-orange" style="margin-top:0;">
+        <div class="ai">ℹ️</div>
+        <div class="ab">Setelah terapi anti-sitokin, steroid, atau antipiretik, demam dapat tersamarkan. Jika CRS sudah established, grade tetap dinilai berdasarkan hipotensi dan/atau hipoksia yang ada.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OKSIGEN -->
+<div class="card">
+  <div class="ctitle toggle-hdr" onclick="toggleCard(this)">🫁 Status Oksigenasi</div>
+  <div class="toggle-body">
+    <div class="g2" style="margin-bottom:10px;">
+      <div class="fld">
+        <label>SpO₂ saat ini (%)</label>
+        <input type="number" id="spo2" min="50" max="100" placeholder="cth: 94">
+      </div>
+      <div></div>
+    </div>
+    <div class="fld">
+      <label>Kebutuhan Oksigen / Dukungan Napas</label>
+      <div class="rg" id="rg-o2">
+        <div class="rb"><input type="radio" name="o2" id="o2_none" value="0"><label for="o2_none">Tidak butuh O₂</label></div>
+        <div class="rb"><input type="radio" name="o2" id="o2_lowflow" value="2"><label for="o2_lowflow">Low-flow nasal kanul ≤6 L/min / blow-by <span class="info-pill">→ Grade 2</span></label></div>
+        <div class="rb"><input type="radio" name="o2" id="o2_highflow" value="3"><label for="o2_highflow">High-flow NC >6 L/min / face mask / NRM / Venturi <span class="info-pill">→ Grade 3</span></label></div>
+        <div class="rb warn"><input type="radio" name="o2" id="o2_ppv" value="4"><label for="o2_ppv">CPAP / BiPAP / NIV / Intubasi / Ventilator <span class="warn-pill">→ Grade 4</span></label></div>
+        <div class="rb"><input type="radio" name="o2" id="o2_unk" value="unk"><label for="o2_unk">❓ Belum dinilai</label></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HEMODINAMIK -->
+<div class="card">
+  <div class="ctitle toggle-hdr" onclick="toggleCard(this)">❤️ Hemodinamik</div>
+  <div class="toggle-body">
+    <div class="g2" style="margin-bottom:10px;">
+      <div class="fld">
+        <label>Tekanan Darah Sistolik (mmHg) <span class="sub">untuk alert syok pediatrik</span></label>
+        <input type="number" id="sbp" min="40" max="200" placeholder="cth: 80">
+      </div>
+      <div class="fld">
+        <label>Usia Pasien (tahun)</label>
+        <input type="number" id="age" min="0" max="18" step="0.5" placeholder="cth: 8">
+      </div>
+    </div>
+    <div class="fld">
+      <label>Status Vasopressor</label>
+      <div class="rg" id="rg-vp">
+        <div class="rb"><input type="radio" name="vp" id="vp_none" value="0"><label for="vp_none">Tidak ada vasopressor</label></div>
+        <div class="rb"><input type="radio" name="vp" id="vp_fluid" value="1"><label for="vp_fluid">Hipotensi — respons cairan, belum butuh vasopressor <span class="info-pill">→ Grade 2</span></label></div>
+        <div class="rb"><input type="radio" name="vp" id="vp_one" value="3"><label for="vp_one">1 vasopressor ± vasopresin <span class="info-pill">→ Grade 3</span></label></div>
+        <div class="rb warn"><input type="radio" name="vp" id="vp_multi" value="4"><label for="vp_multi">≥2 vasopressor (tidak termasuk vasopresin) <span class="warn-pill">→ Grade 4</span></label></div>
+        <div class="rb"><input type="radio" name="vp" id="vp_unk" value="unk"><label for="vp_unk">❓ Belum dinilai</label></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DISFUNGSI ORGAN (FLAG ONLY) -->
+<div class="card">
+  <div class="ctitle toggle-hdr" onclick="toggleCard(this)">🏥 Disfungsi Organ <span class="info-pill" style="margin-left:4px;">Flag klinis — tidak memengaruhi CRS grade ASTCT</span></div>
+  <div class="toggle-body">
+    <div class="chk-list">
+      <div class="ci"><input type="checkbox" id="org_none" onchange="toggleOrgNone()"><label for="org_none"><strong>Tidak ada disfungsi organ relevan</strong></label></div>
+      <hr style="border:none;border-top:1px solid var(--gray200);margin:4px 0;">
+      <div class="ci"><input type="checkbox" id="org_renal" onchange="clearOrgNone()"><label for="org_renal">Kreatinin ≥2× baseline</label></div>
+      <div class="ci"><input type="checkbox" id="org_bili" onchange="clearOrgNone()"><label for="org_bili">Bilirubin ≥2× ULN</label></div>
+      <div class="ci"><input type="checkbox" id="org_ast" onchange="clearOrgNone()"><label for="org_ast">AST/ALT ≥5× ULN</label></div>
+      <div class="ci"><input type="checkbox" id="org_cardiac" onchange="clearOrgNone()"><label for="org_cardiac">Disfungsi kardiak (aritmia / penurunan EF)</label></div>
+      <div class="ci"><input type="checkbox" id="org_coag" onchange="clearOrgNone()"><label for="org_coag">Koagulopati / DIC</label></div>
+    </div>
+  </div>
+</div>
+
+<!-- ICANS MINI-MODULE -->
+<div class="card">
+  <div class="ctitle toggle-hdr" onclick="toggleCard(this)">🧠 ICANS Assessment <span class="info-pill" style="margin-left:4px;">Modul Tersendiri</span></div>
+  <div class="toggle-body">
+    <div class="abox a-purple" style="margin-bottom:12px;">
+      <div class="ai">ℹ️</div>
+      <div class="ab">ICANS dinilai terpisah dari CRS. Pada ICANS terisolasi, steroid adalah pilar utama — tocilizumab tidak bermanfaat. Pada CRS + ICANS bersamaan, tangani keduanya paralel.</div>
+    </div>
+    <div class="g2" style="margin-bottom:10px;">
+      <div class="fld">
+        <label>Ada perubahan status mental?</label>
+        <div class="rg">
+          <div class="rb"><input type="radio" name="neuro_mental" id="nm_no" value="no"><label for="nm_no">Tidak</label></div>
+          <div class="rb"><input type="radio" name="neuro_mental" id="nm_yes" value="yes"><label for="nm_yes">Ya</label></div>
+          <div class="rb"><input type="radio" name="neuro_mental" id="nm_unk" value="unk"><label for="nm_unk">Belum dinilai</label></div>
+        </div>
+      </div>
+      <div class="fld">
+        <label>ICE Score (≥12 th) <span class="sub">Orientasi/Perintah/Menulis/Perhatian/Bicara — maks 10</span></label>
+        <input type="number" id="ice_score" min="0" max="10" placeholder="0–10">
+      </div>
+    </div>
+    <div class="g2" style="margin-bottom:10px;">
+      <div class="fld">
+        <label>Level Kesadaran</label>
+        <select id="loc">
+          <option value="">Pilih...</option>
+          <option value="normal">Alert / Normal</option>
+          <option value="drowsy">Somnolen (terbangun dengan suara)</option>
+          <option value="obtunded">Obtunded (terbangun dengan sentuhan)</option>
+          <option value="stupor">Stupor (tidak terbangun)</option>
+          <option value="coma">Koma</option>
+        </select>
+      </div>
+      <div class="fld">
+        <label>Ada kejang?</label>
+        <div class="rg">
+          <div class="rb"><input type="radio" name="seizure" id="sz_no" value="no"><label for="sz_no">Tidak</label></div>
+          <div class="rb warn"><input type="radio" name="seizure" id="sz_yes" value="yes"><label for="sz_yes">Ya</label></div>
+        </div>
+      </div>
+    </div>
+    <div class="chk-list">
+      <div class="ci"><input type="checkbox" id="ican_weakness"><label for="ican_weakness">Kelemahan motorik fokal</label></div>
+      <div class="ci"><input type="checkbox" id="ican_icp"><label for="ican_icp">Tanda peningkatan TIK (edema papil, Cushing response)</label></div>
+      <div class="ci"><input type="checkbox" id="ican_headache"><label for="ican_headache">Nyeri kepala berat / progresif</label></div>
+    </div>
+  </div>
+</div>
+
+<!-- SEPSIS / INFEKSI -->
+<div class="card">
+  <div class="ctitle toggle-hdr" onclick="toggleCard(this)">🦠 Infeksi / Sepsis Overlay</div>
+  <div class="toggle-body">
+    <div class="chk-list">
+      <div class="ci"><input type="checkbox" id="inf_early"><label for="inf_early">Demam onset hari ke-0 atau sebelum infus</label></div>
+      <div class="ci"><input type="checkbox" id="inf_rigors"><label for="inf_rigors">Rigor/menggigil berat</label></div>
+      <div class="ci"><input type="checkbox" id="inf_focus"><label for="inf_focus">Fokus infeksi klinis atau radiologis jelas</label></div>
+      <div class="ci"><input type="checkbox" id="inf_culture"><label for="inf_culture">Kultur positif atau dugaan kuat BSI</label></div>
+      <div class="ci"><input type="checkbox" id="inf_notoci"><label for="inf_notoci">Tidak respons terhadap tocilizumab ≥12–24 jam</label></div>
+      <div class="ci"><input type="checkbox" id="inf_pct"><label for="inf_pct">PCT sangat tinggi (>10 ng/mL) — <em>clue pendukung, bukan penentu</em></label></div>
+    </div>
+  </div>
+</div>
+
+<!-- HLH/MAS FLAGS -->
+<div class="card">
+  <div class="ctitle toggle-hdr" onclick="toggleCard(this)">🔥 Tanda IEC-HS / HLH-MAS <span class="info-pill" style="margin-left:4px;">Flag Penting</span></div>
+  <div class="toggle-body">
+    <div class="abox a-blue" style="margin-bottom:10px;">
+      <div class="ai">ℹ️</div>
+      <div class="ab">IEC-associated Hemophagocytic Syndrome (IEC-HS) / HLH-like toxicity dapat tumpang tindih atau mengikuti CRS berat. Pertimbangkan bila CRS refrakter dengan gambaran laboratoris di bawah ini.</div>
+    </div>
+    <div class="chk-list">
+      <div class="ci"><input type="checkbox" id="hlh_ferritin"><label for="hlh_ferritin">Ferritin meningkat tajam (>10.000 ng/mL atau >10× dari nilai sebelumnya)</label></div>
+      <div class="ci"><input type="checkbox" id="hlh_fibrinogen"><label for="hlh_fibrinogen">Fibrinogen rendah dan/atau menurun progresif</label></div>
+      <div class="ci"><input type="checkbox" id="hlh_cyto"><label for="hlh_cyto">Sitopenia progresif (≥2 cell line)</label></div>
+      <div class="ci"><input type="checkbox" id="hlh_transaminitis"><label for="hlh_transaminitis">Transaminitis signifikan (AST/ALT >5× ULN)</label></div>
+      <div class="ci"><input type="checkbox" id="hlh_ddimer"><label for="hlh_ddimer">D-dimer sangat tinggi / koagulopati / DIC</label></div>
+      <div class="ci"><input type="checkbox" id="hlh_refractory"><label for="hlh_refractory">CRS tidak membaik meski sudah tocilizumab + steroid</label></div>
+    </div>
+  </div>
+</div>
+
+<div class="no-print">
+  <button class="btn-main" onclick="analyze()">🔍 Analisis CRS Grade & Rekomendasi</button>
+  <button class="btn-sec" onclick="resetForm()">↺ Reset Form</button>
+</div>
+</div><!-- end tc-assess -->
+
+<!-- ===== TAB REF ===== -->
+<div class="tc" id="tc-ref">
+  <div class="card">
+    <div class="ctitle">ASTCT 2019 — Kriteria CRS Grade</div>
+    <table class="rtbl">
+      <thead><tr><th>Grade</th><th>Demam</th><th>Hipotensi</th><th>Hipoksia</th></tr></thead>
+      <tbody>
+        <tr><td class="g1t">Grade 1</td><td>≥38°C</td><td>Tidak ada</td><td>Tidak ada</td></tr>
+        <tr><td class="g2t">Grade 2</td><td>≥38°C</td><td>Tidak butuh vasopressor (boleh respons cairan)</td><td>Low-flow nasal kanul ≤6 L/min atau blow-by</td></tr>
+        <tr><td class="g3t">Grade 3</td><td>≥38°C</td><td><strong>1 vasopressor ± vasopresin</strong></td><td>High-flow NC, face mask, non-rebreather, Venturi</td></tr>
+        <tr><td class="g4t">Grade 4</td><td>≥38°C</td><td><strong>≥2 vasopressor</strong> (tidak termasuk vasopresin)</td><td><strong>Positive pressure ventilation</strong> (CPAP/BiPAP/NIV/intubasi/ventilator)</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11px;color:#6b7280;margin-top:8px;">* Grade ditentukan berdasarkan parameter <strong>TERTINGGI</strong>. Demam ≥38°C wajib ada saat diagnosis awal. Disfungsi organ <u>tidak</u> memengaruhi grade CRS ASTCT — dinilai terpisah dengan CTCAE.</p>
+  </div>
+  <div class="card">
+    <div class="ctitle">Peta O₂ dan Vasopressor → Grade</div>
+    <table class="rtbl">
+      <thead><tr><th>Parameter</th><th>Jenis</th><th>Grade CRS</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="4"><strong>Oksigen</strong></td><td>Tidak butuh O₂</td><td>—</td></tr>
+        <tr><td>Nasal kanul ≤6 L/min / blow-by</td><td class="g2t">Grade 2</td></tr>
+        <tr><td>High-flow NC >6L / face mask / NRM / Venturi</td><td class="g3t">Grade 3</td></tr>
+        <tr><td>CPAP / BiPAP / NIV / Intubasi / Ventilator</td><td class="g4t">Grade 4</td></tr>
+        <tr><td rowspan="4"><strong>Vasopressor</strong></td><td>Tidak ada vasopressor</td><td>—</td></tr>
+        <tr><td>Hipotensi respons cairan (tanpa vasopressor)</td><td class="g2t">Grade 2</td></tr>
+        <tr><td>1 vasopressor ± vasopresin</td><td class="g3t">Grade 3</td></tr>
+        <tr><td>≥2 vasopressor (tidak termasuk vasopresin)</td><td class="g4t">Grade 4</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ctitle">Tocilizumab — Dosis Pediatrik</div>
+    <div style="font-size:13px;line-height:1.9;color:var(--gray700);">
+      <p><strong>BB &lt;30 kg:</strong> 12 mg/kg IV infus 1 jam</p>
+      <p><strong>BB ≥30 kg:</strong> 8 mg/kg IV, maks 800 mg, infus 1 jam</p>
+      <p style="margin-top:6px;"><strong>Ulangan:</strong> Setelah 8 jam jika tidak respons; maks 3–4 dosis sesuai protokol</p>
+      <p style="margin-top:6px;color:#dc2626;font-size:12px;"><strong>⚠️ Perhatian:</strong> Tocilizumab dapat menutupi demam dan meningkatkan risiko infeksi sekunder. Ambil kultur sebelum pemberian bila memungkinkan. <strong>Tocilizumab TIDAK bermanfaat untuk ICANS terisolasi.</strong></p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ctitle">Manajemen Singkat per Grade</div>
+    <table class="rtbl">
+      <thead><tr><th>Grade</th><th>Monitoring</th><th>Tocilizumab</th><th>Steroid</th><th>ICU</th></tr></thead>
+      <tbody>
+        <tr><td class="g1t">1</td><td>Vital tiap 4–6 jam; rawat ruangan biasa</td><td>Tidak rutin; pertimbangkan bila Grade 1 persisten atau risiko tinggi</td><td>Tidak rutin</td><td>Tidak</td></tr>
+        <tr><td class="g2t">2</td><td>Vital tiap 2–4 jam; rawat inap aktif</td><td>Ya — segera</td><td>Bila tidak respons toci dalam 12–24 jam</td><td>Pertimbangkan</td></tr>
+        <tr><td class="g3t">3</td><td>ICU; monitoring kontinu</td><td>Ya — segera, dapat diulang</td><td>Ya — bersamaan atau segera setelah toci</td><td>Ya — segera</td></tr>
+        <tr><td class="g4t">4</td><td>ICU penuh; invasif monitoring</td><td>Ya — tidak ada penundaan</td><td>Ya — pulse dose</td><td>Ya — segera</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== TAB TIMELINE ===== -->
+<div class="tc" id="tc-timeline">
+  <div class="card">
+    <div class="ctitle">Onset Tipikal CRS per Jenis IEC Therapy</div>
+    <table class="rtbl">
+      <thead><tr><th>Terapi</th><th>Onset</th><th>Puncak</th><th>Resolusi</th><th>Catatan</th></tr></thead>
+      <tbody>
+        <tr><td><strong>CAR-T CD19</strong></td><td>Hari 1–5</td><td>Hari 3–7</td><td>≤14 hari</td><td>Onset lebih awal = risiko lebih berat; waspadai ICANS di hari 4–10</td></tr>
+        <tr><td><strong>CAR-T BCMA</strong></td><td>Hari 1–7</td><td>Hari 3–10</td><td>≤14 hari</td><td>Sering Grade 1–2; CRS berat lebih jarang</td></tr>
+        <tr><td><strong>Blinatumomab</strong></td><td>Jam 1–48</td><td>Jam 24–72</td><td>3–7 hari</td><td>Terjadi sering di awal siklus; pertimbangkan interrupt/step-down dosis</td></tr>
+        <tr><td><strong>Bispecific Ab</strong></td><td>Variabel</td><td>Variabel</td><td>Variabel</td><td>Ikuti protokol step-up dosing; step-down saat CRS</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ctitle">Alarm Klinis per Fase</div>
+    <div class="chk-list" style="gap:10px;">
+      <div style="padding:10px;background:var(--g2b);border-radius:8px;font-size:13px;border-left:4px solid #f59e0b;"><strong>Hari 1–3 (CAR-T):</strong> Risiko tinggi CRS. Vital signs tiap 4–6 jam. Siapkan IV akses adekuat dan tocilizumab standby.</div>
+      <div style="padding:10px;background:var(--g3b);border-radius:8px;font-size:13px;border-left:4px solid #ea580c;"><strong>Hari 3–7 (CAR-T):</strong> Puncak CRS dan risiko ICANS bersamaan. Evaluasi neurologi harian dengan ICE score.</div>
+      <div style="padding:10px;background:#eff6ff;border-radius:8px;font-size:13px;border-left:4px solid #3b82f6;"><strong>Hari 7–14:</strong> CRS biasanya mulai mereda; awasi rebound fever (infeksi, HLH) atau ICANS terlambat.</div>
+      <div style="padding:10px;background:var(--g1b);border-radius:8px;font-size:13px;border-left:4px solid #22c55e;"><strong>Hari ≥14:</strong> CRS jarang berlanjut. Demam persisten → pertimbangkan infeksi, HLH/MAS, relaps penyakit.</div>
+      <div style="padding:10px;background:var(--purple-l);border-radius:8px;font-size:13px;border-left:4px solid var(--purple);"><strong>Blinatumomab — Awal Siklus:</strong> Monitor ketat 24–48 jam pertama tiap siklus. Interrupt infus jika CRS ≥Grade 2. Restart dengan step-up sesuai protokol.</div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <div style="height:2px;background:linear-gradient(90deg,var(--teal),transparent);margin:16px 0;"></div>
+  <div id="flags-row" class="flags-row"></div>
+  <div id="gbanner" class="gbanner"></div>
+
+  <!-- Shock alert -->
+  <div id="shock-alert"></div>
+
+  <!-- CRS Rec -->
+  <div class="card" id="rec-crs" style="display:none;">
+    <div class="ctitle">Rekomendasi Manajemen CRS</div>
+    <div id="rec-crs-body"></div>
+  </div>
+
+  <!-- Therapy-specific -->
+  <div class="card" id="rec-therapy" style="display:none;">
+    <div class="ctitle">Rekomendasi Spesifik Terapi</div>
+    <div id="rec-therapy-body"></div>
+  </div>
+
+  <!-- Organ flags -->
+  <div id="organ-alert"></div>
+
+  <!-- ICANS -->
+  <div class="card" id="rec-icans" style="display:none;">
+    <div class="ctitle" style="color:var(--purple);">🧠 Penilaian ICANS</div>
+    <div id="rec-icans-body"></div>
+  </div>
+
+  <!-- Sepsis -->
+  <div id="sepsis-alert"></div>
+
+  <!-- HLH -->
+  <div id="hlh-alert"></div>
+
+  <!-- Disclaimer -->
+  <div id="reassess-note"></div>
+
+  <button class="print-btn no-print" onclick="window.print()">🖨️ Cetak / Simpan PDF</button>
+</div>
+
+<div class="disc">
+  <strong>drAisyi EduCare</strong> — Alat bantu edukasi klinis berbasis ASTCT 2019 Consensus Grading (Lee et al. BBMT 2019).<br>
+  Tidak menggantikan penilaian klinis dokter dan keputusan DPJP. Selalu sesuaikan dengan kondisi pasien dan protokol institusi.
+</div>
+
+</div><!-- end wrap -->
+
+<script>
+function sTab(t) {
+  ['assess','ref','timeline'].forEach(function(x) {
+    document.getElementById('tc-'+x).classList.toggle('active', x===t);
+  });
+  document.querySelectorAll('.tb').forEach(function(b,i) {
+    b.classList.toggle('active', ['assess','ref','timeline'][i]===t);
+  });
+}
+
+function toggleCard(hdr) {
+  hdr.classList.toggle('collapsed');
+  var body = hdr.nextElementSibling;
+  body.classList.toggle('hidden');
+}
+
+function toggleOrgNone() {
+  var none = document.getElementById('org_none').checked;
+  ['org_renal','org_bili','org_ast','org_cardiac','org_coag'].forEach(function(id) {
+    if (none) document.getElementById(id).checked = false;
+  });
+}
+function clearOrgNone() { document.getElementById('org_none').checked = false; }
+
+function getRadio(name) {
+  var el = document.querySelector('input[name="'+name+'"]:checked');
+  return el ? el.value : null;
+}
+function chk(id) { return document.getElementById(id).checked; }
+function val(id) { return parseFloat(document.getElementById(id).value); }
+function sel(id) { return document.getElementById(id).value; }
+
+// Show antipyretic note when post-treatment selected
+document.getElementById('episodeStatus').addEventListener('change', function() {
+  var show = this.value !== 'new';
+  document.getElementById('antipyretic-note').style.display = show ? 'block' : 'none';
+});
+
+function analyze() {
+  // ---- INPUTS ----
+  var day = parseInt(document.getElementById('dayPost').value);
+  var therapy = sel('therapyType');
+  var episode = sel('episodeStatus');
+  var temp = val('temp');
+  var feverHx = getRadio('fever');
+  var o2Level = getRadio('o2');
+  var vpLevel = getRadio('vp');
+  var spo2 = val('spo2');
+  var sbp = val('sbp');
+  var age = val('age');
+
+  // Validate critical fields
+  if (!feverHx) { alert('Pilih status riwayat demam.'); return; }
+  if (!o2Level) { alert('Pilih kebutuhan oksigen.'); return; }
+  if (!vpLevel) { alert('Pilih status vasopressor.'); return; }
+
+  // ---- CRS DIAGNOSIS ----
+  var tempNow = !isNaN(temp) && temp >= 38.0;
+  var priorFever = feverHx === 'yes';
+  var crsEstablished = tempNow || (priorFever && episode !== 'new');
+
+  var incomplete = (o2Level === 'unk' || vpLevel === 'unk' || feverHx === 'unk');
+
+  // ---- CRS GRADE ----
+  var o2 = o2Level === 'unk' ? null : parseInt(o2Level);
+  var vp = vpLevel === 'unk' ? null : parseInt(vpLevel);
+
+  var grade = 0;
+  if (crsEstablished) {
+    grade = 1;
+    if (o2 === 2 || vp === 1) grade = Math.max(grade, 2);
+    if (o2 === 3 || vp === 3) grade = Math.max(grade, 3);
+    if (o2 === 4 || vp === 4) grade = Math.max(grade, 4);
+  }
+
+  // ---- ICANS ----
+  var neuroMental = getRadio('neuro_mental');
+  var iceScore = val('ice_score');
+  var loc = sel('loc');
+  var seizure = getRadio('seizure');
+  var hasICANS = neuroMental === 'yes' || seizure === 'yes' ||
+    chk('ican_weakness') || chk('ican_icp') ||
+    (!isNaN(iceScore) && iceScore < 10);
+
+  // ---- SEPSIS FLAGS ----
+  var sepsisFlags = [];
+  if (chk('inf_early')) sepsisFlags.push('Demam onset hari ke-0 atau sebelum infus');
+  if (chk('inf_rigors')) sepsisFlags.push('Rigor/menggigil berat');
+  if (chk('inf_focus')) sepsisFlags.push('Fokus infeksi klinis/radiologis jelas');
+  if (chk('inf_culture')) sepsisFlags.push('Kultur positif atau dugaan kuat BSI');
+  if (chk('inf_notoci')) sepsisFlags.push('Tidak respons terhadap tocilizumab ≥12–24 jam');
+  if (chk('inf_pct')) sepsisFlags.push('PCT sangat tinggi >10 ng/mL (clue pendukung)');
+
+  // ---- ORGAN DYSFUNCTION ----
+  var orgIds = ['org_renal','org_bili','org_ast','org_cardiac','org_coag'];
+  var orgFlags = orgIds.filter(function(id){ return chk(id); });
+
+  // ---- HLH FLAGS ----
+  var hlhCount = ['hlh_ferritin','hlh_fibrinogen','hlh_cyto','hlh_transaminitis','hlh_ddimer','hlh_refractory'].filter(function(id){ return chk(id); }).length;
+
+  // ---- SHOCK ALERT ----
+  var shockAlert = '';
+  if (!isNaN(sbp) && !isNaN(age) && age > 0) {
+    var sbpThreshold = 70 + 2 * age; // PALS formula
+    if (sbp < sbpThreshold) {
+      shockAlert = '<div class="abox a-red"><div class="ai">⚠️</div><div class="ab"><strong>Alert Syok Pediatrik</strong>SBP '+sbp+' mmHg di bawah ambang batas perkiraan usia ('+Math.round(sbpThreshold)+' mmHg untuk usia '+age+' tahun). Nilai kebutuhan bolus cairan dan vasopressor. Grade CRS tetap ditentukan berdasarkan kebutuhan vasopressor, bukan nilai SBP saja.</div></div>';
+    }
+  }
+
+  renderResult(grade, crsEstablished, hasICANS, sepsisFlags, orgFlags, hlhCount, shockAlert, therapy, episode, day, temp, incomplete, iceScore, loc, seizure);
+}
+
+var gradeConf = {
+  0:  {icon:'✅',label:'TIDAK ADA CRS',desc:'Kriteria CRS ASTCT tidak terpenuhi saat ini.',c:'#4b5563',bg:'#f3f4f6',br:'#d1d5db'},
+  '-1':{icon:'⚠️',label:'BELUM MEMENUHI KRITERIA CRS',desc:'Demam belum terdokumentasi pada episode ini. Jika penilaian baru, CRS tidak dapat didiagnosis. Jika CRS sudah established sebelum antipiretik/toci/steroid, nilai berdasarkan hipotensi dan hipoksia yang ada.',c:'#4b5563',bg:'#f3f4f6',br:'#d1d5db'},
+  1:  {icon:'🟢',label:'CRS GRADE 1',desc:'Demam ≥38°C tanpa hipotensi yang membutuhkan intervensi dan tanpa hipoksia.',c:'#15803d',bg:'#dcfce7',br:'#86efac'},
+  2:  {icon:'🟡',label:'CRS GRADE 2',desc:'Demam dengan hipotensi (respons cairan, tanpa vasopressor) dan/atau hipoksia yang membutuhkan oksigen low-flow.',c:'#b45309',bg:'#fef3c7',br:'#fde68a'},
+  3:  {icon:'🟠',label:'CRS GRADE 3',desc:'Demam dengan hipotensi yang membutuhkan 1 vasopressor ± vasopresin, dan/atau hipoksia membutuhkan oksigen high-flow, face mask, NRM, atau Venturi.',c:'#c2410c',bg:'#ffedd5',br:'#fed7aa'},
+  4:  {icon:'🔴',label:'CRS GRADE 4 — LIFE-THREATENING',desc:'Demam dengan hipotensi membutuhkan ≥2 vasopressor (tidak termasuk vasopresin), dan/atau memerlukan positive pressure ventilation (CPAP/BiPAP/NIV/intubasi/ventilator).',c:'#991b1b',bg:'#fee2e2',br:'#fca5a5'}
+};
+
+function renderResult(grade, crsEst, hasICANS, sepsisFlags, orgFlags, hlhCount, shockAlert, therapy, episode, day, temp, incomplete, iceScore, loc, seizure) {
+
+  // FLAGS ROW
+  var fr = document.getElementById('flags-row');
+  var pills = '';
+  if (!crsEst && grade === 0) pills += '<span class="flag-pill fp-none">CRS: Tidak terpenuhi</span>';
+  else if (grade > 0) pills += '<span class="flag-pill fp-crs'+grade+'">CRS Grade '+grade+'</span>';
+  else pills += '<span class="flag-pill fp-none">CRS: Belum dapat dinilai</span>';
+  if (hasICANS) pills += '<span class="flag-pill fp-icans">🧠 ICANS: Perlu evaluasi</span>';
+  if (sepsisFlags.length >= 2) pills += '<span class="flag-pill fp-sepsis">🦠 Sepsis Overlay: Kuat</span>';
+  else if (sepsisFlags.length === 1) pills += '<span class="flag-pill fp-sepsis">🦠 Infeksi: Perlu dinilai</span>';
+  if (hlhCount >= 3) pills += '<span class="flag-pill fp-hlh">🔥 IEC-HS/HLH: Curiga</span>';
+  if (orgFlags.length > 0) pills += '<span class="flag-pill fp-organ">🏥 Disfungsi Organ</span>';
+  fr.innerHTML = pills;
+
+  // GRADE BANNER
+  var gc = gradeConf[String(grade > 0 ? grade : (crsEst ? 0 : -1))];
+  if (!crsEst && grade === 0) gc = gradeConf['-1'];
+  else if (crsEst && grade === 0) gc = gradeConf[0];
+  var gb = document.getElementById('gbanner');
+  gb.style.background = gc.bg; gb.style.borderColor = gc.br;
+  gb.innerHTML = '<div class="gicon">'+gc.icon+'</div><div class="gtxt"><h2 style="color:'+gc.c+'">'+gc.label+'</h2><p style="color:'+gc.c+'">'+gc.desc+'</p></div>';
+
+  // SHOCK ALERT
+  document.getElementById('shock-alert').innerHTML = shockAlert;
+
+  // INCOMPLETE WARNING
+  var incNote = incomplete ? '<div class="abox a-gray" style="margin-bottom:12px;"><div class="ai">❓</div><div class="ab"><strong>Assessment Belum Lengkap</strong>Beberapa parameter belum dinilai. Grading di atas bersifat parsial. Lengkapi data untuk penilaian akurat.</div></div>' : '';
+
+  // CRS RECS
+  var crsCard = document.getElementById('rec-crs');
+  var crsBody = document.getElementById('rec-crs-body');
+  if (grade > 0) {
+    crsCard.style.display = 'block';
+    crsBody.innerHTML = incNote + buildCRSRec(grade, therapy);
+  } else {
+    crsCard.style.display = 'none';
+  }
+
+  // THERAPY-SPECIFIC
+  var thCard = document.getElementById('rec-therapy');
+  var thBody = document.getElementById('rec-therapy-body');
+  if (grade > 0 && therapy) {
+    thCard.style.display = 'block';
+    thBody.innerHTML = buildTherapyRec(therapy, grade);
+  } else { thCard.style.display = 'none'; }
+
+  // ORGAN
+  var orgDiv = document.getElementById('organ-alert');
+  if (orgFlags.length > 0) {
+    var orgNames = {org_renal:'Disfungsi renal',org_bili:'Hiperbilirubinemia',org_ast:'Transaminitis',org_cardiac:'Disfungsi kardiak',org_coag:'Koagulopati/DIC'};
+    var orgList = orgFlags.map(function(id){ return orgNames[id]; }).join(', ');
+    orgDiv.innerHTML = '<div class="abox a-blue"><div class="ai">🏥</div><div class="ab"><strong>Disfungsi Organ Terdeteksi (Flag Klinis — Tidak Mempengaruhi CRS Grade ASTCT)</strong>'+orgList+'. Tangani secara paralel sesuai panduan. Disfungsi organ pada CRS dinilai terpisah menggunakan CTCAE. Waspadai tumpang tindih dengan IEC-HS/HLH.</div></div>';
+  } else { orgDiv.innerHTML = ''; }
+
+  // ICANS
+  var icansCard = document.getElementById('rec-icans');
+  var icansBody = document.getElementById('rec-icans-body');
+  if (hasICANS) {
+    icansCard.style.display = 'block';
+    icansBody.innerHTML = buildICANSRec(iceScore, loc, seizure, grade);
+  } else { icansCard.style.display = 'none'; }
+
+  // SEPSIS
+  var sDiv = document.getElementById('sepsis-alert');
+  if (sepsisFlags.length >= 2) {
+    sDiv.innerHTML = '<div class="abox a-purple"><div class="ai">🦠</div><div class="ab"><strong>⚠️ Curiga Infeksi / Sepsis Overlay ('+sepsisFlags.length+' indikator)</strong><ul style="margin-top:6px;padding-left:16px;font-size:12px;">'+sepsisFlags.map(function(f){ return '<li>'+f+'</li>'; }).join('')+'</ul><br><strong>Tindakan:</strong> Ambil kultur darah (≥2 set), urin, dan spesimen relevan. Pertimbangkan antibiotik empiris tanpa menunda. PCT tinggi bersifat sugestif, bukan diagnostik — pada inflamasi berat CRS, biomarker dapat tumpang tindih. CRS dan infeksi dapat terjadi bersamaan — tangani paralel.</div></div>';
+  } else if (sepsisFlags.length === 1) {
+    sDiv.innerHTML = '<div class="abox a-orange"><div class="ai">🔍</div><div class="ab"><strong>Satu Indikator Infeksi</strong>'+sepsisFlags[0]+'. Pertimbangkan kultur dan evaluasi klinis lebih lanjut.</div></div>';
+  } else { sDiv.innerHTML = ''; }
+
+  // HLH
+  var hlhDiv = document.getElementById('hlh-alert');
+  if (hlhCount >= 3) {
+    hlhDiv.innerHTML = '<div class="abox" style="background:#fef9c3;border-color:#fde047;color:#713f12;margin-top:12px;"><div class="ai">🔥</div><div class="ab"><strong>⚠️ Curiga IEC-HS / HLH-MAS ('+hlhCount+'/6 kriteria)</strong>CRS berat yang refrakter dengan gambaran hemofagositik harus dipertimbangkan IEC-associated Hemophagocytic Syndrome. Konsultasi hematologi, pertimbangkan bone marrow aspirasi, soluble CD25, NK cell activity. Terapi: steroid dosis tinggi ± etoposid sesuai keputusan tim multidisiplin dan protokol institusi.</div></div>';
+  } else if (hlhCount >= 1) {
+    hlhDiv.innerHTML = '<div class="abox" style="background:#fef9c3;border-color:#fde047;color:#713f12;margin-top:12px;"><div class="ai">🔍</div><div class="ab"><strong>Tanda Awal IEC-HS / HLH — Pantau Ketat</strong>'+hlhCount+'/6 kriteria positif. Lanjutkan monitoring ferritin, fibrinogen, CBC, dan fungsi hati serial.</div></div>';
+  } else { hlhDiv.innerHTML = ''; }
+
+  // REASSESS NOTE
+  var day_ = isNaN(day) ? null : day;
+  var reNote = '';
+  if (day_ !== null && day_ >= 14 && grade > 0) {
+    reNote = '<div class="abox a-orange" style="margin-top:12px;"><div class="ai">📅</div><div class="ab"><strong>Hari ke-'+day_+' — CRS Persisten Tidak Umum</strong>CRS yang menetap setelah hari ke-14 memerlukan evaluasi diagnosis alternatif: infeksi aktif, HLH/MAS sekunder, relaps penyakit, atau toksisitas organ progresif.</div></div>';
+  }
+  document.getElementById('reassess-note').innerHTML = reNote;
+
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function buildCRSRec(grade, therapy) {
+  var monitoring, toci, steroid, icu, labs;
+  if (grade === 1) {
+    monitoring = ['Vital signs tiap 4–6 jam', 'Rawat inap atau observasi ketat', 'Evaluasi ulang setiap 4–8 jam untuk kemungkinan eskalasi grade', 'Pertahankan akses IV adekuat'];
+    toci = ['Tidak rutin untuk Grade 1', 'Pertimbangkan jika Grade 1 persisten >24–48 jam atau terdapat faktor risiko tinggi (tumor burden besar, bridging therapy baru, komorbiditas signifikan)', 'Keputusan sesuai protokol institusi dan produk spesifik'];
+    steroid = ['Tidak direkomendasikan rutin pada Grade 1', 'Hindari bila tidak perlu — dapat mengganggu efikasi CAR-T/IEC'];
+    icu = ['Tidak diperlukan', 'Siapkan rencana eskalasi tertulis jika kondisi memburuk'];
+    labs = ['CBC, panel metabolik (CMP), ferritin, fibrinogen, CRP tiap 24–48 jam', 'Koagulasi (PT, APTT, D-dimer)', 'Kultur darah jika ada kecurigaan infeksi'];
+  } else if (grade === 2) {
+    monitoring = ['Vital signs tiap 2–4 jam', 'Rawat inap dengan monitoring aktif', 'Pastikan akses IV yang adekuat (pertimbangkan CVC)', 'Pantau diuresis dan hidrasi'];
+    toci = ['INDIKASI — berikan sesegera mungkin', 'BB <30 kg: 12 mg/kg IV infus 1 jam', 'BB ≥30 kg: 8 mg/kg IV, maks 800 mg, infus 1 jam', 'Dapat diulang setelah 8 jam bila tidak ada respons (maks 3–4 dosis sesuai protokol)', 'Ambil kultur sebelum pemberian bila memungkinkan'];
+    steroid = ['Tambahkan jika tidak ada respons terhadap tocilizumab dalam 12–24 jam', 'Pertimbangkan lebih awal jika ada gejala ICANS bersamaan', 'Dosis steroid sesuai protokol institusi dan keputusan DPJP'];
+    icu = ['Pertimbangkan transfer ke level perawatan lebih tinggi jika tidak respons atau eskalasi grade'];
+    labs = ['CBC, CMP, ferritin, fibrinogen, LDH tiap 12–24 jam', 'Kultur darah dan urin', 'Prokalsitonin', 'Troponin dan BNP jika ada gejala kardiak', 'Panel koagulasi serial'];
+  } else if (grade === 3) {
+    monitoring = ['Transfer ke ICU / PICU — monitoring kontinu', 'Monitoring hemodinamik invasif bila tersedia', 'Kateter urin untuk pantau output ketat', 'EKG kontinu', 'Evaluasi klinis tiap 1–2 jam'];
+    toci = ['SEGERA — kondisi gawat darurat klinis', 'BB <30 kg: 12 mg/kg IV; BB ≥30 kg: 8 mg/kg IV maks 800 mg', 'Dapat diulang setelah 8 jam', 'Maks 3–4 dosis atau sesuai protokol'];
+    steroid = ['Berikan bersamaan atau segera setelah tocilizumab', 'Dosis dan jenis steroid sesuai protokol CRS/ICANS lokal dan keputusan DPJP', 'Pertimbangkan lebih awal atau dosis lebih tinggi bila ada ICANS bersamaan'];
+    icu = ['Transfer ICU / PICU SEGERA', 'Siapkan dukungan vasopressor dan manajemen jalan napas', 'Koordinasi dengan intensivis dan tim multidisiplin'];
+    labs = ['CBC, CMP, koagulasi, LDH, ferritin tiap 6–12 jam', 'Gas darah arteri', 'Laktat serial', 'Kultur menyeluruh', 'Ekokardiografi jika ada disfungsi kardiak', 'CT/MRI kepala jika ada gejala neurologis'];
+  } else {
+    monitoring = ['ICU / PICU SEGERA — monitoring invasif penuh', 'Arterial line, monitoring tekanan darah kontinu', 'CVP monitoring bila tersedia', 'Pantau output urin ketat'];
+    toci = ['SEGERA — tidak ada penundaan', 'Dapat dikombinasi dengan steroid sejak awal', 'Ulangi sesuai protokol'];
+    steroid = ['Pulse dose steroid SEGERA', 'Jenis dan dosis sesuai protokol CRS Grade 4 institusi dan keputusan DPJP', 'Pertimbangkan deksametason bila ada komponen ICANS'];
+    icu = ['Sudah harus di ICU — eskalasi penuh', 'Siapkan ventilasi mekanik / manajemen jalan napas definitif', 'Konsultasi kardiologi, pulmonologi, neurologi sesuai kebutuhan'];
+    labs = ['Monitoring laboratorium tiap 4–6 jam', 'Panel sepsis lengkap', 'Gas darah arteri serial', 'Monitoring fungsi organ menyeluruh'];
+  }
+
+  var h = '';
+  h += sec('📊','Monitoring & Level Perawatan', monitoring);
+  h += sec('💉','Tocilizumab', toci);
+  h += sec('💊','Steroid', steroid);
+  h += sec('🏥','Kebutuhan ICU / Eskalasi', icu);
+  h += sec('🔬','Pemeriksaan Penunjang', labs);
+  return h;
+}
+
+function buildTherapyRec(therapy, grade) {
+  var items = [];
+  if (therapy === 'blinatumomab' || therapy === 'bispecific') {
+    items.push('Pertimbangkan <strong>interrupt/hold infus</strong> jika CRS ≥ Grade 2 sesuai protokol produk');
+    if (grade >= 2) items.push('Jangan lanjutkan infus sampai CRS mereda ke Grade ≤1 atau sesuai panduan protokol');
+    items.push('Restart blinatumomab dengan step-down dosis sesuai protokol setelah resolusi CRS');
+    items.push('Premedikasi deksametason direkomendasikan sebelum restart dan awal siklus berikutnya');
+    items.push('Monitoring ketat CRS dan ICANS di 48 jam pertama tiap siklus dan setelah restart');
+  } else if (therapy.startsWith('cart')) {
+    items.push('CAR-T tidak dapat di-withdraw setelah infus — fokus manajemen toksisitas');
+    items.push('Pantau CRS dan ICANS secara paralel — dapat terjadi bersamaan atau berurutan');
+    if (grade >= 3) items.push('Pertimbangkan konsultasi ke pusat IEC terdekat atau tim CAR-T institusi');
+    if (therapy === 'cart_cd19') items.push('CAR-T CD19: waspadai ICANS yang dapat muncul bersamaan atau setelah resolusi CRS (hari 4–10)');
+    if (therapy === 'cart_bcma') items.push('CAR-T BCMA: CRS berat lebih jarang, tetapi pantau ketat hari 1–10');
+  } else {
+    items.push('Ikuti algoritma manajemen toksisitas sesuai protokol investigasional / label produk spesifik');
+    items.push('Hubungi sponsor/medical monitor jika menggunakan IEC dalam konteks clinical trial');
+  }
+  return sec('🎯','Rekomendasi Spesifik Terapi', items);
+}
+
+function buildICANSRec(iceScore, loc, seizure, crsGrade) {
+  var items = [];
+  var concern = '';
+
+  if (!isNaN(iceScore)) {
+    if (iceScore === 10) concern = 'ICE Score 10/10 — Normal. Pantau serial.';
+    else if (iceScore >= 7) concern = 'ICE Score ' + iceScore + '/10 — ICANS Grade 1 (bila ada gejala lain).';
+    else if (iceScore >= 3) concern = 'ICE Score ' + iceScore + '/10 — ICANS Grade 2–3. Evaluasi menyeluruh diperlukan.';
+    else concern = 'ICE Score ' + iceScore + '/10 — ICANS Grade 3–4. Tindakan segera.';
+  }
+
+  if (seizure === 'yes') items.push('🚨 Kejang aktif: stabilisasi ABC, antikonvulsan sesuai protokol, konsultasi neurologi segera, MRI kepala');
+  if (loc && loc !== 'normal' && loc !== '') items.push('Penurunan kesadaran: '+loc+' — evaluasi penyebab, pertimbangkan neuroimaging, EEG jika indikasi');
+  if (chk('ican_icp')) items.push('Tanda peningkatan TIK: tata laksana peningkatan TIK, posisi kepala 30°, hindari hipotensi, pertimbangkan CT kepala urgent');
+  if (chk('ican_weakness')) items.push('Kelemahan motorik fokal: MRI kepala segera, konsultasi neurologi');
+
+  items.push('Steroid adalah pilar utama manajemen ICANS (terutama deksametason)');
+  if (crsGrade > 0) {
+    items.push('Pada CRS + ICANS bersamaan: tocilizumab untuk CRS, steroid untuk ICANS — tangani keduanya paralel');
+  } else {
+    items.push('Pada ICANS terisolasi (tanpa CRS aktif): tocilizumab TIDAK bermanfaat — steroid menjadi terapi utama');
+  }
+  items.push('Nilai ICANS Grade menggunakan ASTCT ICANS criteria: ICE score + LOC + seizure + motor + ICP');
+  items.push('Dosis dan durasi steroid untuk ICANS sesuai protokol institusi dan keputusan DPJP');
+  items.push('MRI otak (T2/FLAIR) direkomendasikan untuk evaluasi edema serebral');
+  items.push('Hindari pemberian sedatif berat yang dapat mengaburkan penilaian neurologi');
+
+  var html = '';
+  if (concern) html += '<div class="abox a-purple" style="margin-bottom:10px;"><div class="ai">🧠</div><div class="ab">'+concern+'</div></div>';
+  html += sec('🧠','Tatalaksana ICANS', items);
+  return html;
+}
+
+function sec(icon, title, items) {
+  if (!items.length) return '';
+  return '<div class="rs"><h3>'+icon+' '+title+'</h3><ul class="rl">'+items.map(function(i){ return '<li>'+i+'</li>'; }).join('')+'</ul></div>';
+}
+
+function resetForm() {
+  document.querySelectorAll('input[type=number]').forEach(function(i){ i.value=''; });
+  document.querySelectorAll('select').forEach(function(s){ s.selectedIndex=0; });
+  document.querySelectorAll('input[type=radio]').forEach(function(r){ r.checked=false; });
+  document.querySelectorAll('input[type=checkbox]').forEach(function(c){ c.checked=false; });
+  document.getElementById('result').style.display='none';
+  document.getElementById('antipyretic-note').style.display='none';
+}
+</script>
+</body>
+</html>

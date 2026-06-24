@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAR-T MDT Board Summary & Action Tracker – drAisyi EduCare</title>
+<style>
+:root{--pr:#6C3FC5;--prd:#4B2A8A;--acc:#E040FB;--teal:#00BCD4;--bg:#F5F3FF;--card:#fff;--bdr:#D6CCF5;--txt:#1a1a2e;--mut:#6b7280;--ok:#10b981;--warn:#f59e0b;--err:#ef4444;--sbg:#F0EBFF;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);font-size:13px;}
+.hdr{background:linear-gradient(135deg,var(--prd),var(--pr) 60%,var(--acc));color:#fff;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;}
+.hdr-l{display:flex;align-items:center;gap:12px;}
+.logo{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.45);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;}
+.hdr h1{font-size:16px;font-weight:700;}
+.hdr p{font-size:10px;opacity:.8;margin-top:2px;}
+.hdr-badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:16px;padding:5px 12px;font-size:10px;text-align:center;line-height:1.4;}
+.tabs{display:flex;background:var(--prd);border-bottom:3px solid var(--acc);overflow-x:auto;}
+.tbtn{flex:none;padding:9px 13px;background:none;border:none;color:rgba(255,255,255,.6);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .2s;}
+.tbtn.active{background:var(--acc);color:#fff;}
+.tbtn:hover:not(.active){background:rgba(255,255,255,.1);color:#fff;}
+.main{display:flex;height:calc(100vh - 108px);overflow:hidden;}
+.fp{flex:1.15;overflow-y:auto;padding:16px;border-right:2px solid var(--bdr);}
+.op{flex:1;overflow-y:auto;padding:16px;background:#fafafa;}
+.sec{background:var(--card);border:1px solid var(--bdr);border-radius:9px;margin-bottom:12px;overflow:hidden;}
+.sec-h{background:linear-gradient(90deg,var(--sbg),#fff);padding:9px 13px;font-weight:700;font-size:11px;color:var(--pr);display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--bdr);}
+.sec-b{padding:13px;}
+.tp{display:none;}.tp.active{display:block;}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.fr3{grid-template-columns:1fr 1fr 1fr;}
+.fr1{grid-template-columns:1fr;}
+.fg{display:flex;flex-direction:column;gap:3px;}
+label{font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.4px;}
+input,select,textarea{border:1.5px solid var(--bdr);border-radius:6px;padding:6px 9px;font-size:12px;font-family:inherit;color:var(--txt);background:#fff;transition:border-color .2s;width:100%;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pr);}
+input.req-err{border-color:var(--err)!important;background:#fff5f5;}
+textarea{resize:vertical;min-height:52px;}
+.rg,.cg{display:flex;flex-wrap:wrap;gap:5px;}
+.ri,.ci{display:flex;align-items:center;gap:4px;background:var(--bg);border:1.5px solid var(--bdr);border-radius:6px;padding:4px 9px;cursor:pointer;font-size:11px;transition:all .2s;user-select:none;}
+.ri.sel,.ci.sel{border-color:var(--pr);background:#EDE9FF;color:var(--pr);font-weight:700;}
+.ri input,.ci input{width:auto;border:none;padding:0;background:transparent;}
+.hint{font-size:10px;color:var(--mut);margin-top:3px;}
+.hard-stop{background:#fee2e2;border:2px solid var(--err);border-radius:7px;padding:9px 12px;margin-top:8px;display:none;}
+.hard-stop.show{display:block;}
+.hard-stop p{font-size:11px;color:#7f1d1d;font-weight:700;}
+.warn-box{background:#fef3c7;border:1.5px solid var(--warn);border-radius:7px;padding:8px 11px;margin-top:6px;font-size:11px;color:#78350f;display:none;}
+.warn-box.show{display:block;}
+.gen-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--pr),var(--acc));color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;letter-spacing:.4px;transition:opacity .2s;}
+.gen-btn:hover{opacity:.9;}
+.ph{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--mut);text-align:center;gap:10px;}
+.ph .ic{font-size:52px;opacity:.25;}
+/* ACTION TABLE */
+.act-tbl{width:100%;border-collapse:collapse;font-size:11px;margin-top:8px;}
+.act-tbl th{background:var(--sbg);color:var(--pr);padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.4px;border:1px solid var(--bdr);}
+.act-tbl td{padding:5px 8px;border:1px solid var(--bdr);vertical-align:top;}
+.act-tbl input,.act-tbl select{border:none;border-bottom:1px solid var(--bdr);border-radius:0;padding:3px 4px;font-size:11px;}
+.add-row-btn{margin-top:6px;padding:5px 12px;background:var(--pr);color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:11px;}
+.del-btn{background:#fee2e2;color:var(--err);border:none;border-radius:4px;padding:2px 7px;cursor:pointer;font-size:11px;}
+/* OUTPUT */
+.sc{background:#fff;border:2px solid var(--bdr);border-radius:11px;overflow:hidden;box-shadow:0 2px 14px rgba(108,63,197,.09);}
+.sh{background:linear-gradient(135deg,var(--prd),var(--pr));color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:flex-start;}
+.sh h2{font-size:14px;margin-bottom:3px;}
+.sh p{font-size:10px;opacity:.75;}
+.sb{padding:14px 18px;}
+.ss{margin-bottom:12px;}
+.st{font-size:10px;font-weight:700;color:var(--pr);text-transform:uppercase;letter-spacing:.7px;border-bottom:2px solid var(--sbg);padding-bottom:3px;margin-bottom:7px;}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.si{background:var(--bg);border-radius:5px;padding:6px 9px;}
+.sil{font-size:9px;color:var(--mut);font-weight:700;text-transform:uppercase;}
+.siv{font-size:11px;font-weight:600;margin-top:1px;}
+.sf{background:var(--bg);border-radius:5px;padding:7px 9px;margin-bottom:5px;}
+.sf .sil{font-size:9px;color:var(--mut);font-weight:700;text-transform:uppercase;}
+.sf .siv{font-size:11px;margin-top:2px;}
+.dec-box{border:2px solid var(--pr);border-radius:9px;padding:12px 14px;margin-top:12px;}
+.dec-eligible{background:#d1fae5;border-color:#059669;}
+.dec-cond{background:#fef3c7;border-color:#d97706;}
+.dec-defer{background:#dbeafe;border-color:#2563eb;}
+.dec-no{background:#fee2e2;border-color:#dc2626;}
+.dec-box h3{font-size:11px;font-weight:700;margin-bottom:6px;}
+.chip{display:inline-flex;align-items:center;gap:4px;border-radius:12px;padding:3px 10px;font-size:10px;font-weight:700;margin:2px;}
+.c-ok{background:#d1fae5;color:#065f46;}
+.c-w{background:#fef3c7;color:#92400e;}
+.c-hi{background:#fee2e2;color:#991b1b;}
+.c-vhi{background:#7f1d1d;color:#fff;}
+.c-un{background:#e5e7eb;color:#374151;}
+.c-hard{background:#991b1b;color:#fff;}
+.flag-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;}
+.gate-ok{color:#059669;font-weight:700;}
+.gate-warn{color:#d97706;font-weight:700;}
+.gate-err{color:#dc2626;font-weight:700;}
+.incomplete-banner{background:#fee2e2;border:2px solid var(--err);border-radius:8px;padding:12px 14px;text-align:center;}
+.incomplete-banner h3{color:#991b1b;font-size:13px;margin-bottom:6px;}
+.incomplete-banner ul{text-align:left;font-size:11px;color:#7f1d1d;padding-left:16px;}
+.print-btn{width:100%;margin-top:10px;padding:9px;background:var(--teal);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;}
+.copy-btn{width:100%;margin-top:6px;padding:9px;background:#fff;color:var(--pr);border:2px solid var(--pr);border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;}
+.fb{text-align:center;padding:8px;font-size:9px;color:var(--mut);border-top:1px solid var(--bdr);margin-top:10px;}
+.version-tag{font-size:9px;background:rgba(255,255,255,.2);border-radius:10px;padding:2px 8px;}
+@media print{.hdr,.tabs,.fp,.print-btn,.copy-btn{display:none!important;}.main{display:block;height:auto;}.op{padding:0;background:#fff;}.sc{box-shadow:none;border:1px solid #ccc;}}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:3px;}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-l">
+    <div class="logo">dA</div>
+    <div><h1>drAisyi EduCare</h1><p>Pediatric Oncology Clinical Decision Support</p></div>
+  </div>
+  <div class="hdr-badge">🧬 CAR-T MDT Board Summary<br>&amp; Action Tracker <span class="version-tag">v2.0</span></div>
+</div>
+<div class="tabs" id="tabBar">
+  <button class="tbtn active" data-tab="t1">👤 Pasien</button>
+  <button class="tbtn" data-tab="t2">🔬 Penyakit</button>
+  <button class="tbtn" data-tab="t3">💊 Prior Therapy</button>
+  <button class="tbtn" data-tab="t4">❤️ Organ &amp; Fitness</button>
+  <button class="tbtn" data-tab="t5">🧬 Rencana CAR-T</button>
+  <button class="tbtn" data-tab="t6">⚠️ Risiko</button>
+  <button class="tbtn" data-tab="t7">📋 Board &amp; Aksi</button>
+</div>
+<div class="main">
+<div class="fp" id="formPanel">
+
+<!-- TAB 1 -->
+<div class="tp active" id="t1">
+  <div class="sec"><div class="sec-h">👤 Identitas Pasien (De-identified)</div><div class="sec-b">
+    <div class="fr">
+      <div class="fg"><label>Kode Pasien* <span style="color:var(--err)">●</span></label><input id="pt_id" placeholder="mis. Anak-01 / Kasus A"></div>
+      <div class="fg"><label>Usia*</label><input id="pt_age" placeholder="mis. 9 tahun 2 bulan"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Jenis Kelamin*</label>
+        <select id="pt_sex"><option value="">-- Pilih --</option><option>Laki-laki</option><option>Perempuan</option></select>
+      </div>
+      <div class="fg"><label>Berat Badan (kg)</label><input type="number" id="pt_bb" placeholder="kg"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Tinggi Badan (cm)</label><input type="number" id="pt_tb" placeholder="cm"></div>
+      <div class="fg"><label>BSA (m²) – hitung otomatis</label><input id="pt_bsa" placeholder="Isi BB & TB" readonly style="background:#f3f0ff;"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Tanggal Board*</label><input type="date" id="board_date"></div>
+      <div class="fg"><label>No. Referensi Board</label><input id="board_ref" placeholder="mis. CART-2025-001"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Ketua / Fasilitator Board</label><input id="board_chair" placeholder="mis. Konsultan HEMO"></div>
+      <div class="fg"><label>Anggota MDT (singkatan)</label><input id="board_members" placeholder="mis. Hemo, Onko, Farmasi, ID, ICU"></div>
+    </div>
+  </div></div>
+</div>
+
+<!-- TAB 2 -->
+<div class="tp" id="t2">
+  <div class="sec"><div class="sec-h">🔬 Diagnosis & Status Penyakit</div><div class="sec-b">
+    <div class="fr fr1">
+      <div class="fg"><label>Diagnosis Utama*</label>
+        <select id="dx_main" onchange="updateProductOptions()">
+          <option value="">-- Pilih --</option>
+          <option>B-ALL (Pediatrik ≤25 tahun)</option>
+          <option>B-ALL (Dewasa)</option>
+          <option>T-ALL</option>
+          <option>DLBCL</option>
+          <option>Follicular Lymphoma</option>
+          <option>Multiple Myeloma</option>
+          <option>Neuroblastoma (investigasional)</option>
+          <option>Solid Tumor lain (investigasional)</option>
+          <option>Lainnya</option>
+        </select>
+      </div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Subtipe / Sitogenetik / Molekuler</label><input id="dx_sub" placeholder="mis. Ph+, KMT2A-r, ETV6-RUNX1, hyperdiploid"></div>
+      <div class="fg"><label>Tanggal Diagnosis Awal</label><input id="dx_date" placeholder="mis. Januari 2022"></div>
+    </div>
+    <div class="fr fr1">
+      <div class="fg"><label>Status Penyakit Saat Ini*</label>
+        <div class="rg" id="rg_status"></div>
+      </div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Jumlah Blast BM (%) – tanggal terbaru</label><input type="number" id="blast_pct" placeholder="%" min="0" max="100"> <span class="hint" id="blast_hint"></span></div>
+      <div class="fg"><label>Tanggal Pemeriksaan BM</label><input type="date" id="bm_date"></div>
+    </div>
+    <div class="fr fr1">
+      <div class="fg"><label>Disease Burden*</label>
+        <div class="rg" id="rg_burden"></div>
+      </div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>MRD Status</label>
+        <select id="mrd_s"><option value="">-- Pilih --</option><option>MRD Negatif (&lt;0.01%)</option><option>MRD Positif &lt;1%</option><option>MRD Positif ≥1%</option><option>Tidak diperiksa</option></select>
+      </div>
+      <div class="fg"><label>Metode MRD & Tanggal</label><input id="mrd_method" placeholder="mis. FCM, PCR – 12 Jan 2025"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Status CNS*</label>
+        <select id="cns_s"><option value="">-- Pilih --</option><option>CNS1 – tidak ada blastosis CSS</option><option>CNS2 – &lt;5 sel/µL + blastosis</option><option>CNS3 – ≥5 sel/µL + blastosis</option><option>Tidak berlaku (non-ALL)</option></select>
+      </div>
+      <div class="fg"><label>Extramedullary Disease</label>
+        <select id="emd"><option value="">-- Pilih --</option><option>Tidak ada</option><option>Testicular</option><option>Nodus limfe</option><option>Organ (hati/limpa/ginjal)</option><option>CNS + ekstramedular lain</option></select>
+      </div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>LDH (U/L)</label><input type="number" id="ldh" placeholder="U/L"></div>
+      <div class="fg"><label>Ferritin (ng/mL)</label><input type="number" id="ferritin" placeholder="ng/mL"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>CRP (mg/L)</label><input type="number" id="crp" placeholder="mg/L"></div>
+      <div class="fg"><label>Prior CD19-directed therapy</label>
+        <select id="prior_cd19"><option value="">-- Pilih --</option><option>Tidak ada</option><option>Blinatumomab</option><option>Inotuzumab ozogamisin</option><option>Anti-CD19 CAR-T sebelumnya</option><option>Blinatumomab + Inotuzumab</option></select>
+      </div>
+    </div>
+    <!-- ANTIGEN STATUS -->
+    <div class="sec" style="margin-top:10px;"><div class="sec-h">🎯 Antigen Target Status (wajib spesifik)</div><div class="sec-b">
+      <div class="fr">
+        <div class="fg"><label>CD19 Status*</label>
+          <select id="ag_cd19"><option value="">-- Pilih --</option><option>Positif (bright)</option><option>Dim</option><option>Heterogen</option><option>Negatif</option><option>Belum diperiksa</option></select>
+        </div>
+        <div class="fg"><label>% Blast CD19+</label><input type="number" id="ag_cd19pct" placeholder="%"></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>CD22 Status</label>
+          <select id="ag_cd22"><option value="">-- Pilih --</option><option>Positif</option><option>Dim</option><option>Negatif</option><option>Belum diperiksa</option></select>
+        </div>
+        <div class="fg"><label>BCMA Status</label>
+          <select id="ag_bcma"><option value="">-- Pilih --</option><option>Positif</option><option>Negatif</option><option>Belum diperiksa</option></select>
+        </div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>GD2 Status</label>
+          <select id="ag_gd2"><option value="">-- Pilih --</option><option>Positif</option><option>Negatif</option><option>Belum diperiksa</option></select>
+        </div>
+        <div class="fg"><label>CD20 Status</label>
+          <select id="ag_cd20"><option value="">-- Pilih --</option><option>Positif</option><option>Negatif</option><option>Belum diperiksa</option></select>
+        </div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>Metode Antigen</label>
+          <select id="ag_method"><option value="">-- Pilih --</option><option>Flow Cytometry</option><option>IHC</option><option>Flow + IHC</option><option>Lainnya</option></select>
+        </div>
+        <div class="fg"><label>Tanggal Pemeriksaan Antigen</label><input type="date" id="ag_date"></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>Spesimen</label>
+          <select id="ag_spec"><option value="">-- Pilih --</option><option>BM aspirat</option><option>Darah perifer</option><option>Biopsi jaringan</option><option>CSS</option><option>Kombinasi</option></select>
+        </div>
+        <div class="fg"><label>Recheck antigen pasca terapi anti-CD19?</label>
+          <select id="ag_recheck"><option value="">-- Pilih --</option><option>Ya – sudah dilakukan</option><option>Ya – belum dilakukan (pending)</option><option>Tidak diperlukan</option></select>
+        </div>
+      </div>
+      <div id="ag_cd19_warn" class="warn-box">⚠️ CD19 Negatif atau Dim – konfirmasi indikasi produk anti-CD19. Pertimbangkan CD22 atau dual-target CAR-T.</div>
+    </div></div>
+    <div class="fr fr1"><div class="fg"><label>Catatan Tambahan Penyakit</label><textarea id="disease_notes" placeholder="CNS status detail, bulky disease, keterangan lain..."></textarea></div></div>
+    <!-- INDIKASI CAR-T -->
+    <div class="fr fr1"><div class="fg"><label>Indikasi CAR-T*</label>
+      <select id="indication"><option value="">-- Pilih --</option><option>R/R B-ALL – relaps ke-2 atau lebih</option><option>R/R B-ALL – refrakter (tidak CR setelah ≥2 induksi)</option><option>R/R B-ALL – relaps post-HSCT</option><option>R/R B-ALL – MRD persisten pasca salvage</option><option>R/R DLBCL – relaps/refrakter ≥2 lini</option><option>R/R Follicular Lymphoma ≥2 lini</option><option>R/R Multiple Myeloma ≥4 lini sebelumnya</option><option>Investigasional / studi klinis</option><option>Lainnya</option></select>
+    </div></div>
+  </div></div>
+</div>
+
+<!-- TAB 3 -->
+<div class="tp" id="t3">
+  <div class="sec"><div class="sec-h">💊 Riwayat Terapi Sebelumnya</div><div class="sec-b">
+    <div class="fr">
+      <div class="fg"><label>Jumlah Lini Terapi*</label>
+        <select id="prior_lines"><option value="">-- Pilih --</option><option>1 lini</option><option>2 lini</option><option>3 lini</option><option>≥4 lini</option></select>
+      </div>
+      <div class="fg"><label>Riwayat HSCT</label>
+        <select id="prior_hsct"><option value="">-- Pilih --</option><option>Tidak pernah HSCT</option><option>Auto-HSCT</option><option>Allo-HSCT (MSD)</option><option>Allo-HSCT (MUD)</option><option>Allo-HSCT (Haplo)</option></select>
+      </div>
+    </div>
+    <div class="fr fr1"><div class="fg"><label>Regimen Terapi Sebelumnya</label><textarea id="prior_regimen" placeholder="mis. VANDA → VHD-R → Blinatumomab → Inotuzumab"></textarea></div></div>
+    <div class="fr fr1"><div class="fg"><label>Respons terhadap Terapi Terakhir*</label>
+      <div class="rg" id="rg_response"></div>
+    </div></div>
+    <!-- BRIDGING: DIBAGI 2 FASE -->
+    <div class="sec" style="margin-top:10px;"><div class="sec-h">🌉 Bridging Therapy – Pre-Apheresis</div><div class="sec-b">
+      <div class="fr">
+        <div class="fg"><label>Tujuan</label>
+          <select id="br1_goal"><option value="">-- Pilih --</option><option>Debulking / reduksi burden</option><option>Stabilisasi / symptom control</option><option>Tidak diperlukan</option></select>
+        </div>
+        <div class="fg"><label>Regimen</label><input id="br1_reg" placeholder="mis. dexametason + vincristine"></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>Tanggal Mulai – Selesai</label><input id="br1_dates" placeholder="mis. 1 Feb – 14 Feb 2025"></div>
+        <div class="fg"><label>Washout sebelum apheresis</label><input id="br1_washout" placeholder="mis. 7 hari"></div>
+      </div>
+    </div></div>
+    <div class="sec" style="margin-top:6px;"><div class="sec-h">🌉 Bridging Therapy – Post-Apheresis (selama manufacturing)</div><div class="sec-b">
+      <div class="fr">
+        <div class="fg"><label>Tujuan</label>
+          <select id="br2_goal"><option value="">-- Pilih --</option><option>Debulking / reduksi burden</option><option>Stabilisasi</option><option>Tidak diperlukan</option></select>
+        </div>
+        <div class="fg"><label>Regimen</label><input id="br2_reg" placeholder="mis. mini-COG × 1 siklus"></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>Stop sebelum LD (washout)</label><input id="br2_washout" placeholder="mis. 7–14 hari sebelum LD"></div>
+        <div class="fg"><label>Respons yang diharapkan</label><input id="br2_resp" placeholder="mis. assessment BM setelah bridging"></div>
+      </div>
+    </div></div>
+  </div></div>
+</div>
+
+<!-- TAB 4 -->
+<div class="tp" id="t4">
+  <div class="sec"><div class="sec-h">❤️ Fungsi Organ – Pediatric-Specific</div><div class="sec-b">
+    <div class="fr fr3">
+      <div class="fg"><label>EF (%) / Fraksi Pemendekan (%)</label><input id="ef" placeholder="EF% / FS%"></div>
+      <div class="fg"><label>eGFR/Schwartz (mL/min/1.73m²)</label><input type="number" id="egfr" placeholder="mL/min"></div>
+      <div class="fg"><label>Kreatinin (mg/dL)</label><input type="number" id="creat" step="0.01" placeholder="mg/dL"></div>
+    </div>
+    <div class="fr fr3">
+      <div class="fg"><label>ALT (×ULN)</label><input type="number" id="alt_uln" step="0.1" placeholder="mis. 2.5"></div>
+      <div class="fg"><label>AST (×ULN)</label><input type="number" id="ast_uln" step="0.1" placeholder="mis. 2.0"></div>
+      <div class="fg"><label>Bilirubin Total (mg/dL)</label><input type="number" id="bili" step="0.01" placeholder="mg/dL"></div>
+    </div>
+    <div class="fr fr3">
+      <div class="fg"><label>SpO₂ (%)</label><input type="number" id="spo2" placeholder="%"></div>
+      <div class="fg"><label>Kebutuhan O₂ tambahan</label>
+        <select id="o2_req"><option value="">-- Pilih --</option><option>Tidak ada</option><option>Low-flow nasal kanul</option><option>High-flow / ventilasi</option></select>
+      </div>
+      <div class="fg"><label>CT Paru / foto thorax</label>
+        <select id="ct_paru"><option value="">-- Pilih --</option><option>Normal</option><option>Infiltrat – tidak aktif</option><option>Infiltrat aktif / infeksi</option><option>Belum dilakukan</option></select>
+      </div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Performance Status*</label>
+        <select id="perf_status"><option value="">-- Pilih --</option><option>Lansky ≥80% / ECOG 0–1</option><option>Lansky 60–70% / ECOG 2</option><option>Lansky &lt;60% / ECOG ≥3</option></select>
+      </div>
+      <div class="fg"><label>Neurologic Baseline</label>
+        <select id="neuro_base"><option value="">-- Pilih --</option><option>Normal</option><option>Riwayat kejang – terkontrol</option><option>Defisit neurologi aktif</option><option>Belum dievaluasi</option></select>
+      </div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>CNS Aktif (keterlibatan aktif saat ini)</label>
+        <select id="cns_active"><option value="">-- Pilih --</option><option>Tidak ada</option><option>Ada – terkontrol dengan terapi</option><option>Ada – aktif/tidak terkontrol</option></select>
+      </div>
+      <div class="fg"><label>Kehamilan (bila relevan)</label>
+        <select id="preg"><option value="">-- Pilih --</option><option>Tidak berlaku</option><option>Tes kehamilan negatif</option><option>Tes kehamilan belum dilakukan</option></select>
+      </div>
+    </div>
+    <div id="cns_active_warn" class="hard-stop"><p>🛑 BOARD ISSUE: CNS Aktif tidak terkontrol – defer infus CAR-T hingga CNS terkontrol. Evaluasi lymphodepletion dan indikasi RT CNS.</p></div>
+  </div></div>
+
+  <!-- APHERESIS READINESS -->
+  <div class="sec"><div class="sec-h">🩸 Apheresis Readiness</div><div class="sec-b">
+    <div class="fr">
+      <div class="fg"><label>ALC (sel/µL)</label><input type="number" id="alc" placeholder="sel/µL"></div>
+      <div class="fg"><label>CD3+ Count (bila tersedia)</label><input type="number" id="cd3" placeholder="sel/µL"></div>
+    </div>
+    <div class="fr fr3">
+      <div class="fg"><label>Hb (g/dL)</label><input type="number" id="hb" step="0.1" placeholder="g/dL"></div>
+      <div class="fg"><label>Platelet (/µL)</label><input type="number" id="plt" placeholder="/µL"></div>
+      <div class="fg"><label>Vascular Access</label>
+        <select id="vasc"><option value="">-- Pilih --</option><option>CVC terpasang – siap apheresis</option><option>CVC perlu dipasang</option><option>Akses vena perifer adekuat</option><option>Perlu evaluasi ulang</option></select>
+      </div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Steroid exposure sebelum apheresis</label>
+        <select id="steroid_wash"><option value="">-- Pilih --</option><option>Tidak ada dalam 72 jam</option><option>Ada – washout diperlukan</option><option>Steroid dosis tinggi masih berjalan</option></select>
+      </div>
+      <div class="fg"><label>Chemo washout sebelum apheresis</label>
+        <select id="chemo_wash"><option value="">-- Pilih --</option><option>Sudah ≥7 hari washout</option><option>Belum cukup washout</option><option>Tidak ada kemo terbaru</option></select>
+      </div>
+    </div>
+    <div class="fr fr1"><div class="fg"><label>Kelayakan Apheresis Keseluruhan*</label>
+      <div class="rg" id="rg_apheresis"></div>
+    </div></div>
+    <div class="fr fr1"><div class="fg"><label>Status Infeksi Aktif*</label>
+      <div class="rg" id="rg_infection"></div>
+    </div></div>
+    <div id="infx_stop" class="hard-stop"><p>🛑 BOARD ISSUE: Infeksi aktif belum terkontrol. Defer leukapheresis / lymphodepletion / infus CAR-T hingga infeksi terkontrol. Kecuali keputusan risk-benefit exceptional oleh board.</p></div>
+    <div class="fr fr1"><div class="fg"><label>Skrining Infeksi (HBsAg, HCV, CMV, EBV, HIV, TB)</label><textarea id="infection_screen" placeholder="mis. CMV IgG+/IgM–, HBsAg–, HCV–, HIV–, EBV serology selesai, TB skrining negatif..."></textarea></div></div>
+    <div class="fr">
+      <div class="fg"><label>Preservasi Fertilitas</label>
+        <select id="fertility"><option value="">-- Pilih --</option><option>Didiskusikan – disetujui / dilakukan</option><option>Didiskusikan – ditolak</option><option>Tidak relevan (usia/kondisi)</option><option>Belum didiskusikan</option></select>
+      </div>
+      <div class="fg"><label>Caregiver Readiness</label>
+        <select id="caregiver"><option value="">-- Pilih --</option><option>Caregiver siap – hadir 24 jam</option><option>Perlu edukasi tambahan</option><option>Belum dievaluasi</option></select>
+      </div>
+    </div>
+  </div></div>
+</div>
+
+<!-- TAB 5 -->
+<div class="tp" id="t5">
+  <div class="sec"><div class="sec-h">🧬 Rencana Produk CAR-T</div><div class="sec-b">
+    <div class="fr fr1"><div class="fg"><label>Produk CAR-T yang Diusulkan*</label>
+      <select id="cart_product"><option value="">-- Pilih (berdasarkan diagnosis) --</option></select>
+    </div></div>
+    <div class="fr">
+      <div class="fg"><label>Tipe Produk</label>
+        <select id="cart_type"><option value="">-- Pilih --</option><option>Komersial (approved)</option><option>Akademik / investigasional</option><option>Studi klinis</option></select>
+      </div>
+      <div class="fg"><label>Manufacturing Site</label><input id="mfg_site" placeholder="mis. Novartis / site lokal / vendor"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Rencana Tanggal Apheresis</label><input type="date" id="aph_date"></div>
+      <div class="fg"><label>Estimasi Produk Release</label><input id="prod_release" placeholder="mis. 4–6 minggu setelah apheresis"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Konfirmasi Produk Tersedia</label>
+        <select id="prod_confirm"><option value="">-- Pilih --</option><option>Produk sudah tersedia / released</option><option>Sedang dalam proses manufacturing</option><option>Belum dimulai manufacturing</option><option>Tertunda – alasan logistik</option></select>
+      </div>
+      <div class="fg"><label>Chain of Identity / Custody</label>
+        <select id="coi"><option value="">-- Pilih --</option><option>Sudah terkonfirmasi</option><option>Dalam proses</option><option>Belum dilakukan</option></select>
+      </div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Pendanaan / Payer</label>
+        <select id="funding"><option value="">-- Pilih --</option><option>Sudah terkonfirmasi</option><option>Dalam proses persetujuan</option><option>Mandiri</option><option>Riset/investigasional – covered</option><option>Belum terkonfirmasi</option></select>
+      </div>
+      <div class="fg"><label>ICU Bed Readiness</label>
+        <select id="icu"><option value="">-- Pilih --</option><option>ICU/PICU tersedia dan dikonfirmasi</option><option>Perlu konfirmasi</option><option>Tidak tersedia</option></select>
+      </div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Tocilizumab Tersedia</label>
+        <select id="toci"><option value="">-- Pilih --</option><option>Tersedia ≥2 dosis di apotek</option><option>Perlu pengadaan</option><option>Tidak tersedia</option></select>
+      </div>
+      <div class="fg"><label>Informed Consent CAR-T</label>
+        <select id="consent"><option value="">-- Pilih --</option><option>Sudah ditandatangani</option><option>Proses edukasi / belum tanda tangan</option><option>Belum dimulai</option></select>
+      </div>
+    </div>
+  </div></div>
+  <!-- LYMPHODEPLETION -->
+  <div class="sec"><div class="sec-h">💊 Lymphodepletion Plan</div><div class="sec-b">
+    <div class="fr fr1"><div class="fg"><label>Regimen LD (sesuai produk/protokol)*</label>
+      <select id="lymphodep"><option value="">-- Pilih --</option><option>Fludarabine + Cyclophosphamide (Flu/Cy) – sesuai protokol produk</option><option>Flu/Cy – dosis dimodifikasi (renal/hepatik)</option><option>Bendamustine</option><option>Cyclophosphamide tunggal</option><option>Sesuai protokol studi</option><option>Belum ditentukan</option></select>
+    </div></div>
+    <div class="fr">
+      <div class="fg"><label>Rencana Tanggal Mulai LD</label><input type="date" id="ld_start"></div>
+      <div class="fg"><label>Rencana Tanggal Infus CAR-T</label><input type="date" id="infusion_date"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Penyesuaian Dosis LD</label>
+        <select id="ld_adjust"><option value="">-- Pilih --</option><option>Tidak ada penyesuaian</option><option>Penyesuaian renal (eGFR rendah)</option><option>Penyesuaian hepatik</option><option>Dosis dimodifikasi atas pertimbangan klinis</option></select>
+      </div>
+      <div class="fg"><label>Organ Function Clearance untuk LD</label>
+        <select id="ld_clear"><option value="">-- Pilih --</option><option>Sudah di-review – disetujui</option><option>Perlu review ulang sebelum LD</option><option>Belum direview</option></select>
+      </div>
+    </div>
+    <div class="fr fr1"><div class="fg"><label>Gate Pre-LD: Bridging Washout Selesai</label>
+      <div class="rg" id="rg_ldgate"></div>
+    </div></div>
+  </div></div>
+</div>
+
+<!-- TAB 6 -->
+<div class="tp" id="t6">
+  <div class="sec"><div class="sec-h">⚠️ Risk Flags – CRS & ICANS</div><div class="sec-b">
+    <p style="font-size:11px;color:var(--mut);margin-bottom:10px;"><em>Tool ini mencatat risk flags yang hadir – bukan kalkulasi skor tertimbang. Setiap faktor memiliki bobot klinis berbeda.</em></p>
+    <div class="fr fr1"><div class="fg"><label>Risk Flags CRS</label>
+      <div class="cg" id="cg_crs"></div>
+    </div></div>
+    <div class="fr fr1"><div class="fg"><label>Risk Flags ICANS</label>
+      <div class="cg" id="cg_ican"></div>
+    </div></div>
+    <div class="fr fr1"><div class="fg"><label>Rencana Mitigasi CRS/ICANS</label>
+      <select id="crs_mgmt"><option value="">-- Pilih --</option><option>Standar monitoring rawat inap</option><option>Monitoring ketat + tocilizumab standby</option><option>Monitoring ICU + tim neurologi on-call</option><option>ICU admission dari awal infus</option></select>
+    </div></div>
+    <div class="fr fr1"><div class="fg"><label>Neurologic Baseline Assessment Selesai</label>
+      <div class="rg" id="rg_neuro"></div>
+    </div></div>
+    <div class="fr fr1"><div class="fg"><label>Rencana IEC-HS / Macrophage Activation</label>
+      <select id="iec_hs"><option value="">-- Pilih --</option><option>Tidak ada risiko khusus</option><option>Monitoring HLH/MAS – ferritin serial</option><option>Rencana konsultasi hematologi</option></select>
+    </div></div>
+  </div></div>
+</div>
+
+<!-- TAB 7 -->
+<div class="tp" id="t7">
+  <div class="sec"><div class="sec-h">📌 Keputusan Board*</div><div class="sec-b">
+    <div class="fr fr1"><div class="fg"><label>Keputusan*</label>
+      <div class="rg" id="rg_decision"></div>
+    </div></div>
+    <div class="fr fr1"><div class="fg"><label>Catatan / Syarat / Kondisi Board</label><textarea id="board_notes" placeholder="Syarat persetujuan bersyarat, rekomendasi konsultasi, follow-up diperlukan..."></textarea></div></div>
+    <div class="fr">
+      <div class="fg"><label>Tanggal Follow-up Board Berikutnya</label><input type="date" id="fu_date"></div>
+      <div class="fg"><label>Versi Dokumen</label><input id="doc_version" placeholder="mis. v1.0"></div>
+    </div>
+  </div></div>
+
+  <!-- ACTION ITEMS TABLE -->
+  <div class="sec"><div class="sec-h">📋 Action Items & PIC</div><div class="sec-b">
+    <table class="act-tbl" id="actionTable">
+      <thead><tr><th>No</th><th>Action</th><th>PIC</th><th>Deadline</th><th>Status</th><th></th></tr></thead>
+      <tbody id="actionBody"></tbody>
+    </table>
+    <button class="add-row-btn" id="addRowBtn">+ Tambah Action</button>
+  </div></div>
+
+  <button class="gen-btn" id="genBtn">🧬 Generate Board Summary</button>
+</div>
+
+</div><!-- /form panel -->
+
+<!-- OUTPUT PANEL -->
+<div class="op" id="outputPanel">
+  <div class="ph" id="placeholder">
+    <div class="ic">📄</div>
+    <strong>Board Summary belum dibuat</strong>
+    <span style="font-size:11px">Isi semua tab → klik "Generate Board Summary"</span>
+  </div>
+  <div id="summaryOutput" style="display:none;"></div>
+</div>
+</div><!-- /main -->
+
+<script>
+// ======= UTILS =======
+function h(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function v(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+function radVal(name){var e=document.querySelector('input[name="'+name+'"]:checked');return e?e.value:'';}
+function getChecked(cls){var r=[];document.querySelectorAll('.'+cls+':checked').forEach(function(c){r.push(c.value);});return r;}
+
+// ======= BSA =======
+function calcBSA(){
+  var bb=parseFloat(v('pt_bb')),tb=parseFloat(v('pt_tb'));
+  if(!isNaN(bb)&&!isNaN(tb)&&bb>0&&tb>0){
+    var bsa=Math.sqrt((bb*tb)/3600).toFixed(2);
+    document.getElementById('pt_bsa').value=bsa+' m²';
+  }
+}
+document.getElementById('pt_bb').addEventListener('input',calcBSA);
+document.getElementById('pt_tb').addEventListener('input',calcBSA);
+
+// ======= SET DEFAULT DATE =======
+(function(){
+  var today=new Date().toISOString().split('T')[0];
+  document.getElementById('board_date').value=today;
+})();
+
+// ======= RADIO/CHECK BUILDERS =======
+function makeRadios(containerId,name,opts){
+  var c=document.getElementById(containerId);if(!c)return;
+  c.innerHTML='';
+  opts.forEach(function(o){
+    var label=document.createElement('label');label.className='ri';
+    var inp=document.createElement('input');inp.type='radio';inp.name=name;inp.value=o;
+    inp.addEventListener('change',function(){
+      c.querySelectorAll('.ri').forEach(function(l){l.classList.remove('sel');});
+      label.classList.add('sel');
+      onRadioChange(name,o);
+    });
+    label.appendChild(inp);label.appendChild(document.createTextNode(' '+o));
+    c.appendChild(label);
+  });
+}
+function makeChecks(containerId,cls,opts){
+  var c=document.getElementById(containerId);if(!c)return;
+  c.innerHTML='';
+  opts.forEach(function(o){
+    var label=document.createElement('label');label.className='ci';
+    var inp=document.createElement('input');inp.type='checkbox';inp.className=cls;inp.value=o;
+    inp.addEventListener('change',function(){label.classList.toggle('sel',inp.checked);});
+    label.appendChild(inp);label.appendChild(document.createTextNode(' '+o));
+    c.appendChild(label);
+  });
+}
+
+function onRadioChange(name,val){
+  if(name==='infection'){
+    var s=document.getElementById('infx_stop');
+    s.classList.toggle('show',val==='Infeksi aktif belum terkontrol');
+  }
+  if(name==='cns_active_r'){
+    var s=document.getElementById('cns_active_warn');
+    s&&s.classList.toggle('show',val==='Ada – aktif/tidak terkontrol');
+  }
+}
+
+// CNS active select watch
+document.getElementById('cns_active').addEventListener('change',function(){
+  var s=document.getElementById('cns_active_warn');
+  s&&s.classList.toggle('show',this.value==='Ada – aktif/tidak terkontrol');
+});
+
+// CD19 warn
+document.getElementById('ag_cd19').addEventListener('change',function(){
+  var w=document.getElementById('ag_cd19_warn');
+  w.classList.toggle('show',this.value==='Negatif'||this.value==='Dim');
+});
+
+// Blast hint
+document.getElementById('blast_pct').addEventListener('input',function(){
+  var n=parseFloat(this.value);
+  var h2=document.getElementById('blast_hint');
+  if(isNaN(n)){h2.textContent='';return;}
+  if(n<5)h2.textContent='→ Low burden';
+  else if(n<=25)h2.textContent='→ Intermediate burden';
+  else h2.textContent='→ High burden ⚠️';
+});
+
+// ======= INIT RADIOS/CHECKS =======
+makeRadios('rg_status','disease_status',['Relaps','Refrakter','Relaps/Refrakter','Remisi Parsial','MRD Positif Persisten']);
+makeRadios('rg_burden','burden',['Low burden (<5% blast)','Intermediate (5–25%)','High burden (>25%)']);
+makeRadios('rg_response','last_response',['CR','PR','SD','PD','Tidak diketahui']);
+makeRadios('rg_apheresis','apheresis',['✅ Layak – CVC siap','⚠️ Layak – perlu pasang CVC','🔄 Evaluasi ulang akses vaskular','❌ Tidak layak saat ini']);
+makeRadios('rg_infection','infection',['✅ Tidak ada infeksi aktif','⚠️ Infeksi terkontrol (dalam terapi)','❌ Infeksi aktif belum terkontrol']);
+makeRadios('rg_decision','board_decision',['✅ DISETUJUI – Lanjutkan proses CAR-T','⚠️ DISETUJUI BERSYARAT – syarat di bawah','🔄 TUNDA – optimasi / evaluasi ulang','❌ TIDAK DIREKOMENDASIKAN – pertimbangkan alternatif']);
+makeRadios('rg_ldgate','ldgate',['Ya – washout selesai','Tidak – masih dalam washout','Tidak berlaku']);
+makeRadios('rg_neuro','neuro_done',['Sudah selesai','Belum dilakukan','Tidak diperlukan']);
+
+makeChecks('cg_crs','crs-f',['Disease burden tinggi (>25% blast)','LDH sangat elevasi','Ferritin tinggi pre-infus','CRP pre-infus tinggi','Produk anti-CD19 dengan costimulatory CD28','Infeksi terkontrol (peningkatan risiko)']);
+makeChecks('cg_ican','ican-f',['Disease burden tinggi (>25% blast)','Riwayat keterlibatan CNS aktif/prior','Usia <8 tahun','Riwayat gangguan neurologi','Riwayat CRS berat (≥grade 3) pada terapi sebelumnya','Prior therapies banyak / damage BBB']);
+
+// ======= TABS =======
+document.getElementById('tabBar').addEventListener('click',function(e){
+  if(!e.target.classList.contains('tbtn'))return;
+  document.querySelectorAll('.tbtn').forEach(function(b){b.classList.remove('active');});
+  e.target.classList.add('active');
+  var tgt=e.target.getAttribute('data-tab');
+  document.querySelectorAll('.tp').forEach(function(p){p.classList.remove('active');});
+  document.getElementById(tgt).classList.add('active');
+});
+
+// ======= PRODUCT OPTIONS BY DIAGNOSIS =======
+var productMap={
+  'B-ALL (Pediatrik ≤25 tahun)':['Tisagenlecleucel (Kymriah®) – anti-CD19 [FDA approved ≤25 thn]','Akademik / Investigasional anti-CD19','Akademik / Investigasional dual-target (CD19+CD22)'],
+  'B-ALL (Dewasa)':['Tisagenlecleucel (Kymriah®) – anti-CD19','Axicabtagene ciloleucel (Yescarta®) – anti-CD19','Lisocabtagene maraleucel (Breyanzi®) – anti-CD19','Akademik / Investigasional'],
+  'T-ALL':['Akademik / Investigasional (anti-CD7, anti-CD5, lainnya)'],
+  'DLBCL':['Axicabtagene ciloleucel (Yescarta®) – anti-CD19','Lisocabtagene maraleucel (Breyanzi®) – anti-CD19','Tisagenlecleucel (Kymriah®) – anti-CD19','Akademik / Investigasional'],
+  'Follicular Lymphoma':['Axicabtagene ciloleucel (Yescarta®) – anti-CD19','Akademik / Investigasional'],
+  'Multiple Myeloma':['Idecabtagene vicleucel (Abecma®) – anti-BCMA','Ciltacabtagene autoleucel (Carvykti®) – anti-BCMA','Akademik / Investigasional'],
+  'Neuroblastoma (investigasional)':['Akademik / Investigasional (anti-GD2, anti-L1CAM)'],
+  'Solid Tumor lain (investigasional)':['Akademik / Investigasional'],
+  'Lainnya':['Akademik / Investigasional','Belum ditentukan']
+};
+function updateProductOptions(){
+  var dx=v('dx_main');
+  var sel=document.getElementById('cart_product');
+  sel.innerHTML='<option value="">-- Pilih --</option>';
+  var opts=productMap[dx]||['Akademik / Investigasional','Belum ditentukan'];
+  opts.forEach(function(o){var op=document.createElement('option');op.value=o;op.textContent=o;sel.appendChild(op);});
+}
+document.getElementById('dx_main').addEventListener('change',updateProductOptions);
+updateProductOptions();
+
+// ======= ACTION TABLE =======
+var actionRowCount=0;
+function addActionRow(action,pic,deadline,status){
+  actionRowCount++;
+  var tbody=document.getElementById('actionBody');
+  var tr=document.createElement('tr');
+  tr.innerHTML='<td style="text-align:center;font-weight:700;">'+actionRowCount+'</td>'+
+    '<td><input value="'+h(action||'')+'" placeholder="mis. Recheck flow CD19" style="width:100%;"></td>'+
+    '<td><input value="'+h(pic||'')+'" placeholder="mis. Lab / DPJP" style="width:100%;"></td>'+
+    '<td><input type="date" value="'+(deadline||'')+'"></td>'+
+    '<td><select style="width:100%;"><option>Pending</option><option>Dalam proses</option><option>Selesai</option><option>Dibatalkan</option></select></td>'+
+    '<td><button class="del-btn">×</button></td>';
+  tr.querySelector('.del-btn').addEventListener('click',function(){tr.remove();});
+  tbody.appendChild(tr);
+}
+document.getElementById('addRowBtn').addEventListener('click',function(){addActionRow();});
+// Pre-fill 3 default action rows
+addActionRow('Konfirmasi antigen target (recheck flow)','Lab / DPJP','','Pending');
+addActionRow('Konfirmasi ketersediaan produk & pendanaan','Admin / Program','','Pending');
+addActionRow('Jadwalkan leukapheresis','Tim Apheresis','','Pending');
+
+// ======= VALIDATION =======
+var REQUIRED=[
+  {id:'pt_id',label:'Kode Pasien'},
+  {id:'pt_age',label:'Usia'},
+  {id:'pt_sex',label:'Jenis Kelamin'},
+  {id:'board_date',label:'Tanggal Board'},
+  {id:'dx_main',label:'Diagnosis Utama'},
+  {id:'indication',label:'Indikasi CAR-T'},
+  {id:'prior_lines',label:'Jumlah Lini Terapi'},
+  {id:'perf_status',label:'Performance Status'},
+  {id:'cart_product',label:'Produk CAR-T'},
+];
+var REQUIRED_RADIO=[
+  {name:'disease_status',label:'Status Penyakit'},
+  {name:'burden',label:'Disease Burden'},
+  {name:'last_response',label:'Respons Terapi Terakhir'},
+  {name:'infection',label:'Status Infeksi'},
+  {name:'apheresis',label:'Kelayakan Apheresis'},
+  {name:'board_decision',label:'Keputusan Board'},
+];
+
+function validate(){
+  var missing=[];
+  document.querySelectorAll('.req-err').forEach(function(e){e.classList.remove('req-err');});
+  REQUIRED.forEach(function(f){
+    var el=document.getElementById(f.id);
+    if(!el||!el.value.trim()){missing.push(f.label);if(el)el.classList.add('req-err');}
+  });
+  REQUIRED_RADIO.forEach(function(f){
+    if(!document.querySelector('input[name="'+f.name+'"]:checked'))missing.push(f.label);
+  });
+  return missing;
+}
+
+// ======= CRS/ICANS RISK LABEL =======
+function riskLabel(cls){
+  var n=getChecked(cls).length;
+  if(n===0)return{txt:'Tidak ada flag',chip:'c-ok',icon:'🟢'};
+  if(n===1)return{txt:'1 risk flag hadir',chip:'c-w',icon:'🟡'};
+  if(n===2)return{txt:'2 risk flags hadir',chip:'c-hi',icon:'🟠'};
+  return{txt:n+' risk flags hadir – Multiple high-risk features',chip:'c-vhi',icon:'🔴'};
+}
+
+// ======= ORGAN FLAGS =======
+function organFlags(){
+  var flags=[];
+  var ef=v('ef');if(ef){var efn=parseFloat(ef);if(efn<50)flags.push('⚠️ EF rendah ('+h(ef)+'%)');else flags.push('✅ EF '+h(ef)+'%');}
+  var egfr=parseFloat(v('egfr'));if(!isNaN(egfr)){if(egfr<60)flags.push('⚠️ eGFR rendah ('+egfr+')');else flags.push('✅ eGFR '+egfr);}
+  var alt=parseFloat(v('alt_uln'));if(!isNaN(alt)){if(alt>3)flags.push('⚠️ ALT '+alt+'×ULN');else flags.push('✅ ALT '+alt+'×ULN');}
+  var bili=parseFloat(v('bili'));if(!isNaN(bili)){if(bili>2)flags.push('⚠️ Bili '+bili);else flags.push('✅ Bili '+bili);}
+  var spo2=parseFloat(v('spo2'));if(!isNaN(spo2)){if(spo2<95)flags.push('⚠️ SpO₂ '+spo2+'%');else flags.push('✅ SpO₂ '+spo2+'%');}
+  return flags.length?flags.join(' | '):'Belum diisi';
+}
+
+// ======= ACTION ITEMS FOR OUTPUT =======
+function getActionRows(){
+  var rows=[];
+  document.querySelectorAll('#actionBody tr').forEach(function(tr){
+  var inputs=tr.querySelectorAll('input,select');
+  if(inputs.length>=4){rows.push({action:inputs[0].value,pic:inputs[1].value,deadline:inputs[2].value,status:tr.querySelector('select').value});}
+  });
+  return rows;
+}
+
+// ======= ITEM HELPERS =======
+function si(label,val){return '<div class="si"><div class="sil">'+label+'</div><div class="siv">'+h(val||'–')+'</div></div>';}
+function sf(label,val){return '<div class="sf"><div class="sil">'+label+'</div><div class="siv">'+h(val||'–')+'</div></div>';}
+function sfRaw(label,val){return '<div class="sf"><div class="sil">'+label+'</div><div class="siv">'+val+'</div></div>';}
+
+function fmtDate(d){if(!d)return'–';var p=d.split('-');if(p.length!==3)return d;var m=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];return p[2]+' '+m[parseInt(p[1])-1]+' '+p[0];}
+
+// ======= GENERATE =======
+document.getElementById('genBtn').addEventListener('click',function(){
+  var missing=validate();
+  var out=document.getElementById('summaryOutput');
+  document.getElementById('placeholder').style.display='none';
+  out.style.display='block';
+
+  if(missing.length>0){
+    out.innerHTML='<div class="incomplete-banner"><h3>⚠️ Board Summary Incomplete</h3><p style="font-size:11px;color:#7f1d1d;margin-bottom:8px;">Field wajib belum lengkap:</p><ul>'+missing.map(function(m){return'<li>'+h(m)+'</li>';}).join('')+'</ul></div>';
+    return;
+  }
+
+  var dec=radVal('board_decision');
+  var decClass='dec-box ';
+  if(dec.indexOf('DISETUJUI –')>-1)decClass+='dec-eligible';
+  else if(dec.indexOf('BERSYARAT')>-1)decClass+='dec-cond';
+  else if(dec.indexOf('TUNDA')>-1)decClass+='dec-defer';
+  else decClass+='dec-no';
+
+  var crsR=riskLabel('crs-f');
+  var icanR=riskLabel('ican-f');
+  var crsFlags=getChecked('crs-f');
+  var icanFlags=getChecked('ican-f');
+  var actions=getActionRows();
+
+  var infxStatus=radVal('infection');
+  var infxHard=infxStatus==='❌ Infeksi aktif belum terkontrol';
+
+  var html='<div class="sc">';
+  // HEADER
+  html+='<div class="sh"><div><h2>🧬 CAR-T MDT Board Summary</h2><p>drAisyi EduCare – Pediatric Oncology Clinical Decision Support &nbsp;|&nbsp; <em>Board Summary Generator – bukan eligibility calculator</em></p></div>';
+  html+='<div style="text-align:right;font-size:10px;opacity:.8;">Board: <strong>'+fmtDate(v('board_date'))+'</strong><br>Ref: '+h(v('board_ref')||'–')+'<br>'+h(v('doc_version')||'v1.0')+'</div></div>';
+
+  html+='<div class="sb">';
+
+  // 1. IDENTITAS
+  html+='<div class="ss"><div class="st">1. Identitas Pasien</div><div class="sg">';
+  html+=si('Kode Pasien',v('pt_id'));
+  html+=si('Usia / JK',v('pt_age')+' / '+v('pt_sex'));
+  html+=si('BB / TB / BSA',v('pt_bb')+'kg / '+v('pt_tb')+'cm / '+v('pt_bsa'));
+  html+=si('MDT',v('board_members')||v('board_chair'));
+  html+='</div></div>';
+
+  // 2. DIAGNOSIS & INDIKASI
+  html+='<div class="ss"><div class="st">2. Diagnosis & Indikasi CAR-T</div>';
+  html+=sf('Diagnosis Utama',v('dx_main')+' | '+v('dx_sub'));
+  html+='<div class="sg">';
+  html+=si('Tanggal Diagnosis',v('dx_date'));
+  html+=si('Indikasi CAR-T',v('indication'));
+  html+=si('Status Penyakit',radVal('disease_status'));
+  html+=si('Disease Burden',radVal('burden'));
+  html+=si('Blast BM',v('blast_pct')?(v('blast_pct')+'% ('+fmtDate(v('bm_date'))+')') :'–');
+  html+=si('MRD Status',v('mrd_s')+(v('mrd_method')?' | '+v('mrd_method'):''));
+  html+=si('Status CNS',v('cns_s'));
+  html+=si('Extramedullary',v('emd'));
+  html+=si('LDH / Ferritin / CRP',(v('ldh')||'–')+' / '+(v('ferritin')||'–')+' / '+(v('crp')||'–'));
+  html+=si('Prior CD19 Therapy',v('prior_cd19'));
+  html+='</div>';
+  if(v('disease_notes'))html+=sf('Catatan Penyakit',v('disease_notes'));
+  html+='</div>';
+
+  // 3. ANTIGEN TARGET
+  html+='<div class="ss"><div class="st">3. Konfirmasi Antigen Target</div><div class="sg">';
+  html+=si('CD19',v('ag_cd19')+(v('ag_cd19pct')?' ('+v('ag_cd19pct')+'%)':''));
+  html+=si('CD22 / BCMA / GD2',v('ag_cd22')+' / '+v('ag_bcma')+' / '+v('ag_gd2'));
+  html+=si('Metode / Spesimen',v('ag_method')+' | '+v('ag_spec'));
+  html+=si('Tanggal Antigen',fmtDate(v('ag_date')));
+  html+=si('Recheck post terapi anti-CD19',v('ag_recheck'));
+  html+='</div>';
+  if(v('ag_cd19')==='Negatif'||v('ag_cd19')==='Dim'){
+    html+='<div style="background:#fef3c7;border:1.5px solid #d97706;border-radius:6px;padding:7px 10px;margin-top:5px;font-size:11px;color:#78350f;">⚠️ CD19 '+h(v('ag_cd19'))+' – konfirmasi ulang indikasi produk anti-CD19. Pertimbangkan CD22 atau dual-target CAR-T.</div>';
+  }
+  html+='</div>';
+
+  // 4. PRIOR THERAPY
+  html+='<div class="ss"><div class="st">4. Riwayat Terapi & Bridging</div><div class="sg">';
+  html+=si('Lini Terapi',v('prior_lines'));
+  html+=si('Riwayat HSCT',v('prior_hsct'));
+  html+=si('Respons Terakhir',radVal('last_response'));
+  html+='</div>';
+  if(v('prior_regimen'))html+=sf('Regimen Sebelumnya',v('prior_regimen'));
+  html+='<div class="sg">';
+  html+=si('Bridging Pre-Apheresis',(v('br1_goal')||'–')+(v('br1_reg')?' – '+v('br1_reg'):'')+(v('br1_washout')?' | Washout: '+v('br1_washout'):''));
+  html+=si('Bridging Post-Apheresis',(v('br2_goal')||'–')+(v('br2_reg')?' – '+v('br2_reg'):'')+(v('br2_washout')?' | Washout: '+v('br2_washout'):''));
+  html+='</div></div>';
+
+  // 5. ORGAN & FITNESS
+  html+='<div class="ss"><div class="st">5. Organ Function & Patient Fitness</div>';
+  html+=sfRaw('Ringkasan Organ',organFlags());
+  html+='<div class="sg">';
+  html+=si('Performance Status',v('perf_status'));
+  html+=si('Neurologic Baseline',v('neuro_base'));
+  html+=si('CNS Aktif',v('cns_active'));
+  html+=si('O₂ Requirement',v('o2_req'));
+  html+=si('Foto Thorax / CT Paru',v('ct_paru'));
+  html+=si('Preservasi Fertilitas',v('fertility'));
+  html+='</div>';
+  if(v('cns_active')==='Ada – aktif/tidak terkontrol'){
+    html+='<div style="background:#fee2e2;border:2px solid #dc2626;border-radius:6px;padding:8px 10px;margin-top:5px;font-size:11px;color:#7f1d1d;font-weight:700;">🛑 BOARD ISSUE: CNS aktif tidak terkontrol – defer CAR-T infusion.</div>';
+  }
+  html+='</div>';
+
+  // 6. APHERESIS READINESS
+  html+='<div class="ss"><div class="st">6. Apheresis Readiness</div><div class="sg">';
+  html+=si('ALC / CD3',(v('alc')||'–')+' / '+(v('cd3')||'–')+' sel/µL');
+  html+=si('Hb / Platelet',(v('hb')||'–')+' g/dL / '+(v('plt')||'–')+' /µL');
+  html+=si('Vascular Access',v('vasc'));
+  html+=si('Steroid Washout',v('steroid_wash'));
+  html+=si('Chemo Washout',v('chemo_wash'));
+  html+=si('Kelayakan Apheresis',radVal('apheresis'));
+  html+='</div>';
+  if(infxHard){
+    html+='<div style="background:#fee2e2;border:2px solid #dc2626;border-radius:6px;padding:8px 10px;margin-top:5px;font-size:11px;color:#7f1d1d;font-weight:700;">🛑 BOARD ISSUE: Infeksi aktif belum terkontrol – defer leukapheresis / LD / infus hingga infeksi terkontrol.</div>';
+  }
+  if(v('infection_screen'))html+=sf('Skrining Infeksi',v('infection_screen'));
+  html+=sf('Caregiver',v('caregiver'));
+  html+='</div>';
+
+  // 7. PRODUK & LD
+  html+='<div class="ss"><div class="st">7. Produk CAR-T & Lymphodepletion</div><div class="sg">';
+  html+=si('Produk CAR-T',v('cart_product'));
+  html+=si('Tipe Produk',v('cart_type'));
+  html+=si('Manufacturing Site',v('mfg_site'));
+  html+=si('Konfirmasi Produk',v('prod_confirm'));
+  html+=si('Chain of Identity',v('coi'));
+  html+=si('Pendanaan',v('funding'));
+  html+=si('ICU Readiness',v('icu'));
+  html+=si('Tocilizumab',v('toci'));
+  html+=si('Informed Consent',v('consent'));
+  html+=si('Rencana Apheresis',fmtDate(v('aph_date')));
+  html+=si('Estimasi Release',v('prod_release'));
+  html+=si('Regimen LD',v('lymphodep'));
+  html+=si('Penyesuaian LD',v('ld_adjust'));
+  html+=si('Clearance untuk LD',v('ld_clear'));
+  html+=si('Bridging Washout Gate',radVal('ldgate'));
+  html+=si('Rencana Mulai LD',fmtDate(v('ld_start')));
+  html+=si('Rencana Infus CAR-T',fmtDate(v('infusion_date')));
+  html+='</div></div>';
+
+  // 8. RISIKO
+  html+='<div class="ss"><div class="st">8. Risk Flags – CRS & ICANS</div>';
+  html+='<div class="flag-row">';
+  html+='<span class="chip '+crsR.chip+'">'+crsR.icon+' CRS: '+h(crsR.txt)+'</span>';
+  html+='<span class="chip '+icanR.chip+'">'+icanR.icon+' ICANS: '+h(icanR.txt)+'</span>';
+  html+='</div>';
+  if(crsFlags.length)html+=sfRaw('CRS Risk Flags Hadir','<span style="font-size:11px;">'+crsFlags.map(function(f){return h(f);}).join('<br>')+'</span>');
+  if(icanFlags.length)html+=sfRaw('ICANS Risk Flags Hadir','<span style="font-size:11px;">'+icanFlags.map(function(f){return h(f);}).join('<br>')+'</span>');
+  html+='<div class="sg">';
+  html+=si('Rencana Manajemen CRS/ICANS',v('crs_mgmt'));
+  html+=si('Neurologic Baseline Assessment',radVal('neuro_done'));
+  html+=si('Rencana IEC-HS/MAS',v('iec_hs'));
+  html+='</div></div>';
+
+  // 9. KEPUTUSAN BOARD
+  html+='<div class="'+decClass+'"><h3>📌 9. Keputusan Board</h3>';
+  html+='<div style="font-size:14px;font-weight:800;margin-bottom:6px;">'+h(dec)+'</div>';
+  if(v('board_notes'))html+='<div style="font-size:11px;line-height:1.6;"><strong>Catatan / Syarat:</strong><br>'+h(v('board_notes'))+'</div>';
+  if(v('fu_date'))html+='<div style="font-size:11px;margin-top:5px;">Follow-up board berikutnya: <strong>'+fmtDate(v('fu_date'))+'</strong></div>';
+  html+='</div>';
+
+  // 10. ACTION ITEMS
+  if(actions.length>0){
+    html+='<div class="ss" style="margin-top:12px;"><div class="st">10. Action Items & PIC</div>';
+    html+='<table class="act-tbl" style="margin-top:6px;"><thead><tr><th>No</th><th>Action</th><th>PIC</th><th>Deadline</th><th>Status</th></tr></thead><tbody>';
+    actions.forEach(function(a,i){
+      var sc=a.status==='Selesai'?'color:#059669;':a.status==='Pending'?'color:#d97706;':'';
+      html+='<tr><td style="text-align:center;font-weight:700;">'+(i+1)+'</td><td>'+h(a.action)+'</td><td>'+h(a.pic)+'</td><td>'+fmtDate(a.deadline)+'</td><td style="'+sc+'font-weight:700;">'+h(a.status)+'</td></tr>';
+    });
+    html+='</tbody></table></div>';
+  }
+
+  html+='<div class="fb">drAisyi EduCare · Pediatric Oncology Clinical Decision Support · <em>Dokumen klinis-konfidensial – hanya untuk penggunaan MDT</em> · <strong>Board Summary Generator – bukan eligibility calculator</strong></div>';
+  html+='</div></div>';
+
+  // BUTTONS
+  html+='<button class="print-btn" id="printBtn">🖨️ Cetak / Export PDF</button>';
+  html+='<button class="copy-btn" id="resetBtn">🔄 Reset Form</button>';
+
+  out.innerHTML=html;
+  document.getElementById('printBtn').addEventListener('click',function(){window.print();});
+  document.getElementById('resetBtn').addEventListener('click',function(){if(confirm('Reset semua form? Data tidak dapat dipulihkan.'))location.reload();});
+});
+</script>
+</body>
+</html>

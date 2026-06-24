@@ -1,1 +1,85 @@
-Hematologi
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hematologi Toolkits</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f8fafc;
+        }
+
+        h1 {
+            margin-bottom: 2rem;
+        }
+
+        .toolkit-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .toolkit-list a {
+            display: block;
+            padding: 1rem;
+            text-decoration: none;
+            color: #333;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .toolkit-list a:hover {
+            border-color: #2563eb;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>CAR-T Program Toolkits</h1>
+
+    <div id="toolkits" class="toolkit-list">
+        Loading...
+    </div>
+
+    <script>
+        async function loadRegistry() {
+            try {
+                const response = await fetch('hematologi_registry.json');
+                const toolkits = await response.json();
+
+                const container = document.getElementById('toolkits');
+                container.innerHTML = '';
+
+                toolkits.forEach(toolkit => {
+                    const link = document.createElement('a');
+
+                    // Assumes each toolkit has a matching HTML file
+                    link.href = `${toolkit}.html`;
+
+                    // Convert slug to readable text
+                    link.textContent = toolkit
+                        .replace(/-/g, ' ')
+                        .replace(/\b\w/g, c => c.toUpperCase());
+
+                    container.appendChild(link);
+                });
+            } catch (error) {
+                console.error(error);
+                document.getElementById('toolkits').innerHTML =
+                    '<p>Failed to load toolkit registry.</p>';
+            }
+        }
+
+        loadRegistry();
+    </script>
+
+</body>
+</html>
